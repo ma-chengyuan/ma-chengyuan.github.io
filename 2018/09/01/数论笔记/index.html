@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="定义：只能被$1$和自身整除的数。 素数的判定试除法如果$n$不是素数那么它必定有一个不大于$\sqrt n$的因子，因此我们枚举$[1, \sqrt n]$中的所有数挨个试除即可，时间复杂度$O(\sqrt n)$，虽然慢但是保证正确。 费马判定法逆用费马小定理，即若$n$为素数则$a^{n - 1} \equiv 1 \pmod n$，对于一个可能的$n$我们尝试不同的$a$并判断是否符合定理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="蒟蒻的数论笔记——素数">
+<meta property="og:url" content="https://alan20210202.github.io/2018/09/01/%E6%95%B0%E8%AE%BA%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
+<meta property="og:description" content="定义：只能被$1$和自身整除的数。 素数的判定试除法如果$n$不是素数那么它必定有一个不大于$\sqrt n$的因子，因此我们枚举$[1, \sqrt n]$中的所有数挨个试除即可，时间复杂度$O(\sqrt n)$，虽然慢但是保证正确。 费马判定法逆用费马小定理，即若$n$为素数则$a^{n - 1} \equiv 1 \pmod n$，对于一个可能的$n$我们尝试不同的$a$并判断是否符合定理">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-09-01T09:30:31.459Z">
+<meta property="article:modified_time" content="2018-09-02T03:13:30.927Z">
+<meta property="article:author" content="Chengyuan Ma">
+<meta property="article:tag" content="数论笔记">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://alan20210202.github.io/2018/09/01/%E6%95%B0%E8%AE%BA%E7%AC%94%E8%AE%B0/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>蒟蒻的数论笔记——素数 | Chengyuan Ma's Blog</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-65HSG5NCY6');
+      }
+    </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Chengyuan Ma's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-pagedewarp"><a href="/dewarp/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>PageDewarp</a></li>
+        <li class="menu-item menu-item-english"><a href="/english/" rel="section"><i class="fa fa-globe-americas fa-fw"></i>English</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%B4%A0%E6%95%B0%E7%9A%84%E5%88%A4%E5%AE%9A"><span class="nav-number">1.</span> <span class="nav-text">素数的判定</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%95%E9%99%A4%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">试除法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%B9%E9%A9%AC%E5%88%A4%E5%AE%9A%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">费马判定法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Miller-Rabin-%E5%88%A4%E5%AE%9A%E6%B3%95"><span class="nav-number">1.3.</span> <span class="nav-text">Miller-Rabin 判定法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%B7%B1%E7%9A%84%E5%88%A4%E5%AE%9A%E6%B3%95%EF%BC%9F"><span class="nav-number">1.4.</span> <span class="nav-text">自己的判定法？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97-1-n-%E7%9A%84%E6%89%80%E6%9C%89%E7%B4%A0%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text">计算$[1, n]$的所有素数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%83%E6%8B%89%E6%89%98%E8%89%B2%E5%B0%BC%E7%AD%9B%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">埃拉托色尼筛法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AC%A7%E6%8B%89%E7%AD%9B"><span class="nav-number">2.2.</span> <span class="nav-text">欧拉筛</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%B4%A0%E5%9B%A0%E6%95%B0%E5%88%86%E8%A7%A3"><span class="nav-number">3.</span> <span class="nav-text">素因数分解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%95%E9%99%A4%E6%B3%95-1"><span class="nav-number">3.1.</span> <span class="nav-text">试除法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pollard%E2%80%99s-Rho%E6%96%B9%E6%B3%95"><span class="nav-number">3.2.</span> <span class="nav-text">Pollard’s-Rho方法</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
+  <div class="site-description" itemprop="description">不务正业高中生一枚</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://kalasearch.cn/" title="https:&#x2F;&#x2F;kalasearch.cn&#x2F;" rel="noopener" target="_blank">卡拉搜索</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/01/%E6%95%B0%E8%AE%BA%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          蒟蒻的数论笔记——素数
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-09-01 17:30:31" itemprop="dateCreated datePublished" datetime="2018-09-01T17:30:31+08:00">2018-09-01</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2018-09-02 11:13:30" itemprop="dateModified" datetime="2018-09-02T11:13:30+08:00">2018-09-02</time>
+      </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><strong>定义</strong>：只能被$1$和自身整除的数。</p>
+<h1 id="素数的判定"><a href="#素数的判定" class="headerlink" title="素数的判定"></a>素数的判定</h1><h2 id="试除法"><a href="#试除法" class="headerlink" title="试除法"></a>试除法</h2><p>如果$n$不是素数那么它必定有一个不大于$\sqrt n$的因子，因此我们枚举$[1, \sqrt n]$中的所有数挨个试除即可，时间复杂度$O(\sqrt n)$，虽然慢但是保证正确。</p>
+<h2 id="费马判定法"><a href="#费马判定法" class="headerlink" title="费马判定法"></a>费马判定法</h2><p>逆用费马小定理，即若$n$为素数则$a^{n - 1} \equiv 1 \pmod n$，对于一个可能的$n$我们尝试不同的$a$并判断是否符合定理，如果不是那么$n$一定不是素数，如果是，那么对于单个的$a$我们正确的概率约为$1 \over 4$，因此我们可以多试几次（比如$20$次），这样基本上就可以保证正确性了。时间复杂度就是快速幂的复杂度$O(\log n)$。</p>
+<p><strong>缺点：会被卡迈克尔数干死。</strong>如果合数$n$是卡迈克尔数，那么对于所有和$n$互素的$a$，也有$a^{n - 1} \equiv 1 \pmod n$，简而言之就是费马小定理逆定理的反例。最小的卡迈克尔数是$561 = 3 \times 11 \times 17$。虽然这种数很稀少但是，在$[1, 1 \times 10^8]$之间总共有$255$个卡迈克尔数，出题人想干死你还是很简单。</p>
+<h2 id="Miller-Rabin-判定法"><a href="#Miller-Rabin-判定法" class="headerlink" title="Miller-Rabin 判定法"></a>Miller-Rabin 判定法</h2><p><strong>引理</strong>：模素数$n$意义下$1$的平方根模$n$为$\pm 1$。</p>
+<p><strong>证明：</strong>设此时$1$的平方根为$x$：<br>$$<br>\begin{aligned}<br>x^2 &amp;\equiv 1 &amp;\pmod n\<br>x^2 - 1 &amp;\equiv 0 &amp;\pmod n\<br>(x + 1)(x - 1) &amp;\equiv 0 &amp;\pmod n\<br>\end{aligned}<br>$$<br>因此$n\mid (x + 1)$或$n\mid (x - 1)$，即$x \equiv \pm1 \pmod n$，得证。</p>
+<p>对于一个奇素数$n$，偶数$n - 1$一定可以写成$2^sd$的形式，其中$d$是奇数。我们断言对于所有$a$和某个$r$以下两个不等式必有一个成立：<br>$$<br>\begin{aligned}<br>a^d &amp;\equiv 1 &amp;\pmod n \<br>a^{2^rd} &amp;\equiv -1 &amp;\pmod n<br>\end{aligned}<br>$$<br>其中$0 &lt; a &lt; n, 0 \le r &lt; s$。</p>
+<p><strong>证明：</strong>由费马小定理可得$a^{2^sd} \equiv 1 \pmod n$，我们不断地对这个式子两边开根，由引理，如果开出$-1$，那么下式成立，如果开了$s$次没开出$-1$，则上式成立。</p>
+<p>Miller-Rabin 判别法基于以上命题的逆否命题，即如果存在一个$a$，使得$a^d \not \equiv 1 \pmod n$且对于所有的$0 \le r &lt; s$都有$a^{2^rd} \not\equiv -1 \pmod n$，那$n$一定不是素数。反之，$n$就<em>很有可能</em>是素数。</p>
+<p>因此，Miller Rabin的工作流程如下：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">bool</span> <span class="token function">millerRabin</span><span class="token punctuation">(</span><span class="token keyword">int</span> n<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span> <span class="token comment">// n > 3</span>
+	<span class="token keyword">int</span> s <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span> d <span class="token operator">=</span> n <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span>
+	<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token punctuation">(</span>d <span class="token operator">&amp;</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span> s<span class="token operator">++</span><span class="token punctuation">,</span> d <span class="token operator">>>=</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token comment">// 分解s, d</span>
+	<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> K<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span> <span class="token comment">// K 越大越准</span>
+		<span class="token keyword">int</span> a <span class="token operator">=</span> <span class="token function">rand</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">%</span> <span class="token punctuation">(</span>n <span class="token operator">-</span> <span class="token number">3</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token number">2</span><span class="token punctuation">;</span> <span class="token comment">// 随机一个[2, n - 2]的a</span>
+		<span class="token keyword">int</span> x <span class="token operator">=</span> <span class="token function">qpow</span><span class="token punctuation">(</span>a<span class="token punctuation">,</span> d<span class="token punctuation">,</span> n<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// a^d mod n, qpow快速幂</span>
+		<span class="token keyword">if</span> <span class="token punctuation">(</span>x <span class="token operator">==</span> <span class="token number">1</span> <span class="token operator">||</span> x <span class="token operator">==</span> n <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token keyword">continue</span><span class="token punctuation">;</span> <span class="token comment">// 不满足逆否命题, n - 1是r = 0时的下式</span>
+		<span class="token keyword">bool</span> flag <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+		<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> j <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> j <span class="token operator">&lt;=</span> s <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span> j<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+			x <span class="token operator">=</span> x <span class="token operator">*</span> x <span class="token operator">%</span> n<span class="token punctuation">;</span>
+			<span class="token keyword">if</span> <span class="token punctuation">(</span>x <span class="token operator">==</span> n <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+				flag <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span> <span class="token comment">// 不满足逆否命题</span>
+				<span class="token keyword">break</span><span class="token punctuation">;</span>
+			<span class="token punctuation">&#125;</span>
+		<span class="token punctuation">&#125;</span>
+		<span class="token keyword">if</span> <span class="token punctuation">(</span>flag<span class="token punctuation">)</span> <span class="token keyword">continue</span><span class="token punctuation">;</span>
+		<span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+	<span class="token punctuation">&#125;</span>
+	<span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>要我说还是蛮复杂的，但是这个测试就已经不会被卡迈克尔数干死了。而且在$K = 1$时就已经很准了。</p>
+<p>时间复杂度为$O(n\log n)$。</p>
+<h2 id="自己的判定法？"><a href="#自己的判定法？" class="headerlink" title="自己的判定法？"></a>自己的判定法？</h2><p>可以通过研究素数的更多性质，例如高次剩余的特性等等发明自己的判别法，如果在复杂度允许的情况下能够在<code>int</code>范围内没问题也可以用。</p>
+<h1 id="计算-1-n-的所有素数"><a href="#计算-1-n-的所有素数" class="headerlink" title="计算$[1, n]$的所有素数"></a>计算$[1, n]$的所有素数</h1><p>如何快速获得$[1, n]$的所有素数呢？如果对于$n$个数都进行以上的素数判定肯定是非常慢的，因此我们需要筛法，顾名思义，就是把不是素数的全部筛掉，那么剩下的就都是素数了。</p>
+<h2 id="埃拉托色尼筛法"><a href="#埃拉托色尼筛法" class="headerlink" title="埃拉托色尼筛法"></a>埃拉托色尼筛法</h2><p>最朴素的筛法，基于的思想是如果我把每一个素数的倍数都标记成合数的话那么剩下没有标记的就是素数了，代码非常简洁，如下：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">bool</span> v<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token comment">// 不是质数</span>
+<span class="token keyword">int</span> prime<span class="token punctuation">[</span>P<span class="token punctuation">]</span><span class="token punctuation">,</span> tot <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>v<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token keyword">continue</span><span class="token punctuation">;</span>
+    prime<span class="token punctuation">[</span><span class="token operator">++</span>tot<span class="token punctuation">]</span> <span class="token operator">=</span> i<span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> j <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span> j <span class="token operator">&lt;=</span> n <span class="token operator">/</span> i<span class="token punctuation">;</span> j<span class="token operator">++</span><span class="token punctuation">)</span>
+        v<span class="token punctuation">[</span>i <span class="token operator">*</span> j<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>其复杂度应该为$\sum_{素数p \le n} \left\lfloor \frac{n}{p} \right\rfloor$。由麦腾斯定理，这个式子在$n \to \infty$时逼近$n\ln\ln n$，因此埃拉托色尼筛法的时间复杂度为$O(n\ln\ln n)$，一般$n$可以达到$10^7$。这个筛法有一个小优化我也在<a href="https://alan20210202.github.io/2018/08/21/%E7%AD%9B%E6%B3%95/">之前的笔记</a>中有提到。</p>
+<p>埃拉托色尼筛法的精髓在于它利用了<strong>约数和倍数的关系是成对的</strong>这一点，将素数判断这一个枚举约数的问题转化为了枚举倍数的问题并加快了速度，这一思想十分重要，在计算狄利克雷卷积和反演的时候也会用到（把对因数求和转化为对倍数算贡献）。</p>
+<h2 id="欧拉筛"><a href="#欧拉筛" class="headerlink" title="欧拉筛"></a>欧拉筛</h2><p>虽然$\ln\ln n$这个因子已经很小了，但是面对$n = 10^8$的时候还是会跪掉。因此我们需要一种筛法能够在$O(n)$的时间内筛出所有的素数。</p>
+<p>我们发现埃氏筛效率欠佳的一点是：<em>一个合数会被每一个它的素因数筛掉共计好几次</em>。我们能不能让一个合数只被筛一次呢？</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">bool</span> v<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token comment">// 不是质数</span>
+<span class="token keyword">int</span> prime<span class="token punctuation">[</span>P<span class="token punctuation">]</span><span class="token punctuation">,</span> tot <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>v<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> prime<span class="token punctuation">[</span><span class="token operator">++</span>tot<span class="token punctuation">]</span> <span class="token operator">=</span> i<span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> j <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">*</span> prime<span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> j<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        v<span class="token punctuation">[</span>i <span class="token operator">*</span> prime<span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>i <span class="token operator">%</span> prime<span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>欧拉筛的精髓在于那句<code>if (i % prime[j] == 0) break;</code>。</p>
+<p><strong>结论：</strong>在欧拉筛中每个合数<em>会且仅会</em>被它的最小素因子筛去。</p>
+<p><strong>证明：</strong>设合数$N$的最小素因子为$p_o$，因为$\frac{N}{p_0}$不可能被$p_0$更小的素数所整除，因此在循环到$i = \frac{N}{p_0}$时，内循环一定会在<code>break</code>之前筛到$\frac{N}{p_0} \cdot p_0 = N$。而假设有$N$有另外一个素因子$p_1 &gt; p_0$，则显然$p_0 \mid \frac{N}{p_1}$，因此在循环到$i = \frac{N}{p_1}$时，内循环一定会在筛到（<code>prime[j]</code>为）$p_0$之后就立刻<code>break</code>，因此一定不会再筛到$\frac{N}{p_1} \cdot p_1$。</p>
+<p><strong>推论：</strong>因为合数的数量少于$n$，因此欧拉筛的复杂度为$O(n)$。</p>
+<p>欧拉筛原名线性筛，冠以欧拉之名纯粹是因为我们不仅用它筛素数，还可以顺便计算以欧拉函数为首的一票积性函数。</p>
+<h1 id="素因数分解"><a href="#素因数分解" class="headerlink" title="素因数分解"></a>素因数分解</h1><h2 id="试除法-1"><a href="#试除法-1" class="headerlink" title="试除法"></a>试除法</h2><p>如果$n$为合数那么$n$一定有一个不大于$\sqrt n$的素因子，因此我们枚举$[1, \sqrt n]$中的所有数挨个试除即可，时间复杂度$O(\sqrt n)$，是最常用的方法。</p>
+<h2 id="Pollard’s-Rho方法"><a href="#Pollard’s-Rho方法" class="headerlink" title="Pollard’s-Rho方法"></a>Pollard’s-Rho方法</h2><p><strong>引理（生日悖论）：</strong>在$[1, N]$当中随机选出若干个数，平均需要抽出$O(\sqrt N)$个数才会抽到两个相同的数。</p>
+<p><strong>简介：</strong>抽前$k - 1$个数两两不同的概率为：<br>$$<br>\frac{P(N, k - 1)}{N^{k - 1}} = \frac{N!}{(N - k+1)!N^{k-1}}<br>$$<br>如果你抽第$k$个数，与之前$k - 1$个数相同的概率为$\frac{k - 1}{N}$，因此你恰巧在刚刚抽完第$k$个数后得到两个相同的数的概率为：<br>$$<br>\frac{N!}{(N - k+1)!N^{k-1}} \cdot \frac{k - 1}{N} = \frac{(k - 1)N}{(N - k +1)!N^k}<br>$$<br>因此为了得到两个相同的数你需要抽出的数的期望是：<br>$$<br>\sum_{k = 2}^{N+1} \frac{k(k - 1)N}{(N - k +1)!N^k}<br>$$<br>它也<a target="_blank" rel="noopener" href="https://math.stackexchange.com/questions/693996/average-number-of-people-required-to-find-a-pair-with-same-birthday">等价</a>于TAOCP中的：<br>$$<br>1 + \sum_{k = 1}^N \frac{N!}{(N-k)!N^k}<br>$$<br>神奇的数学家拉马努金曾对该函数进行过研究，并指出它渐进逼近$\sqrt {\frac{\pi N}{2}}$。</p>
+<p>好的，现在假设我们需要分解出$n = pq$的一个非平凡因子$p$，假设我们有一个多项式同余函数$g$（例如$g(x) = (x^2 + 1) \bmod n$）。我们使用$g$来迭代生成一个<em>伪随机</em>序列${x_n}$，它和其模$p$的序列${x_n \bmod p}$相关联。由之前的生日悖论引理，前者平均在$O(\sqrt n)$次迭代后产生循环，而后者只需要$O(\sqrt p) &lt; O(\sqrt n)$次。我们可以在迭代中检测这个循环，从而完成对于素因数的分解。</p>
+<p>我们知道${x_n \bmod p}$产生循环当且仅当存在$x_i, x_j$，有$x_i \equiv x_j \pmod p$，此时$x_i$和$x_j$之间就是这个序列的一个循环节，但是我们预先是不知道$p$的，那怎么判断以上条件是否成立呢？我们发现以上条件等价于$p \mid |x_i - x_j|$，因为同时$p \mid n$，所以此时$p$最大可以为$\gcd(n, |x_i - x_j|)$，因此如果我们发现$\gcd(n, |x_i - x_j|) \neq 1$我们就已经找到了一个$p = \gcd(n, |x_i - x_j|)$，非常巧妙！</p>
+<p>在算法实现中，我们使用弗洛伊德判圈算法，其精髓就是环上的追及问题，我们维护两个指针$x_i, x_j$，从出发点开始$x_i$一个一个地跳，$x_j$两个两个地跳，他们的速度差为$1$，只要出现了了一个环那么在某一时刻$x_j$总是可以套$x_i$一圈！每一轮过后我们检测$\gcd(n, |x_i - x_j|) $，如果不为$1$那说明我们找到一个因子，但是如果为$n$的话就是${x_n}$和${x_n \bmod p}$一起循环了，我们的算法就GG了，需要重新选定一个出发点（给$g$的种子）。</p>
+<p>这个启发式算法的复杂度取决于$O(\sqrt p)$，但是因为一般来说$p \le \sqrt n$，因此算法的复杂度平均下来是$O(n^{1 \over 4})$的，实测在<code>int</code>范围内快得飞起。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E8%AE%BA%E7%AC%94%E8%AE%B0/" rel="tag"># 数论笔记</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/09/01/%E5%9F%BA%E7%AB%99%E9%80%89%E5%9D%80/" rel="prev" title="NOIP模拟赛 基站选址">
+                  <i class="fa fa-chevron-left"></i> NOIP模拟赛 基站选址
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/09/01/%E6%95%B4%E9%99%A4%E5%88%86%E5%9D%97/" rel="next" title="整除分块">
+                  整除分块 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chengyuan Ma</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+</body>
+</html>

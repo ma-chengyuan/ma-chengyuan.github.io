@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="后缀自动机（Suffix Automaton）本质上就是接受字符串集合等于一个给定字符串$S$后缀集合的最小化DFA。SAM可以在$O(|S|)$的时间内构造出来。 等价关系在下文中统一设母串为$S$。 定义1：令$\operatorname{endpos}(s)$表示子串$s$在$S$中的结束位置集合。如$S &#x3D; abcababc, s &#x3D; ab$，则$\operatorname{endpos}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="后缀自动机笔记">
+<meta property="og:url" content="https://alan20210202.github.io/2019/02/05/%E5%90%8E%E7%BC%80%E8%87%AA%E5%8A%A8%E6%9C%BA/index.html">
+<meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
+<meta property="og:description" content="后缀自动机（Suffix Automaton）本质上就是接受字符串集合等于一个给定字符串$S$后缀集合的最小化DFA。SAM可以在$O(|S|)$的时间内构造出来。 等价关系在下文中统一设母串为$S$。 定义1：令$\operatorname{endpos}(s)$表示子串$s$在$S$中的结束位置集合。如$S &#x3D; abcababc, s &#x3D; ab$，则$\operatorname{endpos}">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-02-05T04:59:08.260Z">
+<meta property="article:modified_time" content="2019-03-24T03:01:29.612Z">
+<meta property="article:author" content="Chengyuan Ma">
+<meta property="article:tag" content="刷题记录">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://alan20210202.github.io/2019/02/05/%E5%90%8E%E7%BC%80%E8%87%AA%E5%8A%A8%E6%9C%BA/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>后缀自动机笔记 | Chengyuan Ma's Blog</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-65HSG5NCY6');
+      }
+    </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Chengyuan Ma's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-pagedewarp"><a href="/dewarp/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>PageDewarp</a></li>
+        <li class="menu-item menu-item-english"><a href="/english/" rel="section"><i class="fa fa-globe-americas fa-fw"></i>English</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AD%89%E4%BB%B7%E5%85%B3%E7%B3%BB"><span class="nav-number">1.</span> <span class="nav-text">等价关系</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%8E%E7%BC%80%E9%93%BE%E6%8E%A5"><span class="nav-number">2.</span> <span class="nav-text">后缀链接</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E7%AE%97%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">构建算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AD%A3%E7%A1%AE%E6%80%A7%E8%AF%81%E6%98%8E"><span class="nav-number">4.</span> <span class="nav-text">正确性证明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.</span> <span class="nav-text">代码实现</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
+  <div class="site-description" itemprop="description">不务正业高中生一枚</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://kalasearch.cn/" title="https:&#x2F;&#x2F;kalasearch.cn&#x2F;" rel="noopener" target="_blank">卡拉搜索</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/02/05/%E5%90%8E%E7%BC%80%E8%87%AA%E5%8A%A8%E6%9C%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          后缀自动机笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-02-05 12:59:08" itemprop="dateCreated datePublished" datetime="2019-02-05T12:59:08+08:00">2019-02-05</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2019-03-24 11:01:29" itemprop="dateModified" datetime="2019-03-24T11:01:29+08:00">2019-03-24</time>
+      </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>后缀自动机（Suffix Automaton）本质上就是接受字符串集合等于一个给定字符串$S$后缀集合的最小化DFA。SAM可以在$O(|S|)$的时间内构造出来。</p>
+<h1 id="等价关系"><a href="#等价关系" class="headerlink" title="等价关系"></a>等价关系</h1><p>在下文中统一设母串为$S$。</p>
+<p><strong>定义1：</strong>令$\operatorname{endpos}(s)$表示子串$s$在$S$中的<strong>结束位置集合</strong>。如$S = abcababc, s = ab$，则$\operatorname{endpos}(s) = {2, 5, 7}$。特别地，$\operatorname{endpos}(\emptyset) = {1,2,3, \cdots, |S|}$。</p>
+<p><strong>引理1：</strong>两个子串$u, w$是$\operatorname{endpos}$等价的，且假设$|u| &lt; |w|$，则$u$是$w$的一个后缀。</p>
+<p><strong>证明：</strong>脑补一下，不证自明。</p>
+<p><strong>引理2：</strong>考虑两个子串$u, w$，假设$|u| &lt; |w|$则$\operatorname{endpos}(u)$与$\operatorname{endpos}(v)$有且仅有以下两种关系：</p>
+<ol>
+<li>$\operatorname{endpos}(w) \subseteq \operatorname{endpos}(u)$：此时$u$一定是$w$的后缀。</li>
+<li>$\operatorname{endpos}(w) \cap \operatorname{endpos}(u) = \emptyset$：其他。</li>
+</ol>
+<p><strong>证明：</strong>如果$\operatorname{endpos}(w) \cap \operatorname{endpos}(u) \neq \emptyset$，那么它们至少都会在原串的某一点结束，结合$|u| &lt; |w|$，$u$一定就是$w$的后缀，如此一来$w$结束的地方$u$也一定结束，因此$\operatorname{endpos}(w) \subseteq \operatorname{endpos}(u)$。</p>
+<p><strong>引理3：</strong>考虑一个$\operatorname{endpos}$等价类，如果将其中的串按照长度从小到大排序，则后一个串的长度一定比前一个串的长度严格大$1$，或者说，这个等价类的字符串取遍了某一区间内的所有长度。</p>
+<p><strong>证明：</strong>记这个等价类当中最短的串为$u$，最长的串为$w$。首先由引理1，一个等价类必定由$w$和它的一系列后缀组成。考虑长度在$u, w$之间的$w$的任意后缀$x$，因为$x$是$w$的后缀，由引理2，$\operatorname{endpos}(w) \subseteq \operatorname{endpos}(x)$，同时又因为$u$是$x$的后缀，$\operatorname{endpos}(x) \subseteq \operatorname{endpos}(u)$，结合$\operatorname{endpos}(w) = \operatorname{endpos}(u)$，则$x$与$u, w$也$\operatorname{endpos}$等价。</p>
+<h1 id="后缀链接"><a href="#后缀链接" class="headerlink" title="后缀链接"></a>后缀链接</h1><p>$\operatorname{endpos}$集合描述了一个串在母串当中的出现情况。我们希望构建出来的DFA要最小化，因此我们自然希望一个节点表示一整个$\operatorname{endpos}$的<strong>等价类</strong>。<strong>即SAM当中每个节点的$\operatorname{endpos}$互不相同。</strong></p>
+<p><strong>定义2：</strong>对于一个节点$v$，令$\operatorname{endpos}(v)$表示其表示的$\operatorname{endpos}$等价类。</p>
+<p>我们又知道一个节点表示的字符串是$S$的某一个前缀的前几个后缀（引理3）（假设把后缀长度从大到小排序）。</p>
+<p><strong>定义3：</strong>既然某个节点$v​$表示某前缀的前几个后缀，令$\operatorname{link}(v)​$表示第一个不在等价类$v​$中的后缀所在的等价类节点，称为$v​$的<strong>后缀链接</strong>。</p>
+<p><strong>定义4：</strong>令$\min(v)$表示节点$v$表示的最短子串，$\max(v)$表示节点$v$表示的最长子串。</p>
+<p><strong>观察1：</strong>结合定义3，显然$\left|\min(v)\right| = \left|\max(\operatorname{link}(v))\right| + 1$。</p>
+<p><strong>定义4：</strong>设SAM初始节点为$v_0$，令$\operatorname{link}(v_0) = \emptyset, \min(v_0) = \max(v_0) = \emptyset$。</p>
+<p><strong>引理4：</strong>节点与后缀链接构成一棵以初始节点$v_0​$为根的树。</p>
+<p><strong>证明：</strong>后缀链接$\operatorname{link}(v)$的表示的子串长度是严格小于$v$。顺着后缀链接总可以退回到表示子串长度为$0$的$v_0$。</p>
+<p><strong>观察2：</strong>由引理2，定义3，$\operatorname{endpos}(v) \subsetneq \operatorname{endpos}(\operatorname{link}(v))$。</p>
+<p><strong>观察3：</strong>因此，后缀链接组成的树也完全对应$\operatorname{endpos}​$等价类的子集关系。</p>
+<h1 id="构建算法"><a href="#构建算法" class="headerlink" title="构建算法"></a>构建算法</h1><p>我们采用增量式的方法构建后缀自动机，即考虑在$S$的SAM的基础上构建$S|c$的后缀自动机：</p>
+<p>在算法中，我们对于一个节点$v$只存储以下信息：</p>
+<ol>
+<li>$\operatorname{link}(v)$：后缀链接</li>
+<li>$\operatorname{len}(v) = |\max(v)|​$</li>
+<li>转移边</li>
+</ol>
+<p>算法流程如下：</p>
+<ol>
+<li>令$v_{\text{last}}$表示原来表示整个$S$串的节点。</li>
+<li>创建新节点$v_{\text{cur}}$用于表示串$S|c$，令$\operatorname{len}(v_{\text{cur}}) = \operatorname{len}(v_{\text{last}}) + 1$。</li>
+<li>从$v_{\text{last}}​$开始顺着后缀链接一路向上，对于没有$c​$转移边的节点添加到$v_{\text{cur}}​$的后缀转移。如果一路到了$v_0​$，那么令$\operatorname{link}(v_{\text{cur}}) = v_0​$，否则在第一个存在$c​$转移边的节点$p​$出停住。记$p​$顺$c​$转移到$q​$。</li>
+<li>判断：<ol>
+<li>如果$\operatorname{len}(q) = \operatorname{len}(p) + 1​$，则令$\operatorname{link}(v_{\text{cur}}) = q​$。</li>
+<li>否则，将$q$复制一份得到$q’$，令$\operatorname{len}(q’) = \operatorname{len}(p) + 1$。令$\operatorname{link}(q) = q’$且$\operatorname{link}(v_{\text{cur}}) = q’$。同时再顺着$p$的后缀链接向上，把所有指向$q$的$c$转移边重定向到$q’$，直到到达初始节点或者遇到一个非$q$的转移为止。</li>
+</ol>
+</li>
+</ol>
+<h1 id="正确性证明"><a href="#正确性证明" class="headerlink" title="正确性证明"></a>正确性证明</h1><p>首先，算法从创建一个新状态$v_{\text{cur}}​$开始，这个节点表示的字符串是$S|c​$，同时也开辟一个新的等价类。</p>
+<p>接下来对于之前的后缀我们都要做相应的更新（加上$c$才算新的后缀），最简单的方法就是给这些节点加上往$v_{\text{cur}}$的字符$c$转移边，但是这些转移边必须不与之前的转移冲突才行，因此我们到节点$p$就停止了，再加就冲突了。（注意我们在这里每给一个节点$v$（设表示串为$S_v$）加一条$c$转移边，我们就把$S_v|c$加到了$v_{\text{cur}}$表示的串集合当中。这决定了$v_{\text{cur}}$的后缀链接应该链接到哪里。）</p>
+<p>首先如果我们找不到节点$p$，也就是我们一路到了初始节点，那说明这个$c$就根本没有$S$中出现过，也说明$v_{\text{cur}}$一下子表示了$S|c$的所有非空后缀了，因此由后缀链接的定义$\operatorname{link}(v_{\text{cur}}) = v_0$。</p>
+<p>如果我们确实在$p$节点停下了，令$p$代表的串集为$S_p$，那$q$的串集$S_q$至少包含$S_p|c$，而此时$S_p|c$的$\operatorname{endpos}$集合是被拓展的（因为现在$S_p|c$也会在$S|c$的末尾结束），因此：</p>
+<ol>
+<li>如果$S_q$只包含$S_p|c$，也就是$\operatorname{len}(q) = \operatorname{len}(p)+1$那么我们可以直接拓展$q$的等价类。此时$\operatorname{link}(v_{\text{cur}}) = q$。</li>
+<li>如果$S_q$不只包含$S_p|c$，也就是$\operatorname{len}(q) &gt; \operatorname{len}(p) + 1$的话，那么$S_q$中只有一部分串的$\operatorname{endpos}$集合被拓展了，此时我们有必要重新开一个节点来表示拓展得到的新等价类。那些比$S_p|c$长的，没有拓展的串仍然保留在$q$，$S_p|c$被单独移到了$q’$，由定义那么$\operatorname{link}(q) = q’$。最后我们需要做一些收尾工作，也就是把一些节点从转移到$q$变成转移到$q’$，我们发现这些节点代表的串一定是$S_p$的后缀，因此只要一路$p$的后缀链接向上就行了。</li>
+</ol>
+<p>关于时空复杂度，首先这个算法本身的保证了状态数的上界是$2|S| - 1 = O(|S|)​$的。</p>
+<p>其次这个算法的转移数也是线性的，这两个性质一起确保了整个算法的均摊复杂度是线性的。具体证明可以看<a target="_blank" rel="noopener" href="https://oi-wiki.org/string/sam/">这里</a>。</p>
+<h1 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h1><p>个人认为SAM的代码实现只要理解了SAM的原理其实是比SA简单的：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">namespace</span> sam <span class="token punctuation">&#123;</span>
+    <span class="token keyword">int</span> cnt <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span> last <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> <span class="token keyword">int</span> EPSILON <span class="token operator">=</span> <span class="token number">26</span><span class="token punctuation">;</span>
+    <span class="token keyword">int</span> len<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">,</span> link<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">,</span> nxt<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">[</span>EPSILON<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    
+    <span class="token keyword">void</span> <span class="token function">extend</span><span class="token punctuation">(</span><span class="token keyword">int</span> c<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">int</span> cur <span class="token operator">=</span> <span class="token operator">++</span>cnt<span class="token punctuation">,</span> p <span class="token operator">=</span> last<span class="token punctuation">;</span>
+        len<span class="token punctuation">[</span>cur<span class="token punctuation">]</span> <span class="token operator">=</span> len<span class="token punctuation">[</span>last<span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">;</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token punctuation">;</span> p <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span>nxt<span class="token punctuation">[</span>p<span class="token punctuation">]</span><span class="token punctuation">[</span>c<span class="token punctuation">]</span><span class="token punctuation">;</span> p <span class="token operator">=</span> link<span class="token punctuation">[</span>p<span class="token punctuation">]</span><span class="token punctuation">)</span> nxt<span class="token punctuation">[</span>p<span class="token punctuation">]</span><span class="token punctuation">[</span>c<span class="token punctuation">]</span> <span class="token operator">=</span> cur<span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>p<span class="token punctuation">)</span> link<span class="token punctuation">[</span>cur<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+        <span class="token keyword">else</span> <span class="token punctuation">&#123;</span>
+            <span class="token keyword">int</span> q <span class="token operator">=</span> nxt<span class="token punctuation">[</span>p<span class="token punctuation">]</span><span class="token punctuation">[</span>c<span class="token punctuation">]</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>len<span class="token punctuation">[</span>q<span class="token punctuation">]</span> <span class="token operator">==</span> len<span class="token punctuation">[</span>p<span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span> link<span class="token punctuation">[</span>cur<span class="token punctuation">]</span> <span class="token operator">=</span> q<span class="token punctuation">;</span>
+            <span class="token keyword">else</span> <span class="token punctuation">&#123;</span>
+                <span class="token keyword">int</span> nq <span class="token operator">=</span> <span class="token operator">++</span>cnt<span class="token punctuation">;</span>
+                len<span class="token punctuation">[</span>nq<span class="token punctuation">]</span> <span class="token operator">=</span> len<span class="token punctuation">[</span>p<span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">;</span>
+                link<span class="token punctuation">[</span>nq<span class="token punctuation">]</span> <span class="token operator">=</span> link<span class="token punctuation">[</span>q<span class="token punctuation">]</span><span class="token punctuation">;</span>
+                <span class="token function">copy</span><span class="token punctuation">(</span>nxt<span class="token punctuation">[</span>q<span class="token punctuation">]</span><span class="token punctuation">,</span> nxt<span class="token punctuation">[</span>q<span class="token punctuation">]</span> <span class="token operator">+</span> EPSILON<span class="token punctuation">,</span> nxt<span class="token punctuation">[</span>nq<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token punctuation">;</span> nxt<span class="token punctuation">[</span>p<span class="token punctuation">]</span><span class="token punctuation">[</span>c<span class="token punctuation">]</span> <span class="token operator">==</span> q<span class="token punctuation">;</span> p <span class="token operator">=</span> link<span class="token punctuation">[</span>p<span class="token punctuation">]</span><span class="token punctuation">)</span> nxt<span class="token punctuation">[</span>p<span class="token punctuation">]</span><span class="token punctuation">[</span>c<span class="token punctuation">]</span> <span class="token operator">=</span> nq<span class="token punctuation">;</span>
+                link<span class="token punctuation">[</span>q<span class="token punctuation">]</span> <span class="token operator">=</span> link<span class="token punctuation">[</span>cur<span class="token punctuation">]</span> <span class="token operator">=</span> nq<span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+        <span class="token punctuation">&#125;</span>
+        last <span class="token operator">=</span> cur<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>SAM绝对是代码中“微言精义”的典范233。</p>
+<p>其次在DFS遍历SAM的后缀链接树的时候其实有一个小技巧，就是把节点按照$\operatorname{len}$从大到小的顺序进行访问（这一步可以桶排），这样可以确保儿子节点一定在父亲节点之前访问到。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" rel="tag"># 刷题记录</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/02/04/%E5%90%8E%E7%BC%80%E6%95%B0%E7%BB%84/" rel="prev" title="后缀数组笔记">
+                  <i class="fa fa-chevron-left"></i> 后缀数组笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/02/15/%E6%B5%81%E6%B5%AA%E5%9C%B0%E7%90%83/" rel="next" title="流浪地球中的轨道运动学">
+                  流浪地球中的轨道运动学 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chengyuan Ma</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+</body>
+</html>

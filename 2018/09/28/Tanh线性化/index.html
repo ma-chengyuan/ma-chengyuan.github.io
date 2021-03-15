@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="概况由于VEX中PWM频率偏低，因此马达的响应并不是线性的，例如马达指令在较小时存在死区，在较大时对转速的影响可以忽略不计等等。以269马达的数据为例（393也是类似）：  那么如何让马达的响应变得线性呢？从数学角度出发，我们需要试图找到，或者逼近以上马达曲线$f$的反函数$g &#x3D; f^{-1}$，对于输出我们应用反函数再应用到马达上，由于马达曲线是单调的，因此在理想状况下，这波操作以后马达的响应">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于反双曲正切函数的马达线性化">
+<meta property="og:url" content="https://alan20210202.github.io/2018/09/28/Tanh%E7%BA%BF%E6%80%A7%E5%8C%96/index.html">
+<meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
+<meta property="og:description" content="概况由于VEX中PWM频率偏低，因此马达的响应并不是线性的，例如马达指令在较小时存在死区，在较大时对转速的影响可以忽略不计等等。以269马达的数据为例（393也是类似）：  那么如何让马达的响应变得线性呢？从数学角度出发，我们需要试图找到，或者逼近以上马达曲线$f$的反函数$g &#x3D; f^{-1}$，对于输出我们应用反函数再应用到马达上，由于马达曲线是单调的，因此在理想状况下，这波操作以后马达的响应">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://ovzrr9kke.bkt.clouddn.com/18-9-28/8570621.jpg">
+<meta property="og:image" content="http://ovzrr9kke.bkt.clouddn.com/18-9-28/66159356.jpg">
+<meta property="og:image" content="http://ovzrr9kke.bkt.clouddn.com/18-9-28/24070987.jpg">
+<meta property="og:image" content="http://ovzrr9kke.bkt.clouddn.com/18-9-28/83393060.jpg">
+<meta property="article:published_time" content="2018-09-28T08:27:33.728Z">
+<meta property="article:modified_time" content="2018-09-28T09:15:02.141Z">
+<meta property="article:author" content="Chengyuan Ma">
+<meta property="article:tag" content="VEX">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://ovzrr9kke.bkt.clouddn.com/18-9-28/8570621.jpg">
+
+
+<link rel="canonical" href="https://alan20210202.github.io/2018/09/28/Tanh%E7%BA%BF%E6%80%A7%E5%8C%96/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>基于反双曲正切函数的马达线性化 | Chengyuan Ma's Blog</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-65HSG5NCY6');
+      }
+    </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Chengyuan Ma's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-pagedewarp"><a href="/dewarp/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>PageDewarp</a></li>
+        <li class="menu-item menu-item-english"><a href="/english/" rel="section"><i class="fa fa-globe-americas fa-fw"></i>English</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E5%86%B5"><span class="nav-number">1.</span> <span class="nav-text">概况</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6%E6%8E%A8%E5%AF%BC"><span class="nav-number">2.</span> <span class="nav-text">数学推导</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%88%E6%9E%9C"><span class="nav-number">4.</span> <span class="nav-text">效果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9B%B4%E5%A4%9A"><span class="nav-number">5.</span> <span class="nav-text">更多</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
+  <div class="site-description" itemprop="description">不务正业高中生一枚</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://kalasearch.cn/" title="https:&#x2F;&#x2F;kalasearch.cn&#x2F;" rel="noopener" target="_blank">卡拉搜索</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/28/Tanh%E7%BA%BF%E6%80%A7%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基于反双曲正切函数的马达线性化
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2018-09-28 16:27:33 / 修改时间：17:15:02" itemprop="dateCreated datePublished" datetime="2018-09-28T16:27:33+08:00">2018-09-28</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="概况"><a href="#概况" class="headerlink" title="概况"></a>概况</h1><p>由于VEX中PWM频率偏低，因此马达的响应并不是线性的，例如马达指令在较小时存在死区，在较大时对转速的影响可以忽略不计等等。以269马达的数据为例（393也是类似）：</p>
+<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/8570621.jpg"></p>
+<p>那么如何让马达的响应变得线性呢？从数学角度出发，我们需要试图找到，或者逼近以上马达曲线$f$的<strong>反函数</strong>$g = f^{-1}$，对于输出我们应用反函数再应用到马达上，由于马达曲线是单调的，因此在理想状况下，这波操作以后马达的响应就是线性的了，这一过程也称作<strong>马达线性化</strong>。</p>
+<p>出于简单起见，我们规定这个$g$的定义域和值域都是$[-127, 127]$，这样的话，理论上大部分原来没有使用线性化的PID算法可以较为简单地加上线性化（不然的话就需要从零开始调参）。显然由马达曲线的单调性可得$g(127) = 127$，以及$g(-127) = -127$。</p>
+<p>目前机器人社实践过的线性化算法有：</p>
+<ol>
+<li>去除死区的简单线性化：只比没有线性化好一点，简单来说就是对输出的指令加一个bias，这样就不会有死区的问题。</li>
+<li>三段线性插值线性化：就是被WSJ吹爆的所谓模型，本质是把马达曲线分为三段并分别用线性函数近似，效果很好，缺点是调参较为复杂。</li>
+<li>二次函数线性化：我们发现马达曲线的形状有点像$f(x) = \sqrt x$的图像，因此我们使用二次函数为反函数进行线性化，效果一般。</li>
+<li>反双曲正切线性化：本篇主题，效果较好。</li>
+<li>真·模型线性化：使用马达模型直接计算马达曲线进行线性化，效果最好，可以针对不同的电量，场地状况，扭矩实时给出不同的曲线，缺点是计算慢。</li>
+</ol>
+<h1 id="数学推导"><a href="#数学推导" class="headerlink" title="数学推导"></a>数学推导</h1><p>直觉上，有没有觉得马达曲线的图像很像$\tanh$函数的图像？</p>
+<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/66159356.jpg"></p>
+<p>因此我们选择使用双曲正切函数的反函数来进行线性化：<br>$$<br>\tanh^{-1}(x) = \frac{1}{2}\ln\left(\frac{1 + x}{1 - x}\right)<br>$$<br>为了适应死区，以及满足上文中定义域和值域的要求，我们魔改拓展一下上式：<br>$$<br>g(x) = a\operatorname{sgn}(x) + \frac{127 - a}{2b}\ln\left(\frac{c + x}{c - x}\right)<br>$$<br>解释一下各参数的意义：</p>
+<ol>
+<li>$a$是死区，一般来说$5 \le a \le 20$。</li>
+<li>$b$是我叫做“缩放因子”的参数，其图像意义是<strong>把原双曲正切函数自变量$[-b, b]$这一段的图像看做马达函数图像形状上的近似</strong>。从图像上可以看到，一般$2 \le b \le 3$。</li>
+<li>$c$是一个依赖于$a, b$的参数，由$g(127) = 127$，我们反解得$c = 127\frac{e^{2b} + 1}{e^{2b} - 1}$。</li>
+</ol>
+<p>就完了，不难吧？</p>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p>注意变量名可能和推导中用到的符号并不一致：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">typedef</span> <span class="token keyword">struct</span> <span class="token punctuation">&#123;</span>
+	<span class="token keyword">float</span> a<span class="token punctuation">,</span> b<span class="token punctuation">;</span>
+	<span class="token keyword">float</span> alpha<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span> TanhLinearizer<span class="token punctuation">;</span>
+
+<span class="token keyword">void</span> <span class="token function">initTanhLinearizer</span><span class="token punctuation">(</span>TanhLinearizer <span class="token operator">*</span>t<span class="token punctuation">,</span> <span class="token keyword">float</span> deadband<span class="token punctuation">,</span> <span class="token keyword">float</span> scale <span class="token operator">=</span> <span class="token number">2.333333</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+	t<span class="token operator">-></span>b <span class="token operator">=</span> scale <span class="token operator">*</span> <span class="token number">2</span><span class="token punctuation">;</span>
+	t<span class="token operator">-></span>a <span class="token operator">=</span> <span class="token number">127</span> <span class="token operator">-</span> deadband<span class="token punctuation">;</span>
+	<span class="token keyword">float</span> x <span class="token operator">=</span> <span class="token function">exp</span><span class="token punctuation">(</span><span class="token number">2</span> <span class="token operator">*</span> scale<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	t<span class="token operator">-></span>alpha <span class="token operator">=</span> <span class="token number">127</span> <span class="token operator">*</span> <span class="token punctuation">(</span>x <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token punctuation">(</span>x <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">int</span> <span class="token function">getTanhLinearizedOutput</span><span class="token punctuation">(</span>TanhLinearizer <span class="token operator">*</span>t<span class="token punctuation">,</span> <span class="token keyword">int</span> cmd<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span>cmd <span class="token operator">></span> <span class="token number">127</span><span class="token punctuation">)</span> cmd <span class="token operator">=</span> <span class="token number">127</span><span class="token punctuation">;</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span>cmd <span class="token operator">&lt;</span> <span class="token operator">-</span><span class="token number">127</span><span class="token punctuation">)</span> cmd <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">127</span><span class="token punctuation">;</span>
+	<span class="token keyword">int</span> s <span class="token operator">=</span> <span class="token function">sgn</span><span class="token punctuation">(</span>cmd<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	cmd <span class="token operator">=</span> <span class="token function">fabs</span><span class="token punctuation">(</span>cmd<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token keyword">return</span> <span class="token function">round</span><span class="token punctuation">(</span>t<span class="token operator">-></span>a <span class="token operator">/</span> t<span class="token operator">-></span>b <span class="token operator">*</span> <span class="token function">log</span><span class="token punctuation">(</span><span class="token punctuation">(</span>t<span class="token operator">-></span>alpha <span class="token operator">+</span> cmd<span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token punctuation">(</span>t<span class="token operator">-></span>alpha <span class="token operator">-</span> cmd<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">+</span> s <span class="token operator">*</span> <span class="token punctuation">(</span><span class="token number">127</span> <span class="token operator">-</span> t<span class="token operator">-></span>a<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h1 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h1><p>马达曲线的反函数应该原本是这个样子的（就是原图像转一转）：</p>
+<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/24070987.jpg"></p>
+<p>然后在$a = 8, b = 3$时我们的线性化算法给出的反函数是这个样子的：</p>
+<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/83393060.jpg"></p>
+<p>是不是很像呢？实测的效果确实也是极好的。</p>
+<h1 id="更多"><a href="#更多" class="headerlink" title="更多"></a>更多</h1><p>其实马达函数的图像不只是像$\tanh$啦，其实观察一下你也可以说它像$\arctan$之类的，自然也可以发展出一套线性化的方法，从的来说看图像猜函数只能说是一种近似，最好自然是找出马达曲线精确的计算方法，也就是建模。但是这类线性化方法的一大好处就是<strong>计算量很小，很快</strong>，因此往往更多地得到应用。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/VEX/" rel="tag"># VEX</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/09/18/%E9%A9%AC%E8%BE%BE%E5%BB%BA%E6%A8%A1/" rel="prev" title="VEX 393 马达电流模型">
+                  <i class="fa fa-chevron-left"></i> VEX 393 马达电流模型
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/02/02/FFT/" rel="next" title="FFT笔记">
+                  FFT笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chengyuan Ma</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+</body>
+</html>

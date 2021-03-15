@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="集合覆盖问题定义输入：全集$\mathcal{U}$，以及一些集合的集合$S&#x3D;{S_1,S_2,S_3,\cdots,S_n}$，满足$\forall i, S_i\subseteq \mathcal{U}$。 目标：从$S$中选择一个最小数目的集合，使得它们能够覆盖$\mathcal{U}$中所有的元素（即并集为$\mathcal U$）  如图，$S_1,S_2,S_4$就构成一个集合覆盖。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PACT 07&#x2F;03 集合覆盖问题">
+<meta property="og:url" content="https://alan20210202.github.io/2020/07/04/PACT0703/index.html">
+<meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
+<meta property="og:description" content="集合覆盖问题定义输入：全集$\mathcal{U}$，以及一些集合的集合$S&#x3D;{S_1,S_2,S_3,\cdots,S_n}$，满足$\forall i, S_i\subseteq \mathcal{U}$。 目标：从$S$中选择一个最小数目的集合，使得它们能够覆盖$\mathcal{U}$中所有的元素（即并集为$\mathcal U$）  如图，$S_1,S_2,S_4$就构成一个集合覆盖。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://alan20210202.github.io/2020/07/04/PACT0703/SC1.svg">
+<meta property="og:image" content="https://alan20210202.github.io/2020/07/04/PACT0703/SC2.svg">
+<meta property="article:published_time" content="2020-07-04T07:31:50.387Z">
+<meta property="article:modified_time" content="2020-07-04T10:29:24.428Z">
+<meta property="article:author" content="Chengyuan Ma">
+<meta property="article:tag" content="PACT">
+<meta property="article:tag" content="数学">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://alan20210202.github.io/2020/07/04/PACT0703/SC1.svg">
+
+
+<link rel="canonical" href="https://alan20210202.github.io/2020/07/04/PACT0703/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>PACT 07/03 集合覆盖问题 | Chengyuan Ma's Blog</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-65HSG5NCY6');
+      }
+    </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Chengyuan Ma's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-pagedewarp"><a href="/dewarp/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>PageDewarp</a></li>
+        <li class="menu-item menu-item-english"><a href="/english/" rel="section"><i class="fa fa-globe-americas fa-fw"></i>English</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E8%A6%86%E7%9B%96%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">集合覆盖问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95%E5%8F%8A%E5%85%B6%E5%88%86%E6%9E%90"><span class="nav-number">1.2.</span> <span class="nav-text">贪心算法及其分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%91%E6%BB%A1%E4%B8%8A%E7%95%8C%E7%9A%84%E8%BE%93%E5%85%A5%E6%A0%B7%E4%BE%8B"><span class="nav-number">1.3.</span> <span class="nav-text">跑满上界的输入样例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%A6%E6%9D%83%E9%9B%86%E5%90%88%E8%A6%86%E7%9B%96%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">带权集合覆盖问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95%E5%8F%8A%E5%85%B6%E5%88%86%E6%9E%90-1"><span class="nav-number">2.1.</span> <span class="nav-text">贪心算法及其分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%A6%E5%A4%96%E4%B8%80%E7%A7%8D%E5%88%86%E6%9E%90%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text">另外一种分析方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%91%E6%BB%A1%E4%B8%8A%E7%95%8C%E7%9A%84%E8%BE%93%E5%85%A5%E6%A0%B7%E4%BE%8B-1"><span class="nav-number">2.3.</span> <span class="nav-text">跑满上界的输入样例</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
+  <div class="site-description" itemprop="description">不务正业高中生一枚</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://kalasearch.cn/" title="https:&#x2F;&#x2F;kalasearch.cn&#x2F;" rel="noopener" target="_blank">卡拉搜索</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/04/PACT0703/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PACT 07/03 集合覆盖问题
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-07-04 15:31:50 / 修改时间：18:29:24" itemprop="dateCreated datePublished" datetime="2020-07-04T15:31:50+08:00">2020-07-04</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="集合覆盖问题"><a href="#集合覆盖问题" class="headerlink" title="集合覆盖问题"></a>集合覆盖问题</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p><strong>输入：</strong>全集$\mathcal{U}$，以及一些集合的集合$S={S_1,S_2,S_3,\cdots,S_n}$，满足$\forall i, S_i\subseteq \mathcal{U}$。</p>
+<p><strong>目标：</strong>从$S$中选择一个最小数目的集合，使得它们能够覆盖$\mathcal{U}$中所有的元素（即并集为$\mathcal U$）</p>
+<p><img src="./SC1.svg"></p>
+<p>如图，$S_1,S_2,S_4$就构成一个集合覆盖。</p>
+<h2 id="贪心算法及其分析"><a href="#贪心算法及其分析" class="headerlink" title="贪心算法及其分析"></a>贪心算法及其分析</h2><p>我们的想法很简单：<strong>每次都取含有最多未覆盖元素的集合加入我们的覆盖集</strong>，不断循环直至所有集合都被覆盖。</p>
+<p>我们定义$\mathcal U_i$表示第$i$次循环开始时未覆盖的元素集合，定义$S_i$表示第$i$次循环选择的集合，假设我们选了$k$个集合。有引理：</p>
+<p><strong>引理：</strong><br>$$<br>\left|S_i \cap\mathcal{U}_i \right| \ge \frac{\left|\mathcal{U}_i\right|}{|\mathrm{OPT}|}<br>$$<br>这个引理其实反映了一个“优于平均”的思想。</p>
+<p><strong>证明：</strong><br>$$<br>\begin{aligned}<br>    \left|\mathcal{U}<em>i\right| &amp;= \left|\bigcup</em>{Z\in\mathrm{OPT}}\left(Z\cap\mathcal{U}<em>i\right)\right| \<br>    &amp;\le \sum</em>{Z\in\mathrm{OPT}}\left|Z\cap\mathcal{U}<em>i\right| \<br>    &amp;\le \sum</em>{Z\in\mathrm{OPT}}\left|S_i\cap\mathcal{U}_i \right| \<br>    &amp;= |\mathrm{OPT}||S_i\cap\mathcal{U}_i |<br>\end{aligned}<br>$$<br>得证。</p>
+<p><strong>定理：</strong>我们的算法是一个$\mathcal{O}\left(\log n\right)$倍近似算法。</p>
+<p><strong>证明：</strong>考虑每次循环开始时未覆盖元素的数量：<br>$$<br>\begin{aligned}<br>    |\mathcal U_1| &amp;= n \<br>    |\mathcal U_2| &amp;= |\mathcal U_1| - |S_1\cap\mathcal{U}_1| \<br>    &amp;\le |\mathcal U_1|\left(1-\frac{1}{|\mathrm{OPT}|}\right) \<br>    |\mathcal U_3| &amp;= |\mathcal U_2| - |S_2\cap\mathcal{U}_2| \<br>    &amp;\le |\mathcal U_2|\left(1-\frac{1}{|\mathrm{OPT}|}\right) \<br>    &amp;\le |\mathcal U_1|\left(1-\frac{1}{|\mathrm{OPT}|}\right)^2 \<br>    &amp;\vdots \<br>    |\mathcal U_k|<br>    &amp;\le |\mathcal U_1|\left(1-\frac{1}{|\mathrm{OPT}|}\right)^{k-1} \<br>    &amp;= n\left(1-\frac{1}{|\mathrm{OPT}|}\right)^{k-1}<br>\end{aligned}<br>$$</p>
+<p>因为$\mathcal{U}_k\neq \emptyset$，有<br>$$<br>\begin{aligned}<br>    1\le |\mathcal U_k| &amp;\le n\left(1-\frac{1}{|\mathrm{OPT}|}\right)^{k-1} \<br>    1\le n\left(1-\frac{1}{|\mathrm{OPT}|}\right)^k &amp;\le n\left(e^{-\frac{1}{|\mathrm{OPT}|}}\right)^{k-1} \<br>    e^{-\frac{k-1}{|\mathrm{OPT}|}} &amp;\ge  \frac{1}{n} \<br>    -\frac{k-1}{|\mathrm{OPT}|} &amp;\ge -\ln n \<br>    k &amp;\le  \ln n\cdot |\mathrm{OPT}|+1 \<br>    k &amp;\le \mathcal O\left(\log n\right)|\mathrm{OPT}|<br>\end{aligned}<br>$$<br>证毕。</p>
+<h2 id="跑满上界的输入样例"><a href="#跑满上界的输入样例" class="headerlink" title="跑满上界的输入样例"></a>跑满上界的输入样例</h2><p>对于这个算法而言我们的分析能不能更好一点呢？这里有一个可以让满足这个上界的例子：</p>
+<p><img src="./SC2.svg"></p>
+<p>最优解显然是$2$个集合，但是我们的贪心算法每一次都可能选到红色的集合，而这样就需要$\mathcal{O}\left(\log n\right)$个集合完成覆盖了。</p>
+<h1 id="带权集合覆盖问题"><a href="#带权集合覆盖问题" class="headerlink" title="带权集合覆盖问题"></a>带权集合覆盖问题</h1><p>如果把给每个集合赋予一个权重，而我们需要寻找一个权重和最小的覆盖集呢？这个问题被称作带权集合覆盖。</p>
+<h2 id="贪心算法及其分析-1"><a href="#贪心算法及其分析-1" class="headerlink" title="贪心算法及其分析"></a>贪心算法及其分析</h2><p>我们依然贪心，这个时候我们每次选择“性价比”最优的集合加入我们的覆盖集，设一个集合的权重为$w(\cdot)$，那么<strong>我们每一次循环都挑选$\frac{w(\cdot)}{|\cdot|}$最小的集合</strong>（$|\cdot|$这里不算已经被覆盖的元素）。</p>
+<p>如何分析这个算法？沿用分析不带权覆盖的记号，我们有引理：</p>
+<p><strong>引理：</strong><br>$$<br>\frac{w(S_i)}{|S_i\cap \mathcal{U}_i|} \le \frac{w(\mathrm{OPT})}{|\mathcal{U}_i|}<br>$$<br><strong>证明：</strong><br>$$<br>\begin{aligned}<br>    \left|\mathcal{U}<em>i\right| &amp;= \left|\bigcup</em>{Z\in\mathrm{OPT}}\left(Z\cap\mathcal{U}<em>i\right)\right| \<br>    &amp;\le \sum</em>{Z\in\mathrm{OPT}}\left|Z\cap\mathcal{U}_i\right|<br>\end{aligned}<br>$$<br>而由我们算法贪心的本质可知，<br>$$<br>\frac{w(S_i)}{|S_i \cap \mathcal{U}_i|} \le \frac{w(Z)}{|Z \cap \mathcal{U}_i|}, \quad \forall Z\in\mathrm{OPT}, Z\cap\mathcal{U}_i\neq\emptyset<br>$$<br>也就是<br>$$<br>|Z \cap \mathcal{U}_i| \le \frac{w(Z)}{w(S_i)}|S_i \cap \mathcal{U}_i|,\quad \forall Z\in\mathrm{OPT}, Z\cap\mathcal{U}_i\neq\emptyset<br>$$<br>因此<br>$$<br>\begin{aligned}<br>    \left|\mathcal{U}<em>i\right| &amp;\le \sum</em>{Z\in\mathrm{OPT}}\left|Z\cap\mathcal{U}<em>i\right| \<br>    &amp;\le \sum</em>{Z\in\mathrm{OPT}}\frac{w(Z)}{w(S_i)}|S_i \cap \mathcal{U}_i| \<br>    &amp;= \frac{|S_i \cap \mathcal{U}<em>i|}{w(S_i)}\sum</em>{Z\in\mathrm{OPT}}w(Z) \<br>    &amp;= \frac{|S_i \cap \mathcal{U}_i|}{w(S_i)}w(\mathrm{OPT})<br>\end{aligned}<br>$$<br>随后稍加变形便得引理，证毕。</p>
+<p><strong>定理：</strong>我们的算法是一个$\mathcal O\left(\log n\right)$倍近似算法。</p>
+<p><strong>证明：</strong><br>$$<br>\begin{aligned}<br>    |\mathcal U_1| &amp;= n \<br>    |\mathcal U_2| &amp;= |\mathcal U_1| - |S_1\cap\mathcal{U}<em>1| \<br>    &amp;\le |\mathcal U_1|\left(1-\frac{w(S_1)}{w(\mathrm{OPT})}\right) \<br>    &amp;\le |\mathcal U_1|\exp\left(-\frac{w(S_1)}{w(\mathrm{OPT})}\right)\<br>    |\mathcal U_3| &amp;= |\mathcal U_2| - |S_2\cap\mathcal{U}<em>2| \<br>    &amp;\le |\mathcal U_2|\exp\left(-\frac{w(S_2)}{w(\mathrm{OPT})}\right) \<br>    &amp;\le |\mathcal U_1|\exp\left(-\frac{w(S_1)+w(S_2)}{w(\mathrm{OPT})}\right) \<br>    &amp;\vdots \<br>    |\mathcal U_k|<br>    &amp;\le |\mathcal U_1|\exp\left(-\frac{\sum</em>{i=1}^{k-1}w(S_i)}{w(\mathrm{OPT})}\right) \<br>    &amp;= n\exp\left(-\frac{\sum</em>{i=1}^{k-1}w(S_i)}{w(\mathrm{OPT})}\right)<br>\end{aligned}<br>$$<br>又因$|\mathcal U_k| \ge 1$：<br>$$<br>\begin{aligned}<br>    n\exp\left(-\frac{\sum_{i=1}^{k-1}w(S_i)}{w(\mathrm{OPT})}\right) &amp;\ge 1 \<br>    -\frac{\sum_{i=1}^{k-1}w(S_i)}{w(\mathrm{OPT})} &amp;\ge -\ln n \<br>    \sum_{i=1}^{k-1}w(S_i) &amp;\le \ln n\cdot w(\mathrm{OPT})<br>\end{aligned}<br>$$<br>证完了？还没有！我们的覆盖集的总代价是$\sum_{i=1}^k w(S_i)$，还差一个$S_k$没有处理呢！</p>
+<p>但是注意到之前的结论：<br>$$<br>\frac{w(S_i)}{|S_i\cap \mathcal{U}_i|} \le \frac{w(\mathrm{OPT})}{|\mathcal{U}<em>i|}<br>$$<br>而当$i=k$时因为是最后一轮，自然有$|S_k\cap \mathcal{U}<em>k| = |\mathcal{U}<em>k|$，因此便有<br>$$<br>w(S_k) \le w(\mathrm{OPT})<br>$$<br>和之前的式子相加：<br>$$<br>\begin{aligned}<br>    \sum</em>{i=1}^{k-1}w(S_i) + w(S_k) &amp;\le \ln n\cdot w(\mathrm{OPT}) + w(\mathrm{OPT})\<br>    \sum</em>{i=1}^{k}w(S_i) &amp;\le (\ln n +1)w(\mathrm{OPT})  \<br>    \sum</em>{i=1}^{k}w(S_i) &amp;\le \mathcal O(\log n) w(\mathrm{OPT})<br>\end{aligned}<br>$$<br>证毕。</p>
+<p>其实，如果我们不知道如何给$w(S_k)$定界也没有关系。参考$k$中心问题时我们使用的技巧，我们<strong>可以枚举尝试$\mathrm{OPT}$当中权值最大的集合</strong>。</p>
+<p>显然如果我们知道$\mathrm{OPT}$当中权值最大的集合是什么，我们就会把权值大于这个集合的其他集合全部丢掉。这个时候我们算法的$w(S_k)$自然就不大于$w(\mathrm{OPT})$了。</p>
+<p>但是我们怎么知道我们猜的对不对呢？对不对不重要，重要的是因为我们尝试了每一个集合，我们至少会猜对一次——而对于猜对的那一次，我们的分析全部成立，我们的代价一定是不大于$\mathcal O(\log n) w(\mathrm{OPT})$的。因此，如果<strong>我们最后取所有尝试的最小值作为我们的解</strong>，我们的最终代价一定也是不大于$\mathcal O(\log n) w(\mathrm{OPT})$（虽然最终代价未必是猜对的那一次的代价），我们的算法依然有效，而时间复杂度不过是多了一个$n$而已。</p>
+<p>这个技巧是很有意思的：如果可能性是多项式种，那么在只关注是否是多项式时间的近似算法当中，枚举一遍不失为一种好的思路。</p>
+<h2 id="另外一种分析方法"><a href="#另外一种分析方法" class="headerlink" title="另外一种分析方法"></a>另外一种分析方法</h2><p>令$e_1,e_2,e_3,\cdots,e_n$表示第$1,2,3,\cdots,n$个被覆盖的元素（我们一次选的集合很可能一次性覆盖好几个元素，在这种情况下这些元素的排列可以任意）。我们接下来<strong>把集合的权重分摊到元素上</strong>，对于被集合$S_y$覆盖的元素$e_i$，定义其代价为<br>$$<br>\operatorname{price}(e_i) = \frac{w(S_y)}{|S_y \cap \mathcal{U}<em>y|}<br>$$<br>很显然，因为覆盖到$e_i$的时候$e_i$后面的元素一定没有覆盖到，因此$|S_y \cap \mathcal{U}<em>y| \ge n-i+1$。因此<br>$$<br>\operatorname{price}(e_i) \le \frac{w(S_y)}{n-i+1}<br>$$<br>又由之前的引理以及$|S_y \cap \mathcal U_y| \le |\mathcal U_y|$，可得$w(S_y) \le w(\mathrm{OPT})$，因此<br>$$<br>\operatorname{price}(e_i) \le \frac{w(\mathrm{OPT})}{n-i+1}<br>$$<br>而我们的覆盖集的总代价为<br>$$<br>\begin{aligned}<br>    \sum</em>{i=1}^n w(S_i) &amp;= \sum</em>{i=1}^n \operatorname{price}(e_i) \<br>        &amp;\le  \sum_{i=1}^n \frac{w(\mathrm{OPT})}{n-i+1} \<br>        &amp;= w(\mathrm{OPT})\sum_{i=1}^n \frac{1}{n-i+1} \<br>        &amp;= w(\mathrm{OPT})\sum_{i=1}^n  \frac{1}{i} \<br>        &amp;= w(\mathrm{OPT}) H_n \<br>        &amp;=  O(\log n) w(\mathrm{OPT})<br>\end{aligned}<br>$$</p>
+<h2 id="跑满上界的输入样例-1"><a href="#跑满上界的输入样例-1" class="headerlink" title="跑满上界的输入样例"></a>跑满上界的输入样例</h2><p>有一个大集合，包含所有元素，权值为$1+\varepsilon$。</p>
+<p>还有$n$个只包含一个元素的小集合，权值为$\frac{1}{n}, \frac{1}{n-1}, \frac{1}{n-2},\cdots$。</p>
+<p>对于这个输入，我们的贪心算法会把所有小集合选掉，总权重为$H_n = \mathcal{O}(\log n )$。而最优解为那个大集合，总权重为$1+\varepsilon$，二者差$\mathcal{O}(\log n )$倍，和我们的分析一致，这也说明如果算法不变，我们没办法单纯通过分析得出更好的结果了。</p>
+<p>其实集合覆盖问题可以证明hardness就是$\mathcal{O}(\log n )$的，只是这个证明不简单，上课的时候只是顺带提了一下。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/PACT/" rel="tag"># PACT</a>
+              <a href="/tags/%E6%95%B0%E5%AD%A6/" rel="tag"># 数学</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/07/03/PACT0702/" rel="prev" title="PACT 07/02 TSP问题">
+                  <i class="fa fa-chevron-left"></i> PACT 07/02 TSP问题
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/07/04/%E8%AE%A8%E5%88%86/" rel="next" title="计一次讨分失败">
+                  计一次讨分失败 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chengyuan Ma</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+</body>
+</html>

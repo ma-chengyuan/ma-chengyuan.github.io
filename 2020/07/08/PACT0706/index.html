@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="线性规划舍入（LP Rounding）对于很多的$\mathsf{NP}$问题，我们都可以写出一个对应的整数规划（IP），然而写成整数规划本身没有啥用，因为整数规划也是$\mathsf{NP}$的。但是整数规划可以通过松弛转变为线性规划，后者是可以在多项式时间内求解的，这就给近似算法的设计提供了一个思路。 唯一的问题是，线性规划给出的解未必就是整数了（在例如网络流问题等特殊的问题下还是有可能的），">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PACT 07&#x2F;06 线规舍入 + 背包问题">
+<meta property="og:url" content="https://alan20210202.github.io/2020/07/08/PACT0706/index.html">
+<meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
+<meta property="og:description" content="线性规划舍入（LP Rounding）对于很多的$\mathsf{NP}$问题，我们都可以写出一个对应的整数规划（IP），然而写成整数规划本身没有啥用，因为整数规划也是$\mathsf{NP}$的。但是整数规划可以通过松弛转变为线性规划，后者是可以在多项式时间内求解的，这就给近似算法的设计提供了一个思路。 唯一的问题是，线性规划给出的解未必就是整数了（在例如网络流问题等特殊的问题下还是有可能的），">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-08T11:14:21.551Z">
+<meta property="article:modified_time" content="2020-07-12T03:15:32.503Z">
+<meta property="article:author" content="Chengyuan Ma">
+<meta property="article:tag" content="PACT">
+<meta property="article:tag" content="数学">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://alan20210202.github.io/2020/07/08/PACT0706/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>PACT 07/06 线规舍入 + 背包问题 | Chengyuan Ma's Blog</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-65HSG5NCY6');
+      }
+    </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Chengyuan Ma's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-pagedewarp"><a href="/dewarp/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>PageDewarp</a></li>
+        <li class="menu-item menu-item-english"><a href="/english/" rel="section"><i class="fa fa-globe-americas fa-fw"></i>English</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E8%88%8D%E5%85%A5%EF%BC%88LP-Rounding%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">线性规划舍入（LP Rounding）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">背包问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">2.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text">贪心算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">2.3.</span> <span class="nav-text">动态规划</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E9%A1%B9%E5%BC%8F%E6%97%B6%E9%97%B4%E8%BF%91%E4%BC%BC%E6%96%B9%E6%A1%88%EF%BC%88PTAS%EF%BC%89"><span class="nav-number">2.4.</span> <span class="nav-text">多项式时间近似方案（PTAS）</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
+  <div class="site-description" itemprop="description">不务正业高中生一枚</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://kalasearch.cn/" title="https:&#x2F;&#x2F;kalasearch.cn&#x2F;" rel="noopener" target="_blank">卡拉搜索</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/08/PACT0706/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PACT 07/06 线规舍入 + 背包问题
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-08 19:14:21" itemprop="dateCreated datePublished" datetime="2020-07-08T19:14:21+08:00">2020-07-08</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-07-12 11:15:32" itemprop="dateModified" datetime="2020-07-12T11:15:32+08:00">2020-07-12</time>
+      </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="线性规划舍入（LP-Rounding）"><a href="#线性规划舍入（LP-Rounding）" class="headerlink" title="线性规划舍入（LP Rounding）"></a>线性规划舍入（LP Rounding）</h1><p>对于很多的$\mathsf{NP}$问题，我们都可以写出一个对应的整数规划（IP），然而写成整数规划本身没有啥用，因为整数规划也是$\mathsf{NP}$的。但是整数规划可以通过<strong>松弛</strong>转变为线性规划，后者是可以在多项式时间内求解的，这就给近似算法的设计提供了一个思路。</p>
+<p>唯一的问题是，线性规划给出的解未必就是整数了（在例如网络流问题等特殊的问题下还是有可能的），因此我们需要在确保解的可行性的前提下对于线性规划的解进行舍入，这个技巧便成为LP rounding。</p>
+<p>以带权顶点覆盖问题为例，其整数规划为<br>$$<br>\begin{aligned}<br>    \text{minimize}\quad &amp;\sum_{v\in V}c_vx_v \<br>    \text{subject to}\quad &amp;x_u+x_v\ge 1\quad \forall (u, v)\in E \<br>    &amp;x_v \in {0,1}\quad \forall v\in V<br>\end{aligned}<br>$$<br>$x_v$表示$v$是否被选入覆盖集当中。</p>
+<p>其松弛后的线性规划为<br>$$<br>\begin{aligned}<br>    \text{minimize}\quad &amp;\sum_{v\in V}c_vx_v \<br>    \text{subject to}\quad &amp;x_u+x_v\ge 1\quad \forall (u, v)\in E \<br>    &amp;x_v \ge 0\quad \forall v\in V<br>\end{aligned}<br>$$<br>显然这个线性规划在有的时候不会给出整数解，例如对于一个三角形，整数规划会给两个顶点的$x$赋$1$，而线性规划会给三个顶点赋$\frac{1}{2}$。</p>
+<p>于是就需要舍入。如何舍入？设线性规划最优解$x_v^<em>\ge \frac{1}{2}$时，整数规划的解$\hat x_v$，则<br>$$<br>\hat x_v = \begin{cases}<br>    1,&amp;x_v^</em>\ge \frac{1}{2} \<br>    0,&amp;x_v^*&lt; \frac{1}{2}<br>\end{cases}<br>$$<br>由于我们的约束$x_u+x_v\ge 1$，$x_u,x_v$当中至少有一个$\ge \frac{1}{2}$，因此这么<strong>舍入后的解依然是可行解</strong>。</p>
+<p>注意到如果按照这么舍入，$\hat x_v \le 2x_v^*$，又注意到线性规划的最优解一定不大于原整数规划的最优解，即$\mathrm{OPT}$：<br>$$<br>\sum_{v\in V}c_v\hat x_v \le \sum_{v\in V}2c_vx_v^* = 2\sum_{v\in V}c_vx_v^* \le 2\cdot\mathrm{OPT}<br>$$<br> 因此我们的算法就是一个$2$倍近似算法。这个算法较之前极大匹配算法的优势在于其可以很好地处理点带权的情况。</p>
+<h1 id="背包问题"><a href="#背包问题" class="headerlink" title="背包问题"></a>背包问题</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p><strong>输入：</strong>$n$件物品，每一件物品有重量$w_i$和价值$p_i$，以及背包容量$W$。</p>
+<p><strong>目标：</strong>在物品总重不超过背包容量的前提下使得打包的物品价值总和最大。</p>
+<h2 id="贪心算法"><a href="#贪心算法" class="headerlink" title="贪心算法"></a>贪心算法</h2><p>一个非常简单直接的想法是按照价重比（$\frac{p_i}{w_i}$）贪心，但是这个贪心非常容易被卡掉，比如说有两个物品，第一件物品的重量为$1$，价值为$1+\varepsilon$，第二件物品的重量和价值都是$W$，那按照价重比贪心我会先选第一件，然后之后就不能选第二件了，这个方案就很糟糕，而且和最优解的差距可以任意大。</p>
+<p>但是有一个简单的小优化：假设物品$i$是我们第一个因为放不下不选的物品，我们最后在贪心的方案和物品$i$单件中择优输出，这个算法一下子就会好上很多——事实上这就是一个$2$倍近似算法了。</p>
+<p><strong>证明：</strong>分两种情况。</p>
+<ol>
+<li>贪心方案的总重$&gt; \frac{W}{2}$。因为我们是按照价重比贪心的，因此最优解的总价重比不会大于我们贪心方案的价重比，而贪心方案的重量至多是$B$，因此此时我们贪心方案的总价值至少为最优方案的$\frac{1}{2}$。</li>
+<li>贪心方案的总重$\le\frac{W}{2}$。装不下下一个，说明接下来的物品是重量$&gt;\frac{W}{2}$的大块头，令这个物品为$i$。这样的大块头在任何打包方案当中都至多塞一个。此时最优解总价值不大于当前贪心解价值与$w_i$之和（这个论断可以通过画图的方式进行证明，目前似乎还没有找到更有说服力的纯文字证明）。因为我们最后择优输出，因此我们最终方案的总价值至少是最优方案的$\frac{1}{2}$。</li>
+</ol>
+<h2 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h2><p>背包问题的动态规划是老生常谈的问题了，时间复杂度是$\mathcal O(nW)$，看起来是多项式？其实不然，因为$W$有关的信息只需要$\mathcal O(\log W)$个比特存储，因此这个时间复杂度实际上是和输入长度成指数级的。</p>
+<h2 id="多项式时间近似方案（PTAS）"><a href="#多项式时间近似方案（PTAS）" class="headerlink" title="多项式时间近似方案（PTAS）"></a>多项式时间近似方案（PTAS）</h2><p>接下来我们提供背包问题的一个多项式时间近似方案（PTAS）。什么是PTAS？一个PTAS可以认为是一类基于参数$\varepsilon$的算法，且参数为$\varepsilon$的算法构成问题的$(1+\varepsilon)$倍近似（对于最大化问题则可以是$(1-\varepsilon)$倍近似）。算法的运行时间可以和$\frac{1}{\varepsilon}$成指数级（因为在每一个算法当中，$\varepsilon$被视作常数），如果算法的运行时间和$1 \over \varepsilon$成多项式级，则这个PTAS被称为完全多项式时间近似方案（FPTAS或FPAS）。</p>
+<p>要设计这个算法，我们先从DP入手。考虑背包问题的如下DP：设$A(i, p)$是考虑前$i$个物品，总价值为$p$时的最小总重，则有如下转移：<br>$$<br>A(i, p) = \begin{cases}<br>    0, &amp;i=0 \text{ or }p=0 \<br>    A(i-1, p), &amp;p&lt;p_i \<br>    \min {A(i-1,p),w_i+A(i-1,p-p_i)}, &amp;\text{otherwise}<br>\end{cases}<br>$$<br>如果设所有物品的最大价值是$P$，那么显然总价值最多便是$nP$，DP的时间复杂度就是$\mathcal O(n^2P)$。我们主要担心的问题是$P$太大，要解决这个问题，我们把$P$缩小就行了。</p>
+<p>因此我们的PTAS是：<strong>对于每件物品，对其价格等比例缩小舍入，新的价格为$p_i’=\lfloor p_i / k\rfloor$。随后进行DP，并输出DP的最优解。</strong>设最优解为$S$。</p>
+<p>这样一来我们的总价格是多少呢？（定义$p(\cdot)$表示集合的价格）。<br>$$<br>\begin{aligned}<br>    p(S) &amp;= \sum_{i \in S} p_i \<br>    &amp;\ge \sum_{i \in S} p_i’k \<br>    &amp;= k\sum_{i \in S} p_i’ \<br>    &amp;\ge k\sum_{i \in \mathrm{OPT}} p_i’ \<br>    &amp;\ge k\sum_{i \in \mathrm{OPT}} \left(\frac{p_i}{k} - 1\right) \<br>    &amp;= \sum_{i \in \mathrm{OPT}} p_i- k|\mathrm{OPT}| \<br>    &amp;\ge \sum_{i \in \mathrm{OPT}} p_i - kn<br>\end{aligned}<br>$$<br>第二个不等号处用到了DP的最优性。</p>
+<p>若令$k=\frac{\varepsilon P}{n}$，则有<br>$$<br>\begin{aligned}<br>    p(S) &amp;\ge \sum_{i \in \mathrm{OPT}} p_i - kn \<br>    &amp;= \sum_{i \in \mathrm{OPT}} p_i - \varepsilon P \<br>    &amp;\ge p(\mathrm{OPT}) - \varepsilon p(\mathrm{OPT}) \<br>    &amp;= (1-\varepsilon) p(\mathrm{OPT})<br>\end{aligned}<br>$$<br>第二个不等号处用到了$p(\mathrm{OPT}) \ge P$。（此处我们忽略不可能装得下的物品）</p>
+<p>因此这个算法确实是一个PTAS。这个算法的运行时间是多少呢？<br>$$<br>\mathcal{O} (n^2P) = \mathcal O \left(n^2 \frac{P}{k}\right) = \mathcal O\left(\frac{n^3}{\varepsilon}\right)<br>$$<br>可见这个算法其实不仅是一个PTAS，还是一个FPTAS。这个时间复杂度可以说是很优秀的了。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/PACT/" rel="tag"># PACT</a>
+              <a href="/tags/%E6%95%B0%E5%AD%A6/" rel="tag"># 数学</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/07/07/PACT0705/" rel="prev" title="PACT 07/05 我终于明白线性规划对偶是怎么回事了！">
+                  <i class="fa fa-chevron-left"></i> PACT 07/05 我终于明白线性规划对偶是怎么回事了！
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/07/09/PACT0707/" rel="next" title="PACT 07/07 装箱问题">
+                  PACT 07/07 装箱问题 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chengyuan Ma</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+</body>
+</html>

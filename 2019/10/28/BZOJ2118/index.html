@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="本地笔记整理重发，原文写于2019&#x2F;10&#x2F;28，2019&#x2F;12&#x2F;8上传 题面题意：求使得关于${x_i}$的方程$$\sum_{i&#x3D;1}^n a_ix_i &#x3D; b$$存在非负整数解的的$b \in [l, r]$的个数。 数据范围：$n \le 12, a_i \le 5\times 10^5, l, r \in 10^{12}$。 神题。不妨设$a_1$为${a_i}$当中的最小值。则若对于任意">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BZOJ 2118 &#x2F; 同余最短路">
+<meta property="og:url" content="https://alan20210202.github.io/2019/10/28/BZOJ2118/index.html">
+<meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
+<meta property="og:description" content="本地笔记整理重发，原文写于2019&#x2F;10&#x2F;28，2019&#x2F;12&#x2F;8上传 题面题意：求使得关于${x_i}$的方程$$\sum_{i&#x3D;1}^n a_ix_i &#x3D; b$$存在非负整数解的的$b \in [l, r]$的个数。 数据范围：$n \le 12, a_i \le 5\times 10^5, l, r \in 10^{12}$。 神题。不妨设$a_1$为${a_i}$当中的最小值。则若对于任意">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-10-27T16:00:00.000Z">
+<meta property="article:modified_time" content="2019-12-08T13:38:30.411Z">
+<meta property="article:author" content="Chengyuan Ma">
+<meta property="article:tag" content="刷题记录">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://alan20210202.github.io/2019/10/28/BZOJ2118/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>BZOJ 2118 / 同余最短路 | Chengyuan Ma's Blog</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-65HSG5NCY6');
+      }
+    </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Chengyuan Ma's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-pagedewarp"><a href="/dewarp/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>PageDewarp</a></li>
+        <li class="menu-item menu-item-english"><a href="/english/" rel="section"><i class="fa fa-globe-americas fa-fw"></i>English</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A2%98%E9%9D%A2"><span class="nav-number">1.</span> <span class="nav-text">题面</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">代码</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
+  <div class="site-description" itemprop="description">不务正业高中生一枚</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://kalasearch.cn/" title="https:&#x2F;&#x2F;kalasearch.cn&#x2F;" rel="noopener" target="_blank">卡拉搜索</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/10/28/BZOJ2118/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          BZOJ 2118 / 同余最短路
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-28 00:00:00" itemprop="dateCreated datePublished" datetime="2019-10-28T00:00:00+08:00">2019-10-28</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2019-12-08 21:38:30" itemprop="dateModified" datetime="2019-12-08T21:38:30+08:00">2019-12-08</time>
+      </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>本地笔记整理重发，原文写于2019/10/28，2019/12/8上传</p>
+<h1 id="题面"><a href="#题面" class="headerlink" title="题面"></a>题面</h1><p><strong>题意：</strong>求使得关于${x_i}$的方程<br>$$<br>\sum_{i=1}^n a_ix_i = b<br>$$<br>存在非负整数解的的$b \in [l, r]$的个数。</p>
+<p><strong>数据范围：</strong>$n \le 12, a_i \le 5\times 10^5, l, r \in 10^{12}$。</p>
+<p>神题。不妨设$a_1$为${a_i}$当中的最小值。则若对于任意的$b \equiv x \pmod{a_1}$当中的$b$如果符合题意有解，那么$b+a_1$也一定有解。令满足这个性质的最小的$b$为$b_x$。</p>
+<p>考虑在此条件下如何计算解的数目，设$m$以下满足题意的$b$有$f(m)$个，则可以得出计算式：<br>$$<br>f(m) = \sum_{x=0}^{a_1-1} [b_x \le m]\left(\left\lfloor\frac{m-b_x}{a_1}\right\rfloor+1\right)<br>$$<br>原理显然。</p>
+<p>答案就是$f(r) - f(l - 1)$。</p>
+<p>接下来考虑如何求取$b_x$。考虑构建具有$a_1$个点，编号分别为$0,1,2,\cdots,a_1 - 1$的图，对于编号$u$的点，向$(u + a_i) \bmod a_1, \ (i=2,3,\cdots, n)$连边。表示在模$a_1$意义下，如果$u$可以有解，那么$u+a_i$也一定有解。</p>
+<p>由于$0$是一定有平凡解的，我们从$0$开始跑最短路，就可以求出$b_x$。这背后的思想无疑是非常巧妙的。</p>
+<p>复杂度就是$\mathcal{O}(na_1(\log n + \log a_1))$，即为Dijkstra的复杂度。</p>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;cstdio></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;algorithm></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;queue></span></span>
+
+<span class="token keyword">using</span> <span class="token keyword">namespace</span> std<span class="token punctuation">;</span>
+<span class="token keyword">typedef</span> <span class="token keyword">long</span> <span class="token keyword">long</span> ll<span class="token punctuation">;</span>
+<span class="token keyword">typedef</span> pair<span class="token operator">&lt;</span>ll<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token operator">></span> pli<span class="token punctuation">;</span>
+<span class="token keyword">const</span> <span class="token keyword">int</span> N <span class="token operator">=</span> <span class="token number">13</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> <span class="token keyword">int</span> V <span class="token operator">=</span> <span class="token number">500010</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> <span class="token keyword">int</span> E <span class="token operator">=</span> N <span class="token operator">*</span> V<span class="token punctuation">;</span>
+<span class="token keyword">const</span> ll INF <span class="token operator">=</span> <span class="token number">1ll</span> <span class="token operator">&lt;&lt;</span> <span class="token number">60</span><span class="token punctuation">;</span>
+ll n<span class="token punctuation">,</span> Bl<span class="token punctuation">,</span> Br<span class="token punctuation">,</span> a<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">,</span> mn<span class="token punctuation">,</span> len<span class="token punctuation">[</span>E<span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">int</span> fst<span class="token punctuation">[</span>V<span class="token punctuation">]</span><span class="token punctuation">,</span> nxt<span class="token punctuation">[</span>E<span class="token punctuation">]</span><span class="token punctuation">,</span> to<span class="token punctuation">[</span>E<span class="token punctuation">]</span><span class="token punctuation">,</span> tot <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+ll dis<span class="token punctuation">[</span>V<span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">void</span> <span class="token function">link</span><span class="token punctuation">(</span><span class="token keyword">int</span> u<span class="token punctuation">,</span> <span class="token keyword">int</span> v<span class="token punctuation">,</span> ll w<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+	nxt<span class="token punctuation">[</span><span class="token operator">++</span>tot<span class="token punctuation">]</span> <span class="token operator">=</span> fst<span class="token punctuation">[</span>u<span class="token punctuation">]</span><span class="token punctuation">;</span>
+	fst<span class="token punctuation">[</span>u<span class="token punctuation">]</span> <span class="token operator">=</span> tot<span class="token punctuation">;</span> to<span class="token punctuation">[</span>tot<span class="token punctuation">]</span> <span class="token operator">=</span> v<span class="token punctuation">;</span> len<span class="token punctuation">[</span>tot<span class="token punctuation">]</span> <span class="token operator">=</span> w<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">void</span> <span class="token function">dijkstra</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+	<span class="token keyword">static</span> priority_queue<span class="token operator">&lt;</span>pli<span class="token punctuation">,</span> vector<span class="token operator">&lt;</span>pli<span class="token operator">></span><span class="token punctuation">,</span> greater<span class="token operator">&lt;</span>pli<span class="token operator">></span> <span class="token operator">></span> q<span class="token punctuation">;</span>
+	<span class="token function">fill</span><span class="token punctuation">(</span>dis<span class="token punctuation">,</span> dis <span class="token operator">+</span> mn<span class="token punctuation">,</span> INF<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	dis<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> q<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span><span class="token function">make_pair</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token operator">!</span>q<span class="token punctuation">.</span><span class="token function">empty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+		pli p <span class="token operator">=</span> q<span class="token punctuation">.</span><span class="token function">top</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> q<span class="token punctuation">.</span><span class="token function">pop</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+		<span class="token keyword">int</span> u <span class="token operator">=</span> p<span class="token punctuation">.</span>second<span class="token punctuation">;</span>
+		<span class="token keyword">if</span> <span class="token punctuation">(</span>dis<span class="token punctuation">[</span>u<span class="token punctuation">]</span> <span class="token operator">!=</span> p<span class="token punctuation">.</span>first<span class="token punctuation">)</span> <span class="token keyword">continue</span><span class="token punctuation">;</span>
+		<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> e <span class="token operator">=</span> fst<span class="token punctuation">[</span>u<span class="token punctuation">]</span><span class="token punctuation">;</span> e<span class="token punctuation">;</span> e <span class="token operator">=</span> nxt<span class="token punctuation">[</span>e<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+			<span class="token keyword">int</span> v <span class="token operator">=</span> to<span class="token punctuation">[</span>e<span class="token punctuation">]</span><span class="token punctuation">;</span>
+			<span class="token keyword">if</span> <span class="token punctuation">(</span>dis<span class="token punctuation">[</span>v<span class="token punctuation">]</span> <span class="token operator">></span> dis<span class="token punctuation">[</span>u<span class="token punctuation">]</span> <span class="token operator">+</span> len<span class="token punctuation">[</span>e<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+				dis<span class="token punctuation">[</span>v<span class="token punctuation">]</span> <span class="token operator">=</span> dis<span class="token punctuation">[</span>u<span class="token punctuation">]</span> <span class="token operator">+</span> len<span class="token punctuation">[</span>e<span class="token punctuation">]</span><span class="token punctuation">;</span>
+				q<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span><span class="token function">make_pair</span><span class="token punctuation">(</span>dis<span class="token punctuation">[</span>v<span class="token punctuation">]</span><span class="token punctuation">,</span> v<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+			<span class="token punctuation">&#125;</span>
+		<span class="token punctuation">&#125;</span>
+	<span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+ll <span class="token function">calc</span><span class="token punctuation">(</span>ll x<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+	ll ans <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+	<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> mn<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
+		<span class="token keyword">if</span> <span class="token punctuation">(</span>x <span class="token operator">>=</span> dis<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> ans <span class="token operator">+=</span> <span class="token punctuation">(</span>x <span class="token operator">-</span> dis<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">/</span> mn <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">;</span>
+	<span class="token keyword">return</span> ans<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+	<span class="token function">scanf</span><span class="token punctuation">(</span><span class="token string">"%lld%lld%lld"</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>n<span class="token punctuation">,</span> <span class="token operator">&amp;</span>Bl<span class="token punctuation">,</span> <span class="token operator">&amp;</span>Br<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token function">scanf</span><span class="token punctuation">(</span><span class="token string">"%lld"</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>a<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token function">sort</span><span class="token punctuation">(</span>a <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> a <span class="token operator">+</span> <span class="token number">1</span> <span class="token operator">+</span> n<span class="token punctuation">)</span><span class="token punctuation">;</span> mn <span class="token operator">=</span> a<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+	<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> mn<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
+		<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> j <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span> j <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> j<span class="token operator">++</span><span class="token punctuation">)</span>
+			<span class="token function">link</span><span class="token punctuation">(</span>i<span class="token punctuation">,</span> <span class="token punctuation">(</span>i <span class="token operator">+</span> a<span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">%</span> mn<span class="token punctuation">,</span> a<span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token function">dijkstra</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%lld\n"</span><span class="token punctuation">,</span> <span class="token function">calc</span><span class="token punctuation">(</span>Br<span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token function">calc</span><span class="token punctuation">(</span>Bl <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>	
+	<span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" rel="tag"># 刷题记录</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/10/25/Luogu4719/" rel="prev" title="Luogu 4719 / 动态DP">
+                  <i class="fa fa-chevron-left"></i> Luogu 4719 / 动态DP
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/11/10/CometOJ1110C/" rel="next" title="Comet OJ 11/10模拟赛C / 分块">
+                  Comet OJ 11/10模拟赛C / 分块 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chengyuan Ma</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+</body>
+</html>

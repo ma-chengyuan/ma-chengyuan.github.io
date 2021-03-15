@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="矩阵向量相乘的意义这部分和LU分解没有多大关系，但是GS的书里一直强调这种理解，想必是极有用的。 当矩阵左乘一个列向量，其结果等同于矩阵每一列以列向量为权的线性组合，例如$$\begin{pmatrix}    1&amp;2&amp;3\    4&amp;5&amp;6\    7&amp;8&amp;9\\end{pmatrix}\begin{pmatrix}1\2\3\end{pmatri">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LU分解笔记">
+<meta property="og:url" content="https://alan20210202.github.io/2019/12/21/LU/index.html">
+<meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
+<meta property="og:description" content="矩阵向量相乘的意义这部分和LU分解没有多大关系，但是GS的书里一直强调这种理解，想必是极有用的。 当矩阵左乘一个列向量，其结果等同于矩阵每一列以列向量为权的线性组合，例如$$\begin{pmatrix}    1&amp;2&amp;3\    4&amp;5&amp;6\    7&amp;8&amp;9\\end{pmatrix}\begin{pmatrix}1\2\3\end{pmatri">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-12-21T06:04:53.610Z">
+<meta property="article:modified_time" content="2019-12-21T06:19:14.955Z">
+<meta property="article:author" content="Chengyuan Ma">
+<meta property="article:tag" content="线性代数">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://alan20210202.github.io/2019/12/21/LU/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>LU分解笔记 | Chengyuan Ma's Blog</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-65HSG5NCY6');
+      }
+    </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Chengyuan Ma's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-pagedewarp"><a href="/dewarp/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>PageDewarp</a></li>
+        <li class="menu-item menu-item-english"><a href="/english/" rel="section"><i class="fa fa-globe-americas fa-fw"></i>English</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E5%90%91%E9%87%8F%E7%9B%B8%E4%B9%98%E7%9A%84%E6%84%8F%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">矩阵向量相乘的意义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%9D%E7%AD%89%E8%A1%8C%E5%8F%98%E6%8D%A2%E7%9A%84%E7%9F%A9%E9%98%B5%E8%A1%A8%E7%A4%BA"><span class="nav-number">2.</span> <span class="nav-text">初等行变换的矩阵表示</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E7%9A%84LU%E5%88%86%E8%A7%A3"><span class="nav-number">3.</span> <span class="nav-text">矩阵的LU分解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E7%9A%84LDU%E5%88%86%E8%A7%A3"><span class="nav-number">4.</span> <span class="nav-text">矩阵的LDU分解</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
+  <div class="site-description" itemprop="description">不务正业高中生一枚</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://kalasearch.cn/" title="https:&#x2F;&#x2F;kalasearch.cn&#x2F;" rel="noopener" target="_blank">卡拉搜索</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/12/21/LU/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LU分解笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2019-12-21 14:04:53 / 修改时间：14:19:14" itemprop="dateCreated datePublished" datetime="2019-12-21T14:04:53+08:00">2019-12-21</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="矩阵向量相乘的意义"><a href="#矩阵向量相乘的意义" class="headerlink" title="矩阵向量相乘的意义"></a>矩阵向量相乘的意义</h1><p>这部分和LU分解没有多大关系，但是GS的书里一直强调这种理解，想必是极有用的。</p>
+<p>当矩阵左乘一个列向量，其结果等同于矩阵每一列以列向量为权的线性组合，例如<br>$$<br>\begin{pmatrix}<br>    1&amp;2&amp;3\<br>    4&amp;5&amp;6\<br>    7&amp;8&amp;9\<br>\end{pmatrix}<br>\begin{pmatrix}<br>1\<br>2\<br>3<br>\end{pmatrix}<br>=<br>1\begin{pmatrix}<br>1\4\7<br>\end{pmatrix}<br>+2\begin{pmatrix}<br>2\5\8<br>\end{pmatrix}<br>+3\begin{pmatrix}<br>3\6\9<br>\end{pmatrix}<br>$$<br>类似地，当矩阵右乘一个行向量，其结果等于矩阵每一行以行向量为权的线性组合，例如<br>$$<br>\begin{pmatrix}<br>1&amp;2&amp;3<br>\end{pmatrix}<br>\begin{pmatrix}<br>    1&amp;2&amp;3\<br>    4&amp;5&amp;6\<br>    7&amp;8&amp;9\<br>\end{pmatrix}<br>=\begin{matrix}<br>1\begin{pmatrix}<br>1&amp;2&amp;3<br>\end{pmatrix}\<br>+\<br>2\begin{pmatrix}<br>4&amp;5&amp;6<br>\end{pmatrix}\+\<br>3\begin{pmatrix}<br>7&amp;8&amp;9<br>\end{pmatrix}<br>\end{matrix}<br>$$<br>多列，多行的情况也可以以此类推。</p>
+<h1 id="初等行变换的矩阵表示"><a href="#初等行变换的矩阵表示" class="headerlink" title="初等行变换的矩阵表示"></a>初等行变换的矩阵表示</h1><p>注意到初等行变换可以使用矩阵进行表示，例如在一个$3\times 3$的矩阵当中把第$1$行的$3$倍加到第二行就可以表示为：<br>$$<br>\begin{pmatrix}<br>1&amp;0&amp;0 \<br>3&amp;1&amp;0 \<br>0&amp;0&amp;1<br>\end{pmatrix}<br>\begin{pmatrix}<br>1&amp;2&amp;3 \<br>4&amp;5&amp;6 \<br>7&amp;8&amp;9<br>\end{pmatrix}<br>=\begin{pmatrix}<br>1&amp;2&amp;3 \<br>7&amp;11&amp;15 \<br>7&amp;8&amp;9<br>\end{pmatrix}<br>$$<br><strong>注意行变换的矩阵是左乘的，右乘就是列变换了！</strong></p>
+<p>具体来说，如果你把第$i$行的$k$倍加到第$j$行上，那么这个变换对应的矩阵就是在以单位矩阵为基础上$a_{j,i}=k$。</p>
+<p>初等行变换的矩阵常用符号$E$表示。</p>
+<p>由于初等行变换的意义，很容易就可以看出其逆矩阵就是把对应的元素取反，加上的我们就减回去：<br>$$<br>E=\begin{pmatrix}<br>1&amp;0&amp;0 \<br>3&amp;1&amp;0 \<br>0&amp;0&amp;1<br>\end{pmatrix}\Rightarrow<br>E^{-1}=\begin{pmatrix}<br>1&amp;0&amp;0 \<br>-3&amp;1&amp;0 \<br>0&amp;0&amp;1<br>\end{pmatrix}<br>$$</p>
+<h1 id="矩阵的LU分解"><a href="#矩阵的LU分解" class="headerlink" title="矩阵的LU分解"></a>矩阵的LU分解</h1><p>在学习初等行变换的矩阵表示之后再回头考虑我们对着$n\times n$矩阵$A$做消元得到上三角阵$U$的过程，我们就会发现，<strong>在消元过程不涉及交换两行的时候，</strong>消元过程可以表示为：<br>$$<br>E_{n,n-1}\cdots E_{31}E_{21}A=U<br>$$<br>其中$E_{21}$表示我们把$a_{21}$消为$0$所运用的行变换。</p>
+<p>注意到在消元的时候我们是按照$E_{21}, E_{31},\cdots$这个顺序消过来的，但是因为行变换是左乘，因此上式当中从左到右序号是反的。</p>
+<p>如果$A$确实可以顺顺利利地消成$U$，那说明$E_{n,n-1}\cdots E_{31}E_{21}$是可逆的，即：<br>$$<br>\begin{aligned}<br>A&amp;=(E_{n,n-1}\cdots E_{31}E_{21})^{-1}U\<br>&amp;=E_{21}^{-1}E_{31}^{-1}\cdots E_{n,n-1}^{-1}U</p>
+<p>\end{aligned}<br>$$<br>不妨令$L=E_{21}^{-1}E_{31}^{-1}\cdots E_{n,n-1}^{-1}$，则矩阵$A$可以写作：<br>$$<br>A=LU<br>$$<br>这就被称为矩阵$A$的$LU$分解。</p>
+<p>其中$U$是上三角阵无疑，而$L$，其字母暗示我们这是一个<strong>下三角阵</strong>。</p>
+<p>不仅如此，比如说对于$3$阶方阵消元共三步：<br>$$<br>E_{21}^{-1} = \begin{pmatrix}<br>1&amp;0&amp;0\<br>a&amp;1&amp;0\<br>0&amp;0&amp;1<br>\end{pmatrix}<br>,<br>E_{31}^{-1} = \begin{pmatrix}<br>1&amp;0&amp;0\<br>0&amp;1&amp;0\<br>b&amp;0&amp;1<br>\end{pmatrix}<br>,<br>E_{32}^{-1} = \begin{pmatrix}<br>1&amp;0&amp;0\<br>0&amp;1&amp;0\<br>0&amp;c&amp;1<br>\end{pmatrix}<br>$$<br>计算$L$可得<br>$$<br>L=\begin{pmatrix}<br>1&amp;0&amp;0\<br>a&amp;1&amp;0\<br>0&amp;0&amp;1<br>\end{pmatrix}\begin{pmatrix}<br>1&amp;0&amp;0\<br>0&amp;1&amp;0\<br>b&amp;0&amp;1<br>\end{pmatrix}\begin{pmatrix}<br>1&amp;0&amp;0\<br>0&amp;1&amp;0\<br>0&amp;c&amp;1<br>\end{pmatrix}=\begin{pmatrix}<br>1&amp;0&amp;0\<br>a&amp;1&amp;0\<br>b&amp;c&amp;1<br>\end{pmatrix}<br>$$<br>$L$在形式上就是把<strong>所有行变换矩阵“拼起来“</strong>！矩阵乘法平常都会把矩阵里面的数字形式破坏掉，这次为什么那么奇妙呢？</p>
+<p><strong>从消元的角度，可以这么理解：</strong></p>
+<p>我们能够把两个行变换矩阵“拼”起来，当且仅当一个变换的结果不会改变另一个变换的源。</p>
+<p>什么意思？如果$E_1$把第$2$行的$3$倍加到第$2$行，$E_2$把第$1$行的$2$倍加到第$2$行。</p>
+<p>如果我们先做$E_1$再做$E_2$即$E_2E_1$，那么这个时候我们是可以直接拼起来的。因为先做的$E_1$没有改变$E_2$所依赖的第$2$行。但是先做$E_2$再做$E_1$即$E_1E_2$就不能直接拼起来，因为先做的$E_2$把$E_1$所依赖的第$2$行改掉了。</p>
+<p>然后我们发现在$LU$分解里面我们是先改第$n$行，再改第$n-1$行这样从下到上地变换上去的。改变第$n$行的变换只会依赖于前$n-1$行，因此出不了问题。</p>
+<p><strong>从纯计算的角度，可以这么解释：</strong></p>
+<p>考虑矩阵乘法$L=EL’$，其中$E$是一个行变换矩阵且假设其中$E_{ik}=a$，$L’$是下三角阵。</p>
+<p>则考虑$L$第$i$行第$j$列的值$L_{ij}$（除了第$i$行，结果的其他行显然等于$L’$），必然是$E$的行向量与$L’$列向量之点乘：<br>$$<br>L_{ij}=\begin{pmatrix}<br>0 \<br>\vdots \<br>a\<br>\vdots \<br>\color{red}1\<br>\vdots\<br>0<br>\end{pmatrix}<br>\cdot<br>\begin{pmatrix}<br>0 \<br>\vdots \</p>
+<p>\color{blue}1 \<br>\vdots \<br>b \<br>c \<br>\vdots \<br>\end{pmatrix}<br>$$</p>
+<p>由于三角阵主对角线上都是$1$，在上式中左边向量里面的$\color{red}1$就是从上往下数第$i$个，右边向量里面的$\color{blue}1$就是从上往下数第$j$个。因为是下三角阵$\color{red}1$的下面都是$0$，$\color{blue}1$的上面也都是$0$。接下来讨论$\color{red}1$和$\color{blue} 1$的位置关系。</p>
+<ul>
+<li>$i&lt;j$时，$\color{red}1$在$\color{blue}1$的上面。右侧$\color{blue} 1$下面非零的元素对着左边的都是$0$，左侧$\color{red}1$上面的非零$a$对到右边也是$0$，因此$L_{ij}=0$。</li>
+<li>$i=j$时，$\color{red} 1$正对着$\color{blue}1$，因此$L_{ij}=1\times 1=1$。</li>
+<li>$i&gt;j$时，$\color{red} 1$在$\color{blue}1$的下面。$a$是左侧从上往下数第$k$个。<ul>
+<li>$j&gt;k$时，$\color{blue}1$在$a$下面，$a$对着$0$。$L_{ij}=L’_{ij}$。</li>
+<li>$j=k$时，$a$对着$\color{blue}1$，$\color{red}1$对着$L’<em>{ij}，$$L</em>{ij}=a+L’_{ij}$。</li>
+<li>$j&lt;k$时，$a$对着$L’<em>{kj}$，$\color{red}1$对着$L’</em>{ij}$。$L_{ij}=aL’<em>{kj}+L’</em>{ij}$。</li>
+</ul>
+</li>
+</ul>
+<p>显然，当我们向左边一个一个行变换矩阵乘过来的时候，$L’<em>{ij}=0$，且$L’</em>{kj}=0\quad \forall j&lt;k$。于是乎<br>$$<br>L_{ij} = \begin{cases}<br>0, &amp; i&lt;j\<br>1, &amp; i=j\<br>L’_{ij}, &amp;k&lt;j&lt;i \<br>a, &amp; j=k\<br>0, &amp; j&lt;k\<br>\end{cases}<br>$$<br>这就是把$a$直接放到$L’$的对应位置里面。结合数学归纳法，可以导出$LU$分解的结果确实就是几个行变换矩阵“拼起来”。</p>
+<h1 id="矩阵的LDU分解"><a href="#矩阵的LDU分解" class="headerlink" title="矩阵的LDU分解"></a>矩阵的LDU分解</h1><p>注意到在$A=LU$当中，我们虽然保证了$L$的主对角线是上$1$，但是$U$的主对角线上就未必了。</p>
+<p>假设$U$的主对角线上的数是$d_1,d_2,\cdots,d_n$，那么不妨令：<br>$$<br>U=DU’<br>$$<br>其中<br>$$<br>D=\begin{pmatrix}<br>d_1&amp;0&amp;\cdots&amp;0\<br>0&amp;d_2&amp;\cdots&amp;0\<br>\vdots&amp;\vdots&amp;\ddots&amp;\vdots\<br>0&amp;0&amp;\cdots&amp;d_n\<br>\end{pmatrix}<br>$$<br>而$U’$是$U$每一行分别除以$d_1,d_2,\cdots,d_n$的结果。</p>
+<p>这样一来分解就变成了<br>$$<br>A=LDU’<br>$$</p>
+<p>这种分解就被称作矩阵$A$的$LDU$分解。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" rel="tag"># 线性代数</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/12/16/Nginx%20Proxy/" rel="prev" title="Nginx带子路径的反向代理配置文件的正确写法">
+                  <i class="fa fa-chevron-left"></i> Nginx带子路径的反向代理配置文件的正确写法
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/12/24/Dewarp1/" rel="next" title="卷曲页面复原 1 ——平面重建">
+                  卷曲页面复原 1 ——平面重建 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chengyuan Ma</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+</body>
+</html>
