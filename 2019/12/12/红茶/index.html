@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="只有红茶可以吗？    ——XXXX  起源冬天果然还是热水泡红茶比较舒服啊。 但是就算是保温杯里面的茶也会很快冷下来，每次下课都要加热水。 那么问题来了  我应该喝多少茶，使得每次倒完热水之后的水温都是恒定的呢？  这种果然还是应该建个模啊~ 假设为了探究这个问题，我们不妨做以下假设：  将水看做一个整体，不考虑内部对流以及温度差异。 冷热水的热交换瞬 间 完 成。 热水冷却的过程符合牛顿冷却">
+<meta name="description" content="只有红茶可以吗？ ——XXXX  起源 冬天果然还是热水泡红茶比较舒服啊。 但是就算是保温杯里面的茶也会很快冷下来，每次下课都要加热水。 那么问题来了  我应该喝多少茶，使得每次倒完热水之后的水温都是恒定的呢？  这种果然还是应该建个模啊~ 假设 为了探究这个问题，我们不妨做以下假设：  将水看做一个整体，不考虑内部对流以及温度差异。 冷热水的热交换瞬 间 完 成。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="红 茶 用 量（乱 算）">
 <meta property="og:url" content="https://alan20210202.github.io/2019/12/12/%E7%BA%A2%E8%8C%B6/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="只有红茶可以吗？    ——XXXX  起源冬天果然还是热水泡红茶比较舒服啊。 但是就算是保温杯里面的茶也会很快冷下来，每次下课都要加热水。 那么问题来了  我应该喝多少茶，使得每次倒完热水之后的水温都是恒定的呢？  这种果然还是应该建个模啊~ 假设为了探究这个问题，我们不妨做以下假设：  将水看做一个整体，不考虑内部对流以及温度差异。 冷热水的热交换瞬 间 完 成。 热水冷却的过程符合牛顿冷却">
+<meta property="og:description" content="只有红茶可以吗？ ——XXXX  起源 冬天果然还是热水泡红茶比较舒服啊。 但是就算是保温杯里面的茶也会很快冷下来，每次下课都要加热水。 那么问题来了  我应该喝多少茶，使得每次倒完热水之后的水温都是恒定的呢？  这种果然还是应该建个模啊~ 假设 为了探究这个问题，我们不妨做以下假设：  将水看做一个整体，不考虑内部对流以及温度差异。 冷热水的热交换瞬 间 完 成。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-12-11T16:00:00.000Z">
 <meta property="article:modified_time" content="2019-12-13T02:52:26.313Z">
@@ -48,7 +48,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>红 茶 用 量（乱 算） | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -175,6 +176,8 @@
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -240,7 +243,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/12/12/%E7%BA%A2%E8%8C%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -289,26 +292,57 @@
     
     <div class="post-body" itemprop="articleBody">
         <blockquote>
-<p>只有红茶可以吗？    ——XXXX</p>
+<p>只有红茶可以吗？ ——XXXX</p>
 </blockquote>
-<h1 id="起源"><a href="#起源" class="headerlink" title="起源"></a>起源</h1><p>冬天果然还是热水泡红茶比较舒服啊。</p>
+<h1 id="起源">起源</h1>
+<p>冬天果然还是热水泡红茶比较舒服啊。</p>
 <p>但是就算是保温杯里面的茶也会很快冷下来，每次下课都要加热水。</p>
 <p>那么问题来了</p>
 <blockquote>
 <p>我应该喝多少茶，使得每次倒完热水之后的水温都是恒定的呢？</p>
 </blockquote>
 <p>这种果然还是应该建个模啊~</p>
-<h1 id="假设"><a href="#假设" class="headerlink" title="假设"></a>假设</h1><p>为了探究这个问题，我们不妨做以下假设：</p>
-<ol>
+<h1 id="假设">假设</h1>
+<p>为了探究这个问题，我们不妨做以下假设：</p>
+<ol type="1">
 <li>将水看做一个整体，不考虑内部对流以及温度差异。</li>
 <li>冷热水的热交换瞬 间 完 成。</li>
 <li>热水冷却的过程符合牛顿冷却定律。</li>
 <li>我以恒定的速率喝茶<del>是不可能的（悲）</del>。</li>
 </ol>
-<h1 id="计算"><a href="#计算" class="headerlink" title="计算"></a>计算</h1><p>不妨假设环境温度为$T_a$。牛顿冷却定律告诉我们<br>$$<br>\dot{Q}=-k(T-T_a)<br>$$<br>我们又知道：<br>$$<br>\dot{Q}=cm\dot{T}<br>$$<br>假设加完水时质量为$m_0$，喝水速度为$v$，则组合以上式子可以得到：<br>$$<br>\dot{T}=-\frac{k}{c(m_0 - vt)}(T-T_a)<br>$$<br>不妨设$T’=T-T_a$，直接分：<br>$$<br>\begin{aligned}<br>    \frac{\dot{T’}}{T’} &amp;= -\frac{k}{c(m_0-vt)} \<br>    \Rightarrow \int \frac{\dot{T’}}{T’} \mathrm{d}t &amp;= \int-\frac{k\mathrm{d}t}{c(m_0-vt)} \<br>    \Rightarrow \ln T’&amp;= \frac{k}{cv}\ln(m_0 - vt) + C_1 \<br>    \Rightarrow T’ &amp;= C_2(m_0-vt)^{k\over cv} \<br>    \Rightarrow T &amp;= T_a + C_2(m_0-vt)^{k\over cv}<br>\end{aligned}<br>$$<br>假设加完水$t=0$时$T=T_0$。则求解得<br>$$<br>\begin{aligned}<br>T_0&amp;=T_a + C_2m_0^{\frac{k}{cv}}\<br>\Rightarrow C_2 &amp;= (T_0-T_a)m_0^{-\frac{k}{cv}}\<br>\Rightarrow T&amp;=T_a+\left(\frac{m_0-vt}{m_0}\right)^{\frac{k}{cv}}(T_0-T_a)<br>\end{aligned}<br>$$<br>假设每$t_f$时间补加一次热水，那么最终的温度<br>$$<br>T_f=T_a+\left(\frac{m_0-vt_f}{m_0}\right)^{\frac{k}{cv}}(T_0-T_a)<br>$$<br>这个时候补充温度为$T_h$的热水，假设混合后的温度为$T_0’$：<br>$$<br>(m_0-vt_f)(T_0’-T_f)=vt_f(T_h-T_0’)<br>$$<br>解得<br>$$<br>T_0’= \frac{(m_0-vt_f)T_f+vt_fT_h}{m_0}<br>$$<br>为了保持恒温，我们需要$T_0=T_0’$，即：<br>$$<br>m_0T_0=(m_0-vt_f)\left[T_a+\left(\frac{m_0-vt_f}{m_0}\right)^{\frac{k}{cv}}(T_0-T_a)\right]+vt_fT_h<br>$$<br>接下来只要解出$v$就行了！</p>
+<h1 id="计算">计算</h1>
+<p>不妨假设环境温度为<span class="math inline">\(T_a\)</span>。牛顿冷却定律告诉我们 <span class="math display">\[
+\dot{Q}=-k(T-T_a)
+\]</span> 我们又知道： <span class="math display">\[
+\dot{Q}=cm\dot{T}
+\]</span> 假设加完水时质量为<span class="math inline">\(m_0\)</span>，喝水速度为<span class="math inline">\(v\)</span>，则组合以上式子可以得到： <span class="math display">\[
+\dot{T}=-\frac{k}{c(m_0 - vt)}(T-T_a)
+\]</span> 不妨设<span class="math inline">\(T&#39;=T-T_a\)</span>，直接分： <span class="math display">\[
+\begin{aligned}
+    \frac{\dot{T&#39;}}{T&#39;} &amp;= -\frac{k}{c(m_0-vt)} \\
+    \Rightarrow \int \frac{\dot{T&#39;}}{T&#39;} \mathrm{d}t &amp;= \int-\frac{k\mathrm{d}t}{c(m_0-vt)} \\
+    \Rightarrow \ln T&#39;&amp;= \frac{k}{cv}\ln(m_0 - vt) + C_1 \\
+    \Rightarrow T&#39; &amp;= C_2(m_0-vt)^{k\over cv} \\
+    \Rightarrow T &amp;= T_a + C_2(m_0-vt)^{k\over cv}
+\end{aligned}
+\]</span> 假设加完水<span class="math inline">\(t=0\)</span>时<span class="math inline">\(T=T_0\)</span>。则求解得 <span class="math display">\[
+\begin{aligned}
+T_0&amp;=T_a + C_2m_0^{\frac{k}{cv}}\\
+\Rightarrow C_2 &amp;= (T_0-T_a)m_0^{-\frac{k}{cv}}\\
+\Rightarrow T&amp;=T_a+\left(\frac{m_0-vt}{m_0}\right)^{\frac{k}{cv}}(T_0-T_a)
+\end{aligned}
+\]</span> 假设每<span class="math inline">\(t_f\)</span>时间补加一次热水，那么最终的温度 <span class="math display">\[
+T_f=T_a+\left(\frac{m_0-vt_f}{m_0}\right)^{\frac{k}{cv}}(T_0-T_a)
+\]</span> 这个时候补充温度为<span class="math inline">\(T_h\)</span>的热水，假设混合后的温度为<span class="math inline">\(T_0&#39;\)</span>： <span class="math display">\[
+(m_0-vt_f)(T_0&#39;-T_f)=vt_f(T_h-T_0&#39;)
+\]</span> 解得 <span class="math display">\[
+T_0&#39;= \frac{(m_0-vt_f)T_f+vt_fT_h}{m_0}
+\]</span> 为了保持恒温，我们需要<span class="math inline">\(T_0=T_0&#39;\)</span>，即： <span class="math display">\[
+m_0T_0=(m_0-vt_f)\left[T_a+\left(\frac{m_0-vt_f}{m_0}\right)^{\frac{k}{cv}}(T_0-T_a)\right]+vt_fT_h
+\]</span> 接下来只要解出<span class="math inline">\(v\)</span>就行了！</p>
 <p>可惜这个形式似乎没有初等的解析解（悲）<del>Mathematica跑死机了都没跑出来</del>。</p>
 <p><em>注：根据<a target="_blank" rel="noopener" href="https://arxiv.org/abs/math/9411224">arXiv:math/9411224</a>以及<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1406.1948v2">arXiv:1406.1948v2</a>，或许可以使用超几何函数或者无穷根式求出方程的解，然而依然没有什么卵用。</em></p>
-<p>但是通过一些直觉可以得出$T_0’$一定是随着$v$增加递增的，所以如果有现实数据的话直接二分或者牛顿迭代就行了。</p>
+<p>但是通过一些直觉可以得出<span class="math inline">\(T_0&#39;\)</span>一定是随着<span class="math inline">\(v\)</span>增加递增的，所以如果有现实数据的话直接二分或者牛顿迭代就行了。</p>
 <p>Whatever，感觉还是挺有意思的，如果之后自己真的找时间测到了参数的现实值，大概会算一下吧。</p>
 
     </div>
@@ -401,7 +435,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="最近折腾服务器把Aria2、H5AI、Jellyfin、Jupyter等集合到一个端口访问（因为开端口映射实在是一件麻烦事），于是需要经常用到Nginx的反向代理。之前的配置文件的效果一直都不是最完美，瑕疵体现在redirect之后就会忽略到子路径导致404。在网上多方搜索之后我终于找到了一个总体靠谱的写法（感觉Nginx的流行度还是比不上Apache），记下来留自己备用。 location &#x2F;S">
+<meta name="description" content="最近折腾服务器把Aria2、H5AI、Jellyfin、Jupyter等集合到一个端口访问（因为开端口映射实在是一件麻烦事），于是需要经常用到Nginx的反向代理。之前的配置文件的效果一直都不是最完美，瑕疵体现在redirect之后就会忽略到子路径导致404。在网上多方搜索之后我终于找到了一个总体靠谱的写法（感觉Nginx的流行度还是比不上Apache），记下来留自己备用。 location &#x2F;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Nginx带子路径的反向代理配置文件的正确写法">
 <meta property="og:url" content="https://alan20210202.github.io/2019/12/16/Nginx%20Proxy/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="最近折腾服务器把Aria2、H5AI、Jellyfin、Jupyter等集合到一个端口访问（因为开端口映射实在是一件麻烦事），于是需要经常用到Nginx的反向代理。之前的配置文件的效果一直都不是最完美，瑕疵体现在redirect之后就会忽略到子路径导致404。在网上多方搜索之后我终于找到了一个总体靠谱的写法（感觉Nginx的流行度还是比不上Apache），记下来留自己备用。 location &#x2F;S">
+<meta property="og:description" content="最近折腾服务器把Aria2、H5AI、Jellyfin、Jupyter等集合到一个端口访问（因为开端口映射实在是一件麻烦事），于是需要经常用到Nginx的反向代理。之前的配置文件的效果一直都不是最完美，瑕疵体现在redirect之后就会忽略到子路径导致404。在网上多方搜索之后我终于找到了一个总体靠谱的写法（感觉Nginx的流行度还是比不上Apache），记下来留自己备用。 location &#x2F;">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-12-16T14:10:03.738Z">
 <meta property="article:modified_time" content="2019-12-16T14:09:49.069Z">
@@ -48,7 +48,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>Nginx带子路径的反向代理配置文件的正确写法 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -174,6 +175,8 @@
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -239,7 +242,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/12/16/Nginx%20Proxy/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -282,23 +285,22 @@
     
     <div class="post-body" itemprop="articleBody">
         <p>最近折腾服务器把Aria2、H5AI、Jellyfin、Jupyter等集合到一个端口访问（因为开端口映射实在是一件麻烦事），于是需要经常用到Nginx的反向代理。之前的配置文件的效果一直都不是最完美，瑕疵体现在redirect之后就会忽略到子路径导致404。在网上多方搜索之后我终于找到了一个总体靠谱的写法（感觉Nginx的流行度还是比不上Apache），记下来留自己备用。</p>
-<pre class="line-numbers language-nginx" data-language="nginx"><code class="language-nginx"><span class="token keyword">location</span> <span class="token operator">/</span>SUB_PATH <span class="token punctuation">&#123;</span>
-    <span class="token keyword">return</span> <span class="token number">302</span> <span class="token variable">$scheme</span><span class="token punctuation">:</span><span class="token operator">/</span><span class="token operator">/</span><span class="token variable">$host</span><span class="token punctuation">:</span><span class="token variable">$port</span><span class="token operator">/</span>SUB_PATH<span class="token operator">/</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token keyword">location</span> <span class="token operator">/</span>SUB_PATH<span class="token operator">/</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">proxy_pass</span> xxxxx<span class="token punctuation">;</span>
-    <span class="token keyword">proxy_pass_request_headers</span> on<span class="token punctuation">;</span>
-    <span class="token keyword">proxy_redirect</span> <span class="token operator">~</span><span class="token operator">^</span><span class="token operator">/</span><span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token variable">$scheme</span><span class="token punctuation">:</span><span class="token operator">/</span><span class="token operator">/</span><span class="token variable">$host</span><span class="token punctuation">:</span><span class="token variable">$port</span><span class="token operator">/</span>SUB_PATH<span class="token operator">/</span>$<span class="token number">1</span><span class="token punctuation">;</span>        
-    <span class="token keyword">proxy_set_header</span> Host <span class="token variable">$host</span><span class="token punctuation">;</span>
-    <span class="token keyword">proxy_set_header</span> X<span class="token operator">-</span>Real<span class="token operator">-</span>IP <span class="token variable">$remote_addr</span><span class="token punctuation">;</span>
-    <span class="token keyword">proxy_set_header</span> X<span class="token operator">-</span>Forwarded<span class="token operator">-</span>For <span class="token variable">$proxy_add_x_forwarded_for</span><span class="token punctuation">;</span>
-    <span class="token keyword">proxy_set_header</span> X<span class="token operator">-</span>Forwarded<span class="token operator">-</span>Proto <span class="token variable">$scheme</span><span class="token punctuation">;</span>
-    <span class="token keyword">proxy_set_header</span> X<span class="token operator">-</span>Forwarded<span class="token operator">-</span>Host <span class="token variable">$http_host</span><span class="token punctuation">;</span>
-    <span class="token keyword">proxy_set_header</span> Upgrade <span class="token variable">$http_upgrade</span><span class="token punctuation">;</span>
-    <span class="token keyword">proxy_set_header</span> Connection <span class="token variable">$http_connection</span><span class="token punctuation">;</span>
-    <span class="token comment"># proxy_buffering off; </span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+<pre class="line-numbers"><code class="language-nginx">location /SUB_PATH &#123;
+    return 302 $scheme://$host:$port/SUB_PATH/;
+&#125;
+location /SUB_PATH/ &#123;
+    proxy_pass xxxxx;
+    proxy_pass_request_headers on;
+    proxy_redirect ~^/(.*) $scheme://$host:$port/SUB_PATH/$1;        
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Host $http_host;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $http_connection;
+    # proxy_buffering off; 
+&#125;</code></pre>
 
     </div>
 
@@ -390,7 +392,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

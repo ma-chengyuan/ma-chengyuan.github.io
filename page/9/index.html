@@ -45,7 +45,8 @@
     isPost : false,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -171,6 +172,8 @@
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -235,7 +238,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/08/28/%E5%A4%9A%E9%87%8D%E9%9B%86%E7%BB%84%E5%90%88/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -276,53 +279,67 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="无限元素多重集组合"><a href="#无限元素多重集组合" class="headerlink" title="无限元素多重集组合"></a>无限元素多重集组合</h1><p>对于一个含有$k$种元素的多重集$S = {a_1 \cdot \infty, a_2 \cdot \infty, \cdots, a_k \cdot \infty }$，从当中取出$r$个元素进行组合，共有<br>$$<br>\binom{r + k - 1}{k - 1} = \binom{r + k - 1}{r}<br>$$</p>
+          <h1 id="无限元素多重集组合">无限元素多重集组合</h1>
+<p>对于一个含有<span class="math inline">\(k\)</span>种元素的多重集<span class="math inline">\(S = \{a_1 \cdot \infty, a_2 \cdot \infty, \cdots, a_k \cdot \infty \}\)</span>，从当中取出<span class="math inline">\(r\)</span>个元素进行组合，共有 <span class="math display">\[
+\binom{r + k - 1}{k - 1} = \binom{r + k - 1}{r}
+\]</span></p>
 <p>种取法，这个结论用隔板法易证：</p>
-<p>$$<br>\overbrace{\underbrace{\times \cdots \times \times | \times \times \cdots | \times \times}_{r个元素\times}}^{k -1个隔板|}<br>$$</p>
-<h1 id="有限元素多重集组合"><a href="#有限元素多重集组合" class="headerlink" title="有限元素多重集组合"></a>有限元素多重集组合</h1><p>对于一个含有$k$种元素共计$n$个的多重集$S = {a_1 \cdot n_1, a_2 \cdot n_2, \cdots, a_k \cdot n_k }$，从当中取出$r$ 个元素进行组合，方案数为：<br>$$<br>\sum_{X \subseteq {1, 2, 3, \cdots, k}} (-1)^{|X|} \binom{r - \sum_{i \in X}(n_i + 1) + k - 1}{k - 1}<br>$$<br><strong>证明：</strong></p>
-<p>如果没有数量限制那么答案显然是$\binom{r + k - 1}{k - 1}$，但是由于数量有限，我们要排除$a_i$多于$n_i$的方案，令$P_i$表示第$i$种元素选了至少$n_i + 1$个的方案集合。要构造这样的方案，我们只需要先选出$n_i + 1$个该种元素，再在剩下的集合中选出$r - n_i - 1$个即可，于是我们有<br>$$<br>|P_i| = \binom{r - (n_i + 1) + k - 1}{k - 1}<br>$$<br>所有所有不合法的方案可以表示为</p>
-<p>$$<br>\bigcup_{1 \le i \le k} P_i<br>$$<br>接下来结合容斥原理易证。</p>
-<h1 id="例子：CF451E"><a href="#例子：CF451E" class="headerlink" title="例子：CF451E"></a>例子：CF451E</h1><p>就是以上公式的应用，对于容斥原理使用递归的写法，求取组合数时使用了Lucas定理加以优化，代码很短：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;cstdio></span></span>
+<p><span class="math display">\[
+\overbrace{\underbrace{\times \cdots \times \times | \times \times \cdots | \times \times}_{r个元素\times}}^{k -1个隔板|}
+\]</span></p>
+<h1 id="有限元素多重集组合">有限元素多重集组合</h1>
+<p>对于一个含有<span class="math inline">\(k\)</span>种元素共计<span class="math inline">\(n\)</span>个的多重集<span class="math inline">\(S = \{a_1 \cdot n_1, a_2 \cdot n_2, \cdots, a_k \cdot n_k \}\)</span>，从当中取出<span class="math inline">\(r\)</span> 个元素进行组合，方案数为： <span class="math display">\[
+\sum_{X \subseteq \{1, 2, 3, \cdots, k\}} (-1)^{|X|} \binom{r - \sum_{i \in X}(n_i + 1) + k - 1}{k - 1}
+\]</span> <strong>证明：</strong></p>
+<p>如果没有数量限制那么答案显然是<span class="math inline">\(\binom{r + k - 1}{k - 1}\)</span>，但是由于数量有限，我们要排除<span class="math inline">\(a_i\)</span>多于<span class="math inline">\(n_i\)</span>的方案，令<span class="math inline">\(P_i\)</span>表示第<span class="math inline">\(i\)</span>种元素选了至少<span class="math inline">\(n_i + 1\)</span>个的方案集合。要构造这样的方案，我们只需要先选出<span class="math inline">\(n_i + 1\)</span>个该种元素，再在剩下的集合中选出<span class="math inline">\(r - n_i - 1\)</span>个即可，于是我们有 <span class="math display">\[
+|P_i| = \binom{r - (n_i + 1) + k - 1}{k - 1}
+\]</span> 所有所有不合法的方案可以表示为</p>
+<p><span class="math display">\[
+\bigcup_{1 \le i \le k} P_i
+\]</span> 接下来结合容斥原理易证。</p>
+<h1 id="例子cf451e">例子：CF451E</h1>
+<p>就是以上公式的应用，对于容斥原理使用递归的写法，求取组合数时使用了Lucas定理加以优化，代码很短：</p>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
 
-<span class="token keyword">using</span> <span class="token keyword">namespace</span> std<span class="token punctuation">;</span>
-<span class="token keyword">typedef</span> <span class="token keyword">long</span> <span class="token keyword">long</span> ll<span class="token punctuation">;</span>
-<span class="token keyword">const</span> ll P <span class="token operator">=</span> <span class="token number">1000000007</span><span class="token punctuation">;</span>
-<span class="token keyword">const</span> <span class="token keyword">int</span> N <span class="token operator">=</span> <span class="token number">22</span><span class="token punctuation">;</span>
-ll n<span class="token punctuation">,</span> m<span class="token punctuation">,</span> inv<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">,</span> a<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">;</span>
+using namespace std;
+typedef long long ll;
+const ll P = 1000000007;
+const int N = 22;
+ll n, m, inv[N], a[N];
 
-ll <span class="token function">binom</span><span class="token punctuation">(</span>ll a<span class="token punctuation">,</span> ll b<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>a <span class="token operator">&lt;</span> <span class="token number">0</span> <span class="token operator">||</span> b <span class="token operator">&lt;</span> <span class="token number">0</span> <span class="token operator">||</span> a <span class="token operator">&lt;</span> b<span class="token punctuation">)</span> <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    a <span class="token operator">%=</span> P<span class="token punctuation">;</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>a <span class="token operator">==</span> <span class="token number">0</span> <span class="token operator">||</span> b <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token keyword">return</span> <span class="token number">1</span><span class="token punctuation">;</span>
-    ll ret <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
-    <span class="token keyword">for</span> <span class="token punctuation">(</span>ll i <span class="token operator">=</span> a<span class="token punctuation">;</span> i <span class="token operator">></span> a <span class="token operator">-</span> b<span class="token punctuation">;</span> i<span class="token operator">--</span><span class="token punctuation">)</span>
-        ret <span class="token operator">=</span> ret <span class="token operator">*</span> i <span class="token operator">%</span> P<span class="token punctuation">;</span>
-    <span class="token keyword">for</span> <span class="token punctuation">(</span>ll i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> b<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
-        ret <span class="token operator">=</span> ret <span class="token operator">*</span> inv<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">%</span> P<span class="token punctuation">;</span>
-    <span class="token keyword">return</span> ret<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
+ll binom(ll a, ll b) &#123;
+    if (a &lt; 0 || b &lt; 0 || a &lt; b) return 0;
+    a %= P;
+    if (a == 0 || b == 0) return 1;
+    ll ret = 1;
+    for (ll i = a; i &gt; a - b; i--)
+        ret = ret * i % P;
+    for (ll i = 1; i &lt;= b; i++)
+        ret = ret * inv[i] % P;
+    return ret;
+&#125;
 
-ll <span class="token function">calc</span><span class="token punctuation">(</span><span class="token keyword">int</span> d<span class="token punctuation">,</span> ll x<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>d <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token keyword">return</span> x <span class="token operator">==</span> <span class="token number">0</span> <span class="token operator">?</span> <span class="token number">0</span> <span class="token operator">:</span> <span class="token function">binom</span><span class="token punctuation">(</span>n <span class="token operator">+</span> m <span class="token operator">-</span> <span class="token number">1</span> <span class="token operator">-</span> x<span class="token punctuation">,</span> n <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">else</span> <span class="token keyword">return</span> <span class="token punctuation">(</span><span class="token function">calc</span><span class="token punctuation">(</span>d <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">,</span> x<span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token function">calc</span><span class="token punctuation">(</span>d <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">,</span> x <span class="token operator">+</span> a<span class="token punctuation">[</span>d<span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">%</span> P<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
+ll calc(int d, ll x) &#123;
+    if (d == 0) return x == 0 ? 0 : binom(n + m - 1 - x, n - 1);
+    else return (calc(d - 1, x) - calc(d - 1, x + a[d] + 1)) % P;
+&#125;
 
-<span class="token keyword">void</span> <span class="token function">setup</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    inv<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
-    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
-        inv<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token operator">-</span><span class="token punctuation">(</span>P <span class="token operator">/</span> i<span class="token punctuation">)</span> <span class="token operator">*</span> inv<span class="token punctuation">[</span>P <span class="token operator">%</span> i<span class="token punctuation">]</span> <span class="token operator">%</span> P <span class="token operator">+</span> P<span class="token punctuation">)</span> <span class="token operator">%</span> P<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
+void setup() &#123;
+    inv[1] = 1;
+    for (int i = 2; i &lt;= n; i++)
+        inv[i] = (-(P / i) * inv[P % i] % P + P) % P;
+&#125;
 
-<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token function">scanf</span><span class="token punctuation">(</span><span class="token string">"%lld%lld"</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>n<span class="token punctuation">,</span> <span class="token operator">&amp;</span>m<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token function">setup</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
-        <span class="token function">scanf</span><span class="token punctuation">(</span><span class="token string">"%lld"</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>a<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    ll ans <span class="token operator">=</span> <span class="token function">binom</span><span class="token punctuation">(</span>n <span class="token operator">+</span> m <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">,</span> n <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token function">calc</span><span class="token punctuation">(</span>n<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%lld\n"</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>ans <span class="token operator">%</span> P <span class="token operator">+</span> P<span class="token punctuation">)</span> <span class="token operator">%</span> P<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+int main() &#123;
+    scanf(&quot;%lld%lld&quot;, &amp;n, &amp;m);
+    setup();
+    for (int i = 1; i &lt;= n; i++)
+        scanf(&quot;%lld&quot;, &amp;a[i]);
+    ll ans = binom(n + m - 1, n - 1) + calc(n, 0);
+    printf(&quot;%lld\n&quot;, (ans % P + P) % P);
+    return 0;
+&#125;</code></pre>
+
       
     </div>
 
@@ -351,7 +368,7 @@ ll <span class="token function">calc</span><span class="token punctuation">(</sp
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/08/28/%E7%BA%BF%E6%80%A7%E9%80%86%E5%85%83/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -393,13 +410,20 @@ ll <span class="token function">calc</span><span class="token punctuation">(</sp
     
     <div class="post-body" itemprop="articleBody">
           <p><del>其实这个并没有什么卵用，基本没有人会卡。</del></p>
-<p>对于求单个数的逆元我们有$O(\log n)$的算法，因此，如果我们要求$[1, n]$的所有数的逆元的话，朴素的做法是可以做到$O(n\log n)$的，但是其实我们有线性递推的算法，假设我们要求$i$在模$P$意义下的逆元，且$[1, i - 1]$的逆元已经求出：</p>
-<p>设$P = ki + r$，其中$k = \left\lfloor \frac{P}{i} \right\rfloor, r = P \bmod i &lt; i$，我们有：<br>$$<br>ki + r \equiv 0 \pmod{P}<br>$$<br>两边同时乘上$i^{-1}r^{-1}$：<br>$$<br>\begin{aligned}<br>kr^{-1} + i^{-1} &amp;\equiv 0 &amp;\pmod{P} \<br>i^{-1} &amp;\equiv -kr^{-1} &amp;\pmod{P} \<br>i^{-1} &amp;\equiv -\left\lfloor\frac{P}{i}\right\rfloor (P \bmod i)^{-1} &amp;\pmod{P}<br>\end{aligned}<br>$$<br>由于我们之前已经求得了$P \bmod i$的逆元，$i$的逆元依上式可以直接递推，代码也很短：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">inv<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
-<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
-    inv<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token operator">-</span><span class="token punctuation">(</span>P <span class="token operator">/</span> i<span class="token punctuation">)</span> <span class="token operator">*</span> inv<span class="token punctuation">[</span>P <span class="token operator">%</span> i<span class="token punctuation">]</span> <span class="token operator">%</span> P <span class="token operator">+</span> P<span class="token punctuation">)</span> <span class="token operator">%</span> P<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-<p><del>但是真的没有卵用啊，$P$动不动就是$998244353$或者$1 \times 10^9 + 7$这种，就算你能线性递推时间和空间也要炸糊的。</del></p>
+<p>对于求单个数的逆元我们有<span class="math inline">\(O(\log n)\)</span>的算法，因此，如果我们要求<span class="math inline">\([1, n]\)</span>的所有数的逆元的话，朴素的做法是可以做到<span class="math inline">\(O(n\log n)\)</span>的，但是其实我们有线性递推的算法，假设我们要求<span class="math inline">\(i\)</span>在模<span class="math inline">\(P\)</span>意义下的逆元，且<span class="math inline">\([1, i - 1]\)</span>的逆元已经求出：</p>
+<p>设<span class="math inline">\(P = ki + r\)</span>，其中<span class="math inline">\(k = \left\lfloor \frac{P}{i} \right\rfloor, r = P \bmod i &lt; i\)</span>，我们有： <span class="math display">\[
+ki + r \equiv 0 \pmod{P}
+\]</span> 两边同时乘上<span class="math inline">\(i^{-1}r^{-1}\)</span>： <span class="math display">\[
+\begin{aligned}
+kr^{-1} + i^{-1} &amp;\equiv 0 &amp;\pmod{P} \\
+i^{-1} &amp;\equiv -kr^{-1} &amp;\pmod{P} \\
+i^{-1} &amp;\equiv -\left\lfloor\frac{P}{i}\right\rfloor (P \bmod i)^{-1} &amp;\pmod{P}
+\end{aligned}
+\]</span> 由于我们之前已经求得了<span class="math inline">\(P \bmod i\)</span>的逆元，<span class="math inline">\(i\)</span>的逆元依上式可以直接递推，代码也很短：</p>
+<pre class="line-numbers"><code class="language-cpp">inv[1] = 1;
+for (int i = 2; i &lt;= n; i++)
+    inv[i] = (-(P / i) * inv[P % i] % P + P) % P;</code></pre>
+<p><del>但是真的没有卵用啊，<span class="math inline">\(P\)</span>动不动就是<span class="math inline">\(998244353\)</span>或者<span class="math inline">\(1 \times 10^9 + 7\)</span>这种，就算你能线性递推时间和空间也要炸糊的。</del></p>
 
       
     </div>
@@ -429,7 +453,7 @@ ll <span class="token function">calc</span><span class="token punctuation">(</sp
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/08/27/%E6%88%90%E5%A5%97%E6%96%B9%E6%B3%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -470,33 +494,110 @@ ll <span class="token function">calc</span><span class="token punctuation">(</sp
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>成套方法（repertoire method）可以用来求解一大类的递归式的封闭形式，由于和式也可以化为特殊的递归式，因而该方法对于处理和式也有很好的效果，具体而言，对于如下类似形式的递归式：<br>$$<br>f(n) = \begin{cases}<br>    \alpha &amp; n = 0 \<br>    f(n - 1) + \beta + \gamma n + \delta n^2 \cdots &amp; n &gt; 0<br>\end{cases}<br>$$<br>我们总是可以大胆地猜想：$f(n)$或许有着如下的封闭形式：<br>$$<br>f(n) = A(n)\alpha + B(n)\beta + C(n)\gamma + D(n)\delta \cdots<br>$$<br>成套方法的精髓就是，试图用几组特殊的$f(n)$ （可以让我们相对容易地解出$\alpha,\beta$等的值），来推测$A(n), B(n)$等之间的关系，由于在上面的式子当中$A(n),B(n)$等都是线性组合的，因而最后我们会得到一组线性方程，求解这一组线性方程我们可以得出$A(n),B(n)\cdots$从而解出递归式的特殊形式。这是一个特殊→一般→特殊→一般→特殊的方法，十分巧妙。</p>
-<h1 id="例子：求解-sum-k-1-n-k-2"><a href="#例子：求解-sum-k-1-n-k-2" class="headerlink" title="例子：求解$\sum_{k=1}^n k^2$"></a>例子：求解$\sum_{k=1}^n k^2$</h1><p>这是一个和式，但是不打紧，我们可以把它处理成递归式。</p>
-<p>令$f(n) = \sum_{k = 1}^n k^2$，那么有等价定义<br>$$<br>f(n) = \begin{cases}<br>    0 &amp; n = 0 \<br>    f(n - 1) + n^2 &amp; n &gt; 0<br>\end{cases}<br>$$<br>可以看到从和式到递归式的转化是十分自然的。</p>
-<p>这个递归式自然是满足最前面的形式的，其中$\alpha = \beta = \gamma = 0, \delta = 1$，我们先着手求解一般情况，选取几组“特殊的”$f(n)$：</p>
-<p>首先令$f(n) = 1$，代入最开始的定义：<br>$$<br>\begin{cases}<br>1 &amp;= \alpha \<br>1 &amp;= 1 + \beta + \gamma n + \delta n^2<br>\end{cases}<br>$$<br>显然有$\alpha = 1, \beta = \gamma = \delta = 0$，再把他们带入我们认为的“通用形式”：<br>$$<br>f(n) = 1 = A(n)\cdot 1 + B(n)\cdot 0 + C(n)\cdot 0 + D(n)\cdot 0 \<br>\Rightarrow A(n) = 1<br>$$<br>很好，我们现在得到一组$A(n),B(n),C(n),D(n)$的线性关系了，还需要三组！</p>
-<p>令$f(n) = n$<br>$$<br>\begin{cases}<br>0 &amp;= \alpha \<br>n &amp;= n - 1 + \beta + \gamma n + \delta n^2 \<br>\end{cases} \<br>\begin{aligned}<br>&amp;\Rightarrow \alpha = \gamma = \delta = 0, \beta = 1 \<br>&amp;\Rightarrow B(n) = n<br>\end{aligned}<br>$$<br>令$f(n) = n^2$：<br>$$<br>\begin{cases}<br>0 &amp;= \alpha \<br>n^2 &amp;= (n - 1) ^ 2 + \beta + \gamma n + \delta n^2 \<br>&amp;= n^2 - 2n + 1 + \beta + \gamma n + \delta n^2<br>\end{cases} \<br>\begin{aligned}<br>&amp;\Rightarrow \alpha = \delta = 0, \beta = -1, \gamma = 2 \<br>&amp;\Rightarrow -B(n) + 2C(n) = n^2<br>\end{aligned}<br>$$<br>最后，令$f(n) = n^3$：<br>$$<br>\begin{cases}<br>0 &amp;= \alpha \<br>n^3 &amp;= (n - 1) ^ 3 + \beta + \gamma n + \delta n^2 \<br>&amp;= n^3 - 3n^2 + 3n - 1 + \beta + \gamma n + \delta n^2<br>\end{cases} \<br>\begin{aligned}<br>&amp;\Rightarrow \alpha = 0, \beta = 1,\gamma = -3, \delta = 3 \<br>&amp;\Rightarrow B(n) - 3C(n) + 3D(n) = n^3<br>\end{aligned}<br>$$<br>最后，把这四组关系结合起来：<br>$$<br>\begin{cases}<br>A(n) &amp;&amp; &amp;&amp; &amp;&amp; &amp;= 1 \<br>&amp;&amp;B(n) &amp;&amp;&amp;&amp; &amp;= n \<br>&amp;-&amp;B(n) &amp;+&amp; 2C(n) &amp;&amp; &amp;= n^2 \<br>&amp;&amp;B(n) &amp;-&amp; 3C(n) &amp;+&amp; 3D(n) &amp;= n^3<br>\end{cases}<br>$$<br>非常简单的线性方程组，解得：<br>$$<br>\begin{cases}<br>A(n) = 1 \<br>B(n) = n \<br>C(n) = \frac{n^2 + n}{2} \<br>D(n) = \frac{2n^3 + 3n^2 + n}{6}\<br>\end{cases}<br>$$<br>这个时候，回到我们要解的递归式，其中$\alpha = \beta = \gamma = 0, \delta = 1$,因此<br>$$<br>\begin{aligned}<br>f(n) = \sum_{k = 1}^n k^2 = D(n) &amp;= \frac{2n^3 + 3n^2 + n}{6} \<br>&amp;= \frac{n(n + 1)(2n + 1)}{6}<br>\end{aligned}<br>$$<br>求解到此结束，可以看到这个公式和我们的常识一致。虽然以上过程看似繁琐，但是注意<strong>我们已经求解了一大类的问题，因为$A(n),B(n),C(n),D(n)$是不会因$\alpha, \beta, \gamma, \delta$而变化的！</strong>，现在，对于<strong>任何的二次多项式的和式或者递归式</strong>我们都可以飞快地计算出其封闭形式。更有用的是，不仅仅是二次三项式，如果我们以后要处理三次多项式（意味着我们要加入$\varepsilon$和$E(n)$），<strong>之前的$A(n),B(n),C(n),D(n)$的解也不会变化，因而只要继续带入$f(n) = n^4$即可！</strong> （这是显然的）  </p>
-<p><strong>注意：为了找出线性关系，我们也可以先找出$\alpha, \beta$等的一组特解，然后基于这个解计算$f(n)$，这和代入特殊$f(n)$然后反解$\alpha, \beta$是等价的！</strong></p>
-<h1 id="思考：为什么可以这样做-？"><a href="#思考：为什么可以这样做-？" class="headerlink" title="思考：为什么可以这样做 ？"></a>思考：为什么可以这样做 ？</h1><p>为什么几个看似毫不相关的$f(n)$可以指导我们正在处理的特殊情形，注意到我们的步骤：</p>
-<ol>
-<li>将特殊$f(n)$带入递归式的定义，解出$\alpha, \beta, \gamma, \delta\cdots$</li>
-<li>将1的解带入假设的封闭形式，求出$A(n), B(n), C(n), D(n)\cdots$的关系</li>
+          <h1 id="简介">简介</h1>
+<p>成套方法（repertoire method）可以用来求解一大类的递归式的封闭形式，由于和式也可以化为特殊的递归式，因而该方法对于处理和式也有很好的效果，具体而言，对于如下类似形式的递归式： <span class="math display">\[
+f(n) = \begin{cases}
+    \alpha &amp; n = 0 \\
+    f(n - 1) + \beta + \gamma n + \delta n^2 \cdots &amp; n &gt; 0
+\end{cases}
+\]</span> 我们总是可以大胆地猜想：<span class="math inline">\(f(n)\)</span>或许有着如下的封闭形式： <span class="math display">\[
+f(n) = A(n)\alpha + B(n)\beta + C(n)\gamma + D(n)\delta \cdots
+\]</span> 成套方法的精髓就是，试图用几组特殊的<span class="math inline">\(f(n)\)</span> （可以让我们相对容易地解出<span class="math inline">\(\alpha,\beta\)</span>等的值），来推测<span class="math inline">\(A(n), B(n)\)</span>等之间的关系，由于在上面的式子当中<span class="math inline">\(A(n),B(n)\)</span>等都是线性组合的，因而最后我们会得到一组线性方程，求解这一组线性方程我们可以得出<span class="math inline">\(A(n),B(n)\cdots\)</span>从而解出递归式的特殊形式。这是一个特殊→一般→特殊→一般→特殊的方法，十分巧妙。</p>
+<h1 id="例子求解sum_k1n-k2">例子：求解<span class="math inline">\(\sum_{k=1}^n k^2\)</span></h1>
+<p>这是一个和式，但是不打紧，我们可以把它处理成递归式。</p>
+<p>令<span class="math inline">\(f(n) = \sum_{k = 1}^n k^2\)</span>，那么有等价定义 <span class="math display">\[
+f(n) = \begin{cases}
+    0 &amp; n = 0 \\
+    f(n - 1) + n^2 &amp; n &gt; 0
+\end{cases}
+\]</span> 可以看到从和式到递归式的转化是十分自然的。</p>
+<p>这个递归式自然是满足最前面的形式的，其中<span class="math inline">\(\alpha = \beta = \gamma = 0, \delta = 1\)</span>，我们先着手求解一般情况，选取几组“特殊的”<span class="math inline">\(f(n)\)</span>：</p>
+<p>首先令<span class="math inline">\(f(n) = 1\)</span>，代入最开始的定义： <span class="math display">\[
+\begin{cases}
+1 &amp;= \alpha \\
+1 &amp;= 1 + \beta + \gamma n + \delta n^2 
+\end{cases}
+\]</span> 显然有<span class="math inline">\(\alpha = 1, \beta = \gamma = \delta = 0\)</span>，再把他们带入我们认为的“通用形式”： <span class="math display">\[
+f(n) = 1 = A(n)\cdot 1 + B(n)\cdot 0 + C(n)\cdot 0 + D(n)\cdot 0 \\
+\Rightarrow A(n) = 1
+\]</span> 很好，我们现在得到一组<span class="math inline">\(A(n),B(n),C(n),D(n)\)</span>的线性关系了，还需要三组！</p>
+<p>令<span class="math inline">\(f(n) = n\)</span> <span class="math display">\[
+\begin{cases}
+0 &amp;= \alpha \\
+n &amp;= n - 1 + \beta + \gamma n + \delta n^2 \\
+\end{cases} \\
+\begin{aligned}
+&amp;\Rightarrow \alpha = \gamma = \delta = 0, \beta = 1 \\
+&amp;\Rightarrow B(n) = n
+\end{aligned}
+\]</span> 令<span class="math inline">\(f(n) = n^2\)</span>： <span class="math display">\[
+\begin{cases}
+0 &amp;= \alpha \\
+n^2 &amp;= (n - 1) ^ 2 + \beta + \gamma n + \delta n^2 \\
+&amp;= n^2 - 2n + 1 + \beta + \gamma n + \delta n^2
+\end{cases} \\
+\begin{aligned}
+&amp;\Rightarrow \alpha = \delta = 0, \beta = -1, \gamma = 2 \\
+&amp;\Rightarrow -B(n) + 2C(n) = n^2
+\end{aligned}
+\]</span> 最后，令<span class="math inline">\(f(n) = n^3\)</span>： <span class="math display">\[
+\begin{cases}
+0 &amp;= \alpha \\
+n^3 &amp;= (n - 1) ^ 3 + \beta + \gamma n + \delta n^2 \\
+&amp;= n^3 - 3n^2 + 3n - 1 + \beta + \gamma n + \delta n^2
+\end{cases} \\
+\begin{aligned}
+&amp;\Rightarrow \alpha = 0, \beta = 1,\gamma = -3, \delta = 3 \\
+&amp;\Rightarrow B(n) - 3C(n) + 3D(n) = n^3
+\end{aligned}
+\]</span> 最后，把这四组关系结合起来： <span class="math display">\[
+\begin{cases}
+A(n) &amp;&amp; &amp;&amp; &amp;&amp; &amp;= 1 \\
+&amp;&amp;B(n) &amp;&amp;&amp;&amp; &amp;= n \\
+&amp;-&amp;B(n) &amp;+&amp; 2C(n) &amp;&amp; &amp;= n^2 \\
+&amp;&amp;B(n) &amp;-&amp; 3C(n) &amp;+&amp; 3D(n) &amp;= n^3
+\end{cases}
+\]</span> 非常简单的线性方程组，解得： <span class="math display">\[
+\begin{cases}
+A(n) = 1 \\
+B(n) = n \\
+C(n) = \frac{n^2 + n}{2} \\
+D(n) = \frac{2n^3 + 3n^2 + n}{6}\\
+\end{cases}
+\]</span> 这个时候，回到我们要解的递归式，其中<span class="math inline">\(\alpha = \beta = \gamma = 0, \delta = 1\)</span>,因此 <span class="math display">\[
+\begin{aligned}
+f(n) = \sum_{k = 1}^n k^2 = D(n) &amp;= \frac{2n^3 + 3n^2 + n}{6} \\
+&amp;= \frac{n(n + 1)(2n + 1)}{6}
+\end{aligned}
+\]</span> 求解到此结束，可以看到这个公式和我们的常识一致。虽然以上过程看似繁琐，但是注意<strong>我们已经求解了一大类的问题，因为<span class="math inline">\(A(n),B(n),C(n),D(n)\)</span>是不会因<span class="math inline">\(\alpha, \beta, \gamma, \delta\)</span>而变化的！</strong>，现在，对于<strong>任何的二次多项式的和式或者递归式</strong>我们都可以飞快地计算出其封闭形式。更有用的是，不仅仅是二次三项式，如果我们以后要处理三次多项式（意味着我们要加入<span class="math inline">\(\varepsilon\)</span>和<span class="math inline">\(E(n)\)</span>），<strong>之前的<span class="math inline">\(A(n),B(n),C(n),D(n)\)</span>的解也不会变化，因而只要继续带入<span class="math inline">\(f(n) = n^4\)</span>即可！</strong> （这是显然的）</p>
+<p><strong>注意：为了找出线性关系，我们也可以先找出<span class="math inline">\(\alpha, \beta\)</span>等的一组特解，然后基于这个解计算<span class="math inline">\(f(n)\)</span>，这和代入特殊<span class="math inline">\(f(n)\)</span>然后反解<span class="math inline">\(\alpha, \beta\)</span>是等价的！</strong></p>
+<h1 id="思考为什么可以这样做">思考：为什么可以这样做 ？</h1>
+<p>为什么几个看似毫不相关的<span class="math inline">\(f(n)\)</span>可以指导我们正在处理的特殊情形，注意到我们的步骤：</p>
+<ol type="1">
+<li>将特殊<span class="math inline">\(f(n)\)</span>带入递归式的定义，解出<span class="math inline">\(\alpha, \beta, \gamma, \delta\cdots\)</span></li>
+<li>将1的解带入假设的封闭形式，求出<span class="math inline">\(A(n), B(n), C(n), D(n)\cdots\)</span>的关系</li>
 </ol>
-<p>注意到，我们在第一步解出了$\alpha, \beta$等的值，说明此时我们的特殊$f(n)$本来就是以上的递归式定义可以表出的，而我们假设的通用形式是对任何一组参数通用的，因此求解出来的线性关系也是通用的。</p>
-<h1 id="思考：真的“万能”和“机械化”吗？"><a href="#思考：真的“万能”和“机械化”吗？" class="headerlink" title="思考：真的“万能”和“机械化”吗？"></a>思考：真的“万能”和“机械化”吗？</h1><p>成套方法从刚刚的示例可以看到似乎是非常机械化的，但是其实不然，《具体数学》中有言，成套方法对于线性的递归式最为有效，因此$f(n - 1)$前是不能有系数的（不然直觉上通用形式里就会出现棘手的指数项），但是这不妨碍我们处理和式，其次，对于一开始的“通用形式”的构造和特殊$f(n)$的构造其实不是那么简单的工作，对于多项式，我们可以很简单地构造多项式形式的“通用形式”，但是如果是：</p>
-<p>$$<br>\sum_{k = 1}^n (-1)^k k^2<br>$$<br>最上面的通用形式就不管用了！我们需要自己寻找适合的通用定义和特殊函数值进行求解（这也是《具体数学》当中的习题），虽然找到之后的过程倒是非常地机械化没错。</p>
-<h1 id="思考：作为算法实现的复杂度？"><a href="#思考：作为算法实现的复杂度？" class="headerlink" title="思考：作为算法实现的复杂度？"></a>思考：作为算法实现的复杂度？</h1><p>我们仅在这里思考以上方法<em>在多项式情况下</em>的特例。</p>
+<p>注意到，我们在第一步解出了<span class="math inline">\(\alpha, \beta\)</span>等的值，说明此时我们的特殊<span class="math inline">\(f(n)\)</span>本来就是以上的递归式定义可以表出的，而我们假设的通用形式是对任何一组参数通用的，因此求解出来的线性关系也是通用的。</p>
+<h1 id="思考真的万能和机械化吗">思考：真的“万能”和“机械化”吗？</h1>
+<p>成套方法从刚刚的示例可以看到似乎是非常机械化的，但是其实不然，《具体数学》中有言，成套方法对于线性的递归式最为有效，因此<span class="math inline">\(f(n - 1)\)</span>前是不能有系数的（不然直觉上通用形式里就会出现棘手的指数项），但是这不妨碍我们处理和式，其次，对于一开始的“通用形式”的构造和特殊<span class="math inline">\(f(n)\)</span>的构造其实不是那么简单的工作，对于多项式，我们可以很简单地构造多项式形式的“通用形式”，但是如果是：</p>
+<p><span class="math display">\[
+\sum_{k = 1}^n (-1)^k k^2
+\]</span> 最上面的通用形式就不管用了！我们需要自己寻找适合的通用定义和特殊函数值进行求解（这也是《具体数学》当中的习题），虽然找到之后的过程倒是非常地机械化没错。</p>
+<h1 id="思考作为算法实现的复杂度">思考：作为算法实现的复杂度？</h1>
+<p>我们仅在这里思考以上方法<em>在多项式情况下</em>的特例。</p>
 <p>成套方法分为三步走：</p>
-<ol>
+<ol type="1">
 <li>构造线性方程</li>
 <li>解线性方程</li>
 <li>回代</li>
 </ol>
-<p>第一步，由于是多项式的情况，观察之前的特例并结合二项式定理可以得到， 如果我们带入$f(n) = n^k$的情况，对于对应$n^m$的多项式系数（类似$A(n), B(n)$），其系数为（在$m \neq k$时，在$m = k$时系数自然就是0了）：</p>
-<p>$$<br>-\binom{k}{m}(-1)^{k - m}<br>$$<br>因此，配合杨辉三角递推组合数，这一部分的时间复杂度可以做到$O(n^2)$。</p>
-<p>第二步，考虑到我们解的线性方程当中含有多项式，因此需要采用系数向量的表示方法，基本算数运算代价变为$O(n)$，但是注意到线性方程组列出时已经是简化阶梯形式，因此<strong>不需要高斯消元，只需要代入消元</strong>，时间复杂度是$O(n^2)\cdot O(n) = O(n^3)$。</p>
-<p>第三步的复杂度自然是$O(n^2)$。</p>
-<p>因此，基于成套方法的算法的综合复杂度为$O(n^3)$。</p>
+<p>第一步，由于是多项式的情况，观察之前的特例并结合二项式定理可以得到， 如果我们带入<span class="math inline">\(f(n) = n^k\)</span>的情况，对于对应<span class="math inline">\(n^m\)</span>的多项式系数（类似<span class="math inline">\(A(n), B(n)\)</span>），其系数为（在<span class="math inline">\(m \neq k\)</span>时，在<span class="math inline">\(m = k\)</span>时系数自然就是0了）：</p>
+<p><span class="math display">\[
+-\binom{k}{m}(-1)^{k - m}
+\]</span> 因此，配合杨辉三角递推组合数，这一部分的时间复杂度可以做到<span class="math inline">\(O(n^2)\)</span>。</p>
+<p>第二步，考虑到我们解的线性方程当中含有多项式，因此需要采用系数向量的表示方法，基本算数运算代价变为<span class="math inline">\(O(n)\)</span>，但是注意到线性方程组列出时已经是简化阶梯形式，因此<strong>不需要高斯消元，只需要代入消元</strong>，时间复杂度是<span class="math inline">\(O(n^2)\cdot O(n) = O(n^3)\)</span>。</p>
+<p>第三步的复杂度自然是<span class="math inline">\(O(n^2)\)</span>。</p>
+<p>因此，基于成套方法的算法的综合复杂度为<span class="math inline">\(O(n^3)\)</span>。</p>
 
       
     </div>
@@ -526,7 +627,7 @@ ll <span class="token function">calc</span><span class="token punctuation">(</sp
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/08/21/%E5%BF%AB%E9%80%9F%E6%9E%9A%E4%B8%BE%E5%AD%90%E9%9B%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -567,22 +668,26 @@ ll <span class="token function">calc</span><span class="token punctuation">(</sp
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>目标：对于一个$n$位二进制表示的子集<code>x</code>，我们希望枚举其子集。</p>
-<p>朴素枚举其子集的代码，复杂度$O(2^{n})$： </p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> s <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> s <span class="token operator">&lt;=</span> x<span class="token punctuation">;</span> s<span class="token operator">++</span><span class="token punctuation">)</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>s <span class="token operator">|</span> x <span class="token operator">==</span> x<span class="token punctuation">)</span>
-        <span class="token comment">// s 表示的二进制是x的子集</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-<p>快速枚举其子集的代码，复杂度$O(2^{|X|})$，其中$X$是<code>x</code>表示的集合：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> s <span class="token operator">=</span> x<span class="token punctuation">;</span> s <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">;</span> s <span class="token operator">=</span> <span class="token punctuation">(</span>s <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span> x<span class="token punctuation">)</span>
-    <span class="token comment">// s表示的二进制是x的子集</span>
-<span class="token comment">// 以上算法不！会！处！理！空！集！，额外处理！</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
+          <h1 id="简介">简介</h1>
+<p>目标：对于一个<span class="math inline">\(n\)</span>位二进制表示的子集<code>x</code>，我们希望枚举其子集。</p>
+<p>朴素枚举其子集的代码，复杂度<span class="math inline">\(O(2^{n})\)</span>：</p>
+<pre class="line-numbers"><code class="language-cpp">for (int s = 0; s &lt;= x; s++)
+    if (s | x == x)
+        // s 表示的二进制是x的子集</code></pre>
+<p>快速枚举其子集的代码，复杂度<span class="math inline">\(O(2^{|X|})\)</span>，其中<span class="math inline">\(X\)</span>是<code>x</code>表示的集合：</p>
+<pre class="line-numbers"><code class="language-cpp">for (int s = x; s &gt; 0; s = (s - 1) &amp; x)
+    // s表示的二进制是x的子集
+// 以上算法不！会！处！理！空！集！，额外处理！</code></pre>
 <p><strong>正确性证明：</strong></p>
 <p>代码中的<code>&amp; x</code>保证<code>s</code>一定是<code>s</code>的子集，而<code>(s - 1)</code>保证枚举出来的<code>s</code>递减至0，详细证明不在此赘述<del>脑补即可</del>.</p>
-<h1 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h1><p>在很多的状压DP当中，我们不仅要枚举一个集合的子集，而是要枚举$[0, 2^n)$的所有二进制数表示的集合的子集，如果使用朴素地暴力做法，那么复杂度显然是$O(4^n)$，可以过$n \le 10$的数据。</p>
+<h1 id="拓展">拓展</h1>
+<p>在很多的状压DP当中，我们不仅要枚举一个集合的子集，而是要枚举<span class="math inline">\([0, 2^n)\)</span>的所有二进制数表示的集合的子集，如果使用朴素地暴力做法，那么复杂度显然是<span class="math inline">\(O(4^n)\)</span>，可以过<span class="math inline">\(n \le 10\)</span>的数据。</p>
 <p><strong>那么如果我们使用刚刚介绍的优化方法，复杂度会变成多少呢？</strong></p>
-<p><strong>分析：</strong>总体复杂度为：<br>$$<br>\sum_{i = 0}^n \binom{n}{i}2^i = \sum_{i = 0}^n \binom{n}{i}2^i1^{n - i}<br>$$<br>逆用二项式定理：<br>$$<br>\sum_{i = 0}^n \binom{n}{i}2^n = (2 + 1)^n = 3^n<br>$$<br>因此，算法的复杂度为$O(3^n)$（而且是最优的），可以通过$n \le 15$的数据。</p>
+<p><strong>分析：</strong>总体复杂度为： <span class="math display">\[
+\sum_{i = 0}^n \binom{n}{i}2^i = \sum_{i = 0}^n \binom{n}{i}2^i1^{n - i}
+\]</span> 逆用二项式定理： <span class="math display">\[
+\sum_{i = 0}^n \binom{n}{i}2^n = (2 + 1)^n = 3^n
+\]</span> 因此，算法的复杂度为<span class="math inline">\(O(3^n)\)</span>（而且是最优的），可以通过<span class="math inline">\(n \le 15\)</span>的数据。</p>
 
       
     </div>
@@ -612,7 +717,7 @@ ll <span class="token function">calc</span><span class="token punctuation">(</sp
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/08/21/HDU2204/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -654,32 +759,35 @@ ll <span class="token function">calc</span><span class="token punctuation">(</sp
     
     <div class="post-body" itemprop="articleBody">
           <p><a target="_blank" rel="noopener" href="http://acm.hdu.edu.cn/showproblem.php?pid=2204">题面</a></p>
-<p>大意：求在$[1, n]$中可以表示为$m^k$形式的数的个数（$m, k \in \mathbb{Z}^+, k &gt; 1,n \le 10^{18}$） </p>
-<p>这道题不像是有$O(1)$的解法，但是哪怕是$O(\sqrt{n})$的算法也会超时，因此直觉上我们应该寻找的是$O(\log n)$的算法。</p>
-<p>首先，因为$m = 1$的情形是trivial的，所以考虑$m \ge 2$此时$k \le \log_m n \le \log_2 n \le 60$，这也是$k$的一个上界。</p>
-<p>接下来我们发现：如果一个数可以表示为$m^4$的形式，也一定可以表示为$(m^2)^2$的形式，类似地，如果$k = pq$是合数的话，那么$m^k$一定可以表示为$(m^p)^q$和$(m^q)^p$ 。</p>
-<p>令$P(i)$表示可以表示为$m^i$形式的数的个数，那么题目显然要我们求的是：<br>$$<br>\left| \bigcup_{素数p\le\log_2n}P(p) \right|<br>$$<br>接下来就用容斥原理很快就能解决这道题了，代码非常的简洁，注意精度：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;cstdio></span></span>
-<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;cmath></span></span>
+<p>大意：求在<span class="math inline">\([1, n]\)</span>中可以表示为<span class="math inline">\(m^k\)</span>形式的数的个数（<span class="math inline">\(m, k \in \mathbb{Z}^+, k &gt; 1,n \le 10^{18}\)</span>）</p>
+<p>这道题不像是有<span class="math inline">\(O(1)\)</span>的解法，但是哪怕是<span class="math inline">\(O(\sqrt{n})\)</span>的算法也会超时，因此直觉上我们应该寻找的是<span class="math inline">\(O(\log n)\)</span>的算法。</p>
+<p>首先，因为<span class="math inline">\(m = 1\)</span>的情形是trivial的，所以考虑<span class="math inline">\(m \ge 2\)</span>此时<span class="math inline">\(k \le \log_m n \le \log_2 n \le 60\)</span>，这也是<span class="math inline">\(k\)</span>的一个上界。</p>
+<p>接下来我们发现：如果一个数可以表示为<span class="math inline">\(m^4\)</span>的形式，也一定可以表示为<span class="math inline">\((m^2)^2\)</span>的形式，类似地，如果<span class="math inline">\(k = pq\)</span>是合数的话，那么<span class="math inline">\(m^k\)</span>一定可以表示为<span class="math inline">\((m^p)^q\)</span>和<span class="math inline">\((m^q)^p\)</span> 。</p>
+<p>令<span class="math inline">\(P(i)\)</span>表示可以表示为<span class="math inline">\(m^i\)</span>形式的数的个数，那么题目显然要我们求的是： <span class="math display">\[
+\left| \bigcup_{素数p\le\log_2n}P(p) \right|
+\]</span> 接下来就用容斥原理很快就能解决这道题了，代码非常的简洁，注意精度：</p>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;cmath&gt;
 
-<span class="token keyword">using</span> <span class="token keyword">namespace</span> std<span class="token punctuation">;</span>
-<span class="token keyword">typedef</span> <span class="token keyword">long</span> <span class="token keyword">long</span> ll<span class="token punctuation">;</span>
-<span class="token keyword">const</span> <span class="token keyword">double</span> EPS <span class="token operator">=</span> <span class="token number">1e-8</span><span class="token punctuation">;</span>
-<span class="token keyword">const</span> <span class="token keyword">int</span> p<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">&#123;</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">5</span><span class="token punctuation">,</span> <span class="token number">7</span><span class="token punctuation">,</span> <span class="token number">11</span><span class="token punctuation">,</span> <span class="token number">13</span><span class="token punctuation">,</span> <span class="token number">17</span><span class="token punctuation">,</span> <span class="token number">19</span><span class="token punctuation">,</span> <span class="token number">23</span><span class="token punctuation">,</span> <span class="token number">29</span><span class="token punctuation">,</span> <span class="token number">31</span><span class="token punctuation">,</span> <span class="token number">37</span><span class="token punctuation">,</span> <span class="token number">41</span><span class="token punctuation">,</span> <span class="token number">43</span><span class="token punctuation">,</span> <span class="token number">47</span><span class="token punctuation">,</span> <span class="token number">53</span><span class="token punctuation">,</span> <span class="token number">59</span> <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
-ll n<span class="token punctuation">;</span>
+using namespace std;
+typedef long long ll;
+const double EPS = 1e-8;
+const int p[] = &#123; 0, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59 &#125;;
+ll n;
 
-ll <span class="token function">calc</span><span class="token punctuation">(</span>ll d<span class="token punctuation">,</span> ll a<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>a <span class="token operator">></span> <span class="token number">60</span><span class="token punctuation">)</span> <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>d <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> 
-        <span class="token keyword">return</span> a <span class="token operator">==</span> <span class="token number">1</span> <span class="token operator">?</span> <span class="token number">0</span> <span class="token operator">:</span> <span class="token punctuation">(</span>ll<span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token function">pow</span><span class="token punctuation">(</span>n<span class="token punctuation">,</span> <span class="token number">1.0</span> <span class="token operator">/</span> a<span class="token punctuation">)</span> <span class="token operator">+</span> EPS<span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span>
-    <span class="token keyword">return</span> <span class="token function">calc</span><span class="token punctuation">(</span>d <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">,</span> a<span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token function">calc</span><span class="token punctuation">(</span>d <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">,</span> a <span class="token operator">*</span> p<span class="token punctuation">[</span>d<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
+ll calc(ll d, ll a) &#123;
+    if (a &gt; 60) return 0;
+    if (d == 0) 
+        return a == 1 ? 0 : (ll)(pow(n, 1.0 / a) + EPS) - 1;
+    return calc(d - 1, a) - calc(d - 1, a * p[d]);
+&#125;
 
-<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token function">scanf</span><span class="token punctuation">(</span><span class="token string">"%lld"</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>n<span class="token punctuation">)</span> <span class="token operator">!=</span> <span class="token constant">EOF</span><span class="token punctuation">)</span>
-        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%lld\n"</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token function">calc</span><span class="token punctuation">(</span><span class="token number">17</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+int main() &#123;
+    while (scanf(&quot;%lld&quot;, &amp;n) != EOF)
+        printf(&quot;%lld\n&quot;, -calc(17, 1) + 1);
+    return 0;
+&#125;</code></pre>
+
       
     </div>
 
@@ -708,7 +816,7 @@ ll <span class="token function">calc</span><span class="token punctuation">(</sp
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/08/21/%E7%AD%9B%E6%B3%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -750,19 +858,36 @@ ll <span class="token function">calc</span><span class="token punctuation">(</sp
     
     <div class="post-body" itemprop="articleBody">
           <p>对于优化后的埃氏筛法：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">bool</span> v<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">;</span>
+<pre class="line-numbers"><code class="language-cpp">bool v[N];
 
-<span class="token keyword">void</span> <span class="token function">sieve</span><span class="token punctuation">(</span><span class="token keyword">int</span> n<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token function">memset</span><span class="token punctuation">(</span>v<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token keyword">sizeof</span><span class="token punctuation">(</span>v<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token keyword">if</span> <span class="token punctuation">(</span>v<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token keyword">continue</span><span class="token punctuation">;</span>
-        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> j <span class="token operator">=</span> i<span class="token punctuation">;</span> j <span class="token operator">&lt;=</span> n <span class="token operator">/</span> i<span class="token punctuation">;</span> j<span class="token operator">++</span><span class="token punctuation">)</span>
-            v<span class="token punctuation">[</span>i <span class="token operator">*</span> j<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>简单分析一下它的流程，我们发现当<code>i</code>不是素数的时候内层循环才会执行，而内层循环执行的次数约为$\frac{n}{i} - i$次，暗示了其实对于$i &gt; \sqrt{n}$，这个循环也不会被执行，这已经是埃氏筛的一个小优化：<em>即一个数只会被它前半部分的素数筛去</em>，那么总体的时间复杂度就可以表示为：<br>$$<br>\begin{aligned}<br>\sum_{素数p \le \sqrt{n}} (\frac{n}{p} - p)<br>&amp;= \sum_{素数p \le \sqrt{n}} \frac{n}{p} - \sum_{素数p \le \sqrt{n}} p \<br>&amp;= n \sum_{素数p \le \sqrt{n}} \frac{1}{p} - \sum_{素数p \le \sqrt{n}} p<br>\end{aligned}<br>$$<br>方便起见我们假设$\sqrt{n}$为整数，这样就可以避免写$\lfloor \sqrt{n} \rfloor$，我们先着手估计后半部分，即$\sum_{素数p \le \sqrt{n}} p $的值，通过计算贡献的办法我们得到：<br>$$<br>\sum_{素数p \le \sqrt{n}} p = \sqrt{n}\pi(\sqrt{n}) - \sum_{i = 2}^{\sqrt{n} - 1}\pi(i)<br>$$<br>根据素数定理，我们有$\pi(x) \approx \frac{x}{\ln x}$，那么我们可以得到：<br>$$<br>\begin{aligned}<br> \sqrt{n}\pi(\sqrt{n}) - \sum_{i = 2}^{\sqrt{n} - 1}\pi(i) &amp;\approx \frac{n}{\ln \sqrt{n}} - \sum_{i = 2}^{\sqrt{n} - 1}\frac{i}{\ln i} \<br>&amp;= \frac{2n}{\ln n} - \sum_{i = 2}^{\sqrt{n} - 1}\frac{i}{\ln i} \<br>&amp;\approx \frac{2n}{\ln n} - \int_2^{\sqrt{n}}\frac{x}{\ln x}dx \<br>&amp;&lt; \frac{2n}{\ln n} - \frac{n}{\ln n} \<br>&amp;= O(\frac{n}{\ln n})<br>\end{aligned}<br>$$<br>对于前半部分，我们有<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Mertens%27_theorems">Mertens Theorem</a>指出：<br>$$<br>\lim_{n \to \infty} \left( \sum_{素数p \le n}\frac{1}{p} - \ln\ln n - M \right) = 0<br>$$<br>其中$M \approx 0.2614972128$ 为Meissel-Mertens’ Constant。</p>
-<p>这告诉我们前半部分的复杂度是$O(n\ln\ln\sqrt{n}) = O (n\ln\ln n)$ 的，因此合并起来，整个算法的复杂度为$O(n\ln\ln n - \frac{n}{\ln n}) = O(n \ln\ln n)$，和优化前的复杂度一致。</p>
+void sieve(int n) &#123;
+    memset(v, 0, sizeof(v));
+    for (int i = 2; i &lt;= n; i++) &#123;
+        if (v[i]) continue;
+        for (int j = i; j &lt;= n / i; j++)
+            v[i * j] = true;
+    &#125;
+&#125;</code></pre>
+<p>简单分析一下它的流程，我们发现当<code>i</code>不是素数的时候内层循环才会执行，而内层循环执行的次数约为<span class="math inline">\(\frac{n}{i} - i\)</span>次，暗示了其实对于<span class="math inline">\(i &gt; \sqrt{n}\)</span>，这个循环也不会被执行，这已经是埃氏筛的一个小优化：<em>即一个数只会被它前半部分的素数筛去</em>，那么总体的时间复杂度就可以表示为： <span class="math display">\[
+\begin{aligned}
+\sum_{素数p \le \sqrt{n}} (\frac{n}{p} - p)
+&amp;= \sum_{素数p \le \sqrt{n}} \frac{n}{p} - \sum_{素数p \le \sqrt{n}} p \\
+&amp;= n \sum_{素数p \le \sqrt{n}} \frac{1}{p} - \sum_{素数p \le \sqrt{n}} p 
+\end{aligned}
+\]</span> 方便起见我们假设<span class="math inline">\(\sqrt{n}\)</span>为整数，这样就可以避免写<span class="math inline">\(\lfloor \sqrt{n} \rfloor\)</span>，我们先着手估计后半部分，即$_{素数p } p $的值，通过计算贡献的办法我们得到： <span class="math display">\[
+\sum_{素数p \le \sqrt{n}} p = \sqrt{n}\pi(\sqrt{n}) - \sum_{i = 2}^{\sqrt{n} - 1}\pi(i)
+\]</span> 根据素数定理，我们有<span class="math inline">\(\pi(x) \approx \frac{x}{\ln x}\)</span>，那么我们可以得到： <span class="math display">\[
+\begin{aligned}
+ \sqrt{n}\pi(\sqrt{n}) - \sum_{i = 2}^{\sqrt{n} - 1}\pi(i) &amp;\approx \frac{n}{\ln \sqrt{n}} - \sum_{i = 2}^{\sqrt{n} - 1}\frac{i}{\ln i} \\
+&amp;= \frac{2n}{\ln n} - \sum_{i = 2}^{\sqrt{n} - 1}\frac{i}{\ln i} \\
+&amp;\approx \frac{2n}{\ln n} - \int_2^{\sqrt{n}}\frac{x}{\ln x}dx \\
+&amp;&lt; \frac{2n}{\ln n} - \frac{n}{\ln n} \\
+&amp;= O(\frac{n}{\ln n})
+\end{aligned}
+\]</span> 对于前半部分，我们有<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Mertens%27_theorems">Mertens Theorem</a>指出： <span class="math display">\[
+\lim_{n \to \infty} \left( \sum_{素数p \le n}\frac{1}{p} - \ln\ln n - M \right) = 0
+\]</span> 其中<span class="math inline">\(M \approx 0.2614972128\)</span> 为Meissel-Mertens’ Constant。</p>
+<p>这告诉我们前半部分的复杂度是<span class="math inline">\(O(n\ln\ln\sqrt{n}) = O (n\ln\ln n)\)</span> 的，因此合并起来，整个算法的复杂度为<span class="math inline">\(O(n\ln\ln n - \frac{n}{\ln n}) = O(n \ln\ln n)\)</span>，和优化前的复杂度一致。</p>
 
       
     </div>
@@ -841,7 +966,20 @@ ll <span class="token function">calc</span><span class="token punctuation">(</sp
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

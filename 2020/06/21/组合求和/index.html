@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="省选结束了，本人作为划水3年的OIer宣告原地退役，唯一写出正解的是D1T2。我其实觉得这道题挺有意思的（虽然大佬们都说只是推式子而已……嘛，毕竟本来没期待自己能做出来），就写篇文章记一下自己的想法吧。 题意给定整数$n, x, P\le 10^9$，以及一个$m \le 1000$次整系数多项式$f$，求$$\left[\sum_{k&#x3D;0}^nf(k)x^k\binom{n}{k}\right]">
+<meta name="description" content="省选结束了，本人作为划水3年的OIer宣告原地退役，唯一写出正解的是D1T2。我其实觉得这道题挺有意思的（虽然大佬们都说只是推式子而已……嘛，毕竟本来没期待自己能做出来），就写篇文章记一下自己的想法吧。 题意 给定整数\(n, x, P\le 10^9\)，以及一个\(m \le 1000\)次整系数多项式\(f\)，求 \[ \left[\sum_{k&#x3D;0}^nf(k)x^k\binom{">
 <meta property="og:type" content="article">
 <meta property="og:title" content="论省选中有意思的一道组合题">
 <meta property="og:url" content="https://alan20210202.github.io/2020/06/21/%E7%BB%84%E5%90%88%E6%B1%82%E5%92%8C/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="省选结束了，本人作为划水3年的OIer宣告原地退役，唯一写出正解的是D1T2。我其实觉得这道题挺有意思的（虽然大佬们都说只是推式子而已……嘛，毕竟本来没期待自己能做出来），就写篇文章记一下自己的想法吧。 题意给定整数$n, x, P\le 10^9$，以及一个$m \le 1000$次整系数多项式$f$，求$$\left[\sum_{k&#x3D;0}^nf(k)x^k\binom{n}{k}\right]">
+<meta property="og:description" content="省选结束了，本人作为划水3年的OIer宣告原地退役，唯一写出正解的是D1T2。我其实觉得这道题挺有意思的（虽然大佬们都说只是推式子而已……嘛，毕竟本来没期待自己能做出来），就写篇文章记一下自己的想法吧。 题意 给定整数\(n, x, P\le 10^9\)，以及一个\(m \le 1000\)次整系数多项式\(f\)，求 \[ \left[\sum_{k&#x3D;0}^nf(k)x^k\binom{">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-06-21T06:45:33.105Z">
 <meta property="article:modified_time" content="2020-06-27T12:01:10.683Z">
@@ -49,7 +49,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>论省选中有意思的一道组合题 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -176,6 +177,8 @@
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -241,7 +244,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/06/21/%E7%BB%84%E5%90%88%E6%B1%82%E5%92%8C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -290,33 +293,70 @@
     
     <div class="post-body" itemprop="articleBody">
         <p>省选结束了，本人作为划水3年的OIer宣告原地退役，唯一写出正解的是D1T2。我其实觉得这道题挺有意思的（虽然大佬们都说只是推式子而已……嘛，毕竟本来没期待自己能做出来），就写篇文章记一下自己的想法吧。</p>
-<h1 id="题意"><a href="#题意" class="headerlink" title="题意"></a>题意</h1><p>给定整数$n, x, P\le 10^9$，以及一个$m \le 1000$次整系数多项式$f$，求<br>$$<br>\left[\sum_{k=0}^nf(k)x^k\binom{n}{k}\right]\bmod P<br>$$</p>
-<h1 id="心路历程"><a href="#心路历程" class="headerlink" title="心路历程"></a>心路历程</h1><h2 id="先乱搞一波"><a href="#先乱搞一波" class="headerlink" title="先乱搞一波"></a>先乱搞一波</h2><p>看到这个题目的第一眼我觉得颇为眼熟。虽然没学过奥数，印象当中《具体数学》里面花了很大笔墨讲由这种指数，多项式以及二项式系数组合而成的和式的处理方法，似乎最后也讲到了机械求和法，然并卵，印象止步于印象，机械求合法太复杂了自己并没有记下来。</p>
+<h1 id="题意">题意</h1>
+<p>给定整数<span class="math inline">\(n, x, P\le 10^9\)</span>，以及一个<span class="math inline">\(m \le 1000\)</span>次整系数多项式<span class="math inline">\(f\)</span>，求 <span class="math display">\[
+\left[\sum_{k=0}^nf(k)x^k\binom{n}{k}\right]\bmod P
+\]</span></p>
+<h1 id="心路历程">心路历程</h1>
+<h2 id="先乱搞一波">先乱搞一波</h2>
+<p>看到这个题目的第一眼我觉得颇为眼熟。虽然没学过奥数，印象当中《具体数学》里面花了很大笔墨讲由这种指数，多项式以及二项式系数组合而成的和式的处理方法，似乎最后也讲到了机械求和法，然并卵，印象止步于印象，机械求合法太复杂了自己并没有记下来。</p>
 <p>但是自己的残存记忆告诉我机械求和法的第一步是把求和式化成超几何函数，虽然后者我更没办法但是本着有逼就要装的思想……为什么不试一试呢？</p>
-<p>什么样的级数是超几何的？《具体数学》里面给出的方法是求相邻项之比<del>幸好这个我还没有忘记</del>，而显而易见地是多项式求比是求不出具有良好形式的结果的，因此<strong>多项式必须转化为性质更优良的下降阶乘幂处理</strong>（关于下降阶乘幂我记得两年之前就写过一篇成套方法和有限微积分的博文，现在想来下降阶乘幂在离散求和问题当中真的有非常良好的性质，我在这里就沿用《具体数学》里的记号了：$k^{\underline m} = \prod_{i=0}^m (k-i)$）：<br>$$<br>\begin{aligned}<br>\frac{(k+1)^{\underline{m}}x^{k+1}\binom{n}{k+1}}{k^{\underline{m}}x^k\binom{n}{k}} &amp;= \frac{(k+1)x(n-k)}{(k-m+1)(k+1)} \<br>&amp;= \frac{(n-k)x}{k-m+1}<br>\end{aligned}<br>$$<br>不出所料，结果是一个有理函数，也就是说可以化成高斯超几何函数呢！</p>
+<p>什么样的级数是超几何的？《具体数学》里面给出的方法是求相邻项之比<del>幸好这个我还没有忘记</del>，而显而易见地是多项式求比是求不出具有良好形式的结果的，因此<strong>多项式必须转化为性质更优良的下降阶乘幂处理</strong>（关于下降阶乘幂我记得两年之前就写过一篇成套方法和有限微积分的博文，现在想来下降阶乘幂在离散求和问题当中真的有非常良好的性质，我在这里就沿用《具体数学》里的记号了：<span class="math inline">\(k^{\underline m} = \prod_{i=0}^m (k-i)\)</span>）： <span class="math display">\[
+\begin{aligned}
+\frac{(k+1)^{\underline{m}}x^{k+1}\binom{n}{k+1}}{k^{\underline{m}}x^k\binom{n}{k}} &amp;= \frac{(k+1)x(n-k)}{(k-m+1)(k+1)} \\
+&amp;= \frac{(n-k)x}{k-m+1}
+\end{aligned}
+\]</span> 不出所料，结果是一个有理函数，也就是说可以化成高斯超几何函数呢！</p>
 <p>不出所料，半瓶水的某人也就知道这些了（悲）。</p>
 <p>但是<strong>下降阶乘幂的思想是可以有的嘛</strong>！</p>
-<h2 id="部分分摸鱼"><a href="#部分分摸鱼" class="headerlink" title="部分分摸鱼"></a>部分分摸鱼</h2><p>在乱搞如预想的那般失败之后我就开始看部分分。</p>
-<p>部分分里面有一个$f$是常数的，愣了一会发现能用二项式定理，答案是$(1+x)^n$。</p>
-<p>然后还有一个$x=1$的。这个要怎么解决？</p>
-<p>从最简单的一次多项式开始：<br>$$<br>\sum_{k=0}^nk\binom{n}{k}=?<br>$$<br>推式子本人是不会的，结论也忘了，但是从组合意义上还是好想的：**$k\binom{n}{k}$就是从$n$个人里面选$k$个人，然后钦定一个做队长的方案数，把它求和，就是从$n$个人里面选若干人，然后从当中钦定一个队长的方案数。**这是先选人再定队长的顺序，我们可以先选队长再选人嘛！从$n$个人里面选一个队长有$n$种方法，剩下的$(n-1)$个人要不要都行，所以是$2^{n-1}$种，二者相乘：<br>$$<br>\sum_{k=0}^nk\binom{n}{k}=n2^{n-1}<br>$$<br>就把一次的式子推出来了。</p>
-<p>那二次的式子呢？<br>$$<br>\sum_{k=0}^nk^2\binom{n}{k}=?<br>$$<br>如果沿用之前运用组合意义化简的思路，那$k^2$就有“可以重复选”的含义在，是不好处理的。但是之前的乱搞告诉我们，是不是化成下降阶乘幂会好处理一点呢？<br>$$<br>\sum_{k=0}^nk(k-1)\binom{n}{k}=?<br>$$<br>答案是肯定的，思路和一次的完全一样，只是从“选队长”变成了“选队长和副队长“，因此很快就可以得出：<br>$$<br>\sum_{k=0}^nk(k-1)\binom{n}{k}=n(n-1)2^{n-2}<br>$$<br>然后就可以很快地推广出去了：<br>$$<br>\sum_{k=0}^nk^{\underline{m}}\binom{n}{k}=n^{\underline{m}}2^{n-m}<br>$$<br>这样几个部分分就基本拿到了。</p>
-<h2 id="把两者组合起来"><a href="#把两者组合起来" class="headerlink" title="把两者组合起来"></a>把两者组合起来</h2><p>那如果$x\neq 1$且$f$非常数要怎么做呢？我们不妨还是把$f$想成下降阶乘幂（怎么拆另说）：<br>$$<br>\sum_{k=0}^nk^{\underline{m}}x^k\binom{n}{k}=?<br>$$<br>然后思考其组合意义，稍开脑洞即可得到：</p>
-<p><strong>$k^{\underline{m}}x^k\binom{n}{k}$是从$n$个人里面挑选$k$个人，再给让当中$m$人担任$m$个不同职位，最后再让每个人从$x$种颜色的帽子当中选一个戴上的方案数</strong>（不要问我怎么想到戴帽子的）。</p>
-<p>因此，由加法原理，对其求和之后就是从$n$个人里面挑选<em>若干</em>个人，再给让当中$m$人担任$m$个不同职位，最后再让每个人从$x$种颜色的帽子当中选一个戴上的方案数。</p>
-<p>那我们故技重施，调换顺序，不妨先从$n$个人当中调出担任$m$个职位的那$m$个人（$n^{\underline{m}}$种取法），再先让他们先选帽子（$x^m$种选法），然后让剩下的$(n-m)$个人要不挑一个颜色的帽子进队要么滚蛋（$(1+x)^{n-m}$种取法）。于是就有了：<br>$$<br>\sum_{k=0}^nk^{\underline{m}}x^k\binom{n}{k}=n^{\underline{m}}x^m(1+x)^{n-m}<br>$$<br>哇，式子就推出来了！</p>
-<h2 id="多项式拆分"><a href="#多项式拆分" class="headerlink" title="多项式拆分"></a>多项式拆分</h2><p>现在基于下降阶乘幂的式子已经推出来了，唯一剩下的就是把给定的$f$拆成若干个下降阶乘幂的线性组合。<br>$$<br>\sum_{i=0}^ma_ik^i = \sum_{j=0}^m b_jk^{\underline{j}}<br>$$<br>即求$b_j$的过程。</p>
+<h2 id="部分分摸鱼">部分分摸鱼</h2>
+<p>在乱搞如预想的那般失败之后我就开始看部分分。</p>
+<p>部分分里面有一个<span class="math inline">\(f\)</span>是常数的，愣了一会发现能用二项式定理，答案是<span class="math inline">\((1+x)^n\)</span>。</p>
+<p>然后还有一个<span class="math inline">\(x=1\)</span>的。这个要怎么解决？</p>
+<p>从最简单的一次多项式开始： <span class="math display">\[
+\sum_{k=0}^nk\binom{n}{k}=?
+\]</span> 推式子本人是不会的，结论也忘了，但是从组合意义上还是好想的：<strong><span class="math inline">\(k\binom{n}{k}\)</span>就是从<span class="math inline">\(n\)</span>个人里面选<span class="math inline">\(k\)</span>个人，然后钦定一个做队长的方案数，把它求和，就是从<span class="math inline">\(n\)</span>个人里面选若干人，然后从当中钦定一个队长的方案数。</strong>这是先选人再定队长的顺序，我们可以先选队长再选人嘛！从<span class="math inline">\(n\)</span>个人里面选一个队长有<span class="math inline">\(n\)</span>种方法，剩下的<span class="math inline">\((n-1)\)</span>个人要不要都行，所以是<span class="math inline">\(2^{n-1}\)</span>种，二者相乘： <span class="math display">\[
+\sum_{k=0}^nk\binom{n}{k}=n2^{n-1}
+\]</span> 就把一次的式子推出来了。</p>
+<p>那二次的式子呢？ <span class="math display">\[
+\sum_{k=0}^nk^2\binom{n}{k}=?
+\]</span> 如果沿用之前运用组合意义化简的思路，那<span class="math inline">\(k^2\)</span>就有“可以重复选”的含义在，是不好处理的。但是之前的乱搞告诉我们，是不是化成下降阶乘幂会好处理一点呢？ <span class="math display">\[
+\sum_{k=0}^nk(k-1)\binom{n}{k}=?
+\]</span> 答案是肯定的，思路和一次的完全一样，只是从“选队长”变成了“选队长和副队长“，因此很快就可以得出： <span class="math display">\[
+\sum_{k=0}^nk(k-1)\binom{n}{k}=n(n-1)2^{n-2}
+\]</span> 然后就可以很快地推广出去了： <span class="math display">\[
+\sum_{k=0}^nk^{\underline{m}}\binom{n}{k}=n^{\underline{m}}2^{n-m}
+\]</span> 这样几个部分分就基本拿到了。</p>
+<h2 id="把两者组合起来">把两者组合起来</h2>
+<p>那如果<span class="math inline">\(x\neq 1\)</span>且<span class="math inline">\(f\)</span>非常数要怎么做呢？我们不妨还是把<span class="math inline">\(f\)</span>想成下降阶乘幂（怎么拆另说）： <span class="math display">\[
+\sum_{k=0}^nk^{\underline{m}}x^k\binom{n}{k}=?
+\]</span> 然后思考其组合意义，稍开脑洞即可得到：</p>
+<p><strong><span class="math inline">\(k^{\underline{m}}x^k\binom{n}{k}\)</span>是从<span class="math inline">\(n\)</span>个人里面挑选<span class="math inline">\(k\)</span>个人，再给让当中<span class="math inline">\(m\)</span>人担任<span class="math inline">\(m\)</span>个不同职位，最后再让每个人从<span class="math inline">\(x\)</span>种颜色的帽子当中选一个戴上的方案数</strong>（不要问我怎么想到戴帽子的）。</p>
+<p>因此，由加法原理，对其求和之后就是从<span class="math inline">\(n\)</span>个人里面挑选<em>若干</em>个人，再给让当中<span class="math inline">\(m\)</span>人担任<span class="math inline">\(m\)</span>个不同职位，最后再让每个人从<span class="math inline">\(x\)</span>种颜色的帽子当中选一个戴上的方案数。</p>
+<p>那我们故技重施，调换顺序，不妨先从<span class="math inline">\(n\)</span>个人当中调出担任<span class="math inline">\(m\)</span>个职位的那<span class="math inline">\(m\)</span>个人（<span class="math inline">\(n^{\underline{m}}\)</span>种取法），再先让他们先选帽子（<span class="math inline">\(x^m\)</span>种选法），然后让剩下的<span class="math inline">\((n-m)\)</span>个人要不挑一个颜色的帽子进队要么滚蛋（<span class="math inline">\((1+x)^{n-m}\)</span>种取法）。于是就有了： <span class="math display">\[
+\sum_{k=0}^nk^{\underline{m}}x^k\binom{n}{k}=n^{\underline{m}}x^m(1+x)^{n-m}
+\]</span> 哇，式子就推出来了！</p>
+<h2 id="多项式拆分">多项式拆分</h2>
+<p>现在基于下降阶乘幂的式子已经推出来了，唯一剩下的就是把给定的<span class="math inline">\(f\)</span>拆成若干个下降阶乘幂的线性组合。 <span class="math display">\[
+\sum_{i=0}^ma_ik^i = \sum_{j=0}^m b_jk^{\underline{j}}
+\]</span> 即求<span class="math inline">\(b_j\)</span>的过程。</p>
 <p>显而易见地，我们需要从高次到低次拆，这样后拆出来的幂才不会对之前的结果造成影响。</p>
 <p>同时显然的是，我们需要知道下降阶乘幂展开后对应多项式的系数。</p>
 <p>现在回过来看，朴素的多项式乘法是完全可以胜任的。但是写多项式乘法毕竟比较繁琐，不如观察多项式系数的规律。</p>
-<p>令$c[m, n]$表示下降阶乘幂$x^{\underline m}$的展开式当中$x^n$的系数。则由下降阶乘幂的定义：<br>$$<br>x^{\underline m} = x^{\underline{m-1}}[x-(m-1)],\quad (m\ge 1)<br>$$<br>可以得出递推式：<br>$$<br>c[m,n]=c[m-1,n-1]-(m-1)c[m-1,n]<br>$$<br>边界条件是$c[0,0] = 1$以及$c[m,0]=0\quad \forall m&gt;0$。这是一个类似杨辉三角的递推式，自然可以在$\mathcal{O}\left(m^2\right)$的时间内算出来，代码也好写。</p>
+<p>令<span class="math inline">\(c[m, n]\)</span>表示下降阶乘幂<span class="math inline">\(x^{\underline m}\)</span>的展开式当中<span class="math inline">\(x^n\)</span>的系数。则由下降阶乘幂的定义： <span class="math display">\[
+x^{\underline m} = x^{\underline{m-1}}[x-(m-1)],\quad (m\ge 1)
+\]</span> 可以得出递推式： <span class="math display">\[
+c[m,n]=c[m-1,n-1]-(m-1)c[m-1,n]
+\]</span> 边界条件是<span class="math inline">\(c[0,0] = 1\)</span>以及<span class="math inline">\(c[m,0]=0\quad \forall m&gt;0\)</span>。这是一个类似杨辉三角的递推式，自然可以在<span class="math inline">\(\mathcal{O}\left(m^2\right)\)</span>的时间内算出来，代码也好写。</p>
 <p>至此，这道题目就完全解决了。</p>
-<p>其实不止如此，这个三角在考场上让我感到非常眼熟，回去查证了一下，果然$c[m,n]$就是所谓的<strong>带符号的第一类斯特林数</strong>，“下降阶乘幂的展开系数”正是其重要的性质之一。</p>
-<h2 id="感想"><a href="#感想" class="headerlink" title="感想"></a>感想</h2><p>这道题对我的感触是比较深刻的，尤其是做出来之后，颇有一种成就感。</p>
+<p>其实不止如此，这个三角在考场上让我感到非常眼熟，回去查证了一下，果然<span class="math inline">\(c[m,n]\)</span>就是所谓的<strong>带符号的第一类斯特林数</strong>，“下降阶乘幂的展开系数”正是其重要的性质之一。</p>
+<h2 id="感想">感想</h2>
+<p>这道题对我的感触是比较深刻的，尤其是做出来之后，颇有一种成就感。</p>
 <p>细想来，我组合数学的公式其实几乎都没有背过，故而几乎所有的式子都是现场推出来的。而且推理的方式也不纯代数的暴算，而是通过combinatorial proof的方式。自从PACT学来这招之后我觉得这种方法实在是精妙。在最后自己还稀里糊涂地推演出了斯特林数的递推公式，或许这种高大上的组合数本身离我们就不遥远吧。</p>
 <p>而话又说回来，大佬们看我写的这篇文章，只怕有些不耐烦与乏味吧。那些认真学习过组合数学的选手，大概看到这道题只剩下满满的套路，毕竟斯特林数名声在外，falling factorial这个套路熟悉了也不难想到，而类似的组合式子大概课后的习题会有很多吧。看到诸多大佬将D1T2云淡风轻地说成“裸的推式子”，他们做这道题时的从容大概可见一斑。只有像自己这样偶尔翻翻《组合数学》和《具体数学》，半瓶水晃荡的，才会在考场上各种心情复杂，一惊一乍了。</p>
 <p>然而换一个角度，我觉得这道题对我来说真的不错，自己之前偶尔翻翻书也是。作为一道数学题，这道题并没有远远超出我的见识让我一筹莫展，也没有远远低于我的见识让我秒杀，恰是我稍微努力一下就能解决的。而这次考试正是给了日渐颓废，游手好闲的我一个“努力一下”的契机。就结果来看，解决这道题不仅给了我市选的信心，也给了我组合数学的信心，还让我在结题过程中观赏到了极佳的风景，似乎确实不赖。尤其是后者，若放在平时做题，随时可以查找资料，正确答案触手可及，那结论得出时大概也不会有考场上那么惊喜，那么愉悦了。</p>
-<h2 id="逆-转"><a href="#逆-转" class="headerlink" title="逆 转"></a>逆 转</h2><p>啊？出分了？！</p>
+<h2 id="逆-转">逆 转</h2>
+<p>啊？出分了？！</p>
 <p>我考个250都能压线进队？！</p>
 <p>我可是根本就没认真复习啊，半年没碰OI了……</p>
 <p>唉，看来这次强行退役失败了，心情复杂……</p>
@@ -412,7 +452,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

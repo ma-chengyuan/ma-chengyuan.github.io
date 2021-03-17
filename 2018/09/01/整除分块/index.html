@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="一维情况在莫比乌斯反演中，我们经常需要计算类似如下的和式：$$\sum_{i &#x3D; 1}^n \left\lfloor \frac{n}{i} \right\rfloor$$如果朴素计算的话时间复杂度是$O(n)$的，这个代价对于很多多询问的题目来说是在是太高了，因此我们需要更快的方法。 结论：$\left\lfloor \frac{n}{i} \right\rfloor$总共只有$O(\sqrt">
+<meta name="description" content="一维情况 在莫比乌斯反演中，我们经常需要计算类似如下的和式： \[ \sum_{i &#x3D; 1}^n \left\lfloor \frac{n}{i} \right\rfloor \] 如果朴素计算的话时间复杂度是\(O(n)\)的，这个代价对于很多多询问的题目来说是在是太高了，因此我们需要更快的方法。 结论：\(\left\lfloor \frac{n}{i} \right\rfloor\)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="整除分块">
 <meta property="og:url" content="https://alan20210202.github.io/2018/09/01/%E6%95%B4%E9%99%A4%E5%88%86%E5%9D%97/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="一维情况在莫比乌斯反演中，我们经常需要计算类似如下的和式：$$\sum_{i &#x3D; 1}^n \left\lfloor \frac{n}{i} \right\rfloor$$如果朴素计算的话时间复杂度是$O(n)$的，这个代价对于很多多询问的题目来说是在是太高了，因此我们需要更快的方法。 结论：$\left\lfloor \frac{n}{i} \right\rfloor$总共只有$O(\sqrt">
+<meta property="og:description" content="一维情况 在莫比乌斯反演中，我们经常需要计算类似如下的和式： \[ \sum_{i &#x3D; 1}^n \left\lfloor \frac{n}{i} \right\rfloor \] 如果朴素计算的话时间复杂度是\(O(n)\)的，这个代价对于很多多询问的题目来说是在是太高了，因此我们需要更快的方法。 结论：\(\left\lfloor \frac{n}{i} \right\rfloor\)">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2018-09-01T12:38:47.855Z">
 <meta property="article:modified_time" content="2018-09-02T01:03:55.254Z">
@@ -47,7 +47,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>整除分块 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -174,6 +175,8 @@
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -239,7 +242,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/01/%E6%95%B4%E9%99%A4%E5%88%86%E5%9D%97/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -287,26 +290,39 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="一维情况"><a href="#一维情况" class="headerlink" title="一维情况"></a>一维情况</h1><p>在莫比乌斯反演中，我们经常需要计算类似如下的和式：<br>$$<br>\sum_{i = 1}^n \left\lfloor \frac{n}{i} \right\rfloor<br>$$<br>如果朴素计算的话时间复杂度是$O(n)$的，这个代价对于很多多询问的题目来说是在是太高了，因此我们需要更快的方法。</p>
-<p><strong>结论：</strong>$\left\lfloor \frac{n}{i} \right\rfloor$总共只有$O(\sqrt n)$种不同的取值。</p>
-<p><strong>证明</strong>：我们首先证明：对于所有的$k \le \lfloor \sqrt n \rfloor$我们都可以找到一个$i$使得$\lfloor n / i \rfloor = k$：</p>
-<p>令$i = \left\lfloor n / k\right\rfloor \ge k$：<br>$$<br>ik \le n &lt; (i + 1)k = ik + k \le ik + i = i(k + 1) \<br>\Rightarrow k \le n / i &lt; k + 1 \<br>\Rightarrow \left\lfloor n / i \right\rfloor = k<br>$$<br>因此，通过适当地选择$i$我们已经可以让$\lfloor n / i \rfloor$取到$\lfloor \sqrt n\rfloor$个值，因为这些$i \ge \lfloor \sqrt n\rfloor$，因此我们进一步推得：对于所有$i \ge \lfloor \sqrt n\rfloor$，$\lfloor n / i \rfloor \le \lfloor \sqrt n\rfloor$共有$\lfloor \sqrt n\rfloor$种取值。</p>
-<p>对于所有的$i \le \lfloor \sqrt n \rfloor$，我们证明对于这些$i$，$\lfloor n / i \rfloor$ 的值各不相同，因为假设存在一对相邻的$i - 1, i$，使得$\lfloor {n \over i - 1} \rfloor = \lfloor {n \over i} \rfloor = k$，则：<br>$$<br>k \le {n \over i - 1} &lt; k + 1 \<br>k \le {n \over i} &lt; k + 1 \<br>\Rightarrow {n \over i - 1} - {n \over i} = {n \over i(i - 1)} &lt; 1<br>$$<br>而事实上因为$i \le \lfloor \sqrt n\rfloor$，$i(i - 1) &lt; n \Rightarrow  {n \over i(i - 1)} &gt; 1$，矛盾。</p>
-<p>因此对于$i \le \lfloor \sqrt n\rfloor$的$\lfloor \sqrt n\rfloor$个$i$，$\lfloor n / i \rfloor \ge \lfloor \sqrt n\rfloor$此时也有$\lfloor \sqrt n\rfloor$种取值。</p>
-<p>因此总共大约有$2\lfloor \sqrt n \rfloor$种取值，证毕。</p>
-<p>这样子我们就可以一段一段地计算了，时间复杂度骤降为$O(\sqrt n)$，但是一段到底到哪里结束呢？</p>
-<p><strong>结论：</strong>值为$k$的一段结束于$i = \lfloor n / k\rfloor$。</p>
-<p><strong>证明：</strong>随着$i$的变大，$n / i - \lfloor n / i\rfloor$的值必定单调递减，临界点就是$n / i = \lfloor n / i\rfloor = k$，此时$i = n / k$。考虑到此时$i$可能不是整数，因此结束位置为$\lfloor n / k\rfloor$。</p>
-<p><strong>推论：</strong>$i$所在的一段结束于$\lfloor n / \lfloor n / i \rfloor \rfloor$。</p>
+        <h1 id="一维情况">一维情况</h1>
+<p>在莫比乌斯反演中，我们经常需要计算类似如下的和式： <span class="math display">\[
+\sum_{i = 1}^n \left\lfloor \frac{n}{i} \right\rfloor
+\]</span> 如果朴素计算的话时间复杂度是<span class="math inline">\(O(n)\)</span>的，这个代价对于很多多询问的题目来说是在是太高了，因此我们需要更快的方法。</p>
+<p><strong>结论：</strong><span class="math inline">\(\left\lfloor \frac{n}{i} \right\rfloor\)</span>总共只有<span class="math inline">\(O(\sqrt n)\)</span>种不同的取值。</p>
+<p><strong>证明</strong>：我们首先证明：对于所有的<span class="math inline">\(k \le \lfloor \sqrt n \rfloor\)</span>我们都可以找到一个<span class="math inline">\(i\)</span>使得<span class="math inline">\(\lfloor n / i \rfloor = k\)</span>：</p>
+<p>令<span class="math inline">\(i = \left\lfloor n / k\right\rfloor \ge k\)</span>： <span class="math display">\[
+ik \le n &lt; (i + 1)k = ik + k \le ik + i = i(k + 1) \\
+\Rightarrow k \le n / i &lt; k + 1 \\
+\Rightarrow \left\lfloor n / i \right\rfloor = k
+\]</span> 因此，通过适当地选择<span class="math inline">\(i\)</span>我们已经可以让<span class="math inline">\(\lfloor n / i \rfloor\)</span>取到<span class="math inline">\(\lfloor \sqrt n\rfloor\)</span>个值，因为这些<span class="math inline">\(i \ge \lfloor \sqrt n\rfloor\)</span>，因此我们进一步推得：对于所有<span class="math inline">\(i \ge \lfloor \sqrt n\rfloor\)</span>，<span class="math inline">\(\lfloor n / i \rfloor \le \lfloor \sqrt n\rfloor\)</span>共有<span class="math inline">\(\lfloor \sqrt n\rfloor\)</span>种取值。</p>
+<p>对于所有的<span class="math inline">\(i \le \lfloor \sqrt n \rfloor\)</span>，我们证明对于这些<span class="math inline">\(i\)</span>，<span class="math inline">\(\lfloor n / i \rfloor\)</span> 的值各不相同，因为假设存在一对相邻的<span class="math inline">\(i - 1, i\)</span>，使得<span class="math inline">\(\lfloor {n \over i - 1} \rfloor = \lfloor {n \over i} \rfloor = k\)</span>，则： <span class="math display">\[
+k \le {n \over i - 1} &lt; k + 1 \\
+k \le {n \over i} &lt; k + 1 \\
+\Rightarrow {n \over i - 1} - {n \over i} = {n \over i(i - 1)} &lt; 1
+\]</span> 而事实上因为<span class="math inline">\(i \le \lfloor \sqrt n\rfloor\)</span>，<span class="math inline">\(i(i - 1) &lt; n \Rightarrow {n \over i(i - 1)} &gt; 1\)</span>，矛盾。</p>
+<p>因此对于<span class="math inline">\(i \le \lfloor \sqrt n\rfloor\)</span>的<span class="math inline">\(\lfloor \sqrt n\rfloor\)</span>个<span class="math inline">\(i\)</span>，<span class="math inline">\(\lfloor n / i \rfloor \ge \lfloor \sqrt n\rfloor\)</span>此时也有<span class="math inline">\(\lfloor \sqrt n\rfloor\)</span>种取值。</p>
+<p>因此总共大约有<span class="math inline">\(2\lfloor \sqrt n \rfloor\)</span>种取值，证毕。</p>
+<p>这样子我们就可以一段一段地计算了，时间复杂度骤降为<span class="math inline">\(O(\sqrt n)\)</span>，但是一段到底到哪里结束呢？</p>
+<p><strong>结论：</strong>值为<span class="math inline">\(k\)</span>的一段结束于<span class="math inline">\(i = \lfloor n / k\rfloor\)</span>。</p>
+<p><strong>证明：</strong>随着<span class="math inline">\(i\)</span>的变大，<span class="math inline">\(n / i - \lfloor n / i\rfloor\)</span>的值必定单调递减，临界点就是<span class="math inline">\(n / i = \lfloor n / i\rfloor = k\)</span>，此时<span class="math inline">\(i = n / k\)</span>。考虑到此时<span class="math inline">\(i\)</span>可能不是整数，因此结束位置为<span class="math inline">\(\lfloor n / k\rfloor\)</span>。</p>
+<p><strong>推论：</strong><span class="math inline">\(i\)</span>所在的一段结束于<span class="math inline">\(\lfloor n / \lfloor n / i \rfloor \rfloor\)</span>。</p>
 <p>有这两条结论，我们就可以很快地计算一开头和式的值了：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> l <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span> r<span class="token punctuation">;</span> l <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> l <span class="token operator">=</span> r <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    r <span class="token operator">=</span> n <span class="token operator">/</span> <span class="token punctuation">(</span>n <span class="token operator">/</span> l<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    ans <span class="token operator">+=</span> <span class="token punctuation">(</span>r <span class="token operator">-</span> l <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token punctuation">(</span>n <span class="token operator">/</span> l<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h1 id="二维情况"><a href="#二维情况" class="headerlink" title="二维情况"></a>二维情况</h1><p>假设$n &lt; m$，我们有时候还会碰到类似如下的和式：<br>$$<br>\sum_{i = 1}^n \left\lfloor \frac{n}{i} \right\rfloor \left\lfloor \frac{m}{i} \right\rfloor<br>$$<br><strong>结论：</strong>$\left\lfloor \frac{n}{i} \right\rfloor \left\lfloor \frac{m}{i} \right\rfloor$共有$O(\sqrt n + \sqrt m)$种取值</p>
-<p><strong>证明：</strong>我们可以这样想象：假设有一根数轴表示$i$的不同取值，$\left\lfloor \frac{n}{i} \right\rfloor$用$O(\sqrt n)$个分割点把数轴分成了$O(\sqrt n)$段（姑且叫它们$N$段），$\left\lfloor \frac{m}{i} \right\rfloor$用$O(\sqrt m)$个分割点在不同的位置把数轴也分成了$O(\sqrt m)$段（姑且叫它们$M$段），现在把这些段overlay一下，你会发现现在总共有$O(\sqrt n + \sqrt m)$个分割点把数轴分成了$O(\sqrt n + \sqrt m)$段，每一段的取值可能不同（想一下，两个点只有不完全在相同的$N$段和$M$段时计算出来的$\left\lfloor \frac{n}{i} \right\rfloor \left\lfloor \frac{m}{i} \right\rfloor$才可能不一样！）</p>
-<p><strong>结论：</strong>$i$所在的一段结束于$\min{\lfloor n / \lfloor n / i \rfloor \rfloor, \lfloor m / \lfloor m / i \rfloor \rfloor}$。</p>
+<pre class="line-numbers"><code class="language-cpp">for (int l = 1, r; l &lt;= n; l = r + 1) &#123;
+    r = n / (n / l);
+    ans += (r - l + 1) * (n / l);
+&#125;</code></pre>
+<h1 id="二维情况">二维情况</h1>
+<p>假设<span class="math inline">\(n &lt; m\)</span>，我们有时候还会碰到类似如下的和式： <span class="math display">\[
+\sum_{i = 1}^n \left\lfloor \frac{n}{i} \right\rfloor \left\lfloor \frac{m}{i} \right\rfloor
+\]</span> <strong>结论：</strong><span class="math inline">\(\left\lfloor \frac{n}{i} \right\rfloor \left\lfloor \frac{m}{i} \right\rfloor\)</span>共有<span class="math inline">\(O(\sqrt n + \sqrt m)\)</span>种取值</p>
+<p><strong>证明：</strong>我们可以这样想象：假设有一根数轴表示<span class="math inline">\(i\)</span>的不同取值，<span class="math inline">\(\left\lfloor \frac{n}{i} \right\rfloor\)</span>用<span class="math inline">\(O(\sqrt n)\)</span>个分割点把数轴分成了<span class="math inline">\(O(\sqrt n)\)</span>段（姑且叫它们<span class="math inline">\(N\)</span>段），<span class="math inline">\(\left\lfloor \frac{m}{i} \right\rfloor\)</span>用<span class="math inline">\(O(\sqrt m)\)</span>个分割点在不同的位置把数轴也分成了<span class="math inline">\(O(\sqrt m)\)</span>段（姑且叫它们<span class="math inline">\(M\)</span>段），现在把这些段overlay一下，你会发现现在总共有<span class="math inline">\(O(\sqrt n + \sqrt m)\)</span>个分割点把数轴分成了<span class="math inline">\(O(\sqrt n + \sqrt m)\)</span>段，每一段的取值可能不同（想一下，两个点只有不完全在相同的<span class="math inline">\(N\)</span>段和<span class="math inline">\(M\)</span>段时计算出来的<span class="math inline">\(\left\lfloor \frac{n}{i} \right\rfloor \left\lfloor \frac{m}{i} \right\rfloor\)</span>才可能不一样！）</p>
+<p><strong>结论：</strong><span class="math inline">\(i\)</span>所在的一段结束于<span class="math inline">\(\min\{\lfloor n / \lfloor n / i \rfloor \rfloor, \lfloor m / \lfloor m / i \rfloor \rfloor\}\)</span>。</p>
 <p><strong>证明：</strong>类似一维情况。</p>
 
     </div>
@@ -396,7 +412,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

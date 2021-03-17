@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="上次更新是在十月份？我到底摸了多久 卷积对于两个序列${x}, {y}​$，定义它们的卷积${x \ast y}​$为：$$(x \ast y)k &#x3D; \sum{j &#x3D; 0}^k x_jy_{k- j}$$ 单位根定义复平面单位圆上的$n​$次单位根$$\omega_{n} &#x3D; e^{\frac{2\pi i}{n}} &#x3D; \cos\left(\frac{2\pi}{n}\right) + i\s">
+<meta name="description" content="上次更新是在十月份？我到底摸了多久 卷积 对于两个序列\(\{x\}, \{y\}​\)，定义它们的卷积\(\{x \ast y\}​\)为： \[ (x \ast y)_k &#x3D; \sum_{j &#x3D; 0}^k x_jy_{k- j} \] 单位根 定义复平面单位圆上的\(n​\)次单位根 \[ \omega_{n} &#x3D; e^{\frac{2\pi i}{n}} &#x3D; \cos\left">
 <meta property="og:type" content="article">
 <meta property="og:title" content="FFT笔记">
 <meta property="og:url" content="https://alan20210202.github.io/2019/02/02/FFT/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="上次更新是在十月份？我到底摸了多久 卷积对于两个序列${x}, {y}​$，定义它们的卷积${x \ast y}​$为：$$(x \ast y)k &#x3D; \sum{j &#x3D; 0}^k x_jy_{k- j}$$ 单位根定义复平面单位圆上的$n​$次单位根$$\omega_{n} &#x3D; e^{\frac{2\pi i}{n}} &#x3D; \cos\left(\frac{2\pi}{n}\right) + i\s">
+<meta property="og:description" content="上次更新是在十月份？我到底摸了多久 卷积 对于两个序列\(\{x\}, \{y\}​\)，定义它们的卷积\(\{x \ast y\}​\)为： \[ (x \ast y)_k &#x3D; \sum_{j &#x3D; 0}^k x_jy_{k- j} \] 单位根 定义复平面单位圆上的\(n​\)次单位根 \[ \omega_{n} &#x3D; e^{\frac{2\pi i}{n}} &#x3D; \cos\left">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-02-02T09:50:35.558Z">
 <meta property="article:modified_time" content="2019-02-03T08:09:32.772Z">
@@ -48,7 +48,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>FFT笔记 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -169,12 +170,14 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%B7%E7%A7%AF"><span class="nav-number">1.</span> <span class="nav-text">卷积</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%95%E4%BD%8D%E6%A0%B9"><span class="nav-number">2.</span> <span class="nav-text">单位根</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DFT"><span class="nav-number">3.</span> <span class="nav-text">DFT</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FFT"><span class="nav-number">4.</span> <span class="nav-text">FFT</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%B7%E7%A7%AF"><span class="nav-number">1.</span> <span class="nav-text">卷积</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%95%E4%BD%8D%E6%A0%B9"><span class="nav-number">2.</span> <span class="nav-text">单位根</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dft"><span class="nav-number">3.</span> <span class="nav-text">DFT</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#fft"><span class="nav-number">4.</span> <span class="nav-text">FFT</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -240,7 +243,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/02/02/FFT/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -289,61 +292,116 @@
     
     <div class="post-body" itemprop="articleBody">
         <p><del>上次更新是在十月份？我到底摸了多久</del></p>
-<h1 id="卷积"><a href="#卷积" class="headerlink" title="卷积"></a>卷积</h1><p>对于两个序列${x}, {y}​$，定义它们的卷积${x \ast y}​$为：<br>$$<br>(x \ast y)<em>k = \sum</em>{j = 0}^k x_jy_{k- j}<br>$$</p>
-<h1 id="单位根"><a href="#单位根" class="headerlink" title="单位根"></a>单位根</h1><p>定义复平面单位圆上的$n​$次单位根<br>$$<br>\omega_{n} = e^{\frac{2\pi i}{n}} = \cos\left(\frac{2\pi}{n}\right) + i\sin\left(\frac{2\pi}{n}\right)<br>$$<br>易证其有如下的性质：</p>
-<ol>
-<li>$\omega_{2n}^{2k} = \omega_n^k$</li>
-<li>$\omega_n^k = \omega_n^{k +n}$</li>
-<li>$\omega_n^k = - \omega_{n}^{k + n / 2}$</li>
+<h1 id="卷积">卷积</h1>
+<p>对于两个序列<span class="math inline">\(\{x\}, \{y\}​\)</span>，定义它们的卷积<span class="math inline">\(\{x \ast y\}​\)</span>为： <span class="math display">\[
+(x \ast y)_k = \sum_{j = 0}^k x_jy_{k- j}
+\]</span></p>
+<h1 id="单位根">单位根</h1>
+<p>定义复平面单位圆上的<span class="math inline">\(n​\)</span>次单位根 <span class="math display">\[
+\omega_{n} = e^{\frac{2\pi i}{n}} = \cos\left(\frac{2\pi}{n}\right) + i\sin\left(\frac{2\pi}{n}\right)
+\]</span> 易证其有如下的性质：</p>
+<ol type="1">
+<li><span class="math inline">\(\omega_{2n}^{2k} = \omega_n^k\)</span></li>
+<li><span class="math inline">\(\omega_n^k = \omega_n^{k +n}\)</span></li>
+<li><span class="math inline">\(\omega_n^k = - \omega_{n}^{k + n / 2}\)</span></li>
 </ol>
-<h1 id="DFT"><a href="#DFT" class="headerlink" title="DFT"></a>DFT</h1><p>对于一长度为$n$的序列${x}$，定义其离散傅里叶变换（DFT）$\mathcal{F}{x} = {X}$为：<br>$$<br>\mathcal{F}{x}<em>k = X_k = \sum</em>{j = 0}^{n - 1} x_i\omega_n^{jk}<br>$$<br>则有其离散傅里叶逆变换（IDFT）为：<br>$$<br>x_k = \frac{1}{n}\sum_{j = 0}^{n - 1} X_i\omega_n^{-jk}<br>$$<br>（标准定义里面$\omega_n^{jk}​$和$\omega_n^{-jk}​$应该互换，但是不影响）</p>
-<p><strong>暴力证明：</strong>考虑$\mathcal{F}{x_n}$的计算式：<br>$$<br>\begin{pmatrix}<br>1 &amp;1 &amp;1 &amp;\cdots &amp;1 \<br>1 &amp;\omega_n &amp;\omega_n^2 &amp;\cdots &amp;\omega_n^{n - 1} \<br>1 &amp;\omega_n^2 &amp;\omega_n^4 &amp;\cdots &amp;\omega_n^{2(n-1)} \<br>\vdots &amp;\vdots &amp;\vdots &amp;\ddots &amp;\vdots \<br>1 &amp;\omega_n^{n - 1} &amp;\omega_{n}^{2(n-1)} &amp;\cdots &amp;\omega_n^{(n-1)^2}<br>\end{pmatrix}<br>\begin{pmatrix}<br>x_1 \x_2 \x_3 \ \vdots \x_{n - 1}<br>\end{pmatrix}<br>=<br>\begin{pmatrix}<br>X_1 \X_2 \X_3 \ \vdots \X_{n - 1}<br>\end{pmatrix}<br>$$<br>设左边矩阵为$V​$，接下来从充分性上证明$V^{-1}<em>{jk} = \frac{\omega_n^{-jk}}{n}​$：<br>$$<br>\left(VV^{-1}\right)</em>{jk} = \sum_{l = 0}^{n - 1}\omega_n^{jl}\cdot\frac{\omega_n^{-lk}}{n}<br>= \frac{1}{n}\sum_{l = 0}^{n - 1}\omega_n^{l(j - k)}<br>$$<br>显然当$j = k​$时有$\left(VV^{-1}\right)<em>{jk} = 1​$，而$j \neq k​$时，由等比数列求和公式：<br>$$<br>\begin{aligned}<br>\frac{1}{n}\sum</em>{l = 0}^{n - 1}\omega_n^{l(j - k)} &amp;= \frac{1}{n} \cdot \frac{1 - \omega_n^{n(j - k)}}{1 - \omega_n^{j - k}} = 0<br>\end{aligned}<br>$$<br>因此$VV^{-1} = I​$，得证。</p>
+<h1 id="dft">DFT</h1>
+<p>对于一长度为<span class="math inline">\(n\)</span>的序列<span class="math inline">\(\{x\}\)</span>，定义其离散傅里叶变换（DFT）<span class="math inline">\(\mathcal{F}\{x\} = \{X\}\)</span>为： <span class="math display">\[
+\mathcal{F}\{x\}_k = X_k = \sum_{j = 0}^{n - 1} x_i\omega_n^{jk}
+\]</span> 则有其离散傅里叶逆变换（IDFT）为： <span class="math display">\[
+x_k = \frac{1}{n}\sum_{j = 0}^{n - 1} X_i\omega_n^{-jk}
+\]</span> （标准定义里面<span class="math inline">\(\omega_n^{jk}​\)</span>和<span class="math inline">\(\omega_n^{-jk}​\)</span>应该互换，但是不影响）</p>
+<p><strong>暴力证明：</strong>考虑<span class="math inline">\(\mathcal{F}\{x_n\}\)</span>的计算式： <span class="math display">\[
+\begin{pmatrix}
+1 &amp;1 &amp;1 &amp;\cdots &amp;1 \\
+1 &amp;\omega_n &amp;\omega_n^2 &amp;\cdots &amp;\omega_n^{n - 1} \\
+1 &amp;\omega_n^2 &amp;\omega_n^4 &amp;\cdots &amp;\omega_n^{2(n-1)} \\
+\vdots &amp;\vdots &amp;\vdots &amp;\ddots &amp;\vdots \\
+1 &amp;\omega_n^{n - 1} &amp;\omega_{n}^{2(n-1)} &amp;\cdots &amp;\omega_n^{(n-1)^2}
+\end{pmatrix}
+\begin{pmatrix}
+x_1 \\x_2 \\x_3 \\ \vdots \\x_{n - 1}
+\end{pmatrix}
+=
+\begin{pmatrix}
+X_1 \\X_2 \\X_3 \\ \vdots \\X_{n - 1}
+\end{pmatrix}
+\]</span> 设左边矩阵为<span class="math inline">\(V​\)</span>，接下来从充分性上证明<span class="math inline">\(V^{-1}_{jk} = \frac{\omega_n^{-jk}}{n}​\)</span>： <span class="math display">\[
+\left(VV^{-1}\right)_{jk} = \sum_{l = 0}^{n - 1}\omega_n^{jl}\cdot\frac{\omega_n^{-lk}}{n}
+= \frac{1}{n}\sum_{l = 0}^{n - 1}\omega_n^{l(j - k)}
+\]</span> 显然当<span class="math inline">\(j = k​\)</span>时有<span class="math inline">\(\left(VV^{-1}\right)_{jk} = 1​\)</span>，而<span class="math inline">\(j \neq k​\)</span>时，由等比数列求和公式： <span class="math display">\[
+\begin{aligned}
+\frac{1}{n}\sum_{l = 0}^{n - 1}\omega_n^{l(j - k)} &amp;= \frac{1}{n} \cdot \frac{1 - \omega_n^{n(j - k)}}{1 - \omega_n^{j - k}} = 0
+\end{aligned}
+\]</span> 因此<span class="math inline">\(VV^{-1} = I​\)</span>，得证。</p>
 <p>上面的DFT有如下意义：</p>
-<ol>
-<li>将${x_n}​$作为一组正交基${\omega_n^0, \omega_n^1, \cdots}, {\omega_n^0, \omega_n^{2}, \cdots}​$的系数，计算和向量。（在此意义下逆变换就是将向量进行分解，因此逆变换的意义显然，无需上述证明）</li>
-<li>将${x_n}$作为以个多项式的系数，计算该多项式在$\omega_n^0, \omega_n^1,\cdots$点上的取值。</li>
+<ol type="1">
+<li>将<span class="math inline">\(\{x_n\}​\)</span>作为一组正交基<span class="math inline">\(\{\omega_n^0, \omega_n^1, \cdots\}, \{\omega_n^0, \omega_n^{2}, \cdots\}​\)</span>的系数，计算和向量。（在此意义下逆变换就是将向量进行分解，因此逆变换的意义显然，无需上述证明）</li>
+<li>将<span class="math inline">\(\{x_n\}\)</span>作为以个多项式的系数，计算该多项式在<span class="math inline">\(\omega_n^0, \omega_n^1,\cdots\)</span>点上的取值。</li>
 </ol>
 <p>DFT是线性的，即<strong>和的DFT等于DFT的和</strong>，且<strong>常数倍的DFT是DFT的常数倍。</strong></p>
-<p>同时DFT的另一个重要性质被称为卷积性，即<br>$$<br>\mathcal{F}{x}<em>k\mathcal{F}{y}<em>k = \mathcal{F}{x \ast y}<em>k<br>$$<br><strong>证明：</strong>把式子写出来：<br>$$<br>\left(\sum</em>{j = 0}^{n - 1} x_j \omega_n^{jk}\right)\left(\sum</em>{j = 0}^{n - 1} y_j \omega_n^{jk}\right) \overset{?}{=} \sum</em>{j = 1}^{n - 1}\left(\sum_{l = 0}^jx_ly_{j - l}\right)\omega_n^{jk}<br>$$<br>显然左边式子展开对应的任意一项$x_ay_b\omega_n^{(a + b)k}$都唯一地出现在右式$j = a+b$内层求和的展开式中，因此两个式子总是等价的。</p>
-<p><strong>DFT将卷积$O(n^2)$的操作转化为$O(n)$的操作，因此可以用于加速卷积。</strong></p>
-<h1 id="FFT"><a href="#FFT" class="headerlink" title="FFT"></a>FFT</h1><p>因为DFT对应点相乘这一操作本身是$O(n)​$的，因此我们只要找到快速的DFT/IDFT算法，就可以避免$O(n^2)​$地计算卷积。FFT就是这样一种基于分治的快速DFT算法，时间复杂度为$O(n\log n)​$。</p>
-<p>首先假设我们需要计算一个序列${x}$的DFT（假设$n$是$2$的整数次幂），我们按照下标的奇偶性将这个序列分为${a}, {b}$两部分，其中$a_j = x_{2j}$且$b_j = x_{2j + 1}$。那我们有：<br>$$<br>\begin{aligned}<br>\mathcal{F}{x}<em>k &amp;= \sum</em>{j = 0}^{n - 1} x_j\omega_n^{jk} \<br>&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} \left[(x_{2j}\omega_n^{2jk} + x_{2j + 1}\omega_n^{(2j + 1)k}\right] \<br>&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} x_{2j}\omega_n^{2jk} + \omega_n^k \sum_{j = 0}^{\frac{n}{2} - 1} x_{2j + 1}\omega_n^{2jk} \<br>&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} a_j\omega_{n / 2}^{jk} + \omega_n^k \sum_{j = 0}^{\frac{n}{2} - 1} b_j\omega_{n / 2}^{jk} \<br>&amp;= \mathcal{F}{a}<em>k + \omega</em>{n}^k\mathcal{F}{b}_k<br>\end{aligned}<br>$$<br><del>看起来好像没有问题？</del>我们最后一步推导其实是有一点小问题的，因为当$\mathcal{F}{a}$依据我们的定义只有$\frac{n}{2}$项，因此上面的推导只能让我们计算$0 \le k &lt; \frac{n}{2}$的值。对于$k \ge \frac{n}{2}$的情况要如何处理呢？</p>
-<p>首先，注意到：<br>$$<br>\omega_n^{2jk} = \omega_n^{2jk - jn} = \omega{<em>n^{2j(k - n / 2)}}<br>$$<br>因此我们稍微变一下：<br>$$<br>\begin{aligned}<br>\mathcal{F}{x}<em>k &amp;= \sum</em>{j = 0}^{n - 1} x_j\omega_n^{jk} \<br>&amp;= \sum</em>{j = 0}^{\frac{n}{2} - 1} \left[x_{2j}\omega_n^{2j(k - n /2)} + x_{2j + 1}\omega_n^{2j(k - n /2) + k}\right] \<br>&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} x_{2j}\omega_n^{2j(k - n /2)} + \omega_n^k \sum_{j = 0}^{\frac{n}{2} - 1} x_{2j + 1}\omega_n^{2j(k - n /2)} \<br>&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} a_j\omega_{n / 2}^{j(k - n /2)} + \omega_n^k \sum_{j = 0}^{\frac{n}{2} - 1} b_j\omega_{n / 2}^{j(k - n /2)} \<br>&amp;= \mathcal{F}{a}<em>{k - n / 2} - \omega</em>{n}^{k - n / 2}\mathcal{F}{b}_{k - n / 2}<br>\end{aligned}<br>$$<br>（其实本质上就是DFT的序列其实是可以周期拓展的）</p>
-<p>这使得我们得以计算$\frac{n}{2} \le k &lt; n$时DFT的值。因此，最为朴素的FFT实现就是基于递归不断将${x_n}$进行分治，并通过上式对于分治结果进行合并。时间复杂度自然就是$O(n\log n)$。</p>
+<p>同时DFT的另一个重要性质被称为卷积性，即 <span class="math display">\[
+\mathcal{F}\{x\}_k\mathcal{F}\{y\}_k = \mathcal{F}\{x \ast y\}_k
+\]</span> <strong>证明：</strong>把式子写出来： <span class="math display">\[
+\left(\sum_{j = 0}^{n - 1} x_j \omega_n^{jk}\right)\left(\sum_{j = 0}^{n - 1} y_j \omega_n^{jk}\right) \overset{?}{=} \sum_{j = 1}^{n - 1}\left(\sum_{l = 0}^jx_ly_{j - l}\right)\omega_n^{jk}
+\]</span> 显然左边式子展开对应的任意一项<span class="math inline">\(x_ay_b\omega_n^{(a + b)k}\)</span>都唯一地出现在右式<span class="math inline">\(j = a+b\)</span>内层求和的展开式中，因此两个式子总是等价的。</p>
+<p><strong>DFT将卷积<span class="math inline">\(O(n^2)\)</span>的操作转化为<span class="math inline">\(O(n)\)</span>的操作，因此可以用于加速卷积。</strong></p>
+<h1 id="fft">FFT</h1>
+<p>因为DFT对应点相乘这一操作本身是<span class="math inline">\(O(n)​\)</span>的，因此我们只要找到快速的DFT/IDFT算法，就可以避免<span class="math inline">\(O(n^2)​\)</span>地计算卷积。FFT就是这样一种基于分治的快速DFT算法，时间复杂度为<span class="math inline">\(O(n\log n)​\)</span>。</p>
+<p>首先假设我们需要计算一个序列<span class="math inline">\(\{x\}\)</span>的DFT（假设<span class="math inline">\(n\)</span>是<span class="math inline">\(2\)</span>的整数次幂），我们按照下标的奇偶性将这个序列分为<span class="math inline">\(\{a\}, \{b\}\)</span>两部分，其中<span class="math inline">\(a_j = x_{2j}\)</span>且<span class="math inline">\(b_j = x_{2j + 1}\)</span>。那我们有： <span class="math display">\[
+\begin{aligned}
+\mathcal{F}\{x\}_k &amp;= \sum_{j = 0}^{n - 1} x_j\omega_n^{jk} \\
+&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} \left[(x_{2j}\omega_n^{2jk} + x_{2j + 1}\omega_n^{(2j + 1)k}\right] \\
+&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} x_{2j}\omega_n^{2jk} + \omega_n^k \sum_{j = 0}^{\frac{n}{2} - 1} x_{2j + 1}\omega_n^{2jk} \\
+&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} a_j\omega_{n / 2}^{jk} + \omega_n^k \sum_{j = 0}^{\frac{n}{2} - 1} b_j\omega_{n / 2}^{jk} \\
+&amp;= \mathcal{F}\{a\}_k + \omega_{n}^k\mathcal{F}\{b\}_k
+\end{aligned}
+\]</span> <del>看起来好像没有问题？</del>我们最后一步推导其实是有一点小问题的，因为当<span class="math inline">\(\mathcal{F}\{a\}\)</span>依据我们的定义只有<span class="math inline">\(\frac{n}{2}\)</span>项，因此上面的推导只能让我们计算<span class="math inline">\(0 \le k &lt; \frac{n}{2}\)</span>的值。对于<span class="math inline">\(k \ge \frac{n}{2}\)</span>的情况要如何处理呢？</p>
+<p>首先，注意到： <span class="math display">\[
+\omega_n^{2jk} = \omega_n^{2jk - jn} = \omega{_n^{2j(k - n / 2)}}
+\]</span> 因此我们稍微变一下： <span class="math display">\[
+\begin{aligned}
+\mathcal{F}\{x\}_k &amp;= \sum_{j = 0}^{n - 1} x_j\omega_n^{jk} \\
+&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} \left[x_{2j}\omega_n^{2j(k - n /2)} + x_{2j + 1}\omega_n^{2j(k - n /2) + k}\right] \\
+&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} x_{2j}\omega_n^{2j(k - n /2)} + \omega_n^k \sum_{j = 0}^{\frac{n}{2} - 1} x_{2j + 1}\omega_n^{2j(k - n /2)} \\
+&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} a_j\omega_{n / 2}^{j(k - n /2)} + \omega_n^k \sum_{j = 0}^{\frac{n}{2} - 1} b_j\omega_{n / 2}^{j(k - n /2)} \\
+&amp;= \mathcal{F}\{a\}_{k - n / 2} - \omega_{n}^{k - n / 2}\mathcal{F}\{b\}_{k - n / 2}
+\end{aligned}
+\]</span> （其实本质上就是DFT的序列其实是可以周期拓展的）</p>
+<p>这使得我们得以计算<span class="math inline">\(\frac{n}{2} \le k &lt; n\)</span>时DFT的值。因此，最为朴素的FFT实现就是基于递归不断将<span class="math inline">\(\{x_n\}\)</span>进行分治，并通过上式对于分治结果进行合并。时间复杂度自然就是<span class="math inline">\(O(n\log n)\)</span>。</p>
 <p>然而事实一定没有那么简单。递归写法的FFT常数很大，很大程度上是因为合并本身不是in-place的，需要额外申请空间。更快的in-place FFT实现，Cooley–Tukey算法，是基于这样一个思路的：</p>
-<p>假设每次分出来的${a}$向左走，${b}$向右走，那递归版的FFT就会画出一棵很漂亮的二叉树，其中叶子节点对应的下标和序列本身的下标顺序是有很大差别的。我们可以预先快速计算出叶子节点的顺序，然后直接从叶子开始就地一层一层地合并上去。</p>
-<p>那叶子节点的顺序遵循怎样的规律呢？其实我们依据奇偶分组本质上是在依据二进制的末位分组，在这样的思想下，我们<del>脑补一下</del>发现这就是叶子节点的下标把原来序列的下标的二进制翻转一下（低位变高位，高位变低位）（即${00, 01,10, 11}$到叶子节点变成${00, 10, 01, 11}$）（可以结合画图理解）。这样的话我们维护一个从高位到低位的二进制加法器就行了。</p>
+<p>假设每次分出来的<span class="math inline">\(\{a\}\)</span>向左走，<span class="math inline">\(\{b\}\)</span>向右走，那递归版的FFT就会画出一棵很漂亮的二叉树，其中叶子节点对应的下标和序列本身的下标顺序是有很大差别的。我们可以预先快速计算出叶子节点的顺序，然后直接从叶子开始就地一层一层地合并上去。</p>
+<p>那叶子节点的顺序遵循怎样的规律呢？其实我们依据奇偶分组本质上是在依据二进制的末位分组，在这样的思想下，我们<del>脑补一下</del>发现这就是叶子节点的下标把原来序列的下标的二进制翻转一下（低位变高位，高位变低位）（即<span class="math inline">\(\{00, 01,10, 11\}\)</span>到叶子节点变成<span class="math inline">\(\{00, 10, 01, 11\}\)</span>）（可以结合画图理解）。这样的话我们维护一个从高位到低位的二进制加法器就行了。</p>
 <p>代码如下：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;cstdio></span></span>
-<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;complex></span></span>
-<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;cmath></span></span>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;complex&gt;
+#include &lt;cmath&gt;
 
-<span class="token keyword">using</span> <span class="token keyword">namespace</span> std<span class="token punctuation">;</span>
-<span class="token keyword">typedef</span> complex<span class="token operator">&lt;</span><span class="token keyword">double</span><span class="token operator">></span> cplx<span class="token punctuation">;</span>
-<span class="token keyword">const</span> <span class="token keyword">double</span> PI <span class="token operator">=</span> <span class="token number">3.1415926535897932384626</span><span class="token punctuation">;</span>
+using namespace std;
+typedef complex&lt;double&gt; cplx;
+const double PI = 3.1415926535897932384626;
 
-<span class="token keyword">void</span> <span class="token function">fft</span><span class="token punctuation">(</span><span class="token keyword">int</span> len<span class="token punctuation">,</span> cplx <span class="token operator">*</span>x<span class="token punctuation">,</span> cplx <span class="token operator">*</span>X<span class="token punctuation">,</span> <span class="token keyword">int</span> dir <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span> k <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> len<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        X<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> x<span class="token punctuation">[</span>k<span class="token punctuation">]</span><span class="token punctuation">;</span>
-        <span class="token keyword">int</span> y <span class="token operator">=</span> len <span class="token operator">>></span> <span class="token number">1</span><span class="token punctuation">;</span>
-        <span class="token keyword">while</span> <span class="token punctuation">(</span>y <span class="token operator">&amp;</span> k<span class="token punctuation">)</span> k <span class="token operator">^=</span> y<span class="token punctuation">,</span> y <span class="token operator">>>=</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token comment">// 维护倒序加法器</span>
-        k <span class="token operator">|=</span> y<span class="token punctuation">;</span> 
-    <span class="token punctuation">&#125;</span>
-    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> s <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span> s <span class="token operator">&lt;=</span> len<span class="token punctuation">;</span> s <span class="token operator">&lt;&lt;=</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        cplx <span class="token function">w_</span><span class="token punctuation">(</span><span class="token function">cos</span><span class="token punctuation">(</span><span class="token number">2</span> <span class="token operator">*</span> PI <span class="token operator">/</span> s<span class="token punctuation">)</span><span class="token punctuation">,</span> dir <span class="token operator">*</span> <span class="token function">sin</span><span class="token punctuation">(</span><span class="token number">2</span> <span class="token operator">*</span> PI <span class="token operator">/</span> s<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> l <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> l <span class="token operator">&lt;</span> len<span class="token punctuation">;</span> l <span class="token operator">+=</span> s<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-            <span class="token keyword">int</span> mid <span class="token operator">=</span> l <span class="token operator">+</span> <span class="token punctuation">(</span>s <span class="token operator">>></span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            cplx w <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
-            <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> s <span class="token operator">>></span> <span class="token number">1</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span> <span class="token comment">// 逐层向上合并（一次蝴蝶操作）</span>
-                cplx t <span class="token operator">=</span> w <span class="token operator">*</span> X<span class="token punctuation">[</span>mid <span class="token operator">+</span> i<span class="token punctuation">]</span><span class="token punctuation">;</span>
-                X<span class="token punctuation">[</span>mid <span class="token operator">+</span> i<span class="token punctuation">]</span> <span class="token operator">=</span> X<span class="token punctuation">[</span>l <span class="token operator">+</span> i<span class="token punctuation">]</span> <span class="token operator">-</span> t<span class="token punctuation">;</span>
-                X<span class="token punctuation">[</span>l <span class="token operator">+</span> i<span class="token punctuation">]</span> <span class="token operator">=</span> X<span class="token punctuation">[</span>l <span class="token operator">+</span> i<span class="token punctuation">]</span> <span class="token operator">+</span> t<span class="token punctuation">;</span>
-                w <span class="token operator">*=</span> w_<span class="token punctuation">;</span> 
-            <span class="token punctuation">&#125;</span>
-        <span class="token punctuation">&#125;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+void fft(int len, cplx *x, cplx *X, int dir = 1) &#123;
+    for (int i = 0, k = 0; i &lt; len; i++) &#123;
+        X[i] = x[k];
+        int y = len &gt;&gt; 1;
+        while (y &amp; k) k ^= y, y &gt;&gt;= 1; // 维护倒序加法器
+        k |= y; 
+    &#125;
+    for (int s = 2; s &lt;= len; s &lt;&lt;= 1) &#123;
+        cplx w_(cos(2 * PI / s), dir * sin(2 * PI / s));
+        for (int l = 0; l &lt; len; l += s) &#123;
+            int mid = l + (s &gt;&gt; 1);
+            cplx w = 1;
+            for (int i = 0; i &lt; s &gt;&gt; 1; i++) &#123; // 逐层向上合并（一次蝴蝶操作）
+                cplx t = w * X[mid + i];
+                X[mid + i] = X[l + i] - t;
+                X[l + i] = X[l + i] + t;
+                w *= w_; 
+            &#125;
+        &#125;
+    &#125;
+&#125;</code></pre>
 
     </div>
 
@@ -435,7 +493,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

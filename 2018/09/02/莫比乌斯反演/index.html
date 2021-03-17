@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="莫比乌斯反演是OI中应对数论问题的一大杀器，可以把很多以前需要脑子想的问题无脑化，把很多脑子想不通的问题机械化，非常方便。 狄利克雷卷积对于函数$f, g$，定义它们的狄利克雷卷积$f \times g$为：$$(f \times g)(n) &#x3D; \sum_{d \mid n} f(d)g\left(\frac{n}{d}\right)$$ 性质积性若$f, g$为积性函数，那么$f \times">
+<meta name="description" content="莫比乌斯反演是OI中应对数论问题的一大杀器，可以把很多以前需要脑子想的问题无脑化，把很多脑子想不通的问题机械化，非常方便。 狄利克雷卷积 对于函数\(f, g\)，定义它们的狄利克雷卷积\(f \times g\)为： \[ (f \times g)(n) &#x3D; \sum_{d \mid n} f(d)g\left(\frac{n}{d}\right) \] 性质 积性 若\(f, g">
 <meta property="og:type" content="article">
 <meta property="og:title" content="莫比乌斯反演">
 <meta property="og:url" content="https://alan20210202.github.io/2018/09/02/%E8%8E%AB%E6%AF%94%E4%B9%8C%E6%96%AF%E5%8F%8D%E6%BC%94/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="莫比乌斯反演是OI中应对数论问题的一大杀器，可以把很多以前需要脑子想的问题无脑化，把很多脑子想不通的问题机械化，非常方便。 狄利克雷卷积对于函数$f, g$，定义它们的狄利克雷卷积$f \times g$为：$$(f \times g)(n) &#x3D; \sum_{d \mid n} f(d)g\left(\frac{n}{d}\right)$$ 性质积性若$f, g$为积性函数，那么$f \times">
+<meta property="og:description" content="莫比乌斯反演是OI中应对数论问题的一大杀器，可以把很多以前需要脑子想的问题无脑化，把很多脑子想不通的问题机械化，非常方便。 狄利克雷卷积 对于函数\(f, g\)，定义它们的狄利克雷卷积\(f \times g\)为： \[ (f \times g)(n) &#x3D; \sum_{d \mid n} f(d)g\left(\frac{n}{d}\right) \] 性质 积性 若\(f, g">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2018-09-02T08:59:23.836Z">
 <meta property="article:modified_time" content="2020-07-30T08:26:46.287Z">
@@ -48,7 +48,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>莫比乌斯反演 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -169,12 +170,14 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8B%84%E5%88%A9%E5%85%8B%E9%9B%B7%E5%8D%B7%E7%A7%AF"><span class="nav-number">1.</span> <span class="nav-text">狄利克雷卷积</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%B4%A8"><span class="nav-number">1.1.</span> <span class="nav-text">性质</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%AF%E6%80%A7"><span class="nav-number">1.1.1.</span> <span class="nav-text">积性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A4%E6%8D%A2%E5%BE%8B"><span class="nav-number">1.1.2.</span> <span class="nav-text">交换律</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E5%90%88%E5%BE%8B"><span class="nav-number">1.1.3.</span> <span class="nav-text">结合律</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E4%BD%8D%E5%85%83"><span class="nav-number">1.1.4.</span> <span class="nav-text">单位元</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A8%E8%AE%BA"><span class="nav-number">1.2.</span> <span class="nav-text">推论</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%8E%AB%E6%AF%94%E4%B9%8C%E6%96%AF%E5%8F%8D%E6%BC%94"><span class="nav-number">2.</span> <span class="nav-text">莫比乌斯反演</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%EF%BC%9A-varphi-n"><span class="nav-number">2.1.</span> <span class="nav-text">示例：$\varphi(n)$</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%EF%BC%9A-sum-i-1-n-varphi-i"><span class="nav-number">2.2.</span> <span class="nav-text">示例：$\sum_{i &#x3D; 1}^n \varphi(i)$</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%EF%BC%9A-sum-i-1-n-sum-j-1-n-gcd-i-j-1"><span class="nav-number">2.3.</span> <span class="nav-text">示例：$\sum_{i &#x3D; 1}^n \sum_{j &#x3D; 1}^n [\gcd(i, j) &#x3D; 1]$</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%EF%BC%9A-sum-i-1-n-sum-j-1-m-gcd-i-j"><span class="nav-number">2.4.</span> <span class="nav-text">示例：$\sum_{i &#x3D; 1}^n \sum_{j &#x3D; 1}^m \gcd(i, j)$</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8B%84%E5%88%A9%E5%85%8B%E9%9B%B7%E5%8D%B7%E7%A7%AF"><span class="nav-number">1.</span> <span class="nav-text">狄利克雷卷积</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%B4%A8"><span class="nav-number">1.1.</span> <span class="nav-text">性质</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%AF%E6%80%A7"><span class="nav-number">1.1.1.</span> <span class="nav-text">积性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A4%E6%8D%A2%E5%BE%8B"><span class="nav-number">1.1.2.</span> <span class="nav-text">交换律</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E5%90%88%E5%BE%8B"><span class="nav-number">1.1.3.</span> <span class="nav-text">结合律</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E4%BD%8D%E5%85%83"><span class="nav-number">1.1.4.</span> <span class="nav-text">单位元</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A8%E8%AE%BA"><span class="nav-number">1.2.</span> <span class="nav-text">推论</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%8E%AB%E6%AF%94%E4%B9%8C%E6%96%AF%E5%8F%8D%E6%BC%94"><span class="nav-number">2.</span> <span class="nav-text">莫比乌斯反演</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8Bvarphin"><span class="nav-number">2.1.</span> <span class="nav-text">示例：\(\varphi(n)\)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8Bsum_i-1n-varphii"><span class="nav-number">2.2.</span> <span class="nav-text">示例：\(\sum_{i &#x3D; 1}^n \varphi(i)\)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8Bsum_i-1n-sum_j-1n-gcdi-j-1"><span class="nav-number">2.3.</span> <span class="nav-text">示例：\(\sum_{i &#x3D; 1}^n \sum_{j &#x3D; 1}^n [\gcd(i, j) &#x3D; 1]\)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8Bsum_i-1n-sum_j-1m-gcdi-j"><span class="nav-number">2.4.</span> <span class="nav-text">示例：\(\sum_{i &#x3D; 1}^n \sum_{j &#x3D; 1}^m \gcd(i, j)\)</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -240,7 +243,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/02/%E8%8E%AB%E6%AF%94%E4%B9%8C%E6%96%AF%E5%8F%8D%E6%BC%94/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -289,36 +292,172 @@
     
     <div class="post-body" itemprop="articleBody">
         <p>莫比乌斯反演是OI中应对数论问题的一大杀器，可以把很多以前需要脑子想的问题无脑化，把很多脑子想不通的问题机械化，非常方便。</p>
-<h1 id="狄利克雷卷积"><a href="#狄利克雷卷积" class="headerlink" title="狄利克雷卷积"></a>狄利克雷卷积</h1><p>对于函数$f, g$，定义它们的狄利克雷卷积$f \times g$为：<br>$$<br>(f \times g)(n) = \sum_{d \mid n} f(d)g\left(\frac{n}{d}\right)<br>$$</p>
-<h2 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h2><h3 id="积性"><a href="#积性" class="headerlink" title="积性"></a>积性</h3><p>若$f, g$为积性函数，那么$f \times g$继承它们的积性。</p>
-<p><strong>证明：</strong>令$n, m$为互素正整数，则易证$nm$的全体约数可以<em>不重不漏地</em>表示为${d_nd_m \mid d_n \mid n, d_m \mid m}$。</p>
-<p>因此：<br>$$<br>\begin{aligned}<br>(f \times g)(nm) &amp;= \sum_{d | n} f(d)g\left(\frac{nm}{d}\right) \<br>&amp;= \sum_{d_n\mid n} \sum_{d_m \mid m} f(d_nd_m)g\left(\frac{nm}{d_nd_m}\right)<br>\end{aligned}<br>$$<br>由$n, m$互素可知$d_n, d_m$互素以及$\frac{n}{d_n}, \frac{m}{d_m}$互素，结合$f, g$的积性：<br>$$<br>\begin{aligned}<br>\begin{aligned}<br>(f \times g)(nm) &amp;= \sum_{d_n\mid n} \sum_{d_m \mid m} f(d_n)f(d_m)g\left(\frac{n}{d_n}\right)g\left(\frac{m}{d_m}\right) \<br>&amp;= \sum_{d_n\mid n} f(d_n)g\left(\frac{n}{d_n}\right) \sum_{d_m \mid m} f(d_m)g\left(\frac{m}{d_m}\right) \<br>&amp;= (f \times g)(n) \cdot (f \times g)(m)<br>\end{aligned}<br>\end{aligned}<br>$$<br>证毕。</p>
-<h3 id="交换律"><a href="#交换律" class="headerlink" title="交换律"></a>交换律</h3><p>$$<br>f \times g = g \times f<br>$$</p>
+<h1 id="狄利克雷卷积">狄利克雷卷积</h1>
+<p>对于函数<span class="math inline">\(f, g\)</span>，定义它们的狄利克雷卷积<span class="math inline">\(f \times g\)</span>为： <span class="math display">\[
+(f \times g)(n) = \sum_{d \mid n} f(d)g\left(\frac{n}{d}\right)
+\]</span></p>
+<h2 id="性质">性质</h2>
+<h3 id="积性">积性</h3>
+<p>若<span class="math inline">\(f, g\)</span>为积性函数，那么<span class="math inline">\(f \times g\)</span>继承它们的积性。</p>
+<p><strong>证明：</strong>令<span class="math inline">\(n, m\)</span>为互素正整数，则易证<span class="math inline">\(nm\)</span>的全体约数可以<em>不重不漏地</em>表示为<span class="math inline">\(\{d_nd_m \mid d_n \mid n, d_m \mid m\}\)</span>。</p>
+<p>因此： <span class="math display">\[
+\begin{aligned}
+(f \times g)(nm) &amp;= \sum_{d | n} f(d)g\left(\frac{nm}{d}\right) \\
+&amp;= \sum_{d_n\mid n} \sum_{d_m \mid m} f(d_nd_m)g\left(\frac{nm}{d_nd_m}\right)
+\end{aligned}
+\]</span> 由<span class="math inline">\(n, m\)</span>互素可知<span class="math inline">\(d_n, d_m\)</span>互素以及<span class="math inline">\(\frac{n}{d_n}, \frac{m}{d_m}\)</span>互素，结合<span class="math inline">\(f, g\)</span>的积性： <span class="math display">\[
+\begin{aligned}
+\begin{aligned}
+(f \times g)(nm) &amp;= \sum_{d_n\mid n} \sum_{d_m \mid m} f(d_n)f(d_m)g\left(\frac{n}{d_n}\right)g\left(\frac{m}{d_m}\right) \\
+&amp;= \sum_{d_n\mid n} f(d_n)g\left(\frac{n}{d_n}\right) \sum_{d_m \mid m} f(d_m)g\left(\frac{m}{d_m}\right) \\
+&amp;= (f \times g)(n) \cdot (f \times g)(m)
+\end{aligned}
+\end{aligned}
+\]</span> 证毕。</p>
+<h3 id="交换律">交换律</h3>
+<p><span class="math display">\[
+f \times g = g \times f
+\]</span></p>
 <p><strong>证明：</strong>由于约数是成对出现的，显然。</p>
-<h3 id="结合律"><a href="#结合律" class="headerlink" title="结合律"></a>结合律</h3><p>$$<br>(f \times g) \times h = f \times (g \times h)<br>$$</p>
-<p><strong>证明：</strong>我们需要稍微改变一下下标的写法，然后就非常清楚了：<br>$$<br>\begin{aligned}<br>\left<a href="n">(f \times g) \times h \right</a> &amp;= \sum_{ab = n} (f \times g)(a) h(b) \<br>&amp;= \sum_{ab = n} \sum_{cd = a}f(c)g(d) h(b) \<br>&amp;= \sum_{bcd = n} f(c)g(d)h(b) \<br>&amp;= \sum_{ce = n} f(c) \sum_{bd = e} g(d)h(b) \<br>&amp;= \sum_{ce = n} f(c) (g \times h)(b) \<br>&amp;= \left<a href="n">f \times (g \times h)\right</a><br>\end{aligned}<br>$$</p>
+<h3 id="结合律">结合律</h3>
+<p><span class="math display">\[
+(f \times g) \times h = f \times (g \times h)
+\]</span></p>
+<p><strong>证明：</strong>我们需要稍微改变一下下标的写法，然后就非常清楚了： <span class="math display">\[
+\begin{aligned}
+\left[(f \times g) \times h \right](n) &amp;= \sum_{ab = n} (f \times g)(a) h(b) \\
+&amp;= \sum_{ab = n} \sum_{cd = a}f(c)g(d) h(b) \\
+&amp;= \sum_{bcd = n} f(c)g(d)h(b) \\
+&amp;= \sum_{ce = n} f(c) \sum_{bd = e} g(d)h(b) \\
+&amp;= \sum_{ce = n} f(c) (g \times h)(b) \\
+&amp;= \left[f \times (g \times h)\right](n)
+\end{aligned}
+\]</span></p>
 <p>得证。</p>
-<h3 id="单位元"><a href="#单位元" class="headerlink" title="单位元"></a>单位元</h3><p>定义<br>$$<br>\varepsilon(n) = [n = 1]<br>$$<br>易证$\varepsilon$为狄利克雷卷积的单位元，<em>也是一个积性函数</em>，在之后的反演当中，我们也经常会把$\varepsilon$作为艾弗森括号$[]$的替代品，因为它具有更优良的性质，简单来说：<br>$$<br>[f(x) = y] = \varepsilon\left(\frac{f(x)}{y}\right)<br>$$</p>
-<h2 id="推论"><a href="#推论" class="headerlink" title="推论"></a>推论</h2><p>关于狄利克雷卷积我们有两条非常重要的推论：<br>$$<br>\begin{aligned}<br>\mu \times 1 &amp;= \varepsilon \<br>\varphi \times 1 &amp;= I<br>\end{aligned}<br>$$<br>当中$1$为值恒为$1$的常值函数，$I(x) = x$为恒等函数，易证这两个都是完全积性函数。</p>
-<p><strong>证明：</strong>我们先证明第一条，假设$n &gt; 1$有$r$个素因子，从当中挑去若干个相乘组成$n$的<strong>不含平方素因子</strong>的约数（如果约数含平方素因子则约数的$\mu$为$0$，可以直接忽略）则我们有：<br>$$<br>\begin{aligned}<br>(\mu \times 1)(n) &amp;= \sum_{i = 0}^r \binom{r}{i} (-1)^i \<br>&amp;= \sum_{i = 0}^r \binom{r}{i} (-1)^i\cdot 1^{r - i}<br>\end{aligned}<br>$$<br>结合二项式定理，得到$(\mu \times 1)(n) = (1-1)^r=0$，而如果$n = 1$，手动展开得到$(\mu \times 1)(1) = \mu(1) = 1$。两种情况结合起来得到$\mu \times 1 = \varepsilon$，第一条推论得证。</p>
-<p>对于第二条推论，我们将其展开：<br>$$<br>\sum_{d \mid n} \varphi(i) = n<br>$$<br>我们先考察$n$为素数（或其幂次）的情况，设$n = p^k$，则原式左边变为：<br>$$<br>\begin{aligned}<br>\sum_{i = 0}^k \varphi(p^i) &amp;= 1 +\sum_{i = 1} ^ k p^i\left(1 - {1 \over p}\right) \<br>&amp;= 1 + \left(1 - {1 \over p}\right)\sum_{i = 1} ^ k p^i \<br>&amp;= 1 + \frac{p - 1}{p} \cdot \frac{p^{k + 1} - p}{p - 1} \<br>&amp;= 1 + p^k - 1 \<br>&amp;= p^k<br>\end{aligned}<br>$$<br>因此在$n$为素数或其幂次时推论得证，而我们知道$\varphi \times 1$<strong>继承了积性</strong>，因此我们可以<strong>利用积性把推论推广到$n$不为素数的情况</strong>（通过分解素因数即可），证毕。</p>
-<h1 id="莫比乌斯反演"><a href="#莫比乌斯反演" class="headerlink" title="莫比乌斯反演"></a>莫比乌斯反演</h1><p><strong>定理：</strong>$f \times 1 = g$当且仅当$f = g \times \mu$。</p>
-<p><strong>证明：</strong>本质上是狄利克雷卷积的推论的推论，先正着来一轮，两边同时乘以$\mu$：<br>$$<br>\begin{aligned}<br>f \times 1 &amp;= g \<br>\Rightarrow f \times 1 \times \mu &amp;= g \times \mu \<br>\Rightarrow f \times \varepsilon &amp;= g \times \mu \<br>\Rightarrow f &amp;= g \times \mu \<br>\end{aligned}<br>$$<br>我们再反着来一轮，两边同时乘上$1$：<br>$$<br>\begin{aligned}<br>f &amp;= g \times \mu \<br>\Rightarrow f \times 1 &amp;= g \times \mu \times 1 \<br>\Rightarrow f \times 1 &amp;= g \times \varepsilon \<br>\Rightarrow f \times 1 &amp;= g<br>\end{aligned}<br>$$<br>（所以说不要迷行网上那种大力出奇迹几个$\sum$展开来回套的证明，看这个多简单）</p>
+<h3 id="单位元">单位元</h3>
+<p>定义 <span class="math display">\[
+\varepsilon(n) = [n = 1]
+\]</span> 易证<span class="math inline">\(\varepsilon\)</span>为狄利克雷卷积的单位元，<em>也是一个积性函数</em>，在之后的反演当中，我们也经常会把<span class="math inline">\(\varepsilon\)</span>作为艾弗森括号<span class="math inline">\([]\)</span>的替代品，因为它具有更优良的性质，简单来说： <span class="math display">\[
+[f(x) = y] = \varepsilon\left(\frac{f(x)}{y}\right)
+\]</span></p>
+<h2 id="推论">推论</h2>
+<p>关于狄利克雷卷积我们有两条非常重要的推论： <span class="math display">\[
+\begin{aligned}
+\mu \times 1 &amp;= \varepsilon \\
+\varphi \times 1 &amp;= I
+\end{aligned}
+\]</span> 当中<span class="math inline">\(1\)</span>为值恒为<span class="math inline">\(1\)</span>的常值函数，<span class="math inline">\(I(x) = x\)</span>为恒等函数，易证这两个都是完全积性函数。</p>
+<p><strong>证明：</strong>我们先证明第一条，假设<span class="math inline">\(n &gt; 1\)</span>有<span class="math inline">\(r\)</span>个素因子，从当中挑去若干个相乘组成<span class="math inline">\(n\)</span>的<strong>不含平方素因子</strong>的约数（如果约数含平方素因子则约数的<span class="math inline">\(\mu\)</span>为<span class="math inline">\(0\)</span>，可以直接忽略）则我们有： <span class="math display">\[
+\begin{aligned}
+(\mu \times 1)(n) &amp;= \sum_{i = 0}^r \binom{r}{i} (-1)^i \\
+&amp;= \sum_{i = 0}^r \binom{r}{i} (-1)^i\cdot 1^{r - i}
+\end{aligned}
+\]</span> 结合二项式定理，得到<span class="math inline">\((\mu \times 1)(n) = (1-1)^r=0\)</span>，而如果<span class="math inline">\(n = 1\)</span>，手动展开得到<span class="math inline">\((\mu \times 1)(1) = \mu(1) = 1\)</span>。两种情况结合起来得到<span class="math inline">\(\mu \times 1 = \varepsilon\)</span>，第一条推论得证。</p>
+<p>对于第二条推论，我们将其展开： <span class="math display">\[
+\sum_{d \mid n} \varphi(i) = n
+\]</span> 我们先考察<span class="math inline">\(n\)</span>为素数（或其幂次）的情况，设<span class="math inline">\(n = p^k\)</span>，则原式左边变为： <span class="math display">\[
+\begin{aligned}
+\sum_{i = 0}^k \varphi(p^i) &amp;= 1 +\sum_{i = 1} ^ k p^i\left(1 - {1 \over p}\right) \\
+&amp;= 1 + \left(1 - {1 \over p}\right)\sum_{i = 1} ^ k p^i \\
+&amp;= 1 + \frac{p - 1}{p} \cdot \frac{p^{k + 1} - p}{p - 1} \\
+&amp;= 1 + p^k - 1 \\
+&amp;= p^k
+\end{aligned}
+\]</span> 因此在<span class="math inline">\(n\)</span>为素数或其幂次时推论得证，而我们知道<span class="math inline">\(\varphi \times 1\)</span><strong>继承了积性</strong>，因此我们可以<strong>利用积性把推论推广到<span class="math inline">\(n\)</span>不为素数的情况</strong>（通过分解素因数即可），证毕。</p>
+<h1 id="莫比乌斯反演">莫比乌斯反演</h1>
+<p><strong>定理：</strong><span class="math inline">\(f \times 1 = g\)</span>当且仅当<span class="math inline">\(f = g \times \mu\)</span>。</p>
+<p><strong>证明：</strong>本质上是狄利克雷卷积的推论的推论，先正着来一轮，两边同时乘以<span class="math inline">\(\mu\)</span>： <span class="math display">\[
+\begin{aligned}
+f \times 1 &amp;= g \\
+\Rightarrow f \times 1 \times \mu &amp;= g \times \mu \\
+\Rightarrow f \times \varepsilon &amp;= g \times \mu \\
+\Rightarrow f &amp;= g \times \mu \\
+\end{aligned}
+\]</span> 我们再反着来一轮，两边同时乘上<span class="math inline">\(1\)</span>： <span class="math display">\[
+\begin{aligned}
+f &amp;= g \times \mu \\
+\Rightarrow f \times 1 &amp;= g \times \mu \times 1 \\
+\Rightarrow f \times 1 &amp;= g \times \varepsilon \\
+\Rightarrow f \times 1 &amp;= g
+\end{aligned}
+\]</span> （所以说不要迷行网上那种大力出奇迹几个<span class="math inline">\(\sum\)</span>展开来回套的证明，看这个多简单）</p>
 <p><strong>虽然存在这个莫比乌斯反演定理，但是我们更多的时候还是习惯逆用狄利克雷卷积的那两个推论。</strong></p>
-<h2 id="示例：-varphi-n"><a href="#示例：-varphi-n" class="headerlink" title="示例：$\varphi(n)$"></a>示例：$\varphi(n)$</h2><p>$$<br>\begin{aligned}<br>\varphi(n) &amp;= \sum_{i = 1}^n [\gcd(i, n) = 1] \<br>&amp;= \sum_{i = 1}^n \varepsilon(\gcd(i, n)) \<br>\end{aligned}<br>$$</p>
-<p>此时我们使用推论$\varepsilon = \mu \times 1$：<br>$$<br>\begin{aligned}<br>\varphi(n) &amp;= \sum_{i = 1}^n \varepsilon(\gcd(i, n)) \<br>&amp;= \sum_{i = 1}^n \sum_{d \mid \gcd(i, n)} \mu(d) \<br>&amp;= \sum_{i = 1}^n \sum_{d \mid i, d \mid n} \mu(d) \<br>\end{aligned}<br>$$<br>接下来我们把$d$的求和拖到前面去，本质上是从<strong>对约数求和变为对倍数算贡献</strong>：<br>$$<br>\begin{aligned}<br>\varphi(n) &amp;= \sum_{i = 1}^n \sum_{d \mid i, d \mid n} \mu(d) \<br>&amp;= \sum_{d \mid n} \mu(d) \sum_{i = 1, d \mid i}^n 1 \<br>&amp;= \sum_{d \mid n} \mu(d) \sum_{i = 1}^{n \over d} 1 \<br>&amp;= \sum_{d \mid n} \mu(d) \frac{n}{d} \<br>&amp;= \sum_{d \mid n} \mu(d) I\left(\frac{n}{d}\right) \<br>&amp;= (\mu \times id)(n)<br>\end{aligned}<br>$$<br>因此我们证明了$\varphi = \mu \times id$，虽然这个结论是可以直接从莫比乌斯反演定理推得的，但是呢，这个例子确实展示了莫比乌斯反演的很多常用套路：</p>
-<ol>
+<h2 id="示例varphin">示例：<span class="math inline">\(\varphi(n)\)</span></h2>
+<p><span class="math display">\[
+\begin{aligned}
+\varphi(n) &amp;= \sum_{i = 1}^n [\gcd(i, n) = 1] \\
+&amp;= \sum_{i = 1}^n \varepsilon(\gcd(i, n)) \\
+\end{aligned}
+\]</span></p>
+<p>此时我们使用推论<span class="math inline">\(\varepsilon = \mu \times 1\)</span>： <span class="math display">\[
+\begin{aligned}
+\varphi(n) &amp;= \sum_{i = 1}^n \varepsilon(\gcd(i, n)) \\
+&amp;= \sum_{i = 1}^n \sum_{d \mid \gcd(i, n)} \mu(d) \\
+&amp;= \sum_{i = 1}^n \sum_{d \mid i, d \mid n} \mu(d) \\
+\end{aligned}
+\]</span> 接下来我们把<span class="math inline">\(d\)</span>的求和拖到前面去，本质上是从<strong>对约数求和变为对倍数算贡献</strong>： <span class="math display">\[
+\begin{aligned}
+\varphi(n) &amp;= \sum_{i = 1}^n \sum_{d \mid i, d \mid n} \mu(d) \\
+&amp;= \sum_{d \mid n} \mu(d) \sum_{i = 1, d \mid i}^n 1 \\
+&amp;= \sum_{d \mid n} \mu(d) \sum_{i = 1}^{n \over d} 1 \\
+&amp;= \sum_{d \mid n} \mu(d) \frac{n}{d} \\
+&amp;= \sum_{d \mid n} \mu(d) I\left(\frac{n}{d}\right) \\
+&amp;= (\mu \times id)(n)
+\end{aligned}
+\]</span> 因此我们证明了<span class="math inline">\(\varphi = \mu \times id\)</span>，虽然这个结论是可以直接从莫比乌斯反演定理推得的，但是呢，这个例子确实展示了莫比乌斯反演的很多常用套路：</p>
+<ol type="1">
 <li>把式子写下来</li>
-<li>用$id$或者$\varepsilon$修饰</li>
+<li>用<span class="math inline">\(id\)</span>或者<span class="math inline">\(\varepsilon\)</span>修饰</li>
 <li>逆用狄利克雷卷积的推论，把求和式后面反演成卷积形式</li>
-<li>通过算贡献的方式设法把$d$的求和项连带着只和$d$有关的函数值一起拖到最前面</li>
+<li>通过算贡献的方式设法把<span class="math inline">\(d\)</span>的求和项连带着只和<span class="math inline">\(d\)</span>有关的函数值一起拖到最前面</li>
 <li>化简后半部分</li>
 </ol>
 <p>这一路下来其实是非常套路的，但往往效果拔群。</p>
-<h2 id="示例：-sum-i-1-n-varphi-i"><a href="#示例：-sum-i-1-n-varphi-i" class="headerlink" title="示例：$\sum_{i = 1}^n \varphi(i)$"></a>示例：$\sum_{i = 1}^n \varphi(i)$</h2><p><strong>以下为了方便起见，如果出现$n, m$，皆假设$n \le m$！</strong></p>
-<p>我们试试看刚刚学到的套路，来反演欧拉函数的前缀和：<br>$$<br>\begin{aligned}<br>\sum_{i = 1}^n \varphi(i) &amp;= \sum_{i = 1}^n \sum_{j = 1}^i [\gcd(i, j) = 1] \<br>&amp;= \sum_{i = 1}^n \sum_{j = 1}^i \varepsilon(\gcd(i, j) = 1) \<br>&amp;= \sum_{i = 1}^n \sum_{j = 1}^i \sum_{d \mid \gcd(i, j)} \mu(d) \<br>&amp;= \sum_{i = 1}^n \sum_{j = 1}^i \sum_{d \mid i, d \mid j} \mu(d) \<br>&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1, d \mid i}^n \sum_{j = 1, d \mid j}^i 1\<br>&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} \sum_{j = 1}^i 1\<br>&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} i\<br>&amp;= \sum_{d = 1}^n \mu(d) \frac{\left\lfloor \frac{n}{d} \right\rfloor \left(\left\lfloor \frac{n}{d} \right\rfloor + 1\right)}{2}\<br>&amp;= \frac{1}{2} \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \left(\left\lfloor \frac{n}{d} \right\rfloor + 1\right)<br>\end{aligned}<br>$$<br>嗯，很好，很强大，但是这个有什么用呢？</p>
-<h2 id="示例：-sum-i-1-n-sum-j-1-n-gcd-i-j-1"><a href="#示例：-sum-i-1-n-sum-j-1-n-gcd-i-j-1" class="headerlink" title="示例：$\sum_{i = 1}^n \sum_{j = 1}^n [\gcd(i, j) = 1]$"></a>示例：$\sum_{i = 1}^n \sum_{j = 1}^n [\gcd(i, j) = 1]$</h2><p>这个式子对应POJ3090，即有一个$n \times n$个格点，问从最左下角能够看到几个格点，我们发现如果格点$(i, j)$不互素的话，它一定不会被看到，因此题目就被转化成了我们要求的式子，常规做法是通过把格点劈成三角形，进行转化得到答案为$2\sum_{i = 1}^n \varphi(n) - 1$，但是这毕竟还需要一点智商，而如果你莫比乌斯反演熟练的话，这个东西推起来是非常机械化的：<br>$$<br>\begin{aligned}<br>\sum_{i = 1}^n \sum_{j = 1}^n [\gcd(i, j) = 1] &amp;= \sum_{i = 1}^n \sum_{j = 1}^n \varepsilon(\gcd(i, j) = 1)\<br>&amp;= \sum_{i = 1}^n \sum_{j = 1}^n \sum_{d \mid i, d \mid j} \mu(d)\<br>&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1, d \mid i}^n \sum_{j = 1, d \mid j}^n 1 \<br>&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} \sum_{j = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} 1 \<br>&amp;= \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor^2 \<br>&amp;= 2 \left( \frac{1}{2} \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \left(\left\lfloor \frac{n}{d} \right\rfloor + 1\right) \right) - \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \<br>&amp;= 2\sum_{i = 1}^n \varphi(i) - \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor<br>\end{aligned}<br>$$<br>那么$\sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor$又是什么呢？我们借着套路反着反演：<br>$$<br>\begin{aligned}<br>\sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor &amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1, d \mid i}^n 1 \<br>&amp;= \sum_{i = 1}^n \sum_{d \mid i} \mu(d) \<br>&amp;= \sum_{i = 1}^n (\mu \times 1)(d) \<br>&amp;= \sum_{i = 1}^n \varepsilon(i) \<br>&amp;= 1<br>\end{aligned}<br>$$<br>原来这个是$1$啊，那么带回去我们就得到了：<br>$$<br>\sum_{i = 1}^n \sum_{j = 1}^n [\gcd(i, j) = 1] = 2\sum_{i = 1}^n \varphi(i) - 1<br>$$<br>以上推导中我们完全没有用到$\varphi, \mu$的数学意义，而是顺着我们推导出的狄利克雷卷积的规则和推论进行着机械化的推导，最后也殊途同归，也许有些人会觉得这样没有卵用，那么试解：<br>$$<br>\sum_{i = 1}^n \sum_{j = 1}^m [\gcd(i, j) = 1]<br>$$<br>借助图形和数学意义的人看到这个式子大概就去世了，但是如果我们利用反演的话，类似以上的过程可以推得：<br>$$<br>\sum_{i = 1}^n \sum_{j = 1}^m [\gcd(i, j) = 1] = \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \left\lfloor \frac{m}{d} \right\rfloor<br>$$<br>结合整除分块和$O(n)$预处理莫比乌斯函数的前缀和我们就可以在$O(\sqrt n)$的时间里回答每一个询问，这就是莫比乌斯反演的强大之处。</p>
-<h2 id="示例：-sum-i-1-n-sum-j-1-m-gcd-i-j"><a href="#示例：-sum-i-1-n-sum-j-1-m-gcd-i-j" class="headerlink" title="示例：$\sum_{i = 1}^n \sum_{j = 1}^m \gcd(i, j)$"></a>示例：$\sum_{i = 1}^n \sum_{j = 1}^m \gcd(i, j)$</h2><p>观察这个式子，我们发现和上面实例中式子的唯一不同就是我们把$\varepsilon$换成了$id$，对应下来就是$\mu$换成了$\varphi$，因此我们可以得到：<br>$$<br>\sum_{i = 1}^n \sum_{j = 1}^m \gcd(i, j) = \sum_{d = 1}^n \varphi(d) \left\lfloor \frac{n}{d} \right\rfloor \left\lfloor \frac{m}{d} \right\rfloor<br>$$<br>依然是$O(n)$预处理$O(\sqrt n)$查询！</p>
+<h2 id="示例sum_i-1n-varphii">示例：<span class="math inline">\(\sum_{i = 1}^n \varphi(i)\)</span></h2>
+<p><strong>以下为了方便起见，如果出现<span class="math inline">\(n, m\)</span>，皆假设<span class="math inline">\(n \le m\)</span>！</strong></p>
+<p>我们试试看刚刚学到的套路，来反演欧拉函数的前缀和： <span class="math display">\[
+\begin{aligned}
+\sum_{i = 1}^n \varphi(i) &amp;= \sum_{i = 1}^n \sum_{j = 1}^i [\gcd(i, j) = 1] \\
+&amp;= \sum_{i = 1}^n \sum_{j = 1}^i \varepsilon(\gcd(i, j) = 1) \\
+&amp;= \sum_{i = 1}^n \sum_{j = 1}^i \sum_{d \mid \gcd(i, j)} \mu(d) \\
+&amp;= \sum_{i = 1}^n \sum_{j = 1}^i \sum_{d \mid i, d \mid j} \mu(d) \\
+&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1, d \mid i}^n \sum_{j = 1, d \mid j}^i 1\\
+&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} \sum_{j = 1}^i 1\\
+&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} i\\
+&amp;= \sum_{d = 1}^n \mu(d) \frac{\left\lfloor \frac{n}{d} \right\rfloor \left(\left\lfloor \frac{n}{d} \right\rfloor + 1\right)}{2}\\
+&amp;= \frac{1}{2} \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \left(\left\lfloor \frac{n}{d} \right\rfloor + 1\right)
+\end{aligned}
+\]</span> 嗯，很好，很强大，但是这个有什么用呢？</p>
+<h2 id="示例sum_i-1n-sum_j-1n-gcdi-j-1">示例：<span class="math inline">\(\sum_{i = 1}^n \sum_{j = 1}^n [\gcd(i, j) = 1]\)</span></h2>
+<p>这个式子对应POJ3090，即有一个<span class="math inline">\(n \times n\)</span>个格点，问从最左下角能够看到几个格点，我们发现如果格点<span class="math inline">\((i, j)\)</span>不互素的话，它一定不会被看到，因此题目就被转化成了我们要求的式子，常规做法是通过把格点劈成三角形，进行转化得到答案为<span class="math inline">\(2\sum_{i = 1}^n \varphi(n) - 1\)</span>，但是这毕竟还需要一点智商，而如果你莫比乌斯反演熟练的话，这个东西推起来是非常机械化的： <span class="math display">\[
+\begin{aligned}
+\sum_{i = 1}^n \sum_{j = 1}^n [\gcd(i, j) = 1] &amp;= \sum_{i = 1}^n \sum_{j = 1}^n \varepsilon(\gcd(i, j) = 1)\\
+&amp;= \sum_{i = 1}^n \sum_{j = 1}^n \sum_{d \mid i, d \mid j} \mu(d)\\
+&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1, d \mid i}^n \sum_{j = 1, d \mid j}^n 1 \\
+&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} \sum_{j = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} 1 \\
+&amp;= \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor^2 \\
+&amp;= 2 \left( \frac{1}{2} \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \left(\left\lfloor \frac{n}{d} \right\rfloor + 1\right) \right) - \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \\
+&amp;= 2\sum_{i = 1}^n \varphi(i) - \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor
+\end{aligned}
+\]</span> 那么<span class="math inline">\(\sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor\)</span>又是什么呢？我们借着套路反着反演： <span class="math display">\[
+\begin{aligned}
+\sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor &amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1, d \mid i}^n 1 \\
+&amp;= \sum_{i = 1}^n \sum_{d \mid i} \mu(d) \\
+&amp;= \sum_{i = 1}^n (\mu \times 1)(d) \\
+&amp;= \sum_{i = 1}^n \varepsilon(i) \\
+&amp;= 1
+\end{aligned}
+\]</span> 原来这个是<span class="math inline">\(1\)</span>啊，那么带回去我们就得到了： <span class="math display">\[
+\sum_{i = 1}^n \sum_{j = 1}^n [\gcd(i, j) = 1] = 2\sum_{i = 1}^n \varphi(i) - 1
+\]</span> 以上推导中我们完全没有用到<span class="math inline">\(\varphi, \mu\)</span>的数学意义，而是顺着我们推导出的狄利克雷卷积的规则和推论进行着机械化的推导，最后也殊途同归，也许有些人会觉得这样没有卵用，那么试解： <span class="math display">\[
+\sum_{i = 1}^n \sum_{j = 1}^m [\gcd(i, j) = 1]
+\]</span> 借助图形和数学意义的人看到这个式子大概就去世了，但是如果我们利用反演的话，类似以上的过程可以推得： <span class="math display">\[
+\sum_{i = 1}^n \sum_{j = 1}^m [\gcd(i, j) = 1] = \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \left\lfloor \frac{m}{d} \right\rfloor
+\]</span> 结合整除分块和<span class="math inline">\(O(n)\)</span>预处理莫比乌斯函数的前缀和我们就可以在<span class="math inline">\(O(\sqrt n)\)</span>的时间里回答每一个询问，这就是莫比乌斯反演的强大之处。</p>
+<h2 id="示例sum_i-1n-sum_j-1m-gcdi-j">示例：<span class="math inline">\(\sum_{i = 1}^n \sum_{j = 1}^m \gcd(i, j)\)</span></h2>
+<p>观察这个式子，我们发现和上面实例中式子的唯一不同就是我们把<span class="math inline">\(\varepsilon\)</span>换成了<span class="math inline">\(id\)</span>，对应下来就是<span class="math inline">\(\mu\)</span>换成了<span class="math inline">\(\varphi\)</span>，因此我们可以得到： <span class="math display">\[
+\sum_{i = 1}^n \sum_{j = 1}^m \gcd(i, j) = \sum_{d = 1}^n \varphi(d) \left\lfloor \frac{n}{d} \right\rfloor \left\lfloor \frac{m}{d} \right\rfloor
+\]</span> 依然是<span class="math inline">\(O(n)\)</span>预处理<span class="math inline">\(O(\sqrt n)\)</span>查询！</p>
 
     </div>
 
@@ -410,7 +549,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

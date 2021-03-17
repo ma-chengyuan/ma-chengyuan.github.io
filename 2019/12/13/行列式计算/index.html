@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="行列式值的排列定义$$A_{n\times n} &#x3D; \sum_{\pi \in S_n} (-1)^{\sigma(\pi)}\prod_{i&#x3D;1}^na_{i, \pi(i)}$$ 其中$S_n$表示所有$n$排列的集合，$\pi$表示一个排列，$\sigma(\pi)$表示$\pi$的逆序对数，即$$\sigma(\pi)&#x3D;\sum_{i&lt;j}[\pi(i) &gt; \pi(j)]$">
+<meta name="description" content="行列式值的排列定义 \[ A_{n\times n} &#x3D; \sum_{\pi \in S_n} (-1)^{\sigma(\pi)}\prod_{i&#x3D;1}^na_{i, \pi(i)} \] 其中\(S_n\)表示所有\(n\)排列的集合，\(\pi\)表示一个排列，\(\sigma(\pi)\)表示\(\pi\)的逆序对数，即 \[ \sigma(\pi)&#x3D;\sum_{i&lt;j}[">
 <meta property="og:type" content="article">
 <meta property="og:title" content="行列式值的按行列展开定义与排列定义等价性证明">
 <meta property="og:url" content="https://alan20210202.github.io/2019/12/13/%E8%A1%8C%E5%88%97%E5%BC%8F%E8%AE%A1%E7%AE%97/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="行列式值的排列定义$$A_{n\times n} &#x3D; \sum_{\pi \in S_n} (-1)^{\sigma(\pi)}\prod_{i&#x3D;1}^na_{i, \pi(i)}$$ 其中$S_n$表示所有$n$排列的集合，$\pi$表示一个排列，$\sigma(\pi)$表示$\pi$的逆序对数，即$$\sigma(\pi)&#x3D;\sum_{i&lt;j}[\pi(i) &gt; \pi(j)]$">
+<meta property="og:description" content="行列式值的排列定义 \[ A_{n\times n} &#x3D; \sum_{\pi \in S_n} (-1)^{\sigma(\pi)}\prod_{i&#x3D;1}^na_{i, \pi(i)} \] 其中\(S_n\)表示所有\(n\)排列的集合，\(\pi\)表示一个排列，\(\sigma(\pi)\)表示\(\pi\)的逆序对数，即 \[ \sigma(\pi)&#x3D;\sum_{i&lt;j}[">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-12-13T09:53:48.013Z">
 <meta property="article:modified_time" content="2019-12-13T14:51:55.366Z">
@@ -48,7 +48,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>行列式值的按行列展开定义与排列定义等价性证明 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -175,6 +176,8 @@
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -240,7 +243,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/12/13/%E8%A1%8C%E5%88%97%E5%BC%8F%E8%AE%A1%E7%AE%97/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -282,52 +285,72 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="行列式值的排列定义"><a href="#行列式值的排列定义" class="headerlink" title="行列式值的排列定义"></a>行列式值的排列定义</h1><p>$$<br>A_{n\times n} = \sum_{\pi \in S_n} (-1)^{\sigma(\pi)}\prod_{i=1}^na_{i, \pi(i)}<br>$$</p>
-<p>其中$S_n$表示所有$n$排列的集合，$\pi$表示一个排列，$\sigma(\pi)$表示$\pi$的逆序对数，即<br>$$<br>\sigma(\pi)=\sum_{i&lt;j}[\pi(i) &gt; \pi(j)]<br>$$</p>
-<h1 id="等价性证明"><a href="#等价性证明" class="headerlink" title="等价性证明"></a>等价性证明</h1><p>使用归纳证明。（自己想的，觉得可能绕了很大的弯路。）</p>
-<ol>
-<li><p>$n=1,2,3$时显然。</p>
-</li>
-<li><p>假设$n=k \quad (k \in \mathbb{N^{\ast}})$时成立，考虑$n=k+1$时的情况。</p>
-<p>不失一般性，考虑第$i$行展开：<br>$$<br>A_{(k + 1) \times (k + 1)} = \sum_{j=1}^{k+1} a_{i,j}(-1)^{i+j}M_{i,j}<br>$$<br>其中$M_{i, j}$为$k$阶行列式。考虑如何计算$M_{i, j}$，由归纳假设。<br>$$<br>M_{i,j} = \sum_{\pi \in S_k}(-1)^{\sigma(\pi)}\prod_{l=1, l \neq i}^{k+1} a_{l, \pi’(l)}<br>$$</p>
-<p>（后面所有推导用到的$i,j,\pi$都指上式中的相关符号）其中<br>$$<br>\pi’(l) = \pi(l-[l &gt; i]) + [\pi(l-[l &gt; i])\ge j]<br>$$<br>定义$\pi’$是为了跳过被删去的第$i$行和第$j$列，不改变元素间的大小关系。</p>
-<p>接下来考虑排列<br>$$<br>\pi^{\ast}(l) = \begin{cases}</p>
-<pre><code>j, &amp;l=i \\
-\pi&#39;(l), &amp;l\neq i
-</code></pre>
-<p>\end{cases}<br>$$<br>显然$\pi^{\ast}$表示了把$i \mapsto j$“插入”$\pi$的结果。</p>
-<p>观察到<br>$$<br>\begin{aligned}</p>
-<pre><code>\sigma(\pi^&#123;\ast&#125;) &amp;= \sigma(\pi) + \sum_&#123;l=1&#125;^&#123;i-1&#125;[\pi&#39;(l)&gt;j] + \sum_&#123;l=i+1&#125;^&#123;k+1&#125;[\pi&#39;(l)&lt;j] \\
-&amp;= \sigma(\pi) + \underbrace&#123;\sum_&#123;l =1&#125;^&#123;i-1&#125;[\pi(l) \ge j] + \sum_&#123;l=i&#125;^k[\pi(l)&lt;j]&#125;_&#123;\Delta\sigma&#125;
-</code></pre>
-<p>\end{aligned}<br>$$<br>接下来只需要证明$(-1)^{\Delta\sigma}=(-1)^{i + j}$。</p>
-<p>注意到，可以通过交换元素在任意两个排列之间变换（证明显然略，冒泡排序算法给出了进行此类交换的步骤构造）。为了简便起见，称$l=1,2,3,\cdots,i$为“前面”，$l=i+1,i+2,\cdots,k$为“后面”，$\pi(l)&lt;j$为“小”，$\pi(l) \ge j$为”大”。</p>
-<p>那么显然，前面和前面，后面和后面的交换不改变$\Delta\sigma$。着重考虑前面后面之间交换的情况。</p>
+        <h1 id="行列式值的排列定义">行列式值的排列定义</h1>
+<p><span class="math display">\[
+A_{n\times n} = \sum_{\pi \in S_n} (-1)^{\sigma(\pi)}\prod_{i=1}^na_{i, \pi(i)}
+\]</span></p>
+<p>其中<span class="math inline">\(S_n\)</span>表示所有<span class="math inline">\(n\)</span>排列的集合，<span class="math inline">\(\pi\)</span>表示一个排列，<span class="math inline">\(\sigma(\pi)\)</span>表示<span class="math inline">\(\pi\)</span>的逆序对数，即 <span class="math display">\[
+\sigma(\pi)=\sum_{i&lt;j}[\pi(i) &gt; \pi(j)]
+\]</span></p>
+<h1 id="等价性证明">等价性证明</h1>
+<p>使用归纳证明。（自己想的，觉得可能绕了很大的弯路。）</p>
+<ol type="1">
+<li><p><span class="math inline">\(n=1,2,3\)</span>时显然。</p></li>
+<li><p>假设<span class="math inline">\(n=k \quad (k \in \mathbb{N^{\ast}})\)</span>时成立，考虑<span class="math inline">\(n=k+1\)</span>时的情况。</p>
+<p>不失一般性，考虑第<span class="math inline">\(i\)</span>行展开： <span class="math display">\[
+A_{(k + 1) \times (k + 1)} = \sum_{j=1}^{k+1} a_{i,j}(-1)^{i+j}M_{i,j}
+\]</span> 其中<span class="math inline">\(M_{i, j}\)</span>为<span class="math inline">\(k\)</span>阶行列式。考虑如何计算<span class="math inline">\(M_{i, j}\)</span>，由归纳假设。 <span class="math display">\[
+M_{i,j} = \sum_{\pi \in S_k}(-1)^{\sigma(\pi)}\prod_{l=1, l \neq i}^{k+1} a_{l, \pi&#39;(l)}
+\]</span></p>
+<p>（后面所有推导用到的<span class="math inline">\(i,j,\pi\)</span>都指上式中的相关符号）其中 <span class="math display">\[
+\pi&#39;(l) = \pi(l-[l &gt; i]) + [\pi(l-[l &gt; i])\ge j]
+\]</span> 定义<span class="math inline">\(\pi&#39;\)</span>是为了跳过被删去的第<span class="math inline">\(i\)</span>行和第<span class="math inline">\(j\)</span>列，不改变元素间的大小关系。</p>
+<p>接下来考虑排列 <span class="math display">\[
+\pi^{\ast}(l) = \begin{cases}
+ j, &amp;l=i \\
+ \pi&#39;(l), &amp;l\neq i
+\end{cases}
+\]</span> 显然<span class="math inline">\(\pi^{\ast}\)</span>表示了把<span class="math inline">\(i \mapsto j\)</span>“插入”<span class="math inline">\(\pi\)</span>的结果。</p>
+<p>观察到 <span class="math display">\[
+\begin{aligned}
+ \sigma(\pi^{\ast}) &amp;= \sigma(\pi) + \sum_{l=1}^{i-1}[\pi&#39;(l)&gt;j] + \sum_{l=i+1}^{k+1}[\pi&#39;(l)&lt;j] \\
+ &amp;= \sigma(\pi) + \underbrace{\sum_{l =1}^{i-1}[\pi(l) \ge j] + \sum_{l=i}^k[\pi(l)&lt;j]}_{\Delta\sigma}
+\end{aligned}
+\]</span> 接下来只需要证明<span class="math inline">\((-1)^{\Delta\sigma}=(-1)^{i + j}\)</span>。</p>
+<p>注意到，可以通过交换元素在任意两个排列之间变换（证明显然略，冒泡排序算法给出了进行此类交换的步骤构造）。为了简便起见，称<span class="math inline">\(l=1,2,3,\cdots,i\)</span>为“前面”，<span class="math inline">\(l=i+1,i+2,\cdots,k\)</span>为“后面”，<span class="math inline">\(\pi(l)&lt;j\)</span>为“小”，<span class="math inline">\(\pi(l) \ge j\)</span>为"大"。</p>
+<p>那么显然，前面和前面，后面和后面的交换不改变<span class="math inline">\(\Delta\sigma\)</span>。着重考虑前面后面之间交换的情况。</p>
 <p>然后注意到：</p>
-<ol>
-<li>如果是前面的小元素和后面的大元素进行交换，交换后的$\Delta\sigma$项增加$2$。</li>
-<li>如果是前面的大元素和后面的小元素进行交换，交换后的$\Delta\sigma$项减少$2$。</li>
+<ol type="1">
+<li>如果是前面的小元素和后面的大元素进行交换，交换后的<span class="math inline">\(\Delta\sigma\)</span>项增加<span class="math inline">\(2\)</span>。</li>
+<li>如果是前面的大元素和后面的小元素进行交换，交换后的<span class="math inline">\(\Delta\sigma\)</span>项减少<span class="math inline">\(2\)</span>。</li>
 </ol>
-<p>综上，我们可以下结论：虽然在变换排列的过程中，$\Delta\sigma$项可能会改变，但是$(-1)^{\Delta\sigma}$的值是不会改变的。</p>
-<p>这等价于在$(i, j)$固定的情况下，对于任意的$\pi$，$(-1)^{\Delta\sigma}$都是相同的。</p>
-<p>只需要考察一个特例，选取恒等排列$\pi(l)=l$。</p>
-<p>此时<br>$$<br>\begin{aligned}<br>\Delta\sigma&amp;=\sum_{l =1}^{i-1}[l \ge j] + \sum_{l=i}^k[l&lt;j] \<br>&amp;= \min(i - j,0) + \min(j-i,0) \<br>&amp;= |i - j|<br>\end{aligned}<br>$$<br>显然$(-1)^{|i-j|} = (-1)^{i+j}$。</p>
-<p>因此$(-1)^{\Delta\sigma} = (-1)^{i+j}$。</p>
-<p>因此$(-1)^{\sigma(\pi^{\ast})} = (-1)^{i+j}(-1)^{\sigma(\pi)}$。</p>
-<p>回到$A$的计算式：<br>$$<br>\begin{aligned}</p>
-<pre><code>A_&#123;(k + 1) \times (k + 1)&#125; &amp;= \sum_&#123;j=1&#125;^&#123;k+1&#125; a_&#123;i,j&#125;(-1)^&#123;i+j&#125;M_&#123;i,j&#125; \\
-&amp;= \sum_&#123;j=1&#125;^&#123;k+1&#125; a_&#123;i,j&#125;(-1)^&#123;i+j&#125;\sum_&#123;\pi \in S_k&#125;(-1)^&#123;\sigma(\pi)&#125;\prod_&#123;l=1, l \neq i&#125;^&#123;k+1&#125; a_&#123;l, \pi&#39;(l)&#125; \\
-&amp;= \sum_&#123;j=1&#125;^&#123;k+1&#125; a_&#123;i,j&#125;\sum_&#123;\pi \in S_k&#125;(-1)^&#123;i+j&#125;(-1)^&#123;\sigma(\pi)&#125;\prod_&#123;l=1, l \neq i&#125;^&#123;k+1&#125; a_&#123;l, \pi&#39;(l)&#125; \\
-&amp;= \sum_&#123;j=1&#125;^&#123;k+1&#125; \sum_&#123;\pi \in S_k&#125;(-1)^&#123;\sigma(\pi^&#123;\ast&#125;)&#125;a_&#123;i,j&#125;\prod_&#123;l=1, l \neq i&#125;^&#123;k+1&#125; a_&#123;l, \pi&#39;(l)&#125; \\
-&amp;= \sum_&#123;j=1&#125;^&#123;k+1&#125; \sum_&#123;\pi \in S_k&#125;(-1)^&#123;\sigma(\pi^&#123;\ast&#125;)&#125;\prod_&#123;l=1&#125;^&#123;k+1&#125; a_&#123;l, \pi^&#123;\ast&#125;(l)&#125; \\
-&amp;= \sum_&#123;j=1&#125;^&#123;k+1&#125; \sum_&#123;\substack&#123;\pi^&#123;\ast&#125;\in S_&#123;k+1&#125; \\ \pi^&#123;\ast&#125;(i) = j&#125;&#125;(-1)^&#123;\sigma(\pi^&#123;\ast&#125;)&#125;\prod_&#123;l=1&#125;^&#123;k+1&#125; a_&#123;l, \pi^&#123;\ast&#125;(l)&#125; \\
-&amp;= \sum_&#123;\pi^&#123;\ast&#125;\in S_&#123;k+1&#125;&#125;(-1)^&#123;\sigma(\pi^&#123;\ast&#125;)&#125;\prod_&#123;l=1&#125;^&#123;k+1&#125; a_&#123;l, \pi^&#123;\ast&#125;(l)&#125; \\
-&amp;= \sum_&#123;\pi\in S_&#123;k+1&#125;&#125;(-1)^&#123;\sigma(\pi)&#125;\prod_&#123;i=1&#125;^&#123;k+1&#125; a_&#123;i, \pi(i)&#125;
-</code></pre>
-<p>\end{aligned}<br>$$<br>即归纳命题成立，由数学归纳法，得证。</p>
-</li>
+<p>综上，我们可以下结论：虽然在变换排列的过程中，<span class="math inline">\(\Delta\sigma\)</span>项可能会改变，但是<span class="math inline">\((-1)^{\Delta\sigma}\)</span>的值是不会改变的。</p>
+<p>这等价于在<span class="math inline">\((i, j)\)</span>固定的情况下，对于任意的<span class="math inline">\(\pi\)</span>，<span class="math inline">\((-1)^{\Delta\sigma}\)</span>都是相同的。</p>
+<p>只需要考察一个特例，选取恒等排列<span class="math inline">\(\pi(l)=l\)</span>。</p>
+<p>此时 <span class="math display">\[
+\begin{aligned}
+\Delta\sigma&amp;=\sum_{l =1}^{i-1}[l \ge j] + \sum_{l=i}^k[l&lt;j] \\
+&amp;= \min(i - j,0) + \min(j-i,0) \\
+&amp;= |i - j|
+\end{aligned}
+\]</span> 显然<span class="math inline">\((-1)^{|i-j|} = (-1)^{i+j}\)</span>。</p>
+<p>因此<span class="math inline">\((-1)^{\Delta\sigma} = (-1)^{i+j}\)</span>。</p>
+<p>因此<span class="math inline">\((-1)^{\sigma(\pi^{\ast})} = (-1)^{i+j}(-1)^{\sigma(\pi)}\)</span>。</p>
+<p>回到<span class="math inline">\(A\)</span>的计算式： <span class="math display">\[
+\begin{aligned}
+ A_{(k + 1) \times (k + 1)} &amp;= \sum_{j=1}^{k+1} a_{i,j}(-1)^{i+j}M_{i,j} \\
+ &amp;= \sum_{j=1}^{k+1} a_{i,j}(-1)^{i+j}\sum_{\pi \in S_k}(-1)^{\sigma(\pi)}\prod_{l=1, l \neq i}^{k+1} a_{l, \pi&#39;(l)} \\
+ &amp;= \sum_{j=1}^{k+1} a_{i,j}\sum_{\pi \in S_k}(-1)^{i+j}(-1)^{\sigma(\pi)}\prod_{l=1, l \neq i}^{k+1} a_{l, \pi&#39;(l)} \\
+ &amp;= \sum_{j=1}^{k+1} \sum_{\pi \in S_k}(-1)^{\sigma(\pi^{\ast})}a_{i,j}\prod_{l=1, l \neq i}^{k+1} a_{l, \pi&#39;(l)} \\
+ &amp;= \sum_{j=1}^{k+1} \sum_{\pi \in S_k}(-1)^{\sigma(\pi^{\ast})}\prod_{l=1}^{k+1} a_{l, \pi^{\ast}(l)} \\
+ &amp;= \sum_{j=1}^{k+1} \sum_{\substack{\pi^{\ast}\in S_{k+1} \\ \pi^{\ast}(i) = j}}(-1)^{\sigma(\pi^{\ast})}\prod_{l=1}^{k+1} a_{l, \pi^{\ast}(l)} \\
+ &amp;= \sum_{\pi^{\ast}\in S_{k+1}}(-1)^{\sigma(\pi^{\ast})}\prod_{l=1}^{k+1} a_{l, \pi^{\ast}(l)} \\
+ &amp;= \sum_{\pi\in S_{k+1}}(-1)^{\sigma(\pi)}\prod_{i=1}^{k+1} a_{i, \pi(i)}
+\end{aligned}
+\]</span> 即归纳命题成立，由数学归纳法，得证。</p></li>
 </ol>
-<h1 id="意义"><a href="#意义" class="headerlink" title="意义"></a>意义</h1><ol>
+<h1 id="意义">意义</h1>
+<ol type="1">
 <li>证明了行列式两种方法的等价性。</li>
 <li>证明了行列式挑选任意行/列做展开的结果是等价的，这在行列式按行列展开求值的定义当中并没有那么显然。</li>
 </ol>
@@ -422,7 +445,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

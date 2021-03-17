@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="Julia Plots啥都好，就是原生对于Unicode的支持还不完善（可见用Julia的国人似乎不多）。这篇文章简要汇总一下几个不同的backend对于中文的workaround。 GR BackendGR在支持Unicode字符上进展感觉其实不积极。具体可以看这个issue，修了一年还是没有比较好的成果（作者说是一个extensive patch…估计一开始在架构里写死了），只修到了支持Lat">
+<meta name="description" content="Julia Plots啥都好，就是原生对于Unicode的支持还不完善（可见用Julia的国人似乎不多）。这篇文章简要汇总一下几个不同的backend对于中文的workaround。 GR Backend GR在支持Unicode字符上进展感觉其实不积极。具体可以看这个issue，修了一年还是没有比较好的成果（作者说是一个extensive patch...估计一开始在架构里写死了），只修到了">
 <meta property="og:type" content="article">
 <meta property="og:title" content="让Plots.jl支持中文标题">
 <meta property="og:url" content="https://alan20210202.github.io/2020/01/22/JuliaPlots/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="Julia Plots啥都好，就是原生对于Unicode的支持还不完善（可见用Julia的国人似乎不多）。这篇文章简要汇总一下几个不同的backend对于中文的workaround。 GR BackendGR在支持Unicode字符上进展感觉其实不积极。具体可以看这个issue，修了一年还是没有比较好的成果（作者说是一个extensive patch…估计一开始在架构里写死了），只修到了支持Lat">
+<meta property="og:description" content="Julia Plots啥都好，就是原生对于Unicode的支持还不完善（可见用Julia的国人似乎不多）。这篇文章简要汇总一下几个不同的backend对于中文的workaround。 GR Backend GR在支持Unicode字符上进展感觉其实不积极。具体可以看这个issue，修了一年还是没有比较好的成果（作者说是一个extensive patch...估计一开始在架构里写死了），只修到了">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-01-22T09:36:08.230Z">
 <meta property="article:modified_time" content="2020-01-22T12:25:19.286Z">
@@ -48,7 +48,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>让Plots.jl支持中文标题 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -169,12 +170,14 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#GR-Backend"><span class="nav-number">1.</span> <span class="nav-text">GR Backend</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PyPlot-Backend"><span class="nav-number">2.</span> <span class="nav-text">PyPlot Backend</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PlotlyJS-Backend"><span class="nav-number">3.</span> <span class="nav-text">PlotlyJS Backend</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#InspectDR-Backend"><span class="nav-number">4.</span> <span class="nav-text">InspectDR Backend</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#gr-backend"><span class="nav-number">1.</span> <span class="nav-text">GR Backend</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pyplot-backend"><span class="nav-number">2.</span> <span class="nav-text">PyPlot Backend</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#plotlyjs-backend"><span class="nav-number">3.</span> <span class="nav-text">PlotlyJS Backend</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#inspectdr-backend"><span class="nav-number">4.</span> <span class="nav-text">InspectDR Backend</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -240,7 +243,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/01/22/JuliaPlots/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -283,21 +286,23 @@
     
     <div class="post-body" itemprop="articleBody">
         <p>Julia Plots啥都好，就是原生对于Unicode的支持还不完善（可见用Julia的国人似乎不多）。这篇文章简要汇总一下几个不同的backend对于中文的workaround。</p>
-<h1 id="GR-Backend"><a href="#GR-Backend" class="headerlink" title="GR Backend"></a>GR Backend</h1><p>GR在支持Unicode字符上进展感觉其实不积极。具体可以看<a target="_blank" rel="noopener" href="https://github.com/jheinen/GR.jl/issues/143">这个issue</a>，修了一年还是没有比较好的成果（作者说是一个extensive patch…估计一开始在架构里写死了），只修到了支持Latin-1的地步，目前提供的临时解决方案是：</p>
-<pre class="line-numbers language-julia" data-language="julia"><code class="language-julia">ENV<span class="token punctuation">[</span><span class="token string">"GKS_ENCODING"</span><span class="token punctuation">]</span><span class="token operator">=</span><span class="token string">"utf-8"</span>
-<span class="token keyword">using</span> Plots<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
+<h1 id="gr-backend">GR Backend</h1>
+<p>GR在支持Unicode字符上进展感觉其实不积极。具体可以看<a target="_blank" rel="noopener" href="https://github.com/jheinen/GR.jl/issues/143">这个issue</a>，修了一年还是没有比较好的成果（作者说是一个extensive patch...估计一开始在架构里写死了），只修到了支持Latin-1的地步，目前提供的临时解决方案是：</p>
+<pre class="line-numbers"><code class="language-julia">ENV[&quot;GKS_ENCODING&quot;]=&quot;utf-8&quot;
+using Plots</code></pre>
 <p>在Windows上实测对于png格式的图片还是不行，但是对于SVG是可以的（但是因为计算布局的时候字符串长度算的是有问题的，所以legend的框会偏小）。</p>
-<h1 id="PyPlot-Backend"><a href="#PyPlot-Backend" class="headerlink" title="PyPlot Backend"></a>PyPlot Backend</h1><p>PyPlot背后调用的是matplotlib，因此PyPlot默认对于中文的支持不利主要也来自于matplotlib对中文的支持问题。对于后者网上改<code>rcParams</code>的解决方案已经比较普及了。在Julia里面，我们只需要把<code>rcParams</code>暴露出来改就行了：</p>
-<pre class="line-numbers language-julia" data-language="julia"><code class="language-julia"><span class="token keyword">using</span> Plots
-pyplot<span class="token punctuation">(</span><span class="token punctuation">)</span>
-rcParams <span class="token operator">=</span> Plots<span class="token punctuation">.</span>PyCall<span class="token punctuation">.</span>PyDict<span class="token punctuation">(</span>Plots<span class="token punctuation">.</span>PyPlot<span class="token punctuation">.</span>matplotlib<span class="token punctuation">.</span><span class="token string">"rcParams"</span><span class="token punctuation">)</span>
-rcParams<span class="token punctuation">[</span><span class="token string">"font.sans-serif"</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token string">"Sarasa UI SC"</span><span class="token punctuation">]</span>
-rcParams<span class="token punctuation">[</span><span class="token string">"axes.unicode_minus"</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">false</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>其中的<code>&quot;Sarasa UI SC&quot;</code>可以替换成电脑上安装的中文字体。这样中文标题就一点问题也没有了，但是似乎在Juno里面PyPlot画出来的图不会自动缩放，令强迫症稍微感到一丝不适。</p>
-<h1 id="PlotlyJS-Backend"><a href="#PlotlyJS-Backend" class="headerlink" title="PlotlyJS Backend"></a>PlotlyJS Backend</h1><p>原生支持。</p>
-<h1 id="InspectDR-Backend"><a href="#InspectDR-Backend" class="headerlink" title="InspectDR Backend"></a>InspectDR Backend</h1><p>原生支持。</p>
+<h1 id="pyplot-backend">PyPlot Backend</h1>
+<p>PyPlot背后调用的是matplotlib，因此PyPlot默认对于中文的支持不利主要也来自于matplotlib对中文的支持问题。对于后者网上改<code>rcParams</code>的解决方案已经比较普及了。在Julia里面，我们只需要把<code>rcParams</code>暴露出来改就行了：</p>
+<pre class="line-numbers"><code class="language-julia">using Plots
+pyplot()
+rcParams = Plots.PyCall.PyDict(Plots.PyPlot.matplotlib.&quot;rcParams&quot;)
+rcParams[&quot;font.sans-serif&quot;] = [&quot;Sarasa UI SC&quot;]
+rcParams[&quot;axes.unicode_minus&quot;] = false</code></pre>
+<p>其中的<code>"Sarasa UI SC"</code>可以替换成电脑上安装的中文字体。这样中文标题就一点问题也没有了，但是似乎在Juno里面PyPlot画出来的图不会自动缩放，令强迫症稍微感到一丝不适。</p>
+<h1 id="plotlyjs-backend">PlotlyJS Backend</h1>
+<p>原生支持。</p>
+<h1 id="inspectdr-backend">InspectDR Backend</h1>
+<p>原生支持。</p>
 
     </div>
 
@@ -389,7 +394,20 @@ rcParams<span class="token punctuation">[</span><span class="token string">"axes
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

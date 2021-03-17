@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="题意给定$a_1,a_2,\cdots a_n$以及$b_1,b_2,\cdots b_n$，要求最大化：$$\frac{\sum_{i &#x3D; 1}^n a_ix_i}{\sum_{i &#x3D; 1}^n b_ix_i}$$其中$\forall 1\le i \le n, x_i \in {0, 1}$。 解法我们可以二分答案$L​$，这样这个问题就转变为：能否求出一组解$x​$，使得$\frac{\su">
+<meta name="description" content="题意 给定\(a_1,a_2,\cdots a_n\)以及\(b_1,b_2,\cdots b_n\)，要求最大化： \[ \frac{\sum_{i &#x3D; 1}^n a_ix_i}{\sum_{i &#x3D; 1}^n b_ix_i} \] 其中\(\forall 1\le i \le n, x_i \in \{0, 1\}\)。 解法 我们可以二分答案\(L​\)，这样这个问题就转变为：能否求">
 <meta property="og:type" content="article">
 <meta property="og:title" content="01分数规划">
 <meta property="og:url" content="https://alan20210202.github.io/2018/09/02/01%E5%88%86%E6%95%B0%E8%A7%84%E5%88%92/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="题意给定$a_1,a_2,\cdots a_n$以及$b_1,b_2,\cdots b_n$，要求最大化：$$\frac{\sum_{i &#x3D; 1}^n a_ix_i}{\sum_{i &#x3D; 1}^n b_ix_i}$$其中$\forall 1\le i \le n, x_i \in {0, 1}$。 解法我们可以二分答案$L​$，这样这个问题就转变为：能否求出一组解$x​$，使得$\frac{\su">
+<meta property="og:description" content="题意 给定\(a_1,a_2,\cdots a_n\)以及\(b_1,b_2,\cdots b_n\)，要求最大化： \[ \frac{\sum_{i &#x3D; 1}^n a_ix_i}{\sum_{i &#x3D; 1}^n b_ix_i} \] 其中\(\forall 1\le i \le n, x_i \in \{0, 1\}\)。 解法 我们可以二分答案\(L​\)，这样这个问题就转变为：能否求">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2018-09-02T05:17:25.143Z">
 <meta property="article:modified_time" content="2018-11-03T02:37:43.847Z">
@@ -48,7 +48,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>01分数规划 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -175,6 +176,8 @@
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -240,7 +243,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/02/01%E5%88%86%E6%95%B0%E8%A7%84%E5%88%92/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -288,9 +291,20 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="题意"><a href="#题意" class="headerlink" title="题意"></a>题意</h1><p>给定$a_1,a_2,\cdots a_n$以及$b_1,b_2,\cdots b_n$，要求最大化：<br>$$<br>\frac{\sum_{i = 1}^n a_ix_i}{\sum_{i = 1}^n b_ix_i}<br>$$<br>其中$\forall 1\le i \le n, x_i \in {0, 1}$。</p>
-<h1 id="解法"><a href="#解法" class="headerlink" title="解法"></a>解法</h1><p>我们可以二分答案$L​$，这样这个问题就转变为：能否求出一组解$x​$，使得$\frac{\sum_{i = 1}^n a_ix_i}{\sum_{i = 1}^n b_ix_i} \ge L​$？</p>
-<p>对不等式进行变形：<br>$$<br>\begin{aligned}<br>\frac{\sum_{i = 1}^n a_ix_i}{\sum_{i = 1}^n b_ix_i} &amp;\ge L \<br>\sum_{i = 1}^n a_ix_i &amp;\ge L\sum_{i = 1}^n b_ix_i \<br>\sum_{i = 1}^n a_ix_i - L\sum_{i = 1}^n b_ix_i &amp;\ge 0 \<br>\sum_{i = 1}^n (a_i - Lb_i)x_i &amp;\ge 0<br>\end{aligned}<br>$$<br>我们计算$\sum_{i = 1}^n (a_i - Lb_i)x_i$的最大值，即构造$x$使$x_i = 1$当且仅当$a_i - Lb_i &gt; 0$，并判断最大值的正负性，在此基础上不断二分答案即可。时间复杂度为$O(n\log L_{max})$。</p>
+        <h1 id="题意">题意</h1>
+<p>给定<span class="math inline">\(a_1,a_2,\cdots a_n\)</span>以及<span class="math inline">\(b_1,b_2,\cdots b_n\)</span>，要求最大化： <span class="math display">\[
+\frac{\sum_{i = 1}^n a_ix_i}{\sum_{i = 1}^n b_ix_i}
+\]</span> 其中<span class="math inline">\(\forall 1\le i \le n, x_i \in \{0, 1\}\)</span>。</p>
+<h1 id="解法">解法</h1>
+<p>我们可以二分答案<span class="math inline">\(L​\)</span>，这样这个问题就转变为：能否求出一组解<span class="math inline">\(x​\)</span>，使得<span class="math inline">\(\frac{\sum_{i = 1}^n a_ix_i}{\sum_{i = 1}^n b_ix_i} \ge L​\)</span>？</p>
+<p>对不等式进行变形： <span class="math display">\[
+\begin{aligned}
+\frac{\sum_{i = 1}^n a_ix_i}{\sum_{i = 1}^n b_ix_i} &amp;\ge L \\
+\sum_{i = 1}^n a_ix_i &amp;\ge L\sum_{i = 1}^n b_ix_i \\
+\sum_{i = 1}^n a_ix_i - L\sum_{i = 1}^n b_ix_i &amp;\ge 0 \\
+\sum_{i = 1}^n (a_i - Lb_i)x_i &amp;\ge 0
+\end{aligned}
+\]</span> 我们计算<span class="math inline">\(\sum_{i = 1}^n (a_i - Lb_i)x_i\)</span>的最大值，即构造<span class="math inline">\(x\)</span>使<span class="math inline">\(x_i = 1\)</span>当且仅当<span class="math inline">\(a_i - Lb_i &gt; 0\)</span>，并判断最大值的正负性，在此基础上不断二分答案即可。时间复杂度为<span class="math inline">\(O(n\log L_{max})\)</span>。</p>
 
     </div>
 
@@ -382,7 +396,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

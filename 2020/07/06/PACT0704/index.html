@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="定义在电子转账还未普及的年代，从付款人开出支票到钱从付款人账户里扣走之间是有一段等待的时间的，这段时间被称为浮账期（float time，网上似乎没有找到特别靠谱的翻译）。因为在浮账期这些付出去的钱还是能够产生利息的，人们自然希望这个浮账期越长越好。于是人们就抽象出了这么一个浮账最大化的问题。 输入：带权二分图$G&#x3D;(V,E)$，其中$V&#x3D;B\cup P$，一侧是所有银行的集合$B$，另一侧是所有">
+<meta name="description" content="定义 在电子转账还未普及的年代，从付款人开出支票到钱从付款人账户里扣走之间是有一段等待的时间的，这段时间被称为浮账期（float time，网上似乎没有找到特别靠谱的翻译）。因为在浮账期这些付出去的钱还是能够产生利息的，人们自然希望这个浮账期越长越好。于是人们就抽象出了这么一个浮账最大化的问题。 输入：带权二分图\(G&#x3D;(V,E)\)，其中\(V&#x3D;B\cup P\)，一侧是所有银行的集合\(B">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PACT 07&#x2F;04 浮账最大化（次模优化）">
 <meta property="og:url" content="https://alan20210202.github.io/2020/07/06/PACT0704/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="定义在电子转账还未普及的年代，从付款人开出支票到钱从付款人账户里扣走之间是有一段等待的时间的，这段时间被称为浮账期（float time，网上似乎没有找到特别靠谱的翻译）。因为在浮账期这些付出去的钱还是能够产生利息的，人们自然希望这个浮账期越长越好。于是人们就抽象出了这么一个浮账最大化的问题。 输入：带权二分图$G&#x3D;(V,E)$，其中$V&#x3D;B\cup P$，一侧是所有银行的集合$B$，另一侧是所有">
+<meta property="og:description" content="定义 在电子转账还未普及的年代，从付款人开出支票到钱从付款人账户里扣走之间是有一段等待的时间的，这段时间被称为浮账期（float time，网上似乎没有找到特别靠谱的翻译）。因为在浮账期这些付出去的钱还是能够产生利息的，人们自然希望这个浮账期越长越好。于是人们就抽象出了这么一个浮账最大化的问题。 输入：带权二分图\(G&#x3D;(V,E)\)，其中\(V&#x3D;B\cup P\)，一侧是所有银行的集合\(B">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-07-06T12:25:07.030Z">
 <meta property="article:modified_time" content="2020-07-06T14:52:18.965Z">
@@ -49,7 +49,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>PACT 07/04 浮账最大化（次模优化） | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -176,6 +177,8 @@
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -241,7 +244,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/06/PACT0704/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -283,33 +286,80 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>在电子转账还未普及的年代，从付款人开出支票到钱从付款人账户里扣走之间是有一段等待的时间的，这段时间被称为浮账期（float time，网上似乎没有找到特别靠谱的翻译）。因为在浮账期这些付出去的钱还是能够产生利息的，人们自然希望这个浮账期越长越好。于是人们就抽象出了这么一个浮账最大化的问题。</p>
-<p><strong>输入：</strong>带权二分图$G=(V,E)$，其中$V=B\cup P$，一侧是所有银行的集合$B$，另一侧是所有交易的集合$P$，第$i$个银行到第$j$个交易的边权为$v_{ij}$，表示第$i$个银行处理这笔交易所需的浮账时间。整数$k$。</p>
-<p><strong>目标：</strong>选择$k$家银行的集合$S\subseteq B$，使得<br>$$<br>v(S) = \sum_{j\in P} \max_{i\in S}{v_{ij}}<br>$$<br>最大。</p>
-<h1 id="贪心算法"><a href="#贪心算法" class="headerlink" title="贪心算法"></a>贪心算法</h1><p>我们很容易想到如下的贪心算法：</p>
-<ol>
-<li>一开始$S=\emptyset$。</li>
-<li>然后进行$k$次循环，每次循环寻找能使目标函数增幅最大的银行$i$加入$S$。</li>
+        <h1 id="定义">定义</h1>
+<p>在电子转账还未普及的年代，从付款人开出支票到钱从付款人账户里扣走之间是有一段等待的时间的，这段时间被称为浮账期（float time，网上似乎没有找到特别靠谱的翻译）。因为在浮账期这些付出去的钱还是能够产生利息的，人们自然希望这个浮账期越长越好。于是人们就抽象出了这么一个浮账最大化的问题。</p>
+<p><strong>输入：</strong>带权二分图<span class="math inline">\(G=(V,E)\)</span>，其中<span class="math inline">\(V=B\cup P\)</span>，一侧是所有银行的集合<span class="math inline">\(B\)</span>，另一侧是所有交易的集合<span class="math inline">\(P\)</span>，第<span class="math inline">\(i\)</span>个银行到第<span class="math inline">\(j\)</span>个交易的边权为<span class="math inline">\(v_{ij}\)</span>，表示第<span class="math inline">\(i\)</span>个银行处理这笔交易所需的浮账时间。整数<span class="math inline">\(k\)</span>。</p>
+<p><strong>目标：</strong>选择<span class="math inline">\(k\)</span>家银行的集合<span class="math inline">\(S\subseteq B\)</span>，使得 <span class="math display">\[
+v(S) = \sum_{j\in P} \max_{i\in S}\{v_{ij}\}
+\]</span> 最大。</p>
+<h1 id="贪心算法">贪心算法</h1>
+<p>我们很容易想到如下的贪心算法：</p>
+<ol type="1">
+<li>一开始<span class="math inline">\(S=\emptyset\)</span>。</li>
+<li>然后进行<span class="math inline">\(k\)</span>次循环，每次循环寻找能使目标函数增幅最大的银行<span class="math inline">\(i\)</span>加入<span class="math inline">\(S\)</span>。</li>
 </ol>
 <p>简单，粗暴，好理解。</p>
-<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p><strong>引理1：</strong>令$S$是第$h$次循环开始时我们的银行集合，第$h$次循环我们所选的新银行是$i_h$，那么有<br>$$<br>v(S\cup {i_h}) - v(S)\ge \frac{v(\mathrm{OPT})-v(S)}{k}<br>$$<br>即反映了一种“优于平均”的思想。（感觉类似的引理在贪心算法的分析当中经常会碰到）</p>
-<p>要证明这个引理，我们需要引入第二个引理，或者说发掘$v(\cdot)$的一个重要性质：</p>
-<p><strong>引理2（次模性）：</strong>对于任何$X\subseteq Y\subset B$以及$l\in B\setminus Y$，都有：<br>$$<br>v(X\cup {l}) - v(X) \ge v(Y\cup {l}) - v(Y)<br>$$<br>直观理解：随着集合变大，加入新元素的边际效应递减。</p>
+<h1 id="分析">分析</h1>
+<p><strong>引理1：</strong>令<span class="math inline">\(S\)</span>是第<span class="math inline">\(h\)</span>次循环开始时我们的银行集合，第<span class="math inline">\(h\)</span>次循环我们所选的新银行是<span class="math inline">\(i_h\)</span>，那么有 <span class="math display">\[
+v(S\cup \{i_h\}) - v(S)\ge \frac{v(\mathrm{OPT})-v(S)}{k}
+\]</span> 即反映了一种“优于平均”的思想。（感觉类似的引理在贪心算法的分析当中经常会碰到）</p>
+<p>要证明这个引理，我们需要引入第二个引理，或者说发掘<span class="math inline">\(v(\cdot)\)</span>的一个重要性质：</p>
+<p><strong>引理2（次模性）：</strong>对于任何<span class="math inline">\(X\subseteq Y\subset B\)</span>以及<span class="math inline">\(l\in B\setminus Y\)</span>，都有： <span class="math display">\[
+v(X\cup \{l\}) - v(X) \ge v(Y\cup \{l\}) - v(Y)
+\]</span> 直观理解：随着集合变大，加入新元素的边际效应递减。</p>
 <p><strong>证明：</strong></p>
-<p>考虑对于固定的交易$j$，$j$在$v(X)$当中的贡献是$\max_{i\in X}{v_{ij}}$，在$v(Y)$当中的贡献是$\max_{i\in Y}{v_{ij}}$，而因为$X\subseteq Y$，显然有<br>$$<br>\max_{i\in X}{v_{ij}} \le \max_{i\in Y}{v_{ij}}<br>$$<br>将$l$加入集合之后，$v_{lj}$加入了比较，有三种情况：</p>
-<ol>
-<li>$v_{lj} \le \max_{i\in X}{v_{ij}}$，那么$X$还是$Y$都不会增加。</li>
-<li>$\max_{i\in X}{v_{ij}} &lt; v_{lj} \le \max_{i\in Y}{v_{ij}}$，那么$X$这边增加了，而$Y$这边不增加。</li>
-<li>$v_{lj} &gt; \max_{i\in Y}{v_{ij}}$，两边的最大值都增加了，但是增加幅度$X$这边要大于$Y$。</li>
+<p>考虑对于固定的交易<span class="math inline">\(j\)</span>，<span class="math inline">\(j\)</span>在<span class="math inline">\(v(X)\)</span>当中的贡献是<span class="math inline">\(\max_{i\in X}\{v_{ij}\}\)</span>，在<span class="math inline">\(v(Y)\)</span>当中的贡献是<span class="math inline">\(\max_{i\in Y}\{v_{ij}\}\)</span>，而因为<span class="math inline">\(X\subseteq Y\)</span>，显然有 <span class="math display">\[
+\max_{i\in X}\{v_{ij}\} \le \max_{i\in Y}\{v_{ij}\}
+\]</span> 将<span class="math inline">\(l\)</span>加入集合之后，<span class="math inline">\(v_{lj}\)</span>加入了比较，有三种情况：</p>
+<ol type="1">
+<li><span class="math inline">\(v_{lj} \le \max_{i\in X}\{v_{ij}\}\)</span>，那么<span class="math inline">\(X\)</span>还是<span class="math inline">\(Y\)</span>都不会增加。</li>
+<li><span class="math inline">\(\max_{i\in X}\{v_{ij}\} &lt; v_{lj} \le \max_{i\in Y}\{v_{ij}\}\)</span>，那么<span class="math inline">\(X\)</span>这边增加了，而<span class="math inline">\(Y\)</span>这边不增加。</li>
+<li><span class="math inline">\(v_{lj} &gt; \max_{i\in Y}\{v_{ij}\}\)</span>，两边的最大值都增加了，但是增加幅度<span class="math inline">\(X\)</span>这边要大于<span class="math inline">\(Y\)</span>。</li>
 </ol>
-<p>由此可见，对于一个固定的交易$j$，新银行$l$加入后，$X$这一侧的增加量一定不少于$Y$这一侧的增加量。因此对于所有交易求和之后，必有<br>$$<br>v(X\cup {l}) - v(X) \ge v(Y\cup {l}) - v(Y)<br>$$<br>得证。</p>
+<p>由此可见，对于一个固定的交易<span class="math inline">\(j\)</span>，新银行<span class="math inline">\(l\)</span>加入后，<span class="math inline">\(X\)</span>这一侧的增加量一定不少于<span class="math inline">\(Y\)</span>这一侧的增加量。因此对于所有交易求和之后，必有 <span class="math display">\[
+v(X\cup \{l\}) - v(X) \ge v(Y\cup \{l\}) - v(Y)
+\]</span> 得证。</p>
 <p>这个“边际效应递减”的性质有一个高端的名字：<strong>次模性</strong>（Submodularity）。</p>
-<p><strong>引理1的证明：</strong>令$\mathrm{OPT}\setminus S = {i_1,i_2,\cdots,i_p}$。注意到显然有$p\le |\mathrm{OPT}|=k$。<br>$$<br>\begin{aligned}<br>    v(\mathrm{OPT}) &amp;\le v(\mathrm{OPT} \cup S) \<br>    &amp;= v(S) + v(\mathrm{OPT} \cup S) - v(S) \<br>    &amp;= v(S) + \sum_{j=1}^p \left(v\left(S\cup {i_1,i_2,\cdots,i_j}\right) - v\left(S\cup {i_1,i_2,\cdots,i_{j-1}}\right)\right)<br>\end{aligned}<br>$$<br>那个求和式是一个非常精巧的叠缩。接下来我们运用引理2，令$X=S,Y=S\cup {i_1,i_2,\cdots,i_{j-1}}$：<br>$$<br>\begin{aligned}<br>    v(\mathrm{OPT}) &amp;\le  v(S) + \sum_{j=1}^p \left(v\left(S\cup {i_1,i_2,\cdots,i_j}\right) - v\left(S\cup {i_1,i_2,\cdots,i_{j-1}}\right)\right) \<br>    &amp;\le v(S) + \sum_{j=1}^p (v(S\cup{i_j}) - v(S)) \<br>    &amp;\le v(S) + \sum_{j=1}^p (v(S\cup{i_h}) - v(S)) \<br>    &amp;= v(S) + p(v(S\cup{i_h}) - v(S)) \<br>    &amp;\le v(S) + k(v(S\cup{i_h}) - v(S))<br>\end{aligned}<br>$$<br>倒数第三步运用到了我们算法的贪心性质，即$v(S\cup{i_h}) - v(S) \ge v(S\cup{i_j}) - v(S), \forall j$。接下来我们马上就可以得到引理：<br>$$<br>\begin{aligned}<br>    v(\mathrm{OPT}) &amp;\le v(S) + k(v(S\cup{i_h}) - v(S)) \<br>    v(\mathrm{OPT}) - v(S) &amp;\le k(v(S\cup{i_h}) - v(S)) \<br>    v(S\cup{i_h}) - v(S) &amp;\ge \frac{v(\mathrm{OPT}) - v(S)}{k}<br>\end{aligned}<br>$$<br>证毕。</p>
+<p><strong>引理1的证明：</strong>令<span class="math inline">\(\mathrm{OPT}\setminus S = \{i_1,i_2,\cdots,i_p\}\)</span>。注意到显然有<span class="math inline">\(p\le |\mathrm{OPT}|=k\)</span>。 <span class="math display">\[
+\begin{aligned}
+    v(\mathrm{OPT}) &amp;\le v(\mathrm{OPT} \cup S) \\
+    &amp;= v(S) + v(\mathrm{OPT} \cup S) - v(S) \\
+    &amp;= v(S) + \sum_{j=1}^p \left(v\left(S\cup \{i_1,i_2,\cdots,i_j\}\right) - v\left(S\cup \{i_1,i_2,\cdots,i_{j-1}\}\right)\right)
+\end{aligned}
+\]</span> 那个求和式是一个非常精巧的叠缩。接下来我们运用引理2，令<span class="math inline">\(X=S,Y=S\cup \{i_1,i_2,\cdots,i_{j-1}\}\)</span>： <span class="math display">\[
+\begin{aligned}
+    v(\mathrm{OPT}) &amp;\le  v(S) + \sum_{j=1}^p \left(v\left(S\cup \{i_1,i_2,\cdots,i_j\}\right) - v\left(S\cup \{i_1,i_2,\cdots,i_{j-1}\}\right)\right) \\
+    &amp;\le v(S) + \sum_{j=1}^p (v(S\cup\{i_j\}) - v(S)) \\
+    &amp;\le v(S) + \sum_{j=1}^p (v(S\cup\{i_h\}) - v(S)) \\
+    &amp;= v(S) + p(v(S\cup\{i_h\}) - v(S)) \\
+    &amp;\le v(S) + k(v(S\cup\{i_h\}) - v(S))
+\end{aligned}
+\]</span> 倒数第三步运用到了我们算法的贪心性质，即<span class="math inline">\(v(S\cup\{i_h\}) - v(S) \ge v(S\cup\{i_j\}) - v(S), \forall j\)</span>。接下来我们马上就可以得到引理： <span class="math display">\[
+\begin{aligned}
+    v(\mathrm{OPT}) &amp;\le v(S) + k(v(S\cup\{i_h\}) - v(S)) \\
+    v(\mathrm{OPT}) - v(S) &amp;\le k(v(S\cup\{i_h\}) - v(S)) \\
+    v(S\cup\{i_h\}) - v(S) &amp;\ge \frac{v(\mathrm{OPT}) - v(S)}{k}
+\end{aligned}
+\]</span> 证毕。</p>
 <p>接下来我们可以开始证明我们算法的近似比了：</p>
-<p><strong>定理：</strong>我们的算法是一个$\left(1 - \frac{1}{e}\right)$倍近似算法。</p>
-<p><strong>证明：</strong>令$S_t$表示第$t$次循环后我们所选的银行集合。</p>
-<p>由引理可得<br>$$<br>v(S_k) - v(S_{k-1}) \ge \frac{v(\mathrm{OPT}) - v(S_{k-1})}{k} \Rightarrow v(S_k) \ge \frac{v(\mathrm{OPT})}{k} + \left(1-\frac{1}{k}\right)v(S_{k-1})<br>$$<br>因此<br>$$<br>\begin{aligned}<br>    v(S_k) &amp;\ge \frac{v(\mathrm{OPT})}{k} + \left(1-\frac{1}{k}\right)v(S_{k-1}) \<br>        &amp;\ge  \frac{v(\mathrm{OPT})}{k} + \left(1-\frac{1}{k}\right) \left(\frac{v(\mathrm{OPT})}{k} + \left(1-\frac{1}{k}\right)v(S_{k-2})\right)\<br>        &amp;\cdots \<br>        &amp;\ge \frac{v(\mathrm{OPT})}{k}\left(1+\left(1-\frac{1}{k}\right)+\cdots+\left(1-\frac{1}{k}\right)^{k-1}\right) + \left(1-\frac{1}{k}\right)^kv(S_0) \<br>        &amp;= \frac{v(\mathrm{OPT})}{k}\left(1+\left(1-\frac{1}{k}\right)+\cdots+\left(1-\frac{1}{k}\right)^{k-1}\right) \<br>        &amp;= \frac{v(\mathrm{OPT})}{k}\frac{1-\left(1-\frac{1}{k}\right)^k}{1\over k} \<br>        &amp;= v(\mathrm{OPT})\left(1-\left(1-\frac{1}{k}\right)^k \right) \<br>        &amp;\le \left(1-\left(e^{-\frac{1}{k}}\right)^k \right) v(\mathrm{OPT}) \<br>        &amp;= \left(1 - \frac{1}{e}\right)v(\mathrm{OPT})<br>\end{aligned}<br>$$<br>证毕。</p>
-<p>其实分析我们的贪心算法，我们发现我们其实只利用了$v(\cdot)$的次模性，而没有利用$v(\cdot)$的具体形式或者题目的具体要求。而次模性足以证明引理1，引理1足以证明近似比。也就是说，我们这个贪心算法及其分析是可以被推广到其他的次模优化问题上的。因此，这个看起来很简单粗暴的贪心算法，其实真的是非常有意思！</p>
+<p><strong>定理：</strong>我们的算法是一个<span class="math inline">\(\left(1 - \frac{1}{e}\right)\)</span>倍近似算法。</p>
+<p><strong>证明：</strong>令<span class="math inline">\(S_t\)</span>表示第<span class="math inline">\(t\)</span>次循环后我们所选的银行集合。</p>
+<p>由引理可得 <span class="math display">\[
+v(S_k) - v(S_{k-1}) \ge \frac{v(\mathrm{OPT}) - v(S_{k-1})}{k} \Rightarrow v(S_k) \ge \frac{v(\mathrm{OPT})}{k} + \left(1-\frac{1}{k}\right)v(S_{k-1})
+\]</span> 因此 <span class="math display">\[
+\begin{aligned}
+    v(S_k) &amp;\ge \frac{v(\mathrm{OPT})}{k} + \left(1-\frac{1}{k}\right)v(S_{k-1}) \\
+        &amp;\ge  \frac{v(\mathrm{OPT})}{k} + \left(1-\frac{1}{k}\right) \left(\frac{v(\mathrm{OPT})}{k} + \left(1-\frac{1}{k}\right)v(S_{k-2})\right)\\
+        &amp;\cdots \\
+        &amp;\ge \frac{v(\mathrm{OPT})}{k}\left(1+\left(1-\frac{1}{k}\right)+\cdots+\left(1-\frac{1}{k}\right)^{k-1}\right) + \left(1-\frac{1}{k}\right)^kv(S_0) \\
+        &amp;= \frac{v(\mathrm{OPT})}{k}\left(1+\left(1-\frac{1}{k}\right)+\cdots+\left(1-\frac{1}{k}\right)^{k-1}\right) \\
+        &amp;= \frac{v(\mathrm{OPT})}{k}\frac{1-\left(1-\frac{1}{k}\right)^k}{1\over k} \\
+        &amp;= v(\mathrm{OPT})\left(1-\left(1-\frac{1}{k}\right)^k \right) \\
+        &amp;\le \left(1-\left(e^{-\frac{1}{k}}\right)^k \right) v(\mathrm{OPT}) \\
+        &amp;= \left(1 - \frac{1}{e}\right)v(\mathrm{OPT})
+\end{aligned}
+\]</span> 证毕。</p>
+<p>其实分析我们的贪心算法，我们发现我们其实只利用了<span class="math inline">\(v(\cdot)\)</span>的次模性，而没有利用<span class="math inline">\(v(\cdot)\)</span>的具体形式或者题目的具体要求。而次模性足以证明引理1，引理1足以证明近似比。也就是说，我们这个贪心算法及其分析是可以被推广到其他的次模优化问题上的。因此，这个看起来很简单粗暴的贪心算法，其实真的是非常有意思！</p>
 
     </div>
 
@@ -402,7 +452,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

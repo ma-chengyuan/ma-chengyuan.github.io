@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="进展！自己写的网页终于功能全部完成啦！ 现在已经把成品网页放到博客上来了，上面几个链接最右边那个PageDewarp就是，戳进去就行了。 放几张成品：   效果还是相当不错的。如果有二值化就更好了。 卷曲复原在确定了曲面的各个参数之后，整个纸面的曲面就有了，剩下的就是把卷曲复原，输出结果。 卷曲复原的过程是一个图像上坐标映射的过程。我们遍历结果图像上的每一个坐标，唯一地确立其在输入图像上的源坐标，">
+<meta name="description" content="进展！ 自己写的网页终于功能全部完成啦！ 现在已经把成品网页放到博客上来了，上面几个链接最右边那个PageDewarp就是，戳进去就行了。 放几张成品：   效果还是相当不错的。如果有二值化就更好了。 卷曲复原 在确定了曲面的各个参数之后，整个纸面的曲面就有了，剩下的就是把卷曲复原，输出结果。 卷曲复原的过程是一个图像上坐标映射的过程。我们遍历结果图像上的每一个坐标，唯一地确立其">
 <meta property="og:type" content="article">
 <meta property="og:title" content="卷曲页面复原 3 ——完工">
 <meta property="og:url" content="https://alan20210202.github.io/2020/01/10/Dewarp3/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="进展！自己写的网页终于功能全部完成啦！ 现在已经把成品网页放到博客上来了，上面几个链接最右边那个PageDewarp就是，戳进去就行了。 放几张成品：   效果还是相当不错的。如果有二值化就更好了。 卷曲复原在确定了曲面的各个参数之后，整个纸面的曲面就有了，剩下的就是把卷曲复原，输出结果。 卷曲复原的过程是一个图像上坐标映射的过程。我们遍历结果图像上的每一个坐标，唯一地确立其在输入图像上的源坐标，">
+<meta property="og:description" content="进展！ 自己写的网页终于功能全部完成啦！ 现在已经把成品网页放到博客上来了，上面几个链接最右边那个PageDewarp就是，戳进去就行了。 放几张成品：   效果还是相当不错的。如果有二值化就更好了。 卷曲复原 在确定了曲面的各个参数之后，整个纸面的曲面就有了，剩下的就是把卷曲复原，输出结果。 卷曲复原的过程是一个图像上坐标映射的过程。我们遍历结果图像上的每一个坐标，唯一地确立其">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s2.ax1x.com/2020/01/10/lhyM24.jpg">
 <meta property="og:image" content="https://s2.ax1x.com/2020/01/10/lhyKGF.png">
@@ -52,7 +52,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>卷曲页面复原 3 ——完工 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -173,12 +174,14 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E5%B1%95%EF%BC%81"><span class="nav-number">1.</span> <span class="nav-text">进展！</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%B7%E6%9B%B2%E5%A4%8D%E5%8E%9F"><span class="nav-number">2.</span> <span class="nav-text">卷曲复原</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E5%B1%95"><span class="nav-number">1.</span> <span class="nav-text">进展！</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%B7%E6%9B%B2%E5%A4%8D%E5%8E%9F"><span class="nav-number">2.</span> <span class="nav-text">卷曲复原</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -244,7 +247,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/01/10/Dewarp3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -286,66 +289,68 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="进展！"><a href="#进展！" class="headerlink" title="进展！"></a>进展！</h1><p>自己写的网页终于功能全部完成啦！</p>
+        <h1 id="进展">进展！</h1>
+<p>自己写的网页终于功能全部完成啦！</p>
 <p>现在已经把成品网页放到博客上来了，上面几个链接最右边那个PageDewarp就是，戳进去就行了。</p>
 <p>放几张成品：</p>
-<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/lhyM24"><img src="https://s2.ax1x.com/2020/01/10/lhyM24.jpg" alt="lhyM24.jpg"></a></p>
-<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/lhyKGF"><img src="https://s2.ax1x.com/2020/01/10/lhyKGF.png" alt="lhyKGF.png"></a></p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/lhyM24"><img src="https://s2.ax1x.com/2020/01/10/lhyM24.jpg" alt="lhyM24.jpg" /></a></p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/lhyKGF"><img src="https://s2.ax1x.com/2020/01/10/lhyKGF.png" alt="lhyKGF.png" /></a></p>
 <p>效果还是相当不错的。如果有二值化就更好了。</p>
-<h1 id="卷曲复原"><a href="#卷曲复原" class="headerlink" title="卷曲复原"></a>卷曲复原</h1><p>在确定了曲面的各个参数之后，整个纸面的曲面就有了，剩下的就是把卷曲复原，输出结果。</p>
+<h1 id="卷曲复原">卷曲复原</h1>
+<p>在确定了曲面的各个参数之后，整个纸面的曲面就有了，剩下的就是把卷曲复原，输出结果。</p>
 <p>卷曲复原的过程是一个图像上<strong>坐标映射</strong>的过程。我们遍历结果图像上的每一个坐标，唯一地确立其在输入图像上的源坐标，把源坐标的像素复制进来（或许再使用一些采样的技巧），拼成最终的结果，就成了。</p>
-<p>更具体一点，如果输出图像是$w\times h$，我们就需要把页面曲面水平分成$w$等分，垂直分成$h$等分，形成一个网格。结果图像上的$(i, j)$像素就是网格中$(i,j)$对应点的三维坐标在原始图像上投影点对应的像素。</p>
+<p>更具体一点，如果输出图像是<span class="math inline">\(w\times h\)</span>，我们就需要把页面曲面水平分成<span class="math inline">\(w\)</span>等分，垂直分成<span class="math inline">\(h\)</span>等分，形成一个网格。结果图像上的<span class="math inline">\((i, j)\)</span>像素就是网格中<span class="math inline">\((i,j)\)</span>对应点的三维坐标在原始图像上投影点对应的像素。</p>
 <p>垂直等分是简单的，因为在最早的假设里面我就假设页面的垂直边沿是直线。</p>
 <p>但是水平边沿是一条曲线，或者更精确的说，可以被近似看为一条分段三次样条曲线。怎么等分这样一个曲线呢？</p>
 <p>这种事情用数学解决是最理想的，只要能够解析地计算出任意区间曲线的长度，配合二分这个问题就解决了。但是三次函数曲线长度的积分是非初等的且无比复杂的，所以数学方法行不通。</p>
-<p><img src="https://s2.ax1x.com/2020/01/10/lh4vlV.png" alt="lh4vlV.png"></p>
+<figure>
+<img src="https://s2.ax1x.com/2020/01/10/lh4vlV.png" alt="lh4vlV.png" /><figcaption aria-hidden="true">lh4vlV.png</figcaption>
+</figure>
 <p>（Well，好像Mathematica告诉我算还是可以算的……）</p>
 <p>于是只能使用不那么优雅的数值方法解决了。飞快地写了一个Simpson Integration，效果看起来还不错，嘛反正精度不够缩小步长就可以了，和后面的计算比这个又不是瓶颈。</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// spline: 两端为(0, 0)和(1, 0)的分段样条曲线</span>
-<span class="token comment">// res: 等分的数量</span>
-<span class="token keyword">const</span> step <span class="token operator">=</span> <span class="token number">0.0001</span><span class="token punctuation">;</span>
-<span class="token keyword">let</span> len <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span> t <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>nodeCount<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">let</span> <span class="token punctuation">[</span>a<span class="token punctuation">,</span> b<span class="token punctuation">,</span> c<span class="token punctuation">,</span> d<span class="token punctuation">]</span> <span class="token operator">=</span> spline<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token comment">// a + bx + cx^2 + dx^3</span>
-    <span class="token keyword">let</span> xLeft <span class="token operator">=</span> i <span class="token operator">===</span> <span class="token number">0</span> <span class="token operator">?</span> <span class="token number">0</span> <span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span>splineNodes<span class="token punctuation">[</span>i <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-    <span class="token keyword">let</span> xRight <span class="token operator">=</span> i <span class="token operator">===</span> <span class="token keyword">this</span><span class="token punctuation">.</span>nodeCount <span class="token operator">?</span> <span class="token number">1</span> <span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span>splineNodes<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-    <span class="token keyword">let</span> <span class="token function-variable function">f</span> <span class="token operator">=</span> <span class="token parameter">x</span> <span class="token operator">=></span> Math<span class="token punctuation">.</span><span class="token function">hypot</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token number">3</span> <span class="token operator">*</span> d <span class="token operator">*</span> x <span class="token operator">+</span> <span class="token number">2</span> <span class="token operator">*</span> c<span class="token punctuation">)</span> <span class="token operator">*</span> x <span class="token operator">+</span> b<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> x <span class="token operator">=</span> xLeft<span class="token punctuation">;</span> x <span class="token operator">&lt;</span> xRight<span class="token punctuation">;</span> x <span class="token operator">+=</span> step<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token keyword">let</span> h <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">min</span><span class="token punctuation">(</span>xRight <span class="token operator">-</span> x<span class="token punctuation">,</span> step<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        len <span class="token operator">+=</span> <span class="token punctuation">(</span><span class="token function">f</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token number">4</span> <span class="token operator">*</span> <span class="token function">f</span><span class="token punctuation">(</span>x <span class="token operator">+</span> h <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token function">f</span><span class="token punctuation">(</span>x <span class="token operator">+</span> h<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">*</span> h <span class="token operator">/</span> <span class="token number">6</span><span class="token punctuation">;</span>
-        t<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span><span class="token punctuation">[</span>x<span class="token punctuation">,</span> len<span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>d <span class="token operator">*</span> x <span class="token operator">+</span> c<span class="token punctuation">)</span> <span class="token operator">*</span> x <span class="token operator">+</span> b<span class="token punctuation">)</span> <span class="token operator">*</span> x <span class="token operator">+</span> a<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token keyword">let</span> ret <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span> p <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> res<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">let</span> l <span class="token operator">=</span> i <span class="token operator">/</span> res <span class="token operator">*</span> len<span class="token punctuation">;</span>
-    <span class="token keyword">while</span> <span class="token punctuation">(</span>p <span class="token operator">+</span> <span class="token number">1</span> <span class="token operator">&lt;</span> t<span class="token punctuation">.</span>length <span class="token operator">&amp;&amp;</span> t<span class="token punctuation">[</span>p <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">&lt;=</span> l<span class="token punctuation">)</span> p<span class="token operator">++</span><span class="token punctuation">;</span>
-    <span class="token keyword">let</span> lt <span class="token operator">=</span> t<span class="token punctuation">[</span>p<span class="token punctuation">]</span><span class="token punctuation">,</span> rt <span class="token operator">=</span> p <span class="token operator">+</span> <span class="token number">1</span> <span class="token operator">===</span> t<span class="token punctuation">.</span>length <span class="token operator">?</span> <span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">,</span> len<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">:</span> t<span class="token punctuation">[</span>p <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-    ret<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>l <span class="token operator">-</span> lt<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">&lt;=</span> rt<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">-</span> l <span class="token operator">?</span> <span class="token punctuation">[</span>lt<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> lt<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token operator">:</span> <span class="token punctuation">[</span>rt<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> rt<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token comment">// ret 就是曲线上的点了</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+<pre class="line-numbers"><code class="language-javascript">// spline: 两端为(0, 0)和(1, 0)的分段样条曲线
+// res: 等分的数量
+const step = 0.0001;
+let len = 0, t = [];
+for (let i = 0; i &lt;= this.nodeCount; i++) &#123;
+    let [a, b, c, d] = spline[i]; // a + bx + cx^2 + dx^3
+    let xLeft = i === 0 ? 0 : this.splineNodes[i - 1][0];
+    let xRight = i === this.nodeCount ? 1 : this.splineNodes[i][0];
+    let f = x =&gt; Math.hypot(1, ((3 * d * x + 2 * c) * x + b));
+    for (let x = xLeft; x &lt; xRight; x += step) &#123;
+        let h = Math.min(xRight - x, step);
+        len += (f(x) + 4 * f(x + h / 2) + f(x + h)) * h / 6;
+        t.push([x, len, ((d * x + c) * x + b) * x + a]);
+    &#125;
+&#125;
+let ret = [], p = 0;
+for (let i = 1; i &lt;= res; i++) &#123;
+    let l = i / res * len;
+    while (p + 1 &lt; t.length &amp;&amp; t[p + 1][1] &lt;= l) p++;
+    let lt = t[p], rt = p + 1 === t.length ? [1, len, 0] : t[p + 1];
+    ret.push(l - lt[1] &lt;= rt[1] - l ? [lt[0], lt[2]] : [rt[0], rt[2]]);
+&#125;
+// ret 就是曲线上的点了</code></pre>
 <p>anyway，反正积的函数也没有那么畸形，也没那么着急优化，代码写得乱一点也就凑活着过去了<del>（疯狂为自己的懒找借口）</del></p>
 <p>求出曲线一连串等分点之后就可以做复原了：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// vadd, multiply: 向量和，数乘</span>
-<span class="token comment">// criticalPoints: 曲线等分点</span>
-<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> x <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> x <span class="token operator">&lt;</span> resultWidth<span class="token punctuation">;</span> x<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span> <span class="token comment">// 遍历结果的每一列像素</span>
-    <span class="token keyword">const</span> top <span class="token operator">=</span> <span class="token function">vadd</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>upperLeft3D<span class="token punctuation">,</span>
-        <span class="token function">multiply</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>baseVec<span class="token punctuation">,</span> criticalPoints<span class="token punctuation">[</span>x<span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">multiply</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>normalVec<span class="token punctuation">,</span> criticalPoints<span class="token punctuation">[</span>x<span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> 
-    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> y <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> y <span class="token operator">&lt;</span> resultHeight<span class="token punctuation">;</span> y<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span> 
-        <span class="token keyword">let</span> coord <span class="token operator">=</span> <span class="token function">multiply</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">toCanvasCoord</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">project</span><span class="token punctuation">(</span>
-            <span class="token function">vadd</span><span class="token punctuation">(</span>top<span class="token punctuation">,</span> <span class="token function">multiply</span><span class="token punctuation">(</span>vertical<span class="token punctuation">,</span> y <span class="token operator">/</span> resultHeight<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> width <span class="token operator">/</span> <span class="token keyword">this</span><span class="token punctuation">.</span>canvasWidth<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// (x, y)对应的图像的原坐标</span>
-        <span class="token keyword">let</span> di <span class="token operator">=</span> <span class="token punctuation">(</span>y <span class="token operator">*</span> resultWidth <span class="token operator">+</span> x<span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token number">4</span><span class="token punctuation">;</span>
-        <span class="token keyword">let</span> si <span class="token operator">=</span> <span class="token punctuation">(</span>Math<span class="token punctuation">.</span><span class="token function">round</span><span class="token punctuation">(</span>coord<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">*</span> width <span class="token operator">+</span> Math<span class="token punctuation">.</span><span class="token function">round</span><span class="token punctuation">(</span>coord<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token number">4</span><span class="token punctuation">;</span>
-        <span class="token comment">// R, G, B, alpha四通道</span>
-        imageDataResult<span class="token punctuation">.</span>data<span class="token punctuation">[</span>di<span class="token punctuation">]</span> <span class="token operator">=</span> imageDataOriginal<span class="token punctuation">.</span>data<span class="token punctuation">[</span>si<span class="token punctuation">]</span><span class="token punctuation">;</span>
-        imageDataResult<span class="token punctuation">.</span>data<span class="token punctuation">[</span>di <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> imageDataOriginal<span class="token punctuation">.</span>data<span class="token punctuation">[</span>si <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-        imageDataResult<span class="token punctuation">.</span>data<span class="token punctuation">[</span>di <span class="token operator">+</span> <span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">=</span> imageDataOriginal<span class="token punctuation">.</span>data<span class="token punctuation">[</span>si <span class="token operator">+</span> <span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-        imageDataResult<span class="token punctuation">.</span>data<span class="token punctuation">[</span>di <span class="token operator">+</span> <span class="token number">3</span><span class="token punctuation">]</span> <span class="token operator">=</span> imageDataOriginal<span class="token punctuation">.</span>data<span class="token punctuation">[</span>si <span class="token operator">+</span> <span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>大概是OI写惯了觉得$10^3\times 10^3$级别的运算没啥，直觉告诉我这一段代码跑得会很快。然而现实是残酷的，这段代码要跑三十秒左右，也不知道是哪里出了问题，V8的JIT都拯救不了。</p>
+<pre class="line-numbers"><code class="language-javascript">// vadd, multiply: 向量和，数乘
+// criticalPoints: 曲线等分点
+for (let x = 0; x &lt; resultWidth; x++) &#123; // 遍历结果的每一列像素
+    const top = vadd(this.upperLeft3D,
+        multiply(this.baseVec, criticalPoints[x][0]), multiply(this.normalVec, criticalPoints[x][1])); 
+    for (let y = 0; y &lt; resultHeight; y++) &#123; 
+        let coord = multiply(this.toCanvasCoord(this.project(
+            vadd(top, multiply(vertical, y / resultHeight)))), width / this.canvasWidth); // (x, y)对应的图像的原坐标
+        let di = (y * resultWidth + x) * 4;
+        let si = (Math.round(coord[1]) * width + Math.round(coord[0])) * 4;
+        // R, G, B, alpha四通道
+        imageDataResult.data[di] = imageDataOriginal.data[si];
+        imageDataResult.data[di + 1] = imageDataOriginal.data[si + 1];
+        imageDataResult.data[di + 2] = imageDataOriginal.data[si + 2];
+        imageDataResult.data[di + 3] = imageDataOriginal.data[si + 3];
+    &#125;
+&#125;</code></pre>
+<p>大概是OI写惯了觉得<span class="math inline">\(10^3\times 10^3\)</span>级别的运算没啥，直觉告诉我这一段代码跑得会很快。然而现实是残酷的，这段代码要跑三十秒左右，也不知道是哪里出了问题，V8的JIT都拯救不了。</p>
 <p>目前只能先用这么慢的代码将就着了，回头有空用WebAssembly试图优化一下吧。接下来应该都是工程问题了。</p>
 
     </div>
@@ -438,7 +443,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

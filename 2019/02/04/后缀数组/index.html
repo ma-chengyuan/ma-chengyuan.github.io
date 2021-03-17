@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="简介后缀数组是字符串当中常见的一种数据结构，它将一个字符串$S$的所有后缀进行排序，得到以下三个数组：  $\operatorname{sa}[i]$：排序后排名为$i$的后缀的起始位置 $\operatorname{rank}[i]$：起始位置为$i$的后缀的排名 $\operatorname{height}[i]$：起始位置$\operatorname{sa}[i]$的后缀和起始位置$\ope">
+<meta name="description" content="简介 后缀数组是字符串当中常见的一种数据结构，它将一个字符串\(S\)的所有后缀进行排序，得到以下三个数组：  \(\operatorname{sa}[i]\)：排序后排名为\(i\)的后缀的起始位置 \(\operatorname{rank}[i]\)：起始位置为\(i\)的后缀的排名 \(\operatorname{height}[i]\)：起始位置\(\operatorname{s">
 <meta property="og:type" content="article">
 <meta property="og:title" content="后缀数组笔记">
 <meta property="og:url" content="https://alan20210202.github.io/2019/02/04/%E5%90%8E%E7%BC%80%E6%95%B0%E7%BB%84/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="简介后缀数组是字符串当中常见的一种数据结构，它将一个字符串$S$的所有后缀进行排序，得到以下三个数组：  $\operatorname{sa}[i]$：排序后排名为$i$的后缀的起始位置 $\operatorname{rank}[i]$：起始位置为$i$的后缀的排名 $\operatorname{height}[i]$：起始位置$\operatorname{sa}[i]$的后缀和起始位置$\ope">
+<meta property="og:description" content="简介 后缀数组是字符串当中常见的一种数据结构，它将一个字符串\(S\)的所有后缀进行排序，得到以下三个数组：  \(\operatorname{sa}[i]\)：排序后排名为\(i\)的后缀的起始位置 \(\operatorname{rank}[i]\)：起始位置为\(i\)的后缀的排名 \(\operatorname{height}[i]\)：起始位置\(\operatorname{s">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-02-04T07:06:01.203Z">
 <meta property="article:modified_time" content="2019-02-04T07:33:29.914Z">
@@ -48,7 +48,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>后缀数组笔记 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -169,12 +170,14 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%84%E9%80%A0"><span class="nav-number">2.</span> <span class="nav-text">构造</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97-operatorname-height"><span class="nav-number">3.</span> <span class="nav-text">计算$\operatorname{height}[]$</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%84%E9%80%A0"><span class="nav-number">2.</span> <span class="nav-text">构造</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97operatornameheight"><span class="nav-number">3.</span> <span class="nav-text">计算\(\operatorname{height}[]\)</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -240,7 +243,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/02/04/%E5%90%8E%E7%BC%80%E6%95%B0%E7%BB%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -282,70 +285,73 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>后缀数组是字符串当中常见的一种数据结构，它将一个字符串$S$的所有<strong>后缀</strong>进行排序，得到以下三个数组：</p>
-<ol>
-<li>$\operatorname{sa}[i]$：排序后排名为$i$的后缀的起始位置</li>
-<li>$\operatorname{rank}[i]$：起始位置为$i$的后缀的排名</li>
-<li>$\operatorname{height}[i]$：起始位置$\operatorname{sa}[i]$的后缀和起始位置$\operatorname{sa}[i - 1]$的后缀的<em>最长公共前缀</em>长度</li>
+        <h1 id="简介">简介</h1>
+<p>后缀数组是字符串当中常见的一种数据结构，它将一个字符串<span class="math inline">\(S\)</span>的所有<strong>后缀</strong>进行排序，得到以下三个数组：</p>
+<ol type="1">
+<li><span class="math inline">\(\operatorname{sa}[i]\)</span>：排序后排名为<span class="math inline">\(i\)</span>的后缀的起始位置</li>
+<li><span class="math inline">\(\operatorname{rank}[i]\)</span>：起始位置为<span class="math inline">\(i\)</span>的后缀的排名</li>
+<li><span class="math inline">\(\operatorname{height}[i]\)</span>：起始位置<span class="math inline">\(\operatorname{sa}[i]\)</span>的后缀和起始位置<span class="math inline">\(\operatorname{sa}[i - 1]\)</span>的后缀的<em>最长公共前缀</em>长度</li>
 </ol>
 <p>利用这三个数组我们可以有力地解决字符串当中的大部分问题。</p>
-<h1 id="构造"><a href="#构造" class="headerlink" title="构造"></a>构造</h1><p>显然如果我们朴素地去构造长度为$n$的字符串的后缀树组的话，时间复杂度为$O(n^2\log n)$。这对于长字符串来说是完全无法接受的。然而利用倍增的思想我们可以在$O(n\log n)$之内快速构造后缀树组，虽然像DC3，SAIS之类的$O(n)$算法也存在，但是倍增的编码难度更低，也足以通过大部分的题目（毕竟可能很多时候瓶颈不在于构造）。</p>
-<p>$O(n\log n)$的构造代码如下：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">void</span> <span class="token function">build_sa</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">static</span> <span class="token keyword">int</span> a<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">,</span> b<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">,</span> d<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">,</span> tmp<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">,</span> buc<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">;</span>
-    <span class="token function">copy</span><span class="token punctuation">(</span>s <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> s <span class="token operator">+</span> <span class="token number">1</span> <span class="token operator">+</span> n<span class="token punctuation">,</span> d <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token function">sort</span><span class="token punctuation">(</span>d <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> d <span class="token operator">+</span> <span class="token number">1</span> <span class="token operator">+</span> n<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">int</span> <span class="token operator">*</span>end <span class="token operator">=</span> <span class="token function">unique</span><span class="token punctuation">(</span>d <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> d <span class="token operator">+</span> <span class="token number">1</span> <span class="token operator">+</span> n<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> a<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">lower_bound</span><span class="token punctuation">(</span>d <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> end<span class="token punctuation">,</span> s<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">-</span> d<span class="token punctuation">;</span>
-    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> buc<span class="token punctuation">[</span>a<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token operator">++</span><span class="token punctuation">;</span>
-    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> buc<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">+=</span> buc<span class="token punctuation">[</span>i <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> rk<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> buc<span class="token punctuation">[</span>a<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">;</span>
-    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> t <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> t <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> t <span class="token operator">*=</span> <span class="token number">2</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token function">copy</span><span class="token punctuation">(</span>rk <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> rk <span class="token operator">+</span> <span class="token number">1</span> <span class="token operator">+</span> n<span class="token punctuation">,</span> a <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> b<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> i <span class="token operator">+</span> t <span class="token operator">></span> n <span class="token operator">?</span> <span class="token number">0</span> <span class="token operator">:</span> rk<span class="token punctuation">[</span>i <span class="token operator">+</span> t<span class="token punctuation">]</span><span class="token punctuation">;</span>
+<h1 id="构造">构造</h1>
+<p>显然如果我们朴素地去构造长度为<span class="math inline">\(n\)</span>的字符串的后缀树组的话，时间复杂度为<span class="math inline">\(O(n^2\log n)\)</span>。这对于长字符串来说是完全无法接受的。然而利用倍增的思想我们可以在<span class="math inline">\(O(n\log n)\)</span>之内快速构造后缀树组，虽然像DC3，SAIS之类的<span class="math inline">\(O(n)\)</span>算法也存在，但是倍增的编码难度更低，也足以通过大部分的题目（毕竟可能很多时候瓶颈不在于构造）。</p>
+<p><span class="math inline">\(O(n\log n)\)</span>的构造代码如下：</p>
+<pre class="line-numbers"><code class="language-cpp">void build_sa() &#123;
+    static int a[N], b[N], d[N], tmp[N], buc[N];
+    copy(s + 1, s + 1 + n, d + 1);
+    sort(d + 1, d + 1 + n);
+    int *end = unique(d + 1, d + 1 + n);
+    for (int i = 1; i &lt;= n; i++) a[i] = lower_bound(d + 1, end, s[i]) - d;
+    for (int i = 1; i &lt;= n; i++) buc[a[i]]++;
+    for (int i = 1; i &lt;= n; i++) buc[i] += buc[i - 1];
+    for (int i = 1; i &lt;= n; i++) rk[i] = buc[a[i] - 1] + 1;
+    for (int t = 1; t &lt;= n; t *= 2) &#123;
+        copy(rk + 1, rk + 1 + n, a + 1);
+        for (int i = 1; i &lt;= n; i++) b[i] = i + t &gt; n ? 0 : rk[i + t];
         
-        <span class="token function">fill</span><span class="token punctuation">(</span>buc<span class="token punctuation">,</span> buc <span class="token operator">+</span> n <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> buc<span class="token punctuation">[</span>b<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token operator">++</span><span class="token punctuation">;</span>
-        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> buc<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">+=</span> buc<span class="token punctuation">[</span>i <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> n<span class="token punctuation">;</span> i<span class="token punctuation">;</span> i<span class="token operator">--</span><span class="token punctuation">)</span> tmp<span class="token punctuation">[</span>buc<span class="token punctuation">[</span>b<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token operator">--</span><span class="token punctuation">]</span> <span class="token operator">=</span> i<span class="token punctuation">;</span>
+        fill(buc, buc + n + 1, 0);
+        for (int i = 1; i &lt;= n; i++) buc[b[i]]++;
+        for (int i = 1; i &lt;= n; i++) buc[i] += buc[i - 1];
+        for (int i = n; i; i--) tmp[buc[b[i]]--] = i;
 
-        <span class="token function">fill</span><span class="token punctuation">(</span>buc<span class="token punctuation">,</span> buc <span class="token operator">+</span> n <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> buc<span class="token punctuation">[</span>a<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token operator">++</span><span class="token punctuation">;</span>
-        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> buc<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">+=</span> buc<span class="token punctuation">[</span>i <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> n<span class="token punctuation">;</span> i<span class="token punctuation">;</span> i<span class="token operator">--</span><span class="token punctuation">)</span> sa<span class="token punctuation">[</span>buc<span class="token punctuation">[</span>a<span class="token punctuation">[</span>tmp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token operator">--</span><span class="token punctuation">]</span> <span class="token operator">=</span> tmp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+        fill(buc, buc + n + 1, 0);
+        for (int i = 1; i &lt;= n; i++) buc[a[i]]++;
+        for (int i = 1; i &lt;= n; i++) buc[i] += buc[i - 1];
+        for (int i = n; i; i--) sa[buc[a[tmp[i]]]--] = tmp[i];
 
-        <span class="token keyword">bool</span> flag <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
-        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span> last <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-            <span class="token keyword">int</span> p <span class="token operator">=</span> sa<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
-            <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>last<span class="token punctuation">)</span> rk<span class="token punctuation">[</span>p<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
-            <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>a<span class="token punctuation">[</span>p<span class="token punctuation">]</span> <span class="token operator">==</span> a<span class="token punctuation">[</span>last<span class="token punctuation">]</span> <span class="token operator">&amp;&amp;</span> b<span class="token punctuation">[</span>p<span class="token punctuation">]</span> <span class="token operator">==</span> b<span class="token punctuation">[</span>last<span class="token punctuation">]</span><span class="token punctuation">)</span>
-                flag <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">,</span> rk<span class="token punctuation">[</span>p<span class="token punctuation">]</span> <span class="token operator">=</span> rk<span class="token punctuation">[</span>last<span class="token punctuation">]</span><span class="token punctuation">;</span>
-            <span class="token keyword">else</span> rk<span class="token punctuation">[</span>p<span class="token punctuation">]</span> <span class="token operator">=</span> rk<span class="token punctuation">[</span>last<span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">;</span>
-            last <span class="token operator">=</span> p<span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span>
-        <span class="token keyword">if</span> <span class="token punctuation">(</span>flag<span class="token punctuation">)</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span> 
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>其思想如下：如果我们先把所有后缀按照它们前$2^{i - 1}$个字符进行排序，那基于排完序的结果我们就可以使用<strong>双关键字排序</strong>对所有后缀按照前$2^{i}$个字符进行排序（原因是后缀的后缀还是后缀）,当然在实践过程中我们常使用桶排来加速这一个过程。</p>
-<p>代码的最后一段是在$\operatorname{rank}$互异的时候直接跳出，这是一个小优化。</p>
-<h1 id="计算-operatorname-height"><a href="#计算-operatorname-height" class="headerlink" title="计算$\operatorname{height}[]$"></a>计算$\operatorname{height}[]$</h1><p>除了朴素比较之外，$\operatorname{height}$数组的计算可以在$O(n)$时间内完成。</p>
-<p><strong>观察：</strong>设$h[i] = \operatorname{height}[\operatorname{rank}[i]]$，则我们有：<br>$$<br>h[i] \ge h[i - 1] - 1<br>$$<br><strong>证明：</strong></p>
-<ol>
-<li>$h[i - 1] = 0$：Trivial</li>
-<li>$h[i - 1] &gt; 0$：设$k = \operatorname{sa}[\operatorname{rank}[i - 1]-1]$表示$\operatorname{sa}$数组当中排在以$i - 1$为起始的后缀前的后缀的起始位置，以$k$开始的后缀与以$i - 1$开始的后缀的LCP为$h[i - 1]$。考虑统一截掉开头的一个字符，得到起始位置为$k + 1$与$i$的两个后缀，其LCP为$h[i - 1] - 1$，$k +1$在$\operatorname{sa}[]$里面肯定排在$i$前面，又因为后缀数组的性质，$i$与$\operatorname{sa}[\operatorname{rank}[i] - 1]$的LCP一定不会小于$i$和$k + 1$的LCP，因此不等式成立。</li>
+        bool flag = true;
+        for (int i = 1, last = 0; i &lt;= n; i++) &#123;
+            int p = sa[i];
+            if (!last) rk[p] = 1;
+            else if (a[p] == a[last] &amp;&amp; b[p] == b[last])
+                flag = false, rk[p] = rk[last];
+            else rk[p] = rk[last] + 1;
+            last = p;
+        &#125;
+        if (flag) break;
+    &#125; 
+&#125;</code></pre>
+<p>其思想如下：如果我们先把所有后缀按照它们前<span class="math inline">\(2^{i - 1}\)</span>个字符进行排序，那基于排完序的结果我们就可以使用<strong>双关键字排序</strong>对所有后缀按照前<span class="math inline">\(2^{i}\)</span>个字符进行排序（原因是后缀的后缀还是后缀）,当然在实践过程中我们常使用桶排来加速这一个过程。</p>
+<p>代码的最后一段是在<span class="math inline">\(\operatorname{rank}\)</span>互异的时候直接跳出，这是一个小优化。</p>
+<h1 id="计算operatornameheight">计算<span class="math inline">\(\operatorname{height}[]\)</span></h1>
+<p>除了朴素比较之外，<span class="math inline">\(\operatorname{height}\)</span>数组的计算可以在<span class="math inline">\(O(n)\)</span>时间内完成。</p>
+<p><strong>观察：</strong>设<span class="math inline">\(h[i] = \operatorname{height}[\operatorname{rank}[i]]\)</span>，则我们有： <span class="math display">\[
+h[i] \ge h[i - 1] - 1
+\]</span> <strong>证明：</strong></p>
+<ol type="1">
+<li><span class="math inline">\(h[i - 1] = 0\)</span>：Trivial</li>
+<li><span class="math inline">\(h[i - 1] &gt; 0\)</span>：设<span class="math inline">\(k = \operatorname{sa}[\operatorname{rank}[i - 1]-1]\)</span>表示<span class="math inline">\(\operatorname{sa}\)</span>数组当中排在以<span class="math inline">\(i - 1\)</span>为起始的后缀前的后缀的起始位置，以<span class="math inline">\(k\)</span>开始的后缀与以<span class="math inline">\(i - 1\)</span>开始的后缀的LCP为<span class="math inline">\(h[i - 1]\)</span>。考虑统一截掉开头的一个字符，得到起始位置为<span class="math inline">\(k + 1\)</span>与<span class="math inline">\(i\)</span>的两个后缀，其LCP为<span class="math inline">\(h[i - 1] - 1\)</span>，<span class="math inline">\(k +1\)</span>在<span class="math inline">\(\operatorname{sa}[]\)</span>里面肯定排在<span class="math inline">\(i\)</span>前面，又因为后缀数组的性质，<span class="math inline">\(i\)</span>与<span class="math inline">\(\operatorname{sa}[\operatorname{rank}[i] - 1]\)</span>的LCP一定不会小于<span class="math inline">\(i\)</span>和<span class="math inline">\(k + 1\)</span>的LCP，因此不等式成立。</li>
 </ol>
-<p>基于以上的观察，计算$\operatorname{height}[]$的代码如下：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span> k <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>rk<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token number">1</span><span class="token punctuation">)</span> k <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token keyword">else</span> <span class="token punctuation">&#123;</span>
-        <span class="token keyword">if</span> <span class="token punctuation">(</span>k <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">)</span> k<span class="token operator">--</span><span class="token punctuation">;</span>
-        <span class="token keyword">int</span> j <span class="token operator">=</span> sa<span class="token punctuation">[</span>rk<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-        <span class="token keyword">while</span> <span class="token punctuation">(</span>i <span class="token operator">+</span> k <span class="token operator">&lt;=</span> n <span class="token operator">&amp;&amp;</span> j <span class="token operator">+</span> k <span class="token operator">&lt;=</span> n <span class="token operator">&amp;&amp;</span> s<span class="token punctuation">[</span>i <span class="token operator">+</span> k<span class="token punctuation">]</span> <span class="token operator">==</span> s<span class="token punctuation">[</span>j <span class="token operator">+</span> k<span class="token punctuation">]</span><span class="token punctuation">)</span> k<span class="token operator">++</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-    ht<span class="token punctuation">[</span>rk<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token operator">=</span> k<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+<p>基于以上的观察，计算<span class="math inline">\(\operatorname{height}[]\)</span>的代码如下：</p>
+<pre class="line-numbers"><code class="language-cpp">for (int i = 1, k = 0; i &lt;= n; i++) &#123;
+    if (rk[i] == 1) k = 0;
+    else &#123;
+        if (k &gt; 0) k--;
+        int j = sa[rk[i] - 1];
+        while (i + k &lt;= n &amp;&amp; j + k &lt;= n &amp;&amp; s[i + k] == s[j + k]) k++;
+    &#125;
+    ht[rk[i]] = k;
+&#125;</code></pre>
 
     </div>
 
@@ -437,7 +443,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

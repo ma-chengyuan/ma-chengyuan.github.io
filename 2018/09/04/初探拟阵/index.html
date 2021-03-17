@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="拟阵是很多贪心算法的基础，也可以帮助我们验证自己的贪心算法的正确性，接下来是我从抄《算法导论》中整理出来的一些关于拟阵的性质： 定义吐槽：虽然说拟阵叫拟阵，但是这个“阵”和矩阵的阵几乎一点关系都没有（名字的由来纯粹是历史遗留问题），拟阵和矩阵的关系就像JavaScript和Java，雷锋和雷峰塔一样…… 拟阵：拟阵是一个二元组$M &#x3D; (S, I)$，其中$S$为一个有限集，$I$为$S$的一个族">
+<meta name="description" content="拟阵是很多贪心算法的基础，也可以帮助我们验证自己的贪心算法的正确性，接下来是我从抄《算法导论》中整理出来的一些关于拟阵的性质： 定义 吐槽：虽然说拟阵叫拟阵，但是这个“阵”和矩阵的阵几乎一点关系都没有（名字的由来纯粹是历史遗留问题），拟阵和矩阵的关系就像JavaScript和Java，雷锋和雷峰塔一样…… 拟阵：拟阵是一个二元组\(M &#x3D; (S, I)\)，其中\(S\)为一个有限集，\(I">
 <meta property="og:type" content="article">
 <meta property="og:title" content="拟阵笔记">
 <meta property="og:url" content="https://alan20210202.github.io/2018/09/04/%E5%88%9D%E6%8E%A2%E6%8B%9F%E9%98%B5/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="拟阵是很多贪心算法的基础，也可以帮助我们验证自己的贪心算法的正确性，接下来是我从抄《算法导论》中整理出来的一些关于拟阵的性质： 定义吐槽：虽然说拟阵叫拟阵，但是这个“阵”和矩阵的阵几乎一点关系都没有（名字的由来纯粹是历史遗留问题），拟阵和矩阵的关系就像JavaScript和Java，雷锋和雷峰塔一样…… 拟阵：拟阵是一个二元组$M &#x3D; (S, I)$，其中$S$为一个有限集，$I$为$S$的一个族">
+<meta property="og:description" content="拟阵是很多贪心算法的基础，也可以帮助我们验证自己的贪心算法的正确性，接下来是我从抄《算法导论》中整理出来的一些关于拟阵的性质： 定义 吐槽：虽然说拟阵叫拟阵，但是这个“阵”和矩阵的阵几乎一点关系都没有（名字的由来纯粹是历史遗留问题），拟阵和矩阵的关系就像JavaScript和Java，雷锋和雷峰塔一样…… 拟阵：拟阵是一个二元组\(M &#x3D; (S, I)\)，其中\(S\)为一个有限集，\(I">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2018-09-04T11:47:02.328Z">
 <meta property="article:modified_time" content="2018-10-07T08:12:09.985Z">
@@ -48,7 +48,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>拟阵笔记 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -175,6 +176,8 @@
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -240,7 +243,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/04/%E5%88%9D%E6%8E%A2%E6%8B%9F%E9%98%B5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -289,32 +292,41 @@
     
     <div class="post-body" itemprop="articleBody">
         <p>拟阵是很多贪心算法的基础，也可以帮助我们验证自己的贪心算法的正确性，接下来是我从<del>抄</del>《算法导论》中整理出来的一些关于拟阵的性质：</p>
-<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p><strong>吐槽：</strong>虽然说拟阵叫拟阵，但是这个“阵”和矩阵的阵几乎一点关系都没有（名字的由来纯粹是历史遗留问题），拟阵和矩阵的关系就像JavaScript和Java，雷锋和雷峰塔一样……</p>
-<p><strong>拟阵：</strong>拟阵是一个二元组$M = (S, I)$，其中$S$为一个有限集，$I$为$S$的一个族（即子集的集合）并满足如下性质：</p>
-<ol>
-<li><strong>遗传性：</strong>若$B \in I$且$A \subseteq B$，则$A \in I$。</li>
-<li><strong>交换性：</strong>若$A \in I, B \in I$且$|A| &lt; |B|$，那么存在元素$x \in B \setminus A$，使得$A \cup {x} \in I$。（又是一个误导性的名字……）</li>
+<h1 id="定义">定义</h1>
+<p><strong>吐槽：</strong>虽然说拟阵叫拟阵，但是这个“阵”和矩阵的阵几乎一点关系都没有（名字的由来纯粹是历史遗留问题），拟阵和矩阵的关系就像JavaScript和Java，雷锋和雷峰塔一样……</p>
+<p><strong>拟阵：</strong>拟阵是一个二元组<span class="math inline">\(M = (S, I)\)</span>，其中<span class="math inline">\(S\)</span>为一个有限集，<span class="math inline">\(I\)</span>为<span class="math inline">\(S\)</span>的一个族（即子集的集合）并满足如下性质：</p>
+<ol type="1">
+<li><strong>遗传性：</strong>若<span class="math inline">\(B \in I\)</span>且<span class="math inline">\(A \subseteq B\)</span>，则<span class="math inline">\(A \in I\)</span>。</li>
+<li><strong>交换性：</strong>若<span class="math inline">\(A \in I, B \in I\)</span>且<span class="math inline">\(|A| &lt; |B|\)</span>，那么存在元素<span class="math inline">\(x \in B \setminus A\)</span>，使得<span class="math inline">\(A \cup \{x\} \in I\)</span>。（又是一个误导性的名字……）</li>
 </ol>
-<p>$I$中的集合成为$S$的<strong>独立子集</strong>。</p>
-<p><strong>图拟阵：</strong>对于一个图$G = (V, E)$，我们定义它的图拟阵为$M_G = (S_G, I_G)$，当中$S_G$为边集，而$E$的子集$A \in I_G$的当且仅当$A$中无环（森林）。图拟阵与最小生成树有关（这也解释了为什么最小生成树的算法都是贪心）。由于森林的子图还是森林，因此该拟阵的遗传性显然。而该拟阵的交换性也在算法导论中有详细的证明，简单讲起来就是对于森林$A, B$，$|A| &lt; |B|$，我们知道$A$中有$|V| - |A|$棵树，$B$中有$|V| - |B|$棵树比$A$少，因此一定存在一条边$(u, v)$使得$u, v$在$A$中分别属于两棵树，而在$B$中却在一棵树上，显然$A \cup {(u, v)} \in I_G$，证毕。</p>
-<p><strong>拓展：</strong>对于集合$A$，若存在元素$x$使得$A \cup {x} \in I$，则称$x$是$A$的一个拓展。</p>
+<p><span class="math inline">\(I\)</span>中的集合成为<span class="math inline">\(S\)</span>的<strong>独立子集</strong>。</p>
+<p><strong>图拟阵：</strong>对于一个图<span class="math inline">\(G = (V, E)\)</span>，我们定义它的图拟阵为<span class="math inline">\(M_G = (S_G, I_G)\)</span>，当中<span class="math inline">\(S_G\)</span>为边集，而<span class="math inline">\(E\)</span>的子集<span class="math inline">\(A \in I_G\)</span>的当且仅当<span class="math inline">\(A\)</span>中无环（森林）。图拟阵与最小生成树有关（这也解释了为什么最小生成树的算法都是贪心）。由于森林的子图还是森林，因此该拟阵的遗传性显然。而该拟阵的交换性也在算法导论中有详细的证明，简单讲起来就是对于森林<span class="math inline">\(A, B\)</span>，<span class="math inline">\(|A| &lt; |B|\)</span>，我们知道<span class="math inline">\(A\)</span>中有<span class="math inline">\(|V| - |A|\)</span>棵树，<span class="math inline">\(B\)</span>中有<span class="math inline">\(|V| - |B|\)</span>棵树比<span class="math inline">\(A\)</span>少，因此一定存在一条边<span class="math inline">\((u, v)\)</span>使得<span class="math inline">\(u, v\)</span>在<span class="math inline">\(A\)</span>中分别属于两棵树，而在<span class="math inline">\(B\)</span>中却在一棵树上，显然<span class="math inline">\(A \cup \{(u, v)\} \in I_G\)</span>，证毕。</p>
+<p><strong>拓展：</strong>对于集合<span class="math inline">\(A\)</span>，若存在元素<span class="math inline">\(x\)</span>使得<span class="math inline">\(A \cup \{x\} \in I\)</span>，则称<span class="math inline">\(x\)</span>是<span class="math inline">\(A\)</span>的一个拓展。</p>
 <p><strong>最大独立子集：</strong>不存在拓展的独立子集。</p>
 <p><strong>定理：</strong>所有的最大独立子集等大小。</p>
-<p><strong>证明：</strong>反证， 假设存在最大独立子集$A, B$使得$|A| &lt; |B|$，由交换性，必然存在$x \in B \setminus A$是$A$的一个拓展，证毕。</p>
-<p><strong>加权拟阵：</strong>若存在一个权函数$w$为所有$S$的元素定义了严格正的权值，则称$M$为加权拟阵，定义独立子集$A$的权值为：<br>$$<br>w(a) = \sum_{x \in A} w(x)<br>$$</p>
-<h1 id="和贪心的关系"><a href="#和贪心的关系" class="headerlink" title="和贪心的关系"></a>和贪心的关系</h1><p>很多贪心问题可以转化为<strong>在拟阵上求最大权独立子集</strong>，或者称为拟阵的<strong>最优子集</strong>。</p>
-<p><strong>例：</strong>最小生成树算法当中我们可以对于边$e$定义权重$w(e) = l_{max} - l(e)$，其中$l(e)$为边的长度，$l_{max}$为一个极大的数。<em>在图拟阵上最大化独立子集权重必然等价于在图上最小化生成树边权</em>（因为生成树的边数总是固定的）。</p>
-<p><strong>求解最优子集的算法：</strong>将$S$的所有元素$x$按照$w(x)$从大到小排序，初始化$A = \emptyset$，然后依次从大到小考虑每个元素$x$，并<strong>尽可能地</strong>用$x$去拓展$A$，最后得到的集合必定是最优子集。</p>
+<p><strong>证明：</strong>反证， 假设存在最大独立子集<span class="math inline">\(A, B\)</span>使得<span class="math inline">\(|A| &lt; |B|\)</span>，由交换性，必然存在<span class="math inline">\(x \in B \setminus A\)</span>是<span class="math inline">\(A\)</span>的一个拓展，证毕。</p>
+<p><strong>加权拟阵：</strong>若存在一个权函数<span class="math inline">\(w\)</span>为所有<span class="math inline">\(S\)</span>的元素定义了严格正的权值，则称<span class="math inline">\(M\)</span>为加权拟阵，定义独立子集<span class="math inline">\(A\)</span>的权值为： <span class="math display">\[
+w(a) = \sum_{x \in A} w(x)
+\]</span></p>
+<h1 id="和贪心的关系">和贪心的关系</h1>
+<p>很多贪心问题可以转化为<strong>在拟阵上求最大权独立子集</strong>，或者称为拟阵的<strong>最优子集</strong>。</p>
+<p><strong>例：</strong>最小生成树算法当中我们可以对于边<span class="math inline">\(e\)</span>定义权重<span class="math inline">\(w(e) = l_{max} - l(e)\)</span>，其中<span class="math inline">\(l(e)\)</span>为边的长度，<span class="math inline">\(l_{max}\)</span>为一个极大的数。<em>在图拟阵上最大化独立子集权重必然等价于在图上最小化生成树边权</em>（因为生成树的边数总是固定的）。</p>
+<p><strong>求解最优子集的算法：</strong>将<span class="math inline">\(S\)</span>的所有元素<span class="math inline">\(x\)</span>按照<span class="math inline">\(w(x)\)</span>从大到小排序，初始化<span class="math inline">\(A = \emptyset\)</span>，然后依次从大到小考虑每个元素<span class="math inline">\(x\)</span>，并<strong>尽可能地</strong>用<span class="math inline">\(x\)</span>去拓展<span class="math inline">\(A\)</span>，最后得到的集合必定是最优子集。</p>
 <p>这个算法的贪心本质暴露无遗，接下来我们证明这个算法的正确性：</p>
-<p><strong>引理1（贪心选择）：</strong>若将$S$的元素从大到小排序，令$x$为排序后第一个使得${x} \in I$的元素，那么必然存在一个包含$x$的最优子集。</p>
-<p><strong>证明：</strong>如果不存在$x$，则最优子集为空，显然。</p>
-<p>否则，假设我们有一个不含$x$的最优子集$B$，显然由遗传性，对于$y \in B$都有${y} \in I$，又因为我们选择$x$的方式显然由$w(x) \ge w(y)$。我们初始化$A = {x}$，利用和$B$交换性不断拓展$A$直至$|A| = |B|$，此时必定存在另一元素$y$，使得$A \setminus {x} = B \setminus {y}$，又因为$w(x) \ge w(y)$，那么$A$一定不会比$B$差，得证。</p>
-<p><strong>引理2：</strong>若元素$x$是$A$的一个拓展，那么${x} \in I$，换而言之，$x$是$\emptyset$的拓展。</p>
-<p><strong>证明：</strong>由定义，$A \cup {x} \in I$，由遗传性显然。</p>
-<p><strong>推论（逆否命题）：</strong>若$x$不是$\emptyset$的拓展，那它也一定不是其他非空独立子集的拓展。</p>
-<p><strong>引理3（最优子结构）：</strong>在如上算法中选择完$x$之后，在$M = (S, I)$中寻找最优子集等价于在$M’= (S’, I’)$中寻找最优子集，其中：<br>$$<br>\begin{aligned}<br>S’ &amp;= {y \mid {x, y} \in S} \<br>I’ &amp;= {B \mid B \subseteq S \setminus {x}, B \cup {x} \in I}<br>\end{aligned}<br>$$<br>即<strong>我们可以忽略$x$继续我们的算法。</strong></p>
-<p><strong>证明：</strong>如果我们在$M’$当中选出了最优子集$A’$，则显然$A’ \cup {x}$是$M$的独立子集，并且由$x$的选择方式可知也是最优子集，证毕。</p>
-<p><strong>贪心正确性的证明：</strong>由引理2的推论，我们知道贪心算法没能一开始用来拓展的$x$一定在后面也没有用。由引理3，选择完$x$之后我们把问题缩小，还可以进一步贪心，此时贪心实质上是在$M’$上寻找最优子集。证毕。</p>
+<p><strong>引理1（贪心选择）：</strong>若将<span class="math inline">\(S\)</span>的元素从大到小排序，令<span class="math inline">\(x\)</span>为排序后第一个使得<span class="math inline">\(\{x\} \in I\)</span>的元素，那么必然存在一个包含<span class="math inline">\(x\)</span>的最优子集。</p>
+<p><strong>证明：</strong>如果不存在<span class="math inline">\(x\)</span>，则最优子集为空，显然。</p>
+<p>否则，假设我们有一个不含<span class="math inline">\(x\)</span>的最优子集<span class="math inline">\(B\)</span>，显然由遗传性，对于<span class="math inline">\(y \in B\)</span>都有<span class="math inline">\(\{y\} \in I\)</span>，又因为我们选择<span class="math inline">\(x\)</span>的方式显然由<span class="math inline">\(w(x) \ge w(y)\)</span>。我们初始化<span class="math inline">\(A = \{x\}\)</span>，利用和<span class="math inline">\(B\)</span>交换性不断拓展<span class="math inline">\(A\)</span>直至<span class="math inline">\(|A| = |B|\)</span>，此时必定存在另一元素<span class="math inline">\(y\)</span>，使得<span class="math inline">\(A \setminus \{x\} = B \setminus \{y\}\)</span>，又因为<span class="math inline">\(w(x) \ge w(y)\)</span>，那么<span class="math inline">\(A\)</span>一定不会比<span class="math inline">\(B\)</span>差，得证。</p>
+<p><strong>引理2：</strong>若元素<span class="math inline">\(x\)</span>是<span class="math inline">\(A\)</span>的一个拓展，那么<span class="math inline">\(\{x\} \in I\)</span>，换而言之，<span class="math inline">\(x\)</span>是<span class="math inline">\(\emptyset\)</span>的拓展。</p>
+<p><strong>证明：</strong>由定义，<span class="math inline">\(A \cup \{x\} \in I\)</span>，由遗传性显然。</p>
+<p><strong>推论（逆否命题）：</strong>若<span class="math inline">\(x\)</span>不是<span class="math inline">\(\emptyset\)</span>的拓展，那它也一定不是其他非空独立子集的拓展。</p>
+<p><strong>引理3（最优子结构）：</strong>在如上算法中选择完<span class="math inline">\(x\)</span>之后，在<span class="math inline">\(M = (S, I)\)</span>中寻找最优子集等价于在<span class="math inline">\(M&#39;= (S&#39;, I&#39;)\)</span>中寻找最优子集，其中： <span class="math display">\[
+\begin{aligned}
+S&#39; &amp;= \{y \mid \{x, y\} \in S\} \\
+I&#39; &amp;= \{B \mid B \subseteq S \setminus \{x\}, B \cup \{x\} \in I\}
+\end{aligned}
+\]</span> 即<strong>我们可以忽略<span class="math inline">\(x\)</span>继续我们的算法。</strong></p>
+<p><strong>证明：</strong>如果我们在<span class="math inline">\(M&#39;\)</span>当中选出了最优子集<span class="math inline">\(A&#39;\)</span>，则显然<span class="math inline">\(A&#39; \cup \{x\}\)</span>是<span class="math inline">\(M\)</span>的独立子集，并且由<span class="math inline">\(x\)</span>的选择方式可知也是最优子集，证毕。</p>
+<p><strong>贪心正确性的证明：</strong>由引理2的推论，我们知道贪心算法没能一开始用来拓展的<span class="math inline">\(x\)</span>一定在后面也没有用。由引理3，选择完<span class="math inline">\(x\)</span>之后我们把问题缩小，还可以进一步贪心，此时贪心实质上是在<span class="math inline">\(M&#39;\)</span>上寻找最优子集。证毕。</p>
 <p>从以上讨论我们可以看出，对于一类问题，如果我们可以以某种方式把它规约为在拟阵上求取最优子集，那你一定可以使用贪心解决，这给很多贪心算法（例如Kruskal）提供了理论支持。</p>
 
     </div>
@@ -407,7 +419,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="UNFINISHED ARTICLE – WORK IN PROGRESS UNFINISHED ARTICLE – WORK IN PROGRESS UNFINISHED ARTICLE – WORK IN PROGRESS This was a project I worked on two months ago, but it wasn’t until now that I have the">
+<meta name="description" content="UNFINISHED ARTICLE -- WORK IN PROGRESS UNFINISHED ARTICLE -- WORK IN PROGRESS UNFINISHED ARTICLE -- WORK IN PROGRESS This was a project I worked on two months ago, but it wasn&#39;t until now that I ha">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Designing Computational Redstone Circuits Automatically in Minecraft with Integer Programming: Preliminary Thoughts and Tests">
 <meta property="og:url" content="https://alan20210202.github.io/2020/08/28/Minecraft%20ILP/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="UNFINISHED ARTICLE – WORK IN PROGRESS UNFINISHED ARTICLE – WORK IN PROGRESS UNFINISHED ARTICLE – WORK IN PROGRESS This was a project I worked on two months ago, but it wasn’t until now that I have the">
+<meta property="og:description" content="UNFINISHED ARTICLE -- WORK IN PROGRESS UNFINISHED ARTICLE -- WORK IN PROGRESS UNFINISHED ARTICLE -- WORK IN PROGRESS This was a project I worked on two months ago, but it wasn&#39;t until now that I ha">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://alan20210202.github.io/ANDCD.svg">
 <meta property="article:published_time" content="2020-08-28T05:48:50.411Z">
@@ -51,7 +51,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>Designing Computational Redstone Circuits Automatically in Minecraft with Integer Programming: Preliminary Thoughts and Tests | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -172,12 +173,14 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Intro"><span class="nav-number">1.</span> <span class="nav-text">Intro</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Formulating-the-problem"><span class="nav-number">2.</span> <span class="nav-text">Formulating the problem</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#What%E2%80%99s-the-input"><span class="nav-number">2.1.</span> <span class="nav-text">What’s the input?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What%E2%80%99s-the-output"><span class="nav-number">2.2.</span> <span class="nav-text">What’s the output?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#The-Objective"><span class="nav-number">2.3.</span> <span class="nav-text">The Objective</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Example-the-AND-gate"><span class="nav-number">2.4.</span> <span class="nav-text">Example: the AND gate</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#intro"><span class="nav-number">1.</span> <span class="nav-text">Intro</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#formulating-the-problem"><span class="nav-number">2.</span> <span class="nav-text">Formulating the problem</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#whats-the-input"><span class="nav-number">2.1.</span> <span class="nav-text">What&#39;s the input?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#whats-the-output"><span class="nav-number">2.2.</span> <span class="nav-text">What&#39;s the output?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#the-objective"><span class="nav-number">2.3.</span> <span class="nav-text">The Objective</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#example-the-and-gate"><span class="nav-number">2.4.</span> <span class="nav-text">Example: the AND gate</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -243,7 +246,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/08/28/Minecraft%20ILP/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -291,46 +294,52 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p><strong>UNFINISHED ARTICLE – WORK IN PROGRESS</strong></p>
-<p><strong>UNFINISHED ARTICLE – WORK IN PROGRESS</strong></p>
-<p><strong>UNFINISHED ARTICLE – WORK IN PROGRESS</strong></p>
-<p>This was a project I worked on two months ago, but it wasn’t until now that I have the time to write it down and share it on my blog. </p>
-<h1 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h1><p>Redstone has been a core element in the game Minecraft for quite some years. It is presumably the most untrivial one as well: while anyone could master nearly all Minecraft mechanics through experiences, it takes not only experience but also ingenuity to design a good redstone circuit. Few of us are bold enough to claim “I master redstone”, even after playing Minecraft for a decade.</p>
+        <p><strong>UNFINISHED ARTICLE -- WORK IN PROGRESS</strong></p>
+<p><strong>UNFINISHED ARTICLE -- WORK IN PROGRESS</strong></p>
+<p><strong>UNFINISHED ARTICLE -- WORK IN PROGRESS</strong></p>
+<p>This was a project I worked on two months ago, but it wasn't until now that I have the time to write it down and share it on my blog.</p>
+<h1 id="intro">Intro</h1>
+<p>Redstone has been a core element in the game Minecraft for quite some years. It is presumably the most untrivial one as well: while anyone could master nearly all Minecraft mechanics through experiences, it takes not only experience but also ingenuity to design a good redstone circuit. Few of us are bold enough to claim "I master redstone", even after playing Minecraft for a decade.</p>
 <p>So here comes the question: <strong>Can the design of redstone circuits, the core of Minecraft automations, be automated?</strong> and <strong>If so, how?</strong> (appreciate how meta this is :)</p>
-<p>Theoretically, the answer is “yes…but”. Minecraft has a finite world, and each position has a finite number of possible blockstates. We can write a program to enumerate all possible placements of blocks until we find some placement corresponding to the desired redstone circuit. However, this needs exponential time and we may need to wait for a century before it could give us, for instance, a decent piston door. Moreover, if a circuit involves manipulation of entities (which could have infinite many states), then we are easily screwed.</p>
-<p>Well, perhaps it is difficult to let a program design any redstone circuit. But there is indeed a subset of redstone circuits whose design can very likely be automated – <strong>computational redstone circuits</strong>, aka. logic gates, calculators, CPUs etc. Why? Because software that design their real world electronic counterparts are readily available – they are called “EDA”.</p>
-<p>As a high school student I, of course, know little about the inner workings of real-world EDA applications (and there doesn’t seem to be a lot of resources out there). I am convinced that this problem is NPC (further articulated below), so designing an efficient polytime combinatorial algorithm doesn’t seem plausible. That said, what about reducing this problem to some other NPC problems which we can solve relatively quickly with optimized algorithms / heuristics – say, ILP? This is what I am trying to do here.</p>
-<h1 id="Formulating-the-problem"><a href="#Formulating-the-problem" class="headerlink" title="Formulating the problem"></a>Formulating the problem</h1><p>“Designing computational redstone circuit automatically” is a vague idea, so it is necessary that we know what this truly means. </p>
-<h2 id="What’s-the-input"><a href="#What’s-the-input" class="headerlink" title="What’s the input?"></a>What’s the input?</h2><p>The input should describe the intended functionality of a circuit. Recall how we usually describe a circuit: we draw a <strong>circuit diagram</strong>. I here characterize a redstone circuit diagram by the assumptions and constraints below:</p>
-<ol>
+<p>Theoretically, the answer is "yes...but". Minecraft has a finite world, and each position has a finite number of possible blockstates. We can write a program to enumerate all possible placements of blocks until we find some placement corresponding to the desired redstone circuit. However, this needs exponential time and we may need to wait for a century before it could give us, for instance, a decent piston door. Moreover, if a circuit involves manipulation of entities (which could have infinite many states), then we are easily screwed.</p>
+<p>Well, perhaps it is difficult to let a program design any redstone circuit. But there is indeed a subset of redstone circuits whose design can very likely be automated -- <strong>computational redstone circuits</strong>, aka. logic gates, calculators, CPUs etc. Why? Because software that design their real world electronic counterparts are readily available -- they are called "EDA".</p>
+<p>As a high school student I, of course, know little about the inner workings of real-world EDA applications (and there doesn't seem to be a lot of resources out there). I am convinced that this problem is NPC (further articulated below), so designing an efficient polytime combinatorial algorithm doesn't seem plausible. That said, what about reducing this problem to some other NPC problems which we can solve relatively quickly with optimized algorithms / heuristics -- say, ILP? This is what I am trying to do here.</p>
+<h1 id="formulating-the-problem">Formulating the problem</h1>
+<p>"Designing computational redstone circuit automatically" is a vague idea, so it is necessary that we know what this truly means.</p>
+<h2 id="whats-the-input">What's the input?</h2>
+<p>The input should describe the intended functionality of a circuit. Recall how we usually describe a circuit: we draw a <strong>circuit diagram</strong>. I here characterize a redstone circuit diagram by the assumptions and constraints below:</p>
+<ol type="1">
 <li>A circuit contains two parts: <strong>wires and components</strong>.</li>
 <li>Components are the <strong>primitives</strong> of a circuit. E.g. A torch or a wire junction.</li>
-<li>A component has <strong>interfaces</strong>, either <strong>in or out</strong>, as where the component receives signals from and sends signals to. </li>
-<li>A wire connects <strong>an</strong> out-interface from a component (“source”) to <strong>an</strong> in-interface of another component (“target”).</li>
+<li>A component has <strong>interfaces</strong>, either <strong>in or out</strong>, as where the component receives signals from and sends signals to.</li>
+<li>A wire connects <strong>an</strong> out-interface from a component ("source") to <strong>an</strong> in-interface of another component ("target").</li>
 <li>Wires are <strong>directed</strong>.</li>
 <li>Components are <strong>independent</strong>. i.e. they do not interfere with other components in any way other than being connected by wires from interfaces.</li>
 </ol>
 <p>A circuit diagram can be represented in a directed graph, with components as vertices and wires as edges. Source/target interfaces as extra information stored on edges.</p>
-<h2 id="What’s-the-output"><a href="#What’s-the-output" class="headerlink" title="What’s the output?"></a>What’s the output?</h2><p>We want our program to tell us how the circuit we described in the input can be built in the Minecraft world. Therefore, we could define the the output to be a set of position - blockstate pairs, (which, in implementation, can be stored in a schematic file). </p>
-<p>However, we don’t want to jump straight from a circuit diagram to a detailed Minecraft schematic because that means taking interference between components, quasi connectivity, update order – basically everything that makes redstone engineering complex – into consideration in the first place. </p>
+<h2 id="whats-the-output">What's the output?</h2>
+<p>We want our program to tell us how the circuit we described in the input can be built in the Minecraft world. Therefore, we could define the the output to be a set of position - blockstate pairs, (which, in implementation, can be stored in a schematic file).</p>
+<p>However, we don't want to jump straight from a circuit diagram to a detailed Minecraft schematic because that means taking interference between components, quasi connectivity, update order -- basically everything that makes redstone engineering complex -- into consideration in the first place.</p>
 <p>Instead, we could first build our circuit in an <strong>ideal world</strong>, in which we forget about all those factors above, and then convert the ideal placement into an actual Minecraft schematic.</p>
-<p>What’s an idea world?</p>
-<ol>
+<p>What's an idea world?</p>
+<ol type="1">
 <li>A circuit consists of multiple ideal blocks.</li>
 <li>A component fully occupies a set of ideal blocks, some of which are its interfaces. How many and which blocks a certain type of component occupies depend on its size in Minecraft and how we plan to convert the ideal placement to a real schematic.</li>
-<li>A wire is a chain of blocks, where any adjacent two share a face. The first block is always the source interface and the last is always the target interface. </li>
-<li>**Exclusiveness: **All components and all wires (ignoring their first and last block) mustn’t overlap.</li>
-<li>**Mutual Independence: **Unless both blocks are occupied by the same component / wire, anything in two adjacent cells do not interfere with each other.</li>
+<li>A wire is a chain of blocks, where any adjacent two share a face. The first block is always the source interface and the last is always the target interface.</li>
+<li><strong>Exclusiveness: </strong>All components and all wires (ignoring their first and last block) mustn't overlap.</li>
+<li><strong>Mutual Independence: </strong>Unless both blocks are occupied by the same component / wire, anything in two adjacent cells do not interfere with each other.</li>
 <li>Wire junctions are special components and are exceptions to rule 2 and 3. A wire junction always have three interfaces (1 in &amp; 2 outs, or 2 ins &amp; 1 out). Multiple junctions can overlap and they can overlap with an interface of some component.</li>
-<li>There are times when we want to fix the location of some components in the input. These components are usually just placeholders that mark the position of IO. (We don’t want to produce a circuit with an unreachable input/output in the center of everything else, right?)</li>
+<li>There are times when we want to fix the location of some components in the input. These components are usually just placeholders that mark the position of IO. (We don't want to produce a circuit with an unreachable input/output in the center of everything else, right?)</li>
 </ol>
-<h2 id="The-Objective"><a href="#The-Objective" class="headerlink" title="The Objective"></a>The Objective</h2><ol>
+<h2 id="the-objective">The Objective</h2>
+<ol type="1">
 <li>The circuit represented by the output must have the same functionality as described by the input circuit diagram.</li>
 <li>The delay of the circuit should be minimized.</li>
 </ol>
-<h2 id="Example-the-AND-gate"><a href="#Example-the-AND-gate" class="headerlink" title="Example: the AND gate"></a>Example: the AND gate</h2><p>Let’s see how we design a simple AND gate.</p>
+<h2 id="example-the-and-gate">Example: the AND gate</h2>
+<p>Let's see how we design a simple AND gate.</p>
 <p>Suppose the only primitive components we have are NOT gate (torch), wire junction, and IO placeholder. The circuit diagram of AND gate is:</p>
-<p><img src="/ANDCD.svg"></p>
+<p><img src="/ANDCD.svg" /></p>
 
     </div>
 
@@ -423,7 +432,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

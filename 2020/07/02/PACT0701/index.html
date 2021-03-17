@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="定义输入：$n$个任务，第$i$个任务的运行时间为$p_i$，共有$m$个相同的机器（一个任务在每台机器上运行时间都相同）。每台机器同一时间只能运行一个任务，每个任务只能在一台机器上运行（不能拆分）。 目标：合理地调度任务，使得完成所有任务的时间（makespan）最短。 下界估计自然而然地，我们首先思考$\mathrm{OPT}$的下界。一个比较容易想到的下界是耗时最长的任务所需要的时间：$$\">
+<meta name="description" content="定义 输入：\(n\)个任务，第\(i\)个任务的运行时间为\(p_i\)，共有\(m\)个相同的机器（一个任务在每台机器上运行时间都相同）。每台机器同一时间只能运行一个任务，每个任务只能在一台机器上运行（不能拆分）。 目标：合理地调度任务，使得完成所有任务的时间（makespan）最短。 下界估计 自然而然地，我们首先思考\(\mathrm{OPT}\)的下界。一个比较容易想到的下界是耗">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PACT 07&#x2F;01 任务调度问题">
 <meta property="og:url" content="https://alan20210202.github.io/2020/07/02/PACT0701/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="定义输入：$n$个任务，第$i$个任务的运行时间为$p_i$，共有$m$个相同的机器（一个任务在每台机器上运行时间都相同）。每台机器同一时间只能运行一个任务，每个任务只能在一台机器上运行（不能拆分）。 目标：合理地调度任务，使得完成所有任务的时间（makespan）最短。 下界估计自然而然地，我们首先思考$\mathrm{OPT}$的下界。一个比较容易想到的下界是耗时最长的任务所需要的时间：$$\">
+<meta property="og:description" content="定义 输入：\(n\)个任务，第\(i\)个任务的运行时间为\(p_i\)，共有\(m\)个相同的机器（一个任务在每台机器上运行时间都相同）。每台机器同一时间只能运行一个任务，每个任务只能在一台机器上运行（不能拆分）。 目标：合理地调度任务，使得完成所有任务的时间（makespan）最短。 下界估计 自然而然地，我们首先思考\(\mathrm{OPT}\)的下界。一个比较容易想到的下界是耗">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://alan20210202.github.io/2020/07/02/PACT0701/SIPM1.svg">
 <meta property="og:image" content="https://alan20210202.github.io/2020/07/02/PACT0701/SIPM2.svg">
@@ -53,7 +53,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>PACT 07/01 任务调度问题 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -180,6 +181,8 @@
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -245,7 +248,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/02/PACT0701/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -293,41 +296,64 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p><strong>输入：</strong>$n$个任务，第$i$个任务的运行时间为$p_i$，共有$m$个相同的机器（一个任务在每台机器上运行时间都相同）。每台机器同一时间只能运行一个任务，每个任务只能在一台机器上运行（不能拆分）。</p>
+        <h1 id="定义">定义</h1>
+<p><strong>输入：</strong><span class="math inline">\(n\)</span>个任务，第<span class="math inline">\(i\)</span>个任务的运行时间为<span class="math inline">\(p_i\)</span>，共有<span class="math inline">\(m\)</span>个相同的机器（一个任务在每台机器上运行时间都相同）。每台机器同一时间只能运行一个任务，每个任务只能在一台机器上运行（不能拆分）。</p>
 <p><strong>目标：</strong>合理地调度任务，使得完成所有任务的时间（makespan）最短。</p>
-<h1 id="下界估计"><a href="#下界估计" class="headerlink" title="下界估计"></a>下界估计</h1><p>自然而然地，我们首先思考$\mathrm{OPT}$的下界。一个比较容易想到的下界是耗时最长的任务所需要的时间：<br>$$<br>\mathrm{OPT} \ge \max_{i} {p_i}<br>$$<br>除此以外，考虑如果可以拆分任务，最短的运行时间是多少？自然是$\frac{\sum_i p_i}{m}$，而这在现实中常常是做不到的，因此有：<br>$$<br>\mathrm{OPT} \ge \frac{\sum_i p_i}{m}<br>$$<br>这两个下界对于之后的算法分析非常有用。</p>
-<h1 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h1><ol>
+<h1 id="下界估计">下界估计</h1>
+<p>自然而然地，我们首先思考<span class="math inline">\(\mathrm{OPT}\)</span>的下界。一个比较容易想到的下界是耗时最长的任务所需要的时间： <span class="math display">\[
+\mathrm{OPT} \ge \max_{i} \{p_i\}
+\]</span> 除此以外，考虑如果可以拆分任务，最短的运行时间是多少？自然是<span class="math inline">\(\frac{\sum_i p_i}{m}\)</span>，而这在现实中常常是做不到的，因此有： <span class="math display">\[
+\mathrm{OPT} \ge \frac{\sum_i p_i}{m}
+\]</span> 这两个下界对于之后的算法分析非常有用。</p>
+<h1 id="算法">算法</h1>
+<ol type="1">
 <li>将所有的任务随机排成一列。</li>
 <li>当一台机器完成了一个任务变得闲置了，马上把列表上的下一项任务安排到这个机器上去执行。</li>
 <li>重复步骤2直至所有任务都被执行完毕。</li>
 </ol>
 <p>这个算法是非常简单且自然的。</p>
-<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p>我们算法给出结果的什么？自然是最后一个结束的任务的结束时间。如果我们设最后一个结束的任务为任务$l$，且这个任务开始于$s_l$，那么就有：<br>$$<br>\mathrm{Cost} = s_l+p_l<br>$$<br>接下来我们进行放缩。</p>
-<p>考虑$s_l$的上界是什么？</p>
-<p><img src="./SIPM1.svg"></p>
-<p>很显然，<strong>在$s_l$时刻，除了$l$即将运行的那台机器，其他机器上必须有任务在运行或者刚刚空下来</strong>（如果有机器已经空了一阵子了，那当时$l$就会被安排到那台机器上去跑），因此不难得出$ms_l \le \sum_{i\neq l} p_i$，即<br>$$<br>s_l \le \frac{\sum_{i \neq l}p_i}{m}<br>$$<br>因此<br>$$<br>\begin{aligned}<br>\mathrm{Cost} &amp;= s_l+p_l \<br>&amp; \le \frac{\sum_{i \neq l}p_i}{m} + p_l \<br>&amp;= \frac{\sum_{i}p_i}{m} + \left(1 - \frac{1}{m}\right) p_l \<br>&amp;\le \frac{\sum_{i}p_i}{m} + \left(1 - \frac{1}{m}\right)\max_{i}{p_i} \<br>&amp;\le \mathrm{OPT} + \left(1 - \frac{1}{m}\right)\mathrm{OPT} \<br>&amp;= \left(2 - \frac{1}{m}\right)\mathrm{OPT}<br>\end{aligned}<br>$$<br>我们就证明了我们的算法是一个$2$倍近似算法！</p>
-<h1 id="提升近似比"><a href="#提升近似比" class="headerlink" title="提升近似比"></a>提升近似比</h1><p>能不能在这个算法的基础上提升呢？我们注意到将$\mathrm{OPT}$作为$p_l$的上界其实还是太松了。如果我们能够缩短$p_l$，那上界的估计有没有改善的空间呢？</p>
+<h1 id="分析">分析</h1>
+<p>我们算法给出结果的什么？自然是最后一个结束的任务的结束时间。如果我们设最后一个结束的任务为任务<span class="math inline">\(l\)</span>，且这个任务开始于<span class="math inline">\(s_l\)</span>，那么就有： <span class="math display">\[
+\mathrm{Cost} = s_l+p_l
+\]</span> 接下来我们进行放缩。</p>
+<p>考虑<span class="math inline">\(s_l\)</span>的上界是什么？</p>
+<p><img src="./SIPM1.svg" /></p>
+<p>很显然，<strong>在<span class="math inline">\(s_l\)</span>时刻，除了<span class="math inline">\(l\)</span>即将运行的那台机器，其他机器上必须有任务在运行或者刚刚空下来</strong>（如果有机器已经空了一阵子了，那当时<span class="math inline">\(l\)</span>就会被安排到那台机器上去跑），因此不难得出<span class="math inline">\(ms_l \le \sum_{i\neq l} p_i\)</span>，即 <span class="math display">\[
+s_l \le \frac{\sum_{i \neq l}p_i}{m}
+\]</span> 因此 <span class="math display">\[
+\begin{aligned}
+\mathrm{Cost} &amp;= s_l+p_l \\
+&amp; \le \frac{\sum_{i \neq l}p_i}{m} + p_l \\
+&amp;= \frac{\sum_{i}p_i}{m} + \left(1 - \frac{1}{m}\right) p_l \\
+&amp;\le \frac{\sum_{i}p_i}{m} + \left(1 - \frac{1}{m}\right)\max_{i}\{p_i\} \\
+&amp;\le \mathrm{OPT} + \left(1 - \frac{1}{m}\right)\mathrm{OPT} \\
+&amp;= \left(2 - \frac{1}{m}\right)\mathrm{OPT}
+\end{aligned}
+\]</span> 我们就证明了我们的算法是一个<span class="math inline">\(2\)</span>倍近似算法！</p>
+<h1 id="提升近似比">提升近似比</h1>
+<p>能不能在这个算法的基础上提升呢？我们注意到将<span class="math inline">\(\mathrm{OPT}\)</span>作为<span class="math inline">\(p_l\)</span>的上界其实还是太松了。如果我们能够缩短<span class="math inline">\(p_l\)</span>，那上界的估计有没有改善的空间呢？</p>
 <p>于是我们在原来算法的基础上不妨进行一个改进：与其在一开始将所有任务随机排列，不如<strong>将其按照运行时间从大到小的顺序进行排序</strong>。这也很符合直觉，一开始就把需要时间很长的任务跑完，之后肯定有些机器空着有些机器还在忙，这个时候就可以用完成时间比较短的小任务来灵活地填补这些空缺了。</p>
 <p>这一下让近似比提升了多少呢？</p>
-<p><strong>引理：</strong>加上排序之后的算法具有$\frac{3}{2}$的近似比。</p>
+<p><strong>引理：</strong>加上排序之后的算法具有<span class="math inline">\(\frac{3}{2}\)</span>的近似比。</p>
 <p><strong>证明：</strong>我们不妨分类讨论，</p>
-<p>**情形1. **$p_l \le \frac{1}{2}\mathrm{OPT}$，这个时候按照我们上文分析的路子走直接就可以得到$\mathrm{Cost} \le \frac{3}{2}\mathrm{OPT}$，就做完了。</p>
-<p><strong>情形2. <strong>$p_l &gt; \frac{1}{2}\mathrm{OPT}$，此时所有$l$之前的任务也肯定具有大于$\frac{1}{2} \mathrm{OPT}$的运行时间。注意到</strong>我们不需要考虑$p_l$之后的任务</strong>，因为依据定义$l$是最后结束的，后面的任务对于我们的结果没有影响。那$l$之前的任务在最优调度里面是怎么样的呢？反证法可以很快说明：<strong>在最优调度里面，每一台机器至多只能处理一件任务</strong>（忽略$l$之后的任务）！也就是说事实上$l$以及之前的任务数目加起来不会超过机器数$m$，那再想一想在这种机器充足的情况下，我们的算法在分配这些任务的时候也是一个机器一个任务，$p_l$必定是从一开始就执行的，因此$\mathrm{Cost}=p_l$，而显然$\mathrm{OPT} \ge p_l$，因此必有$\mathrm{Cost} = \mathrm{OPT}$，结束。（事实上，由于$l$还是最后结束的任务，不难想通在一机器一任务的情形下，$l$之前的所有任务都一定和$l$花费相同的时间，或$l$就是我们算法分配的第一个任务。）</p>
-<p>综上所述，近似比是$\frac{3}{2}$。</p>
-<h1 id="进一步提升近似比"><a href="#进一步提升近似比" class="headerlink" title="进一步提升近似比"></a>进一步提升近似比</h1><p>通过对于上述论证的些许修改，我们其实可以证明：</p>
-<p><strong>引理：</strong>加上排序之后的算法具有$\frac{4}{3}$的近似比。</p>
+<p><strong>情形1. </strong><span class="math inline">\(p_l \le \frac{1}{2}\mathrm{OPT}\)</span>，这个时候按照我们上文分析的路子走直接就可以得到<span class="math inline">\(\mathrm{Cost} \le \frac{3}{2}\mathrm{OPT}\)</span>，就做完了。</p>
+<p><strong>情形2. </strong><span class="math inline">\(p_l &gt; \frac{1}{2}\mathrm{OPT}\)</span>，此时所有<span class="math inline">\(l\)</span>之前的任务也肯定具有大于<span class="math inline">\(\frac{1}{2} \mathrm{OPT}\)</span>的运行时间。注意到<strong>我们不需要考虑<span class="math inline">\(p_l\)</span>之后的任务</strong>，因为依据定义<span class="math inline">\(l\)</span>是最后结束的，后面的任务对于我们的结果没有影响。那<span class="math inline">\(l\)</span>之前的任务在最优调度里面是怎么样的呢？反证法可以很快说明：<strong>在最优调度里面，每一台机器至多只能处理一件任务</strong>（忽略<span class="math inline">\(l\)</span>之后的任务）！也就是说事实上<span class="math inline">\(l\)</span>以及之前的任务数目加起来不会超过机器数<span class="math inline">\(m\)</span>，那再想一想在这种机器充足的情况下，我们的算法在分配这些任务的时候也是一个机器一个任务，<span class="math inline">\(p_l\)</span>必定是从一开始就执行的，因此<span class="math inline">\(\mathrm{Cost}=p_l\)</span>，而显然<span class="math inline">\(\mathrm{OPT} \ge p_l\)</span>，因此必有<span class="math inline">\(\mathrm{Cost} = \mathrm{OPT}\)</span>，结束。（事实上，由于<span class="math inline">\(l\)</span>还是最后结束的任务，不难想通在一机器一任务的情形下，<span class="math inline">\(l\)</span>之前的所有任务都一定和<span class="math inline">\(l\)</span>花费相同的时间，或<span class="math inline">\(l\)</span>就是我们算法分配的第一个任务。）</p>
+<p>综上所述，近似比是<span class="math inline">\(\frac{3}{2}\)</span>。</p>
+<h1 id="进一步提升近似比">进一步提升近似比</h1>
+<p>通过对于上述论证的些许修改，我们其实可以证明：</p>
+<p><strong>引理：</strong>加上排序之后的算法具有<span class="math inline">\(\frac{4}{3}\)</span>的近似比。</p>
 <p><strong>证明：</strong>我们故技重施：</p>
-<p>**情形1. **$p_l \le \frac{1}{3}\mathrm{OPT}$，这个时候我们直接就可以得到$\mathrm{Cost} \le \frac{4}{3}\mathrm{OPT}$。</p>
-<p><strong>情形2. <strong>$p_l &gt; \frac{1}{3}\mathrm{OPT}$，此时所有$l$之前的任务也肯定具有大于$\frac{1}{3} \mathrm{OPT}$的运行时间。我们同样不考虑$l$之后的任务。可以通过反证证明：</strong>在最优调度里，每一台机器至多只能处理两件任务！</strong>因此，我们确定有足够的机器让我们的算法得以这样调度任务：</p>
-<p><img src="./SIPM2.svg"></p>
+<p><strong>情形1. </strong><span class="math inline">\(p_l \le \frac{1}{3}\mathrm{OPT}\)</span>，这个时候我们直接就可以得到<span class="math inline">\(\mathrm{Cost} \le \frac{4}{3}\mathrm{OPT}\)</span>。</p>
+<p><strong>情形2. </strong><span class="math inline">\(p_l &gt; \frac{1}{3}\mathrm{OPT}\)</span>，此时所有<span class="math inline">\(l\)</span>之前的任务也肯定具有大于<span class="math inline">\(\frac{1}{3} \mathrm{OPT}\)</span>的运行时间。我们同样不考虑<span class="math inline">\(l\)</span>之后的任务。可以通过反证证明：<strong>在最优调度里，每一台机器至多只能处理两件任务！</strong>因此，我们确定有足够的机器让我们的算法得以这样调度任务：</p>
+<p><img src="./SIPM2.svg" /></p>
 <p>（看着是不是很像双指针？）</p>
 <p>具体来说，如果我们把机器按照第一个任务的耗时降序排序，那么它们第二个任务的耗时一定成升序排列。（这并不难证明：第一个任务耗时最短的机器一定能够先领到列表中最长的任务作为第二个任务，之后的机器领到的任务时间递减）</p>
-<p>（在这里我们假定$l$一定是第二个任务，如果$l$从头开始运行而且时间特别长的话，参考上一节的证明）</p>
+<p>（在这里我们假定<span class="math inline">\(l\)</span>一定是第二个任务，如果<span class="math inline">\(l\)</span>从头开始运行而且时间特别长的话，参考上一节的证明）</p>
 <p>而接下来我们证明这样的分配方式是最优的。</p>
-<p>我们采取反证的方法：不妨假设在最优方案中存在两个机器，两个机器上都有两个任务，耗时分别为$(a,b)$和$(c,d)$，且$a&gt;c,b&gt;d$。那么我们把两个机器上的第二个任务互换，变成$(a,d)$和$(c,b)$，不难发现此时完成任务的最短时间会减少，和“最优”矛盾。因此，对于最优方案的任意两台机器$(a,b)$和$(c,d)$，如果$a&gt;c$那么$b&lt;d$：</p>
-<p><img src="./SIPM3.svg"></p>
-<p>这正是我们算法所给出的调度方案。因此$\mathrm{OPT}$不会比我们算法的结果更好了。</p>
-<p>综上所述，近似比为$\frac{4}{3}$。</p>
+<p>我们采取反证的方法：不妨假设在最优方案中存在两个机器，两个机器上都有两个任务，耗时分别为<span class="math inline">\((a,b)\)</span>和<span class="math inline">\((c,d)\)</span>，且<span class="math inline">\(a&gt;c,b&gt;d\)</span>。那么我们把两个机器上的第二个任务互换，变成<span class="math inline">\((a,d)\)</span>和<span class="math inline">\((c,b)\)</span>，不难发现此时完成任务的最短时间会减少，和“最优”矛盾。因此，对于最优方案的任意两台机器<span class="math inline">\((a,b)\)</span>和<span class="math inline">\((c,d)\)</span>，如果<span class="math inline">\(a&gt;c\)</span>那么<span class="math inline">\(b&lt;d\)</span>：</p>
+<p><img src="./SIPM3.svg" /></p>
+<p>这正是我们算法所给出的调度方案。因此<span class="math inline">\(\mathrm{OPT}\)</span>不会比我们算法的结果更好了。</p>
+<p>综上所述，近似比为<span class="math inline">\(\frac{4}{3}\)</span>。</p>
 
     </div>
 
@@ -420,7 +446,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

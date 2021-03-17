@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="自己最近又在用JVM系的语言开新坑。这次终于说服自己从Jetbrains的温床里脱离出来改用了大家都在用的Gradle！感觉良好，在这里简单写一下大概咋用，给之后的自己留一个参考吧。 为什么自己要用Gradle呢？  Gradle作为一个开源的构建系统不与任何IDE绑定（比如说IDEA），这相当于增加了代码的兼容性。 Gradle里面可以直接从Maven Central上下库下来，省了我手动下库导">
+<meta name="description" content="自己最近又在用JVM系的语言开新坑。这次终于说服自己从Jetbrains的温床里脱离出来改用了大家都在用的Gradle！感觉良好，在这里简单写一下大概咋用，给之后的自己留一个参考吧。 为什么自己要用Gradle呢？  Gradle作为一个开源的构建系统不与任何IDE绑定（比如说IDEA），这相当于增加了代码的兼容性。 Gradle里面可以直接从Maven Central上下库下来，省了我手">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Gradle初探">
 <meta property="og:url" content="https://alan20210202.github.io/2020/04/03/Gradle%E5%88%9D%E6%8E%A2/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="自己最近又在用JVM系的语言开新坑。这次终于说服自己从Jetbrains的温床里脱离出来改用了大家都在用的Gradle！感觉良好，在这里简单写一下大概咋用，给之后的自己留一个参考吧。 为什么自己要用Gradle呢？  Gradle作为一个开源的构建系统不与任何IDE绑定（比如说IDEA），这相当于增加了代码的兼容性。 Gradle里面可以直接从Maven Central上下库下来，省了我手动下库导">
+<meta property="og:description" content="自己最近又在用JVM系的语言开新坑。这次终于说服自己从Jetbrains的温床里脱离出来改用了大家都在用的Gradle！感觉良好，在这里简单写一下大概咋用，给之后的自己留一个参考吧。 为什么自己要用Gradle呢？  Gradle作为一个开源的构建系统不与任何IDE绑定（比如说IDEA），这相当于增加了代码的兼容性。 Gradle里面可以直接从Maven Central上下库下来，省了我手">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-04-03T12:02:19.209Z">
 <meta property="article:modified_time" content="2020-04-03T14:26:34.819Z">
@@ -48,7 +48,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>Gradle初探 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -174,6 +175,8 @@
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -239,7 +242,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/04/03/Gradle%E5%88%9D%E6%8E%A2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -283,7 +286,7 @@
     <div class="post-body" itemprop="articleBody">
         <p>自己最近又在用JVM系的语言开新坑。这次终于说服自己从Jetbrains的温床里脱离出来改用了大家都在用的Gradle！感觉良好，在这里简单写一下大概咋用，给之后的自己留一个参考吧。</p>
 <p>为什么自己要用Gradle呢？</p>
-<ol>
+<ol type="1">
 <li>Gradle作为一个开源的构建系统不与任何IDE绑定（比如说IDEA），这相当于增加了代码的兼容性。</li>
 <li>Gradle里面可以直接从Maven Central上下库下来，省了我手动下库导入的过程，库更新了也好维护。这对我来说非常地有诱惑力。实测也非常舒服。</li>
 <li>Gradle从设计上来说非常灵活，Gradle默认的构建脚本是用Groovy写的（当然也可以用Kotlin但是这似乎不是主流的样子），而不是只有标记功能的XML，这使Gradle一下子非常强大。</li>
@@ -291,60 +294,59 @@
 <li>IDEA对于Gradle的支持非常棒！（所以到头来自己还是没有逃脱JB的舒适圈……）</li>
 </ol>
 <p>虽然说Gradle的功能很强大我目前的用法还是最初级的。我目前用的Gradle代码大致如下：</p>
-<pre class="line-numbers language-groovy" data-language="groovy"><code class="language-groovy">plugins <span class="token punctuation">&#123;</span>
-    id <span class="token string">'java'</span>
-    id <span class="token string">'org.jetbrains.kotlin.jvm'</span> version <span class="token string">'1.3.61'</span>
-<span class="token punctuation">&#125;</span>
+<pre class="line-numbers"><code class="language-groovy">plugins &#123;
+    id &#39;java&#39;
+    id &#39;org.jetbrains.kotlin.jvm&#39; version &#39;1.3.61&#39;
+&#125;
 
-group <span class="token string">'chengyuan'</span>
-version <span class="token string">'1.0-SNAPSHOT'</span>
+group &#39;chengyuan&#39;
+version &#39;1.0-SNAPSHOT&#39;
 
-sourceCompatibility <span class="token operator">=</span> <span class="token number">1.8</span>
-project<span class="token punctuation">.</span>ext<span class="token punctuation">.</span>lwjglVersion <span class="token operator">=</span> <span class="token string gstring">"3.2.3"</span>
-project<span class="token punctuation">.</span>ext<span class="token punctuation">.</span>lwjglNatives <span class="token operator">=</span> <span class="token string gstring">"natives-windows"</span>
+sourceCompatibility = 1.8
+project.ext.lwjglVersion = &quot;3.2.3&quot;
+project.ext.lwjglNatives = &quot;natives-windows&quot;
 
-repositories <span class="token punctuation">&#123;</span>
-    maven <span class="token punctuation">&#123;</span> url <span class="token string">'http://maven.aliyun.com/nexus/content/groups/public/'</span> <span class="token punctuation">&#125;</span>
-    maven <span class="token punctuation">&#123;</span> url <span class="token string gstring">"https://oss.sonatype.org/content/repositories/snapshots/"</span> <span class="token punctuation">&#125;</span>
-    <span class="token function">mavenCentral</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">&#125;</span>
+repositories &#123;
+    maven &#123; url &#39;http://maven.aliyun.com/nexus/content/groups/public/&#39; &#125;
+    maven &#123; url &quot;https://oss.sonatype.org/content/repositories/snapshots/&quot; &#125;
+    mavenCentral()
+&#125;
 
-dependencies <span class="token punctuation">&#123;</span>
-    implementation <span class="token function">platform</span><span class="token punctuation">(</span><span class="token string gstring">"org.lwjgl:lwjgl-bom:<span class="token expression"><span class="token punctuation">$</span>lwjglVersion</span>"</span><span class="token punctuation">)</span>
+dependencies &#123;
+    implementation platform(&quot;org.lwjgl:lwjgl-bom:$lwjglVersion&quot;)
     
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-assimp"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-bgfx"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-glfw"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-nanovg"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-nuklear"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-openal"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-opengl"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-par"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-stb"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-vulkan"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl-assimp::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl-bgfx::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl-glfw::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl-nanovg::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl-nuklear::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl-openal::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl-opengl::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl-par::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl-stb::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
+    implementation &quot;org.lwjgl:lwjgl&quot;
+    implementation &quot;org.lwjgl:lwjgl-assimp&quot;
+    implementation &quot;org.lwjgl:lwjgl-bgfx&quot;
+    implementation &quot;org.lwjgl:lwjgl-glfw&quot;
+    implementation &quot;org.lwjgl:lwjgl-nanovg&quot;
+    implementation &quot;org.lwjgl:lwjgl-nuklear&quot;
+    implementation &quot;org.lwjgl:lwjgl-openal&quot;
+    implementation &quot;org.lwjgl:lwjgl-opengl&quot;
+    implementation &quot;org.lwjgl:lwjgl-par&quot;
+    implementation &quot;org.lwjgl:lwjgl-stb&quot;
+    implementation &quot;org.lwjgl:lwjgl-vulkan&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-assimp::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-bgfx::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-glfw::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-nanovg::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-nuklear::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-openal::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-opengl::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-par::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-stb::$lwjglNatives&quot;
     
-    testCompile group<span class="token punctuation">:</span> <span class="token string gstring">"junit"</span><span class="token punctuation">,</span> name<span class="token punctuation">:</span> <span class="token string gstring">"junit"</span><span class="token punctuation">,</span> version<span class="token punctuation">:</span> <span class="token string gstring">"4.12"</span>
-<span class="token punctuation">&#125;</span>
+    testCompile group: &quot;junit&quot;, name: &quot;junit&quot;, version: &quot;4.12&quot;
+&#125;
 
-compileKotlin <span class="token punctuation">&#123;</span>
-    kotlinOptions<span class="token punctuation">.</span>jvmTarget <span class="token operator">=</span> <span class="token string gstring">"1.8"</span>
-<span class="token punctuation">&#125;</span>
+compileKotlin &#123;
+    kotlinOptions.jvmTarget = &quot;1.8&quot;
+&#125;
 
-compileTestKotlin <span class="token punctuation">&#123;</span>
-    kotlinOptions<span class="token punctuation">.</span>jvmTarget <span class="token operator">=</span> <span class="token string gstring">"1.8"</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+compileTestKotlin &#123;
+    kotlinOptions.jvmTarget = &quot;1.8&quot;
+&#125;</code></pre>
 <p>首先是<code>plugins</code>这段，这一段虽然重要但一般用不着特别操心，按照我的理解大概是语言支持的插件。</p>
 <p>接下来是版本、JVM版本之类的，看着也很明白。</p>
 <p>然后可以申明一些接下来会用到的常量。</p>
@@ -446,7 +448,20 @@ compileTestKotlin <span class="token punctuation">&#123;</span>
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

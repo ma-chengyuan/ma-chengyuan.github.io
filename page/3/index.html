@@ -45,7 +45,8 @@
     isPost : false,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -171,6 +172,8 @@
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -235,7 +238,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/02/Sublinear/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -276,8 +279,9 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="什么是次线性算法？"><a href="#什么是次线性算法？" class="headerlink" title="什么是次线性算法？"></a>什么是次线性算法？</h1><p>如何衡量算法的效率？一般来说，问题（以及对应的算法）可以分为以下几类：</p>
-<ol>
+          <h1 id="什么是次线性算法">什么是次线性算法？</h1>
+<p>如何衡量算法的效率？一般来说，问题（以及对应的算法）可以分为以下几类：</p>
+<ol type="1">
 <li>不可判定问题。这种问题不存在算法。</li>
 <li>指数时间可解。这种问题虽然存在算法但是就目前我们的技术水平，对于大输入，它们没办法在可接受的时间内返回结果。</li>
 <li>多项式时间可解。这些算法可以在现在的电脑上较为高效地运行。</li>
@@ -287,90 +291,128 @@
 <p>为什么我们需要次线性算法？</p>
 <p>大数据时代我们要处理的数据是在是太多了，光是谷歌一天就会产生20PB的数据，我们根本没有足够的时空资源来哪怕运行线性的算法或者把它们全部过一遍！但是我们又希望从这些数据中挖掘有价值的结论，就只能求助于次线性算法了。</p>
 <p>因为次线性算法没法看到完整的输入，给出错误的结果自然是情有可原的（在精确解没法在次线性时间内算出的情况下）。因此，次线性算法多是<strong>近似算法</strong>。同时，因为如果一个算法是确定性的，对手就可以预判这个算法会看那部分输入，并针对这个造出会让算法100%翻车的数据，因此<strong>随机化</strong>在次线性算法的设计也经常出现。</p>
-<h1 id="查询模型"><a href="#查询模型" class="headerlink" title="查询模型"></a>查询模型</h1><p>好，既然次线性算法不能把输入完整地读一遍，那么要怎么样才能获取输入的信息呢？我们将次线性算法获取输入信息的方式称为<strong>查询</strong>（query）。而算法的难易自然和可以进行的查询方式有着很大的关系，因此我们还需要一组规则定义在一个问题中可以进行何种方式的查询，这种规则称一个问题的<strong>查询模型</strong>（query model）。例如，在以数组为输入的问题当中，常见的查询方式是按照一个下标询问对应的值，在以图为输入的问题当中，查询可以是按照两点查询边权……可以看到，查询模型是因问题而异的。</p>
-<h1 id="有序判定问题（Sortedness-Problem）"><a href="#有序判定问题（Sortedness-Problem）" class="headerlink" title="有序判定问题（Sortedness Problem）"></a>有序判定问题（Sortedness Problem）</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p><strong>输入：</strong>一个$n$个元素的数组$A$。</p>
-<p><strong>查询模型：</strong>对于一个整数$1\le i \le n$，查询$A_i$的值。</p>
-<p><strong>目标：</strong>在尽量少的时间内（假设一次查询时$\mathcal{O}(1)$的）<strong>判断这个数组是否是有序</strong>（此处单指<strong>升序</strong>）的。</p>
-<p>很显然，任何一个确定性的算法都必须进行$\Omega(n)$次查询才能解决这个问题（不然肯定会有漏看的）。</p>
-<p>因此我们退而求其次：如果运用随机化的话，我们能不能在$o(n)$次查询之内给出正确概率至少为$\frac{1}{2}+\epsilon\ (\epsilon &gt;0)$的答案呢？</p>
-<p>（正确概率在这里只要大于$\frac{1}{2}$就行，精确的值没有意义，因为我们总是可以重复运行不靠谱的算法提高正确率）</p>
+<h1 id="查询模型">查询模型</h1>
+<p>好，既然次线性算法不能把输入完整地读一遍，那么要怎么样才能获取输入的信息呢？我们将次线性算法获取输入信息的方式称为<strong>查询</strong>（query）。而算法的难易自然和可以进行的查询方式有着很大的关系，因此我们还需要一组规则定义在一个问题中可以进行何种方式的查询，这种规则称一个问题的<strong>查询模型</strong>（query model）。例如，在以数组为输入的问题当中，常见的查询方式是按照一个下标询问对应的值，在以图为输入的问题当中，查询可以是按照两点查询边权……可以看到，查询模型是因问题而异的。</p>
+<h1 id="有序判定问题sortedness-problem">有序判定问题（Sortedness Problem）</h1>
+<h2 id="定义">定义</h2>
+<p><strong>输入：</strong>一个<span class="math inline">\(n\)</span>个元素的数组<span class="math inline">\(A\)</span>。</p>
+<p><strong>查询模型：</strong>对于一个整数<span class="math inline">\(1\le i \le n\)</span>，查询<span class="math inline">\(A_i\)</span>的值。</p>
+<p><strong>目标：</strong>在尽量少的时间内（假设一次查询时<span class="math inline">\(\mathcal{O}(1)\)</span>的）<strong>判断这个数组是否是有序</strong>（此处单指<strong>升序</strong>）的。</p>
+<p>很显然，任何一个确定性的算法都必须进行<span class="math inline">\(\Omega(n)\)</span>次查询才能解决这个问题（不然肯定会有漏看的）。</p>
+<p>因此我们退而求其次：如果运用随机化的话，我们能不能在<span class="math inline">\(o(n)\)</span>次查询之内给出正确概率至少为<span class="math inline">\(\frac{1}{2}+\epsilon\ (\epsilon &gt;0)\)</span>的答案呢？</p>
+<p>（正确概率在这里只要大于<span class="math inline">\(\frac{1}{2}\)</span>就行，精确的值没有意义，因为我们总是可以重复运行不靠谱的算法提高正确率）</p>
 <p>答案还是不行（证明课上似乎没讲？）</p>
 <p>那我们怎么办？只好稍微把题目修改一下，再退而求其次看看能不能有高效的<strong>近似算法</strong>了。</p>
-<h2 id="修改后的定义"><a href="#修改后的定义" class="headerlink" title="修改后的定义"></a>修改后的定义</h2><p>我们不妨寻找这么一个算法，它</p>
-<ol>
+<h2 id="修改后的定义">修改后的定义</h2>
+<p>我们不妨寻找这么一个算法，它</p>
+<ol type="1">
 <li>在数组有序的时候输出是</li>
 <li>在数组“非常无序”的时候输出否</li>
 <li>而对于那种非常接近有序的数组，我们干脆不管。</li>
 </ol>
 <p>设计这样的算法显然比设计能够精确解决这个问题的算法要容易多了。</p>
 <p>那么怎么样算是“非常无序”，怎么样算是“接近有序”呢？显然，我们需要在数学上给予这些描述严谨的定义。</p>
-<p><strong>定义：</strong>对于$\epsilon\in(0,1)$，如果需要至少修改$\epsilon n$个数才能让数组$A$变为有序，那么称数组$A$是$\epsilon$无序（$\epsilon$-far from sorted）的。</p>
+<p><strong>定义：</strong>对于<span class="math inline">\(\epsilon\in(0,1)\)</span>，如果需要至少修改<span class="math inline">\(\epsilon n\)</span>个数才能让数组<span class="math inline">\(A\)</span>变为有序，那么称数组<span class="math inline">\(A\)</span>是<span class="math inline">\(\epsilon\)</span>无序（<span class="math inline">\(\epsilon\)</span>-far from sorted）的。</p>
 <p>那么我们就可以进一步精炼我们上面的问题了：我们需要设计一个算法，使其</p>
-<ol>
-<li>在$A$有序的时候输出是</li>
-<li>在$A$ $\epsilon$无序的时候输出否</li>
+<ol type="1">
+<li>在<span class="math inline">\(A\)</span>有序的时候输出是</li>
+<li>在<span class="math inline">\(A\)</span> <span class="math inline">\(\epsilon\)</span>无序的时候输出否</li>
 </ol>
-<p>（$\epsilon$是算法的一个参数）</p>
-<p>从这里其实可以看到对于近似算法的一种设计思路：对于数值型的问题，我们通过对于最优解的放缩定义了近似比$\alpha$，而对于判定型的问题，我们试图放宽需要判定的条件。在上面的问题当中我们相当于变相假设，或者说承诺了$A$要么是有序要么是$\epsilon$无序的，因此这种问题被称作promise problem。</p>
-<h2 id="二元数组"><a href="#二元数组" class="headerlink" title="二元数组"></a>二元数组</h2><p>我们先从最简单的情形开始分析：如果数组只有$0$和$1$两种元素呢？</p>
-<h3 id="初步分析"><a href="#初步分析" class="headerlink" title="初步分析"></a>初步分析</h3><p>显然此时数组有序等价于所有的$0$都在$1$前面。</p>
-<p>我们不妨定义两个集合，$L_1$和$R_0$。如果将数组里的元素从左到右排列，$L_1$表示最靠左的$\frac{\epsilon n}{2}$个$1$的下标集合，$R_0$表示最靠右的$\frac{\epsilon n}{2}$个$0$的下标集合。</p>
-<p>显然在数组有序时，$L_1$整体都在$R_0$右边。而当数组不有序时，有可能：</p>
-<ol>
-<li>$L_1$和$R_0$的区间重叠。</li>
-<li>$L_1$在$R_0$的左边。</li>
+<p>（<span class="math inline">\(\epsilon\)</span>是算法的一个参数）</p>
+<p>从这里其实可以看到对于近似算法的一种设计思路：对于数值型的问题，我们通过对于最优解的放缩定义了近似比<span class="math inline">\(\alpha\)</span>，而对于判定型的问题，我们试图放宽需要判定的条件。在上面的问题当中我们相当于变相假设，或者说承诺了<span class="math inline">\(A\)</span>要么是有序要么是<span class="math inline">\(\epsilon\)</span>无序的，因此这种问题被称作promise problem。</p>
+<h2 id="二元数组">二元数组</h2>
+<p>我们先从最简单的情形开始分析：如果数组只有<span class="math inline">\(0\)</span>和<span class="math inline">\(1\)</span>两种元素呢？</p>
+<h3 id="初步分析">初步分析</h3>
+<p>显然此时数组有序等价于所有的<span class="math inline">\(0\)</span>都在<span class="math inline">\(1\)</span>前面。</p>
+<p>我们不妨定义两个集合，<span class="math inline">\(L_1\)</span>和<span class="math inline">\(R_0\)</span>。如果将数组里的元素从左到右排列，<span class="math inline">\(L_1\)</span>表示最靠左的<span class="math inline">\(\frac{\epsilon n}{2}\)</span>个<span class="math inline">\(1\)</span>的下标集合，<span class="math inline">\(R_0\)</span>表示最靠右的<span class="math inline">\(\frac{\epsilon n}{2}\)</span>个<span class="math inline">\(0\)</span>的下标集合。</p>
+<p>显然在数组有序时，<span class="math inline">\(L_1\)</span>整体都在<span class="math inline">\(R_0\)</span>右边。而当数组不有序时，有可能：</p>
+<ol type="1">
+<li><span class="math inline">\(L_1\)</span>和<span class="math inline">\(R_0\)</span>的区间重叠。</li>
+<li><span class="math inline">\(L_1\)</span>在<span class="math inline">\(R_0\)</span>的左边。</li>
 </ol>
 <p>接下来我们证明：</p>
-<p><strong>引理：</strong>如果$A$是$\epsilon$无序的，那么$L_1$必定在$R_0$左边且不重叠。</p>
-<p><strong>证明：</strong>我们使用反证法，不妨假设$L_1$和$R_0$有重叠的部分：<br>$$<br>0,0,\cdots,\rlap{\overbrace{1,\cdots,1,0,1}^{L_1} }1,\cdots,1,\underbrace{ {\color{blue}{0} },{\color{red}{1} },0,\cdots,0}_{R_0},\cdots1,1<br>$$</p>
-<p>$\color{red}1$是$L_1$中最右边的$1$，$\color{blue}0$是$R_0$中最左边的$0$。</p>
-<p>由$L_1,R_0$的定义可知，$\color{red}1$左侧的$1$的数量严格小于$\frac{\epsilon n}{2}$，$\color{blue}0$右侧的$0$的数量也严格小于$\frac{\epsilon n}{2}$。而注意到如果把$\color{red}1$的左侧$1$改成$0$，把$\color{blue}0$右侧的$0$的改成$1$，那么数组就变得有序了，而此时我们修改的元素数量严格小于$\epsilon n$，这和数组是$\epsilon$无序的前提是矛盾的。</p>
-<h3 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h3><p>接下来我们给出能够以$1-\delta$的成功率判定二元数组有序性的算法：</p>
-<ol>
-<li>从数组当中随机选取$t=\frac{2}{\epsilon}\ln\frac{2}{\delta}$个下标$i_1,\cdots,i_t$（为了简化分析，允许下标重复）。</li>
-<li>查询$A_{i_1},\cdots, A_{i_t}$的值。</li>
-<li>如果在$\left{A_{i_1},\cdots, A_{i_t}\right}$当中发现了逆序对，输出否，否则输出是。</li>
+<p><strong>引理：</strong>如果<span class="math inline">\(A\)</span>是<span class="math inline">\(\epsilon\)</span>无序的，那么<span class="math inline">\(L_1\)</span>必定在<span class="math inline">\(R_0\)</span>左边且不重叠。</p>
+<p><strong>证明：</strong>我们使用反证法，不妨假设<span class="math inline">\(L_1\)</span>和<span class="math inline">\(R_0\)</span>有重叠的部分： <span class="math display">\[
+0,0,\cdots,\rlap{\overbrace{1,\cdots,1,0,1}^{L_1} }1,\cdots,1,\underbrace{ {\color{blue}{0} },{\color{red}{1} },0,\cdots,0}_{R_0},\cdots1,1
+\]</span></p>
+<p><span class="math inline">\(\color{red}1\)</span>是<span class="math inline">\(L_1\)</span>中最右边的<span class="math inline">\(1\)</span>，<span class="math inline">\(\color{blue}0\)</span>是<span class="math inline">\(R_0\)</span>中最左边的<span class="math inline">\(0\)</span>。</p>
+<p>由<span class="math inline">\(L_1,R_0\)</span>的定义可知，<span class="math inline">\(\color{red}1\)</span>左侧的<span class="math inline">\(1\)</span>的数量严格小于<span class="math inline">\(\frac{\epsilon n}{2}\)</span>，<span class="math inline">\(\color{blue}0\)</span>右侧的<span class="math inline">\(0\)</span>的数量也严格小于<span class="math inline">\(\frac{\epsilon n}{2}\)</span>。而注意到如果把<span class="math inline">\(\color{red}1\)</span>的左侧<span class="math inline">\(1\)</span>改成<span class="math inline">\(0\)</span>，把<span class="math inline">\(\color{blue}0\)</span>右侧的<span class="math inline">\(0\)</span>的改成<span class="math inline">\(1\)</span>，那么数组就变得有序了，而此时我们修改的元素数量严格小于<span class="math inline">\(\epsilon n\)</span>，这和数组是<span class="math inline">\(\epsilon\)</span>无序的前提是矛盾的。</p>
+<h3 id="算法">算法</h3>
+<p>接下来我们给出能够以<span class="math inline">\(1-\delta\)</span>的成功率判定二元数组有序性的算法：</p>
+<ol type="1">
+<li>从数组当中随机选取<span class="math inline">\(t=\frac{2}{\epsilon}\ln\frac{2}{\delta}\)</span>个下标<span class="math inline">\(i_1,\cdots,i_t\)</span>（为了简化分析，允许下标重复）。</li>
+<li>查询<span class="math inline">\(A_{i_1},\cdots, A_{i_t}\)</span>的值。</li>
+<li>如果在<span class="math inline">\(\left\{A_{i_1},\cdots, A_{i_t}\right\}\)</span>当中发现了逆序对，输出否，否则输出是。</li>
 </ol>
-<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>很显然，如果数组是有序的，那么我们的算法一定会输出是，成功率$1&gt;1-\delta$。</p>
-<p>而如果数组是$\epsilon$-无序的，为了证明此时的成功率至少为$1-\delta$，我们只需要证明<br>$$<br>\operatorname{Pr}[\text{wrong answer}] \le \delta<br>$$<br>即错误（输出了是）概率不大于$\delta$。</p>
-<p>设随机事件$E_L$表示在随机选取的$t$个下标中，至少有一个下标来自$L_1$，$E_R$表示至少有一个下标来自$R_0$。</p>
-<p>那么由之前的引理，如果$E_L\cap E_R$，我们一定找得到逆序对。</p>
-<p>因此只有可能在$\overline{E_L\cap E_R}$才有可能出错：<br>$$<br>\begin{aligned}<br>    \operatorname{Pr}[\text{wrong answer}] \le \operatorname{Pr}\left[\overline{E_L}\cup\overline{E_R} \right] \le \operatorname{Pr}\left[\overline{E_L}\right] +  \operatorname{Pr}\left[\overline{E_R}\right]<br>\end{aligned}<br>$$<br>而<br>$$<br>\begin{aligned}<br>    \operatorname{Pr}\left[\overline{E_L}\right] &amp;= \left(1-\frac{\left|L_1\right|}{n}\right) ^ t \<br>    &amp;= \left(1-\frac{\epsilon}{2}\right)^{\frac{2}{\epsilon}\ln\frac{2}{\delta}} \<br>    &amp;\le \left(e^{-\frac{\epsilon}{2}}\right)^{\frac{2}{\epsilon}\ln\frac{2}{\delta}} \<br>    &amp;= \frac{\delta}{2}<br>\end{aligned}<br>$$<br>倒数第二步我们运用了不等式$1+x\le e^x$。</p>
-<p>同理可证$\operatorname{Pr}\left[\overline{E_R}\right] \le \frac{\delta}{2}$，因此<br>$$<br>\operatorname{Pr}[\text{wrong answer}] \le \operatorname{Pr}\left[\overline{E_L}\right] +  \operatorname{Pr}\left[\overline{E_R}\right] \le \frac{\delta}{2} + \frac{\delta}{2} = \delta<br>$$<br>证毕。</p>
-<h3 id="时间复杂度"><a href="#时间复杂度" class="headerlink" title="时间复杂度"></a>时间复杂度</h3><p>随机采样花费的时间复杂度为$\mathcal{O}(t)$。</p>
-<p>查询子数组花费的时间复杂度也是$\mathcal{O}(t)$。</p>
-<p>而在子数组当中查找逆序对也可以被优化成$\mathcal{O}(t)$，实现的方法有很多，例如可以计算$1$的下标的最小值和$0$的下标的最大值进行比较等。</p>
-<p>因此这个算法的时间复杂度就是$\mathcal O(t) = \mathcal O\left(\frac{1}{\epsilon}\ln\frac{1}{\delta}\right)$，和$n$无关。</p>
-<h2 id="一般情况"><a href="#一般情况" class="headerlink" title="一般情况"></a>一般情况</h2><p>接下来我们来看数组元素可以是任意数字的情况。</p>
+<h3 id="分析">分析</h3>
+<p>很显然，如果数组是有序的，那么我们的算法一定会输出是，成功率<span class="math inline">\(1&gt;1-\delta\)</span>。</p>
+<p>而如果数组是<span class="math inline">\(\epsilon\)</span>-无序的，为了证明此时的成功率至少为<span class="math inline">\(1-\delta\)</span>，我们只需要证明 <span class="math display">\[
+\operatorname{Pr}[\text{wrong answer}] \le \delta
+\]</span> 即错误（输出了是）概率不大于<span class="math inline">\(\delta\)</span>。</p>
+<p>设随机事件<span class="math inline">\(E_L\)</span>表示在随机选取的<span class="math inline">\(t\)</span>个下标中，至少有一个下标来自<span class="math inline">\(L_1\)</span>，<span class="math inline">\(E_R\)</span>表示至少有一个下标来自<span class="math inline">\(R_0\)</span>。</p>
+<p>那么由之前的引理，如果<span class="math inline">\(E_L\cap E_R\)</span>，我们一定找得到逆序对。</p>
+<p>因此只有可能在<span class="math inline">\(\overline{E_L\cap E_R}\)</span>才有可能出错： <span class="math display">\[
+\begin{aligned}
+    \operatorname{Pr}[\text{wrong answer}] \le \operatorname{Pr}\left[\overline{E_L}\cup\overline{E_R} \right] \le \operatorname{Pr}\left[\overline{E_L}\right] +  \operatorname{Pr}\left[\overline{E_R}\right]
+\end{aligned}
+\]</span> 而 <span class="math display">\[
+\begin{aligned}
+    \operatorname{Pr}\left[\overline{E_L}\right] &amp;= \left(1-\frac{\left|L_1\right|}{n}\right) ^ t \\
+    &amp;= \left(1-\frac{\epsilon}{2}\right)^{\frac{2}{\epsilon}\ln\frac{2}{\delta}} \\
+    &amp;\le \left(e^{-\frac{\epsilon}{2}}\right)^{\frac{2}{\epsilon}\ln\frac{2}{\delta}} \\
+    &amp;= \frac{\delta}{2}
+\end{aligned}
+\]</span> 倒数第二步我们运用了不等式<span class="math inline">\(1+x\le e^x\)</span>。</p>
+<p>同理可证<span class="math inline">\(\operatorname{Pr}\left[\overline{E_R}\right] \le \frac{\delta}{2}\)</span>，因此 <span class="math display">\[
+\operatorname{Pr}[\text{wrong answer}] \le \operatorname{Pr}\left[\overline{E_L}\right] +  \operatorname{Pr}\left[\overline{E_R}\right] \le \frac{\delta}{2} + \frac{\delta}{2} = \delta
+\]</span> 证毕。</p>
+<h3 id="时间复杂度">时间复杂度</h3>
+<p>随机采样花费的时间复杂度为<span class="math inline">\(\mathcal{O}(t)\)</span>。</p>
+<p>查询子数组花费的时间复杂度也是<span class="math inline">\(\mathcal{O}(t)\)</span>。</p>
+<p>而在子数组当中查找逆序对也可以被优化成<span class="math inline">\(\mathcal{O}(t)\)</span>，实现的方法有很多，例如可以计算<span class="math inline">\(1\)</span>的下标的最小值和<span class="math inline">\(0\)</span>的下标的最大值进行比较等。</p>
+<p>因此这个算法的时间复杂度就是<span class="math inline">\(\mathcal O(t) = \mathcal O\left(\frac{1}{\epsilon}\ln\frac{1}{\delta}\right)\)</span>，和<span class="math inline">\(n\)</span>无关。</p>
+<h2 id="一般情况">一般情况</h2>
+<p>接下来我们来看数组元素可以是任意数字的情况。</p>
 <p>我们之前随机采样的想法还能继续沿用吗？</p>
-<p>考虑如下情况：<br>$$<br>3,2,1{\color{red}|}6,5,4{\color{red}|}9,8,7<br>$$<br>虽然这个数组是$\frac{2}{3}$无序的，但是如果我的随机采样在每个段中只挑了一个元素，那采样出来的子序列却一定是有序的，我们的算法就被糊弄过去了。</p>
-<p>这就是问题所在：如果我们把一个数组分成若干段“总体有序，但局部无序”的连续段，显然这样的段最多可以有$\mathcal O(n)$个。而为了能够在子序列当中找到逆序对，就必须从同一个段当中至少选两个数。而由生日悖论可知，为了大概率确保能从一个段中选两个数，我们必须至少随机选$\mathcal O\left(\sqrt n\right)$个数——这让我们之前的分析几乎废掉。</p>
+<p>考虑如下情况： <span class="math display">\[
+3,2,1{\color{red}|}6,5,4{\color{red}|}9,8,7
+\]</span> 虽然这个数组是<span class="math inline">\(\frac{2}{3}\)</span>无序的，但是如果我的随机采样在每个段中只挑了一个元素，那采样出来的子序列却一定是有序的，我们的算法就被糊弄过去了。</p>
+<p>这就是问题所在：如果我们把一个数组分成若干段“总体有序，但局部无序”的连续段，显然这样的段最多可以有<span class="math inline">\(\mathcal O(n)\)</span>个。而为了能够在子序列当中找到逆序对，就必须从同一个段当中至少选两个数。而由生日悖论可知，为了大概率确保能从一个段中选两个数，我们必须至少随机选<span class="math inline">\(\mathcal O\left(\sqrt n\right)\)</span>个数——这让我们之前的分析几乎废掉。</p>
 <p>那怎么办呢？</p>
 <p>考虑一个有序的数组所具有的性质。在算法层面，一个熟悉的性质便是：<strong>可以进行二分查找</strong>。</p>
 <p>这给我们一个思路：如果我们不管三七二十一在给定的数组上跑二分，如果二分翻车了，那么数组一定是无序的，如果二分没翻车，数组或许就是有序的。</p>
 <p>如何定义二分有没有“翻车”？或者说，如何定义一次正常的二分？</p>
 <p>引入<em>一致二分查找</em>（Consistent Binary Search）的概念，如果对于一次二分查找，</p>
-<ol>
-<li>我最后找到了我要找的那个数（也就是说，如果我要找的是$A_i$，而我的二分最后终止于下标$i$），</li>
-<li>假设二分的左右端点和终点分别为$l,r,m$，二分的过程中$A_l &lt; A_m &lt; A_r$始终成立，</li>
+<ol type="1">
+<li>我最后找到了我要找的那个数（也就是说，如果我要找的是<span class="math inline">\(A_i\)</span>，而我的二分最后终止于下标<span class="math inline">\(i\)</span>），</li>
+<li>假设二分的左右端点和终点分别为<span class="math inline">\(l,r,m\)</span>，二分的过程中<span class="math inline">\(A_l &lt; A_m &lt; A_r\)</span>始终成立，</li>
 </ol>
 <p>那么我们称这次二分查找是“一致的”或“相容的”（我觉得翻译成哪个似乎都不大合适）。</p>
-<h3 id="算法-1"><a href="#算法-1" class="headerlink" title="算法"></a>算法</h3><p>在二分思想的指引下我们提出如下的算法：</p>
-<ol>
-<li>随机选择一个下标$i$并查询$A_i$的值。</li>
-<li>二分查找$A_i$。</li>
+<h3 id="算法-1">算法</h3>
+<p>在二分思想的指引下我们提出如下的算法：</p>
+<ol type="1">
+<li>随机选择一个下标<span class="math inline">\(i\)</span>并查询<span class="math inline">\(A_i\)</span>的值。</li>
+<li>二分查找<span class="math inline">\(A_i\)</span>。</li>
 <li>如果这次二分查找是一致的，那么输出是，反之输出否。</li>
 </ol>
-<h3 id="分析-1"><a href="#分析-1" class="headerlink" title="分析"></a>分析</h3><p><strong>引理：</strong>如果对于$A_i$和$A_j$的二分查找都是一致的，而且$i&lt;j$，一定有$A_i&lt;A_j$。</p>
-<p><strong>证明：</strong>虽然两次二分查找中前几层的搜索区间可能相同，但由于$i &lt; j$，到了某一层一定会出现$A_i$往左边，$A_j$往右边的分歧。假设该层搜索区间的中点是$A_m$，显然对$A_i$的二分搜索之所以在这层之后往左走是因为$A_i &lt; A_m$，同理可知$A_j&gt;A_m$，将二式组合引理便得证。</p>
-<p>假设$C$表示所有对下标对应的数进行的二分搜索是一致的下标的集合。则由刚刚的引理，由$C$中下标组成的原数组的子序列一定是有序的。因为原数组是$\epsilon$无序的，因此必然有$|C|&lt;(1-\epsilon) n$（可以通过反证法证明）。</p>
-<p>这个结论有什么意义呢？要知道我们的算法在原数组有序的时候一定输出正确的结果，而在原数组无序时，我们算法只有在抽到$C$中的下标时才会做出误判。因此我们算法的错误率的上界为$1-\epsilon$。</p>
+<h3 id="分析-1">分析</h3>
+<p><strong>引理：</strong>如果对于<span class="math inline">\(A_i\)</span>和<span class="math inline">\(A_j\)</span>的二分查找都是一致的，而且<span class="math inline">\(i&lt;j\)</span>，一定有<span class="math inline">\(A_i&lt;A_j\)</span>。</p>
+<p><strong>证明：</strong>虽然两次二分查找中前几层的搜索区间可能相同，但由于<span class="math inline">\(i &lt; j\)</span>，到了某一层一定会出现<span class="math inline">\(A_i\)</span>往左边，<span class="math inline">\(A_j\)</span>往右边的分歧。假设该层搜索区间的中点是<span class="math inline">\(A_m\)</span>，显然对<span class="math inline">\(A_i\)</span>的二分搜索之所以在这层之后往左走是因为<span class="math inline">\(A_i &lt; A_m\)</span>，同理可知<span class="math inline">\(A_j&gt;A_m\)</span>，将二式组合引理便得证。</p>
+<p>假设<span class="math inline">\(C\)</span>表示所有对下标对应的数进行的二分搜索是一致的下标的集合。则由刚刚的引理，由<span class="math inline">\(C\)</span>中下标组成的原数组的子序列一定是有序的。因为原数组是<span class="math inline">\(\epsilon\)</span>无序的，因此必然有<span class="math inline">\(|C|&lt;(1-\epsilon) n\)</span>（可以通过反证法证明）。</p>
+<p>这个结论有什么意义呢？要知道我们的算法在原数组有序的时候一定输出正确的结果，而在原数组无序时，我们算法只有在抽到<span class="math inline">\(C\)</span>中的下标时才会做出误判。因此我们算法的错误率的上界为<span class="math inline">\(1-\epsilon\)</span>。</p>
 <p>在得出这个上界之后，我们就可以改进我们的算法了：</p>
-<ol>
-<li>将之前的算法运行$k=\frac{1}{\epsilon}\ln\frac{1}{\delta}$遍。</li>
-<li>如果$k$次运行的结果都为是，则输出是，反之则输出否。</li>
+<ol type="1">
+<li>将之前的算法运行<span class="math inline">\(k=\frac{1}{\epsilon}\ln\frac{1}{\delta}\)</span>遍。</li>
+<li>如果<span class="math inline">\(k\)</span>次运行的结果都为是，则输出是，反之则输出否。</li>
 </ol>
-<p>这样的错误率是多少呢？<br>$$<br>\begin{aligned}<br>    \operatorname{Pr}[\text{wrong answer}] &amp;\le \left(1-\epsilon\right)^k \<br>    &amp;= \left(1-\epsilon\right)^{\frac{1}{\epsilon}\ln\frac{1}{\delta}} \<br>    &amp;\le \left(e^{-\epsilon}\right)^{\frac{1}{\epsilon}\ln\frac{1}{\delta}} \<br>    &amp; = \delta<br>\end{aligned}<br>$$<br>因此正确率至少为$1-\delta$，符合我们的要求。而这个算法的时间复杂度是$\mathcal O\left(\frac{1}{\epsilon}\ln\frac{1}{\delta}\log n\right)$，也是相当优秀的。</p>
+<p>这样的错误率是多少呢？ <span class="math display">\[
+\begin{aligned}
+    \operatorname{Pr}[\text{wrong answer}] &amp;\le \left(1-\epsilon\right)^k \\
+    &amp;= \left(1-\epsilon\right)^{\frac{1}{\epsilon}\ln\frac{1}{\delta}} \\
+    &amp;\le \left(e^{-\epsilon}\right)^{\frac{1}{\epsilon}\ln\frac{1}{\delta}} \\
+    &amp; = \delta
+\end{aligned}
+\]</span> 因此正确率至少为<span class="math inline">\(1-\delta\)</span>，符合我们的要求。而这个算法的时间复杂度是<span class="math inline">\(\mathcal O\left(\frac{1}{\epsilon}\ln\frac{1}{\delta}\log n\right)\)</span>，也是相当优秀的。</p>
 
       
     </div>
@@ -400,7 +442,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/02/PACT0701/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -441,41 +483,64 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p><strong>输入：</strong>$n$个任务，第$i$个任务的运行时间为$p_i$，共有$m$个相同的机器（一个任务在每台机器上运行时间都相同）。每台机器同一时间只能运行一个任务，每个任务只能在一台机器上运行（不能拆分）。</p>
+          <h1 id="定义">定义</h1>
+<p><strong>输入：</strong><span class="math inline">\(n\)</span>个任务，第<span class="math inline">\(i\)</span>个任务的运行时间为<span class="math inline">\(p_i\)</span>，共有<span class="math inline">\(m\)</span>个相同的机器（一个任务在每台机器上运行时间都相同）。每台机器同一时间只能运行一个任务，每个任务只能在一台机器上运行（不能拆分）。</p>
 <p><strong>目标：</strong>合理地调度任务，使得完成所有任务的时间（makespan）最短。</p>
-<h1 id="下界估计"><a href="#下界估计" class="headerlink" title="下界估计"></a>下界估计</h1><p>自然而然地，我们首先思考$\mathrm{OPT}$的下界。一个比较容易想到的下界是耗时最长的任务所需要的时间：<br>$$<br>\mathrm{OPT} \ge \max_{i} {p_i}<br>$$<br>除此以外，考虑如果可以拆分任务，最短的运行时间是多少？自然是$\frac{\sum_i p_i}{m}$，而这在现实中常常是做不到的，因此有：<br>$$<br>\mathrm{OPT} \ge \frac{\sum_i p_i}{m}<br>$$<br>这两个下界对于之后的算法分析非常有用。</p>
-<h1 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h1><ol>
+<h1 id="下界估计">下界估计</h1>
+<p>自然而然地，我们首先思考<span class="math inline">\(\mathrm{OPT}\)</span>的下界。一个比较容易想到的下界是耗时最长的任务所需要的时间： <span class="math display">\[
+\mathrm{OPT} \ge \max_{i} \{p_i\}
+\]</span> 除此以外，考虑如果可以拆分任务，最短的运行时间是多少？自然是<span class="math inline">\(\frac{\sum_i p_i}{m}\)</span>，而这在现实中常常是做不到的，因此有： <span class="math display">\[
+\mathrm{OPT} \ge \frac{\sum_i p_i}{m}
+\]</span> 这两个下界对于之后的算法分析非常有用。</p>
+<h1 id="算法">算法</h1>
+<ol type="1">
 <li>将所有的任务随机排成一列。</li>
 <li>当一台机器完成了一个任务变得闲置了，马上把列表上的下一项任务安排到这个机器上去执行。</li>
 <li>重复步骤2直至所有任务都被执行完毕。</li>
 </ol>
 <p>这个算法是非常简单且自然的。</p>
-<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p>我们算法给出结果的什么？自然是最后一个结束的任务的结束时间。如果我们设最后一个结束的任务为任务$l$，且这个任务开始于$s_l$，那么就有：<br>$$<br>\mathrm{Cost} = s_l+p_l<br>$$<br>接下来我们进行放缩。</p>
-<p>考虑$s_l$的上界是什么？</p>
-<p><img src="./SIPM1.svg"></p>
-<p>很显然，<strong>在$s_l$时刻，除了$l$即将运行的那台机器，其他机器上必须有任务在运行或者刚刚空下来</strong>（如果有机器已经空了一阵子了，那当时$l$就会被安排到那台机器上去跑），因此不难得出$ms_l \le \sum_{i\neq l} p_i$，即<br>$$<br>s_l \le \frac{\sum_{i \neq l}p_i}{m}<br>$$<br>因此<br>$$<br>\begin{aligned}<br>\mathrm{Cost} &amp;= s_l+p_l \<br>&amp; \le \frac{\sum_{i \neq l}p_i}{m} + p_l \<br>&amp;= \frac{\sum_{i}p_i}{m} + \left(1 - \frac{1}{m}\right) p_l \<br>&amp;\le \frac{\sum_{i}p_i}{m} + \left(1 - \frac{1}{m}\right)\max_{i}{p_i} \<br>&amp;\le \mathrm{OPT} + \left(1 - \frac{1}{m}\right)\mathrm{OPT} \<br>&amp;= \left(2 - \frac{1}{m}\right)\mathrm{OPT}<br>\end{aligned}<br>$$<br>我们就证明了我们的算法是一个$2$倍近似算法！</p>
-<h1 id="提升近似比"><a href="#提升近似比" class="headerlink" title="提升近似比"></a>提升近似比</h1><p>能不能在这个算法的基础上提升呢？我们注意到将$\mathrm{OPT}$作为$p_l$的上界其实还是太松了。如果我们能够缩短$p_l$，那上界的估计有没有改善的空间呢？</p>
+<h1 id="分析">分析</h1>
+<p>我们算法给出结果的什么？自然是最后一个结束的任务的结束时间。如果我们设最后一个结束的任务为任务<span class="math inline">\(l\)</span>，且这个任务开始于<span class="math inline">\(s_l\)</span>，那么就有： <span class="math display">\[
+\mathrm{Cost} = s_l+p_l
+\]</span> 接下来我们进行放缩。</p>
+<p>考虑<span class="math inline">\(s_l\)</span>的上界是什么？</p>
+<p><img src="./SIPM1.svg" /></p>
+<p>很显然，<strong>在<span class="math inline">\(s_l\)</span>时刻，除了<span class="math inline">\(l\)</span>即将运行的那台机器，其他机器上必须有任务在运行或者刚刚空下来</strong>（如果有机器已经空了一阵子了，那当时<span class="math inline">\(l\)</span>就会被安排到那台机器上去跑），因此不难得出<span class="math inline">\(ms_l \le \sum_{i\neq l} p_i\)</span>，即 <span class="math display">\[
+s_l \le \frac{\sum_{i \neq l}p_i}{m}
+\]</span> 因此 <span class="math display">\[
+\begin{aligned}
+\mathrm{Cost} &amp;= s_l+p_l \\
+&amp; \le \frac{\sum_{i \neq l}p_i}{m} + p_l \\
+&amp;= \frac{\sum_{i}p_i}{m} + \left(1 - \frac{1}{m}\right) p_l \\
+&amp;\le \frac{\sum_{i}p_i}{m} + \left(1 - \frac{1}{m}\right)\max_{i}\{p_i\} \\
+&amp;\le \mathrm{OPT} + \left(1 - \frac{1}{m}\right)\mathrm{OPT} \\
+&amp;= \left(2 - \frac{1}{m}\right)\mathrm{OPT}
+\end{aligned}
+\]</span> 我们就证明了我们的算法是一个<span class="math inline">\(2\)</span>倍近似算法！</p>
+<h1 id="提升近似比">提升近似比</h1>
+<p>能不能在这个算法的基础上提升呢？我们注意到将<span class="math inline">\(\mathrm{OPT}\)</span>作为<span class="math inline">\(p_l\)</span>的上界其实还是太松了。如果我们能够缩短<span class="math inline">\(p_l\)</span>，那上界的估计有没有改善的空间呢？</p>
 <p>于是我们在原来算法的基础上不妨进行一个改进：与其在一开始将所有任务随机排列，不如<strong>将其按照运行时间从大到小的顺序进行排序</strong>。这也很符合直觉，一开始就把需要时间很长的任务跑完，之后肯定有些机器空着有些机器还在忙，这个时候就可以用完成时间比较短的小任务来灵活地填补这些空缺了。</p>
 <p>这一下让近似比提升了多少呢？</p>
-<p><strong>引理：</strong>加上排序之后的算法具有$\frac{3}{2}$的近似比。</p>
+<p><strong>引理：</strong>加上排序之后的算法具有<span class="math inline">\(\frac{3}{2}\)</span>的近似比。</p>
 <p><strong>证明：</strong>我们不妨分类讨论，</p>
-<p>**情形1. **$p_l \le \frac{1}{2}\mathrm{OPT}$，这个时候按照我们上文分析的路子走直接就可以得到$\mathrm{Cost} \le \frac{3}{2}\mathrm{OPT}$，就做完了。</p>
-<p><strong>情形2. <strong>$p_l &gt; \frac{1}{2}\mathrm{OPT}$，此时所有$l$之前的任务也肯定具有大于$\frac{1}{2} \mathrm{OPT}$的运行时间。注意到</strong>我们不需要考虑$p_l$之后的任务</strong>，因为依据定义$l$是最后结束的，后面的任务对于我们的结果没有影响。那$l$之前的任务在最优调度里面是怎么样的呢？反证法可以很快说明：<strong>在最优调度里面，每一台机器至多只能处理一件任务</strong>（忽略$l$之后的任务）！也就是说事实上$l$以及之前的任务数目加起来不会超过机器数$m$，那再想一想在这种机器充足的情况下，我们的算法在分配这些任务的时候也是一个机器一个任务，$p_l$必定是从一开始就执行的，因此$\mathrm{Cost}=p_l$，而显然$\mathrm{OPT} \ge p_l$，因此必有$\mathrm{Cost} = \mathrm{OPT}$，结束。（事实上，由于$l$还是最后结束的任务，不难想通在一机器一任务的情形下，$l$之前的所有任务都一定和$l$花费相同的时间，或$l$就是我们算法分配的第一个任务。）</p>
-<p>综上所述，近似比是$\frac{3}{2}$。</p>
-<h1 id="进一步提升近似比"><a href="#进一步提升近似比" class="headerlink" title="进一步提升近似比"></a>进一步提升近似比</h1><p>通过对于上述论证的些许修改，我们其实可以证明：</p>
-<p><strong>引理：</strong>加上排序之后的算法具有$\frac{4}{3}$的近似比。</p>
+<p><strong>情形1. </strong><span class="math inline">\(p_l \le \frac{1}{2}\mathrm{OPT}\)</span>，这个时候按照我们上文分析的路子走直接就可以得到<span class="math inline">\(\mathrm{Cost} \le \frac{3}{2}\mathrm{OPT}\)</span>，就做完了。</p>
+<p><strong>情形2. </strong><span class="math inline">\(p_l &gt; \frac{1}{2}\mathrm{OPT}\)</span>，此时所有<span class="math inline">\(l\)</span>之前的任务也肯定具有大于<span class="math inline">\(\frac{1}{2} \mathrm{OPT}\)</span>的运行时间。注意到<strong>我们不需要考虑<span class="math inline">\(p_l\)</span>之后的任务</strong>，因为依据定义<span class="math inline">\(l\)</span>是最后结束的，后面的任务对于我们的结果没有影响。那<span class="math inline">\(l\)</span>之前的任务在最优调度里面是怎么样的呢？反证法可以很快说明：<strong>在最优调度里面，每一台机器至多只能处理一件任务</strong>（忽略<span class="math inline">\(l\)</span>之后的任务）！也就是说事实上<span class="math inline">\(l\)</span>以及之前的任务数目加起来不会超过机器数<span class="math inline">\(m\)</span>，那再想一想在这种机器充足的情况下，我们的算法在分配这些任务的时候也是一个机器一个任务，<span class="math inline">\(p_l\)</span>必定是从一开始就执行的，因此<span class="math inline">\(\mathrm{Cost}=p_l\)</span>，而显然<span class="math inline">\(\mathrm{OPT} \ge p_l\)</span>，因此必有<span class="math inline">\(\mathrm{Cost} = \mathrm{OPT}\)</span>，结束。（事实上，由于<span class="math inline">\(l\)</span>还是最后结束的任务，不难想通在一机器一任务的情形下，<span class="math inline">\(l\)</span>之前的所有任务都一定和<span class="math inline">\(l\)</span>花费相同的时间，或<span class="math inline">\(l\)</span>就是我们算法分配的第一个任务。）</p>
+<p>综上所述，近似比是<span class="math inline">\(\frac{3}{2}\)</span>。</p>
+<h1 id="进一步提升近似比">进一步提升近似比</h1>
+<p>通过对于上述论证的些许修改，我们其实可以证明：</p>
+<p><strong>引理：</strong>加上排序之后的算法具有<span class="math inline">\(\frac{4}{3}\)</span>的近似比。</p>
 <p><strong>证明：</strong>我们故技重施：</p>
-<p>**情形1. **$p_l \le \frac{1}{3}\mathrm{OPT}$，这个时候我们直接就可以得到$\mathrm{Cost} \le \frac{4}{3}\mathrm{OPT}$。</p>
-<p><strong>情形2. <strong>$p_l &gt; \frac{1}{3}\mathrm{OPT}$，此时所有$l$之前的任务也肯定具有大于$\frac{1}{3} \mathrm{OPT}$的运行时间。我们同样不考虑$l$之后的任务。可以通过反证证明：</strong>在最优调度里，每一台机器至多只能处理两件任务！</strong>因此，我们确定有足够的机器让我们的算法得以这样调度任务：</p>
-<p><img src="./SIPM2.svg"></p>
+<p><strong>情形1. </strong><span class="math inline">\(p_l \le \frac{1}{3}\mathrm{OPT}\)</span>，这个时候我们直接就可以得到<span class="math inline">\(\mathrm{Cost} \le \frac{4}{3}\mathrm{OPT}\)</span>。</p>
+<p><strong>情形2. </strong><span class="math inline">\(p_l &gt; \frac{1}{3}\mathrm{OPT}\)</span>，此时所有<span class="math inline">\(l\)</span>之前的任务也肯定具有大于<span class="math inline">\(\frac{1}{3} \mathrm{OPT}\)</span>的运行时间。我们同样不考虑<span class="math inline">\(l\)</span>之后的任务。可以通过反证证明：<strong>在最优调度里，每一台机器至多只能处理两件任务！</strong>因此，我们确定有足够的机器让我们的算法得以这样调度任务：</p>
+<p><img src="./SIPM2.svg" /></p>
 <p>（看着是不是很像双指针？）</p>
 <p>具体来说，如果我们把机器按照第一个任务的耗时降序排序，那么它们第二个任务的耗时一定成升序排列。（这并不难证明：第一个任务耗时最短的机器一定能够先领到列表中最长的任务作为第二个任务，之后的机器领到的任务时间递减）</p>
-<p>（在这里我们假定$l$一定是第二个任务，如果$l$从头开始运行而且时间特别长的话，参考上一节的证明）</p>
+<p>（在这里我们假定<span class="math inline">\(l\)</span>一定是第二个任务，如果<span class="math inline">\(l\)</span>从头开始运行而且时间特别长的话，参考上一节的证明）</p>
 <p>而接下来我们证明这样的分配方式是最优的。</p>
-<p>我们采取反证的方法：不妨假设在最优方案中存在两个机器，两个机器上都有两个任务，耗时分别为$(a,b)$和$(c,d)$，且$a&gt;c,b&gt;d$。那么我们把两个机器上的第二个任务互换，变成$(a,d)$和$(c,b)$，不难发现此时完成任务的最短时间会减少，和“最优”矛盾。因此，对于最优方案的任意两台机器$(a,b)$和$(c,d)$，如果$a&gt;c$那么$b&lt;d$：</p>
-<p><img src="./SIPM3.svg"></p>
-<p>这正是我们算法所给出的调度方案。因此$\mathrm{OPT}$不会比我们算法的结果更好了。</p>
-<p>综上所述，近似比为$\frac{4}{3}$。</p>
+<p>我们采取反证的方法：不妨假设在最优方案中存在两个机器，两个机器上都有两个任务，耗时分别为<span class="math inline">\((a,b)\)</span>和<span class="math inline">\((c,d)\)</span>，且<span class="math inline">\(a&gt;c,b&gt;d\)</span>。那么我们把两个机器上的第二个任务互换，变成<span class="math inline">\((a,d)\)</span>和<span class="math inline">\((c,b)\)</span>，不难发现此时完成任务的最短时间会减少，和“最优”矛盾。因此，对于最优方案的任意两台机器<span class="math inline">\((a,b)\)</span>和<span class="math inline">\((c,d)\)</span>，如果<span class="math inline">\(a&gt;c\)</span>那么<span class="math inline">\(b&lt;d\)</span>：</p>
+<p><img src="./SIPM3.svg" /></p>
+<p>这正是我们算法所给出的调度方案。因此<span class="math inline">\(\mathrm{OPT}\)</span>不会比我们算法的结果更好了。</p>
+<p>综上所述，近似比为<span class="math inline">\(\frac{4}{3}\)</span>。</p>
 
       
     </div>
@@ -505,7 +570,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/01/PACT0630/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -546,58 +611,70 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>定义所谓$k$中心问题为：</p>
-<p><strong>输入：</strong>完全图$G=(V,E)$，边带正权，且满足三角不等式$w_{uv} \le w_{uk} + w_{kv}$，以及一个正整数$k$。</p>
-<p><strong>目标：</strong>求一个点集$|S|=k$（称为$k$个中心），定义一个点到一个点集的距离<br>$$<br>d(u,S) = \min_{v\in S} w_{uv}<br>$$<br>（显然，如果满足三角不等式，那么任意两点之间的最短距离就是直接连接两点的边权）</p>
-<p>要求最小化$\max_{u\in V} d(u,S)$。即所有顶点到这$k$个中心的<strong>最短路程的最大值</strong>（不妨称之为这个这个$k$中心的<strong>代价</strong>）最小。</p>
-<h1 id="近似算法1（Gonzalez）"><a href="#近似算法1（Gonzalez）" class="headerlink" title="近似算法1（Gonzalez）"></a>近似算法1（Gonzalez）</h1><h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><ol>
-<li>任意选取一个顶点并将其加入$S$。</li>
-<li>选取离当前$S$最远的顶点加入$S$。</li>
-<li>重复步骤2直至$|S|=k$。</li>
+          <h1 id="定义">定义</h1>
+<p>定义所谓<span class="math inline">\(k\)</span>中心问题为：</p>
+<p><strong>输入：</strong>完全图<span class="math inline">\(G=(V,E)\)</span>，边带正权，且满足三角不等式<span class="math inline">\(w_{uv} \le w_{uk} + w_{kv}\)</span>，以及一个正整数<span class="math inline">\(k\)</span>。</p>
+<p><strong>目标：</strong>求一个点集<span class="math inline">\(|S|=k\)</span>（称为<span class="math inline">\(k\)</span>个中心），定义一个点到一个点集的距离 <span class="math display">\[
+d(u,S) = \min_{v\in S} w_{uv}
+\]</span> （显然，如果满足三角不等式，那么任意两点之间的最短距离就是直接连接两点的边权）</p>
+<p>要求最小化<span class="math inline">\(\max_{u\in V} d(u,S)\)</span>。即所有顶点到这<span class="math inline">\(k\)</span>个中心的<strong>最短路程的最大值</strong>（不妨称之为这个这个<span class="math inline">\(k\)</span>中心的<strong>代价</strong>）最小。</p>
+<h1 id="近似算法1gonzalez">近似算法1（Gonzalez）</h1>
+<h2 id="算法">算法</h2>
+<ol type="1">
+<li>任意选取一个顶点并将其加入<span class="math inline">\(S\)</span>。</li>
+<li>选取离当前<span class="math inline">\(S\)</span>最远的顶点加入<span class="math inline">\(S\)</span>。</li>
+<li>重复步骤2直至<span class="math inline">\(|S|=k\)</span>。</li>
 </ol>
-<p>第2步的操作是非常合乎直觉的：如果不把离$S$最远的顶点加入$S$的话，这条最远的边权就可能会被计入答案当中，这显然是不合算的，而如果将这个最远点作为新的中心，那么这条最远边就必定不会被计入答案。</p>
-<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>这个算法给出方案的代价是什么？在这个算法的背景下，我们不妨说：<em>这个算法结果的代价是如果不跳出循环，下一个选取的中心到当前$S$的距离</em>（依据第2步）。假设这个中心为$x$，我们不妨画图：</p>
-<p><img src="./Analysis1.jpg"></p>
-<p>其中左边的$S$是我们的解，右边是最优解（我们这里把他们化成了不重叠的形式，事实上有重叠对于我们的论证也不造成影响）。</p>
-<p>我们的解加上$x$总共有$k+1$个点，最优解有$k$个点，因此由抽屉原理，至少左边有两个点，它们在最优解中的最近点是相同的（即图中的两条横叉边），且由于是最优解，两条边的长度都$\le \mathrm{OPT}$。</p>
-<p>不妨设这两个点为$u,v$，由三角不等式，可以得出$w_{uv}\le2\cdot\mathrm{OPT}$。</p>
-<p>接下来不妨假设$u,v$中的后来者为$v$，为什么当时我们选择$v$而不是$x$加入$S$呢？肯定是因为当时$d(v,S)\ge d(x,S)$。而由$d(v,S)$的定义可知，$d(v,S)\le w_{uv}$，且由于随着$S$的变大，$d(x,S)$不增，因此我们解的代价（即现在的$d(x,S)$）一定也是不大于当时的$d(v,S)$。将这些不等式串联起来，便得到：<br>$$<br>d(x,S) \le w_{uv} \le 2\cdot \mathrm{OPT}<br>$$<br>也就是说这个算法的近似比为$2$。</p>
-<h1 id="近似算法2（Hochbaum-amp-Shmoys）"><a href="#近似算法2（Hochbaum-amp-Shmoys）" class="headerlink" title="近似算法2（Hochbaum &amp; Shmoys）"></a>近似算法2（Hochbaum &amp; Shmoys）</h1><h2 id="算法-1"><a href="#算法-1" class="headerlink" title="算法"></a>算法</h2><p>我们不妨<strong>假设我们已经知道了最优解的代价</strong>$\mathrm{OPT}$，那么我们要怎么做呢？</p>
-<ol>
-<li>我们选取任意顶点$u_1$加入中心，并以为中心画一个半径为的球，钦定球内的所有点归$u_1$。</li>
-<li>我们接着选取一个在这个球以外的一个顶点$u_2$加入中心，并以$u_2$为中心画一个半径为$2\cdot \mathrm{OPT}$的球，钦定球里面的点归$u_2$。</li>
-<li>我们接着选取一个在$u_1$和$u_2$的球外的点$u_3$作为中心……</li>
-<li>重复上述步骤，直至图上的所有点都归一个至多$2\cdot \mathrm{OPT}$远处的中心管。</li>
+<p>第2步的操作是非常合乎直觉的：如果不把离<span class="math inline">\(S\)</span>最远的顶点加入<span class="math inline">\(S\)</span>的话，这条最远的边权就可能会被计入答案当中，这显然是不合算的，而如果将这个最远点作为新的中心，那么这条最远边就必定不会被计入答案。</p>
+<h2 id="分析">分析</h2>
+<p>这个算法给出方案的代价是什么？在这个算法的背景下，我们不妨说：<em>这个算法结果的代价是如果不跳出循环，下一个选取的中心到当前<span class="math inline">\(S\)</span>的距离</em>（依据第2步）。假设这个中心为<span class="math inline">\(x\)</span>，我们不妨画图：</p>
+<p><img src="./Analysis1.jpg" /></p>
+<p>其中左边的<span class="math inline">\(S\)</span>是我们的解，右边是最优解（我们这里把他们化成了不重叠的形式，事实上有重叠对于我们的论证也不造成影响）。</p>
+<p>我们的解加上<span class="math inline">\(x\)</span>总共有<span class="math inline">\(k+1\)</span>个点，最优解有<span class="math inline">\(k\)</span>个点，因此由抽屉原理，至少左边有两个点，它们在最优解中的最近点是相同的（即图中的两条横叉边），且由于是最优解，两条边的长度都<span class="math inline">\(\le \mathrm{OPT}\)</span>。</p>
+<p>不妨设这两个点为<span class="math inline">\(u,v\)</span>，由三角不等式，可以得出<span class="math inline">\(w_{uv}\le2\cdot\mathrm{OPT}\)</span>。</p>
+<p>接下来不妨假设<span class="math inline">\(u,v\)</span>中的后来者为<span class="math inline">\(v\)</span>，为什么当时我们选择<span class="math inline">\(v\)</span>而不是<span class="math inline">\(x\)</span>加入<span class="math inline">\(S\)</span>呢？肯定是因为当时<span class="math inline">\(d(v,S)\ge d(x,S)\)</span>。而由<span class="math inline">\(d(v,S)\)</span>的定义可知，<span class="math inline">\(d(v,S)\le w_{uv}\)</span>，且由于随着<span class="math inline">\(S\)</span>的变大，<span class="math inline">\(d(x,S)\)</span>不增，因此我们解的代价（即现在的<span class="math inline">\(d(x,S)\)</span>）一定也是不大于当时的<span class="math inline">\(d(v,S)\)</span>。将这些不等式串联起来，便得到： <span class="math display">\[
+d(x,S) \le w_{uv} \le 2\cdot \mathrm{OPT}
+\]</span> 也就是说这个算法的近似比为<span class="math inline">\(2\)</span>。</p>
+<h1 id="近似算法2hochbaum-shmoys">近似算法2（Hochbaum &amp; Shmoys）</h1>
+<h2 id="算法-1">算法</h2>
+<p>我们不妨<strong>假设我们已经知道了最优解的代价</strong><span class="math inline">\(\mathrm{OPT}\)</span>，那么我们要怎么做呢？</p>
+<ol type="1">
+<li>我们选取任意顶点<span class="math inline">\(u_1\)</span>加入中心，并以为中心画一个半径为的球，钦定球内的所有点归<span class="math inline">\(u_1\)</span>。</li>
+<li>我们接着选取一个在这个球以外的一个顶点<span class="math inline">\(u_2\)</span>加入中心，并以<span class="math inline">\(u_2\)</span>为中心画一个半径为<span class="math inline">\(2\cdot \mathrm{OPT}\)</span>的球，钦定球里面的点归<span class="math inline">\(u_2\)</span>。</li>
+<li>我们接着选取一个在<span class="math inline">\(u_1\)</span>和<span class="math inline">\(u_2\)</span>的球外的点<span class="math inline">\(u_3\)</span>作为中心……</li>
+<li>重复上述步骤，直至图上的所有点都归一个至多<span class="math inline">\(2\cdot \mathrm{OPT}\)</span>远处的中心管。</li>
 </ol>
 <p>画在图上大概是这样的：</p>
-<p><img src="./HS.jpg"></p>
-<p>可以看到，可能会有点同时处在多个中心的“势力范围”之内，但这并不重要，我们只需要确保每个点离最近的一个中心至多$2\cdot \mathrm{OPT}$那么远就行了。</p>
-<h2 id="分析-1"><a href="#分析-1" class="headerlink" title="分析"></a>分析</h2><p>我们接下来证明这是一个$2$近似算法。算法本身的流程确保了$2$的近似比，因此唯一需要证明的就是这个算法产生的中心不超过要求的$k$个。</p>
-<p>不妨反证：如果产生了超过$k$个中心呢？</p>
-<p><img src="./Analysis2.jpg"></p>
-<p>那么根据抽屉原理，至少有两个中心在最优解中的最近点是相同的（这和我们分析第一个算法时的逻辑是完全相同的），由三角不等式，这两个中心之间的距离$\le 2\cdot \mathrm{OPT}$。但是根据算法，中心之间两两距离应该大于$2\cdot \mathrm{OPT}$，这就产生了矛盾。</p>
-<p>因此必定不会有超过$k$个中心，证毕。</p>
-<p>还剩下来一个问题：这个算法假定我们知道$\mathrm{OPT}$，但是实际上我们不知道啊！</p>
-<p>但是我们知道$\mathrm{OPT}$<em>一定是某一条边的边权</em>，因此我们只需要按边权从小到大<strong>枚举每一条边，把边权当做$\mathrm{OPT}$试试看</strong>，如果产生超过$k$个中心那必然不是$\mathrm{OPT}$（这是我们推论的逆否），而反之则可能就是$\mathrm{OPT}$（但无论如何，事实上是$\mathrm{OPT}$的那条边一定是没有问题的）。因为我们在这里只在意是否是多项式时间复杂度而不在意复杂度本身，而枚举边自然是多项式时间的，因此没有任何问题（当然，在实现过程中可以考虑使用二分，但这就是后话了）。</p>
-<h1 id="近似比可以更好吗？"><a href="#近似比可以更好吗？" class="headerlink" title="近似比可以更好吗？"></a>近似比可以更好吗？</h1><p><strong>定理：</strong>如果存在一个多项式时间的，近似比$&lt;2$的$k$中心问题的近似算法，那么$\mathsf{P}=\mathsf{NP}$。</p>
+<p><img src="./HS.jpg" /></p>
+<p>可以看到，可能会有点同时处在多个中心的“势力范围”之内，但这并不重要，我们只需要确保每个点离最近的一个中心至多<span class="math inline">\(2\cdot \mathrm{OPT}\)</span>那么远就行了。</p>
+<h2 id="分析-1">分析</h2>
+<p>我们接下来证明这是一个<span class="math inline">\(2\)</span>近似算法。算法本身的流程确保了<span class="math inline">\(2\)</span>的近似比，因此唯一需要证明的就是这个算法产生的中心不超过要求的<span class="math inline">\(k\)</span>个。</p>
+<p>不妨反证：如果产生了超过<span class="math inline">\(k\)</span>个中心呢？</p>
+<p><img src="./Analysis2.jpg" /></p>
+<p>那么根据抽屉原理，至少有两个中心在最优解中的最近点是相同的（这和我们分析第一个算法时的逻辑是完全相同的），由三角不等式，这两个中心之间的距离<span class="math inline">\(\le 2\cdot \mathrm{OPT}\)</span>。但是根据算法，中心之间两两距离应该大于<span class="math inline">\(2\cdot \mathrm{OPT}\)</span>，这就产生了矛盾。</p>
+<p>因此必定不会有超过<span class="math inline">\(k\)</span>个中心，证毕。</p>
+<p>还剩下来一个问题：这个算法假定我们知道<span class="math inline">\(\mathrm{OPT}\)</span>，但是实际上我们不知道啊！</p>
+<p>但是我们知道<span class="math inline">\(\mathrm{OPT}\)</span><em>一定是某一条边的边权</em>，因此我们只需要按边权从小到大<strong>枚举每一条边，把边权当做<span class="math inline">\(\mathrm{OPT}\)</span>试试看</strong>，如果产生超过<span class="math inline">\(k\)</span>个中心那必然不是<span class="math inline">\(\mathrm{OPT}\)</span>（这是我们推论的逆否），而反之则可能就是<span class="math inline">\(\mathrm{OPT}\)</span>（但无论如何，事实上是<span class="math inline">\(\mathrm{OPT}\)</span>的那条边一定是没有问题的）。因为我们在这里只在意是否是多项式时间复杂度而不在意复杂度本身，而枚举边自然是多项式时间的，因此没有任何问题（当然，在实现过程中可以考虑使用二分，但这就是后话了）。</p>
+<h1 id="近似比可以更好吗">近似比可以更好吗？</h1>
+<p><strong>定理：</strong>如果存在一个多项式时间的，近似比<span class="math inline">\(&lt;2\)</span>的<span class="math inline">\(k\)</span>中心问题的近似算法，那么<span class="math inline">\(\mathsf{P}=\mathsf{NP}\)</span>。</p>
 <p><strong>证明：</strong>考虑<em>最小支配集问题</em>的判定形式：</p>
-<p><strong>输入：</strong>无向图$G=(V,E)$以及正整数$k$。</p>
-<p><strong>判定：</strong>是否存在一个大小为$k$的支配集？支配集定义为一个点集$S\subseteq V$，使得$\forall u\in V$，要么$u\in S$或者$u$的邻居$\in S$。</p>
-<p>最小支配集问题是NPC的。我们接下来将其规约到$k$中心问题（也是判定形式）：</p>
-<p><strong>输入：</strong>完全图$G’$，正整数$k,b$。</p>
-<p><strong>判定：</strong>是否存在一个代价$\le b$的$k$中心的方案？</p>
-<p>如何规约？不难想到，我们可以让$G$与$G’$用相同的点集，而对于所有在$G$中的边，其在$G’$中的边权为$1$。而对于所有不在$G$中的边，其在$G’$中的边权为$2$（为什么是$2$？直觉上我们会首先想到$\infty$，但是这样就不满足三角不等式了，因此改成$2$）。令两个问题当中的$k$相等，且$b=1$，我们就完成了规约。</p>
+<p><strong>输入：</strong>无向图<span class="math inline">\(G=(V,E)\)</span>以及正整数<span class="math inline">\(k\)</span>。</p>
+<p><strong>判定：</strong>是否存在一个大小为<span class="math inline">\(k\)</span>的支配集？支配集定义为一个点集<span class="math inline">\(S\subseteq V\)</span>，使得<span class="math inline">\(\forall u\in V\)</span>，要么<span class="math inline">\(u\in S\)</span>或者<span class="math inline">\(u\)</span>的邻居<span class="math inline">\(\in S\)</span>。</p>
+<p>最小支配集问题是NPC的。我们接下来将其规约到<span class="math inline">\(k\)</span>中心问题（也是判定形式）：</p>
+<p><strong>输入：</strong>完全图<span class="math inline">\(G&#39;\)</span>，正整数<span class="math inline">\(k,b\)</span>。</p>
+<p><strong>判定：</strong>是否存在一个代价<span class="math inline">\(\le b\)</span>的<span class="math inline">\(k\)</span>中心的方案？</p>
+<p>如何规约？不难想到，我们可以让<span class="math inline">\(G\)</span>与<span class="math inline">\(G&#39;\)</span>用相同的点集，而对于所有在<span class="math inline">\(G\)</span>中的边，其在<span class="math inline">\(G&#39;\)</span>中的边权为<span class="math inline">\(1\)</span>。而对于所有不在<span class="math inline">\(G\)</span>中的边，其在<span class="math inline">\(G&#39;\)</span>中的边权为<span class="math inline">\(2\)</span>（为什么是<span class="math inline">\(2\)</span>？直觉上我们会首先想到<span class="math inline">\(\infty\)</span>，但是这样就不满足三角不等式了，因此改成<span class="math inline">\(2\)</span>）。令两个问题当中的<span class="math inline">\(k\)</span>相等，且<span class="math inline">\(b=1\)</span>，我们就完成了规约。</p>
 <p>为什么？</p>
-<p>在这样的规约下，一个在$G$中的支配集必然对应一个$G’$当中代价为$1$的相同大小的$k$中心，反之亦然。</p>
-<p>也就是说，如果我们可以解决这个规约后的$k$中心问题，那么我们就能解决原来的最小支配集问题了。</p>
-<p>这个时候就可以看出为什么近似比$&lt;2$的近似算法牛逼了：</p>
-<ol>
-<li>如果$G$当中有符合要求的支配集，那么$k$中心的$\mathrm{OPT}=1$，而由于近似比$&lt;2$且边权只有$1,2$，因此即使是近似算法也会次次给出$1$。</li>
-<li>如果$G$当中没有符合要求的支配集，那么$k$中心的$\mathrm{OPT} = 2$，而由于近似比$&lt;2$且边权只有$1,2$，因此即使是近似算法也只能给出$2$。</li>
+<p>在这样的规约下，一个在<span class="math inline">\(G\)</span>中的支配集必然对应一个<span class="math inline">\(G&#39;\)</span>当中代价为<span class="math inline">\(1\)</span>的相同大小的<span class="math inline">\(k\)</span>中心，反之亦然。</p>
+<p>也就是说，如果我们可以解决这个规约后的<span class="math inline">\(k\)</span>中心问题，那么我们就能解决原来的最小支配集问题了。</p>
+<p>这个时候就可以看出为什么近似比<span class="math inline">\(&lt;2\)</span>的近似算法牛逼了：</p>
+<ol type="1">
+<li>如果<span class="math inline">\(G\)</span>当中有符合要求的支配集，那么<span class="math inline">\(k\)</span>中心的<span class="math inline">\(\mathrm{OPT}=1\)</span>，而由于近似比<span class="math inline">\(&lt;2\)</span>且边权只有<span class="math inline">\(1,2\)</span>，因此即使是近似算法也会次次给出<span class="math inline">\(1\)</span>。</li>
+<li>如果<span class="math inline">\(G\)</span>当中没有符合要求的支配集，那么<span class="math inline">\(k\)</span>中心的<span class="math inline">\(\mathrm{OPT} = 2\)</span>，而由于近似比<span class="math inline">\(&lt;2\)</span>且边权只有<span class="math inline">\(1,2\)</span>，因此即使是近似算法也只能给出<span class="math inline">\(2\)</span>。</li>
 </ol>
-<p>如此说来，即使是近似算法，通过判断输出代价是$1$还是$2$我们就能判断$G$中有没有大小$k$的支配集。而这个近似算法是多项式时间的，因此我们可以用多项式时间解决支配集问题这么一个NPC问题，即$P=NP$。</p>
+<p>如此说来，即使是近似算法，通过判断输出代价是<span class="math inline">\(1\)</span>还是<span class="math inline">\(2\)</span>我们就能判断<span class="math inline">\(G\)</span>中有没有大小<span class="math inline">\(k\)</span>的支配集。而这个近似算法是多项式时间的，因此我们可以用多项式时间解决支配集问题这么一个NPC问题，即<span class="math inline">\(P=NP\)</span>。</p>
 <p>刚刚用到的这个技巧被称为“gap reduction”。</p>
-<p>整个定理的言下之意就是如果你也相信$\mathsf{P}\neq \mathsf{NP}$，那么就可以洗洗睡了~</p>
+<p>整个定理的言下之意就是如果你也相信<span class="math inline">\(\mathsf{P}\neq \mathsf{NP}\)</span>，那么就可以洗洗睡了~</p>
 
       
     </div>
@@ -627,7 +704,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/06/30/PACT0629/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -668,48 +745,114 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="概率论初步"><a href="#概率论初步" class="headerlink" title="概率论初步"></a>概率论初步</h1><h2 id="期望的线性性"><a href="#期望的线性性" class="headerlink" title="期望的线性性"></a>期望的线性性</h2><p>$$<br>\mathbb{E}[X+Y] = \mathbb E [X] + \mathbb E[Y]<br>$$</p>
-<h2 id="随机变量的方差"><a href="#随机变量的方差" class="headerlink" title="随机变量的方差"></a>随机变量的方差</h2><p>$$<br>\begin{aligned}<br>    \operatorname{Var}[X] &amp;:= \mathbb{E}\left[\left(X-\mathbb{E}[X]\right)^2\right] \<br>    &amp;= \mathbb{E} \left[X^2 - 2\mathbb{E}[X]X+\mathbb{E}[X]^2\right] \<br>    &amp;= \mathbb{E} \left[X^2\right] - 2\mathbb{E}[X]^2 + \mathbb{E}[X]^2 \<br>    &amp;= \mathbb{E} \left[X^2\right] - \mathbb{E}[X]^2<br>\end{aligned}<br>$$</p>
-<p><strong>推论：</strong>若随机变量$X,Y$互相独立，则有：</p>
-<ol>
-<li>$\operatorname{Var}[X+Y] = \operatorname{Var}[X] + \operatorname{Var}[Y]$</li>
-<li>$\mathbb{E}[XY] = \mathbb{E}[X]\mathbb{E}[Y]$</li>
+          <h1 id="概率论初步">概率论初步</h1>
+<h2 id="期望的线性性">期望的线性性</h2>
+<p><span class="math display">\[
+\mathbb{E}[X+Y] = \mathbb E [X] + \mathbb E[Y]
+\]</span></p>
+<h2 id="随机变量的方差">随机变量的方差</h2>
+<p><span class="math display">\[
+\begin{aligned}
+    \operatorname{Var}[X] &amp;:= \mathbb{E}\left[\left(X-\mathbb{E}[X]\right)^2\right] \\
+    &amp;= \mathbb{E} \left[X^2 - 2\mathbb{E}[X]X+\mathbb{E}[X]^2\right] \\
+    &amp;= \mathbb{E} \left[X^2\right] - 2\mathbb{E}[X]^2 + \mathbb{E}[X]^2 \\
+    &amp;= \mathbb{E} \left[X^2\right] - \mathbb{E}[X]^2
+\end{aligned}
+\]</span></p>
+<p><strong>推论：</strong>若随机变量<span class="math inline">\(X,Y\)</span>互相独立，则有：</p>
+<ol type="1">
+<li><span class="math inline">\(\operatorname{Var}[X+Y] = \operatorname{Var}[X] + \operatorname{Var}[Y]\)</span></li>
+<li><span class="math inline">\(\mathbb{E}[XY] = \mathbb{E}[X]\mathbb{E}[Y]\)</span></li>
 </ol>
-<p>（互相独立的定义：$\forall x, y, \operatorname{Pr}[X=x\cap Y=y]=\operatorname{Pr}[X=x]\operatorname{Pr}[Y=y]$）</p>
-<h2 id="马尔科夫不等式"><a href="#马尔科夫不等式" class="headerlink" title="马尔科夫不等式"></a>马尔科夫不等式</h2><p>设$X$为<strong>非负</strong>随机变量，则$\forall a &gt;0$：<br>$$<br>\operatorname{Pr}[X\ge a] \le \frac{\mathbb{E}[X]}{a}<br>$$<br><strong>证明：</strong><br>$$<br>\begin{aligned}<br>    \mathbb{E}[X] &amp;= \sum_{x}x\operatorname{Pr}[X=x] \<br>    &amp;= \sum_{x&lt;a}x\operatorname{Pr}[X=x] + \sum_{x\ge a}x\operatorname{Pr}[X=x] \<br>    &amp;\ge \sum_{x\ge a}x\operatorname{Pr}[X=x] \<br>    &amp;\ge \sum_{x\ge a}a\operatorname{Pr}[X=x] \<br>    &amp;= a \sum_{x\ge a}\operatorname{Pr}[X=x] \<br>    &amp;= a \operatorname{Pr}[X\ge x]<br>\end{aligned}<br>$$<br>（离散形式，连续形式的证明方法类似）</p>
-<p>其中第一个$\ge$依赖于$X$非负的特性，因此非负是必须的！</p>
+<p>（互相独立的定义：<span class="math inline">\(\forall x, y, \operatorname{Pr}[X=x\cap Y=y]=\operatorname{Pr}[X=x]\operatorname{Pr}[Y=y]\)</span>）</p>
+<h2 id="马尔科夫不等式">马尔科夫不等式</h2>
+<p>设<span class="math inline">\(X\)</span>为<strong>非负</strong>随机变量，则<span class="math inline">\(\forall a &gt;0\)</span>： <span class="math display">\[
+\operatorname{Pr}[X\ge a] \le \frac{\mathbb{E}[X]}{a}
+\]</span> <strong>证明：</strong> <span class="math display">\[
+\begin{aligned}
+    \mathbb{E}[X] &amp;= \sum_{x}x\operatorname{Pr}[X=x] \\
+    &amp;= \sum_{x&lt;a}x\operatorname{Pr}[X=x] + \sum_{x\ge a}x\operatorname{Pr}[X=x] \\
+    &amp;\ge \sum_{x\ge a}x\operatorname{Pr}[X=x] \\
+    &amp;\ge \sum_{x\ge a}a\operatorname{Pr}[X=x] \\
+    &amp;= a \sum_{x\ge a}\operatorname{Pr}[X=x] \\
+    &amp;= a \operatorname{Pr}[X\ge x]
+\end{aligned}
+\]</span> （离散形式，连续形式的证明方法类似）</p>
+<p>其中第一个<span class="math inline">\(\ge\)</span>依赖于<span class="math inline">\(X\)</span>非负的特性，因此非负是必须的！</p>
 <p>马尔科夫不等式让我们可以在只知道随机变量期望的情况下对于其分布概率进行粗略定界。</p>
-<h2 id="切比雪夫不等式"><a href="#切比雪夫不等式" class="headerlink" title="切比雪夫不等式"></a>切比雪夫不等式</h2><p>设$X$为随机变量，则$\forall a &gt; 0$：<br>$$<br>\operatorname{Pr}\left[|X-\mathbb{E}[X]| \ge a\right] \le \frac{\operatorname{Var}[X]}{a^2}<br>$$<br><strong>证明：</strong><br>$$<br>\begin{aligned}<br>    \operatorname{Pr}\left[|X-\mathbb{E}[X]| \ge a\right] &amp;= \operatorname{Pr}\left[(X-\mathbb{E}[X])^2 \ge a^2\right] \<br>    &amp;\le \frac{\mathbb{E}\left[(X-\mathbb{E}[X])^2\right]}{a^2} \<br>    &amp;= \frac{\operatorname{Var}[X]}{a^2}<br>\end{aligned}<br>$$<br>注意到$a^2&gt;0$且$(X-\mathbb{E}[X])^2$非负，因此我们可以在第二步使用马尔科夫不等式。</p>
+<h2 id="切比雪夫不等式">切比雪夫不等式</h2>
+<p>设<span class="math inline">\(X\)</span>为随机变量，则<span class="math inline">\(\forall a &gt; 0\)</span>： <span class="math display">\[
+\operatorname{Pr}\left[|X-\mathbb{E}[X]| \ge a\right] \le \frac{\operatorname{Var}[X]}{a^2}
+\]</span> <strong>证明：</strong> <span class="math display">\[
+\begin{aligned}
+    \operatorname{Pr}\left[|X-\mathbb{E}[X]| \ge a\right] &amp;= \operatorname{Pr}\left[(X-\mathbb{E}[X])^2 \ge a^2\right] \\
+    &amp;\le \frac{\mathbb{E}\left[(X-\mathbb{E}[X])^2\right]}{a^2} \\
+    &amp;= \frac{\operatorname{Var}[X]}{a^2}
+\end{aligned}
+\]</span> 注意到<span class="math inline">\(a^2&gt;0\)</span>且<span class="math inline">\((X-\mathbb{E}[X])^2\)</span>非负，因此我们可以在第二步使用马尔科夫不等式。</p>
 <p>如果我们不仅知道随机变量的期望（一阶矩），还知道其方差（二阶矩），那么切比雪夫不等式可以给出比马尔科夫不等式更为精确的上界。</p>
-<h2 id="切尔诺夫上界（Chernoff-Bound）"><a href="#切尔诺夫上界（Chernoff-Bound）" class="headerlink" title="切尔诺夫上界（Chernoff Bound）"></a>切尔诺夫上界（Chernoff Bound）</h2><p>设随机变量$X=\sum_{i=1}^n X_i$，其中$X_1,\cdots,X_n$为$[0,1]$上互相独立的随机变量，则$\forall t&gt;1$：<br>$$<br>\operatorname{Pr}\left[|X - \mathbb{E}[X]| \ge t\mathbb{E}[X]\right] \le 2\exp\left(-\frac{t\mathbb{E}[X]}{3}\right)<br>$$<br>且$\forall \epsilon \in (0,1]$：<br>$$<br>\operatorname{Pr}\left[|X - \mathbb{E}[X]| \ge \epsilon\mathbb{E}[X]\right] \le 2\exp\left(-\frac{\epsilon^2\mathbb{E}[X]}{3}\right)<br>$$<br><em>加性切尔诺夫不等式（Additive Chernoff Bound）</em>：$\forall b &gt;1$：<br>$$<br>\operatorname{Pr}\left[|X - \mathbb{E}[X]| \ge b\right] \le 2\exp\left(-\frac{2b^2}{n}\right)<br>$$</p>
-<h2 id="三个不等式给出上界的比较"><a href="#三个不等式给出上界的比较" class="headerlink" title="三个不等式给出上界的比较"></a>三个不等式给出上界的比较</h2><p>考虑如下问题：投$n$次均质硬币，设随机变量$X$表示头朝上的次数。估计$\operatorname{Pr}\left[X\ge \frac{3n}{4}\right]$？</p>
+<h2 id="切尔诺夫上界chernoff-bound">切尔诺夫上界（Chernoff Bound）</h2>
+<p>设随机变量<span class="math inline">\(X=\sum_{i=1}^n X_i\)</span>，其中<span class="math inline">\(X_1,\cdots,X_n\)</span>为<span class="math inline">\([0,1]\)</span>上互相独立的随机变量，则<span class="math inline">\(\forall t&gt;1\)</span>： <span class="math display">\[
+\operatorname{Pr}\left[|X - \mathbb{E}[X]| \ge t\mathbb{E}[X]\right] \le 2\exp\left(-\frac{t\mathbb{E}[X]}{3}\right)
+\]</span> 且<span class="math inline">\(\forall \epsilon \in (0,1]\)</span>： <span class="math display">\[
+\operatorname{Pr}\left[|X - \mathbb{E}[X]| \ge \epsilon\mathbb{E}[X]\right] \le 2\exp\left(-\frac{\epsilon^2\mathbb{E}[X]}{3}\right)
+\]</span> <em>加性切尔诺夫不等式（Additive Chernoff Bound）</em>：<span class="math inline">\(\forall b &gt;1\)</span>： <span class="math display">\[
+\operatorname{Pr}\left[|X - \mathbb{E}[X]| \ge b\right] \le 2\exp\left(-\frac{2b^2}{n}\right)
+\]</span></p>
+<h2 id="三个不等式给出上界的比较">三个不等式给出上界的比较</h2>
+<p>考虑如下问题：投<span class="math inline">\(n\)</span>次均质硬币，设随机变量<span class="math inline">\(X\)</span>表示头朝上的次数。估计<span class="math inline">\(\operatorname{Pr}\left[X\ge \frac{3n}{4}\right]\)</span>？</p>
 <p><strong>马尔科夫不等式：</strong></p>
-<p>显然，$\mathbb{E}[X]=\frac{n}{2}$，且$X$非负：<br>$$<br>\operatorname{Pr}\left[X\ge \frac{3n}{4}\right] \le \frac{\frac{n}{2}}{\frac{3n}{4}} = \frac{2}{3}<br>$$<br>这个上界是很松的。</p>
+<p>显然，<span class="math inline">\(\mathbb{E}[X]=\frac{n}{2}\)</span>，且<span class="math inline">\(X\)</span>非负： <span class="math display">\[
+\operatorname{Pr}\left[X\ge \frac{3n}{4}\right] \le \frac{\frac{n}{2}}{\frac{3n}{4}} = \frac{2}{3}
+\]</span> 这个上界是很松的。</p>
 <p><strong>切比雪夫不等式：</strong></p>
-<p>设随机二元变量$X_i$表示第$i$次投是否头朝上，则显然$X=\sum_{i=1}^nX_i$，且易得$\operatorname{Var}[X_i]=\frac{1}{4}$，由于$X_i$两两独立，则$\operatorname{Var}[X]=\frac{n}{4}$，运用切比雪夫不等式：<br>$$<br>\begin{aligned}<br>    \operatorname{Pr}\left[X\ge \frac{3n}{4}\right] &amp;= \operatorname{Pr}\left[X - \frac{n}{2}\ge \frac{n}{4}\right] \<br>    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \frac{n}{2}\right|\ge \frac{n}{4}\right] \<br>    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \mathbb{E}[X]\right|\ge \frac{n}{4}\right] \<br>    &amp;\le \frac{1}{2} \frac{\frac{n}{4}}{\left(\frac{n}{4}\right)^2} \<br>    &amp;= \frac{2}{n}<br>\end{aligned}<br>$$<br><strong>切尔诺夫上界：</strong></p>
-<p>显然，取$\epsilon = \frac{1}{2}$：<br>$$<br>\begin{aligned}<br>    \operatorname{Pr}\left[X\ge \frac{3n}{4}\right] &amp;= \operatorname{Pr}\left[X - \frac{n}{2}\ge \frac{n}{4}\right] \<br>    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \frac{n}{2}\right|\ge \frac{n}{4}\right] \<br>    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \mathbb{E}[X]\right|\ge \frac{1}{2}\mathbb{E}[X]\right] \<br>    &amp;\le \exp\left(-\frac{1}{12}\cdot \frac{n}{2}\right)\<br>    &amp;= \exp\left(-\frac{n}{24}\right)<br>\end{aligned}<br>$$<br>各上界的效果：</p>
-<p><img src="/Bounds.png"></p>
+<p>设随机二元变量<span class="math inline">\(X_i\)</span>表示第<span class="math inline">\(i\)</span>次投是否头朝上，则显然<span class="math inline">\(X=\sum_{i=1}^nX_i\)</span>，且易得<span class="math inline">\(\operatorname{Var}[X_i]=\frac{1}{4}\)</span>，由于<span class="math inline">\(X_i\)</span>两两独立，则<span class="math inline">\(\operatorname{Var}[X]=\frac{n}{4}\)</span>，运用切比雪夫不等式： <span class="math display">\[
+\begin{aligned}
+    \operatorname{Pr}\left[X\ge \frac{3n}{4}\right] &amp;= \operatorname{Pr}\left[X - \frac{n}{2}\ge \frac{n}{4}\right] \\
+    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \frac{n}{2}\right|\ge \frac{n}{4}\right] \\
+    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \mathbb{E}[X]\right|\ge \frac{n}{4}\right] \\
+    &amp;\le \frac{1}{2} \frac{\frac{n}{4}}{\left(\frac{n}{4}\right)^2} \\
+    &amp;= \frac{2}{n}
+\end{aligned}
+\]</span> <strong>切尔诺夫上界：</strong></p>
+<p>显然，取<span class="math inline">\(\epsilon = \frac{1}{2}\)</span>： <span class="math display">\[
+\begin{aligned}
+    \operatorname{Pr}\left[X\ge \frac{3n}{4}\right] &amp;= \operatorname{Pr}\left[X - \frac{n}{2}\ge \frac{n}{4}\right] \\
+    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \frac{n}{2}\right|\ge \frac{n}{4}\right] \\
+    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \mathbb{E}[X]\right|\ge \frac{1}{2}\mathbb{E}[X]\right] \\
+    &amp;\le \exp\left(-\frac{1}{12}\cdot \frac{n}{2}\right)\\
+    &amp;= \exp\left(-\frac{n}{24}\right)
+\end{aligned}
+\]</span> 各上界的效果：</p>
+<p><img src="/Bounds.png" /></p>
 <p>看来这个例子里面还是切比雪夫不等式给出的上界最好——是不是切尔诺夫上界我学到的形式本身太loose了？</p>
-<h1 id="近似算法初步"><a href="#近似算法初步" class="headerlink" title="近似算法初步"></a>近似算法初步</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>若算法$A$满足以下条件，则称算法$A$是某个问题（不妨假设是最小化问题）的$\alpha$近似比的近似算法：</p>
-<ol>
-<li>$A$是多项式时间的。</li>
-<li>对于所有输入，$A$的输出$\operatorname{soln}(A) \le \alpha \cdot\mathrm{OPT}$，其中$\mathrm{OPT}$是该输入的最优解。</li>
+<h1 id="近似算法初步">近似算法初步</h1>
+<h2 id="定义">定义</h2>
+<p>若算法<span class="math inline">\(A\)</span>满足以下条件，则称算法<span class="math inline">\(A\)</span>是某个问题（不妨假设是最小化问题）的<span class="math inline">\(\alpha\)</span>近似比的近似算法：</p>
+<ol type="1">
+<li><span class="math inline">\(A\)</span>是多项式时间的。</li>
+<li>对于所有输入，<span class="math inline">\(A\)</span>的输出<span class="math inline">\(\operatorname{soln}(A) \le \alpha \cdot\mathrm{OPT}\)</span>，其中<span class="math inline">\(\mathrm{OPT}\)</span>是该输入的最优解。</li>
 </ol>
-<p>*对于最大化问题，第二个条件为$\operatorname{soln}(A) \ge \frac{1}{\alpha} \cdot\mathrm{OPT}$*。</p>
+<p><em>对于最大化问题，第二个条件为<span class="math inline">\(\operatorname{soln}(A) \ge \frac{1}{\alpha} \cdot\mathrm{OPT}\)</span></em>。</p>
 <p>（继续假设是最小化问题）</p>
-<p>显然，为了精确计算$\alpha$我们必须知道$\mathrm{OPT}$，而这显然是不现实的（如果可以我还要近似算法干嘛？），因此我们退而求其次寻找$\mathrm{OPT}$的一个比较紧的<strong>下界</strong>，我们的解与该下界之比自然就是$\alpha$的上界了。</p>
-<h2 id="例：最小顶点覆盖问题"><a href="#例：最小顶点覆盖问题" class="headerlink" title="例：最小顶点覆盖问题"></a>例：最小顶点覆盖问题</h2><p><strong>输入：</strong>$G=(V,E)$</p>
-<p><strong>目标：</strong>最小化点集$S\subseteq V$，同时满足$\forall (u,v) \in E$，$u\in S$或$v \in S$。</p>
-<p>这是一个知名的NP Complete问题。在这里我们设计一个简单的$2$近似算法。然而令人吃惊地是，$2$的近似比已经是我们目前能够做到的最好结果！</p>
-<p><strong>思路：</strong>考虑$G$的一个<strong>极大匹配</strong>，显然极大匹配是可以在多项式时间内求出的。</p>
+<p>显然，为了精确计算<span class="math inline">\(\alpha\)</span>我们必须知道<span class="math inline">\(\mathrm{OPT}\)</span>，而这显然是不现实的（如果可以我还要近似算法干嘛？），因此我们退而求其次寻找<span class="math inline">\(\mathrm{OPT}\)</span>的一个比较紧的<strong>下界</strong>，我们的解与该下界之比自然就是<span class="math inline">\(\alpha\)</span>的上界了。</p>
+<h2 id="例最小顶点覆盖问题">例：最小顶点覆盖问题</h2>
+<p><strong>输入：</strong><span class="math inline">\(G=(V,E)\)</span></p>
+<p><strong>目标：</strong>最小化点集<span class="math inline">\(S\subseteq V\)</span>，同时满足<span class="math inline">\(\forall (u,v) \in E\)</span>，<span class="math inline">\(u\in S\)</span>或<span class="math inline">\(v \in S\)</span>。</p>
+<p>这是一个知名的NP Complete问题。在这里我们设计一个简单的<span class="math inline">\(2\)</span>近似算法。然而令人吃惊地是，<span class="math inline">\(2\)</span>的近似比已经是我们目前能够做到的最好结果！</p>
+<p><strong>思路：</strong>考虑<span class="math inline">\(G\)</span>的一个<strong>极大匹配</strong>，显然极大匹配是可以在多项式时间内求出的。</p>
 <p>同时注意到，任意无向图极大匹配的大小必定是其点覆盖集大小的下界，因为点覆盖必须取极大匹配当中每一条边的至少一个端点才能完成覆盖！</p>
 <p><strong>算法：</strong></p>
-<ol>
-<li>计算$G$的一个极大匹配$M$。</li>
-<li>取极大匹配所有边的所有端点为$S$。</li>
+<ol type="1">
+<li>计算<span class="math inline">\(G\)</span>的一个极大匹配<span class="math inline">\(M\)</span>。</li>
+<li>取极大匹配所有边的所有端点为<span class="math inline">\(S\)</span>。</li>
 </ol>
-<p><strong>为什么正确？</strong>考虑反证：若$\exists (u,v) \in E$，使$u\not\in S$且$v \not \in S$，那显然边$(u, v)$还可以加入$M$，这和$M$的极大性是矛盾的。</p>
-<p>近似比证明：<br>$$<br>\begin{aligned}<br>    |S| = 2|M| \le 2\cdot \mathrm{OPT}<br>\end{aligned}<br>$$<br>得证。</p>
+<p><strong>为什么正确？</strong>考虑反证：若<span class="math inline">\(\exists (u,v) \in E\)</span>，使<span class="math inline">\(u\not\in S\)</span>且<span class="math inline">\(v \not \in S\)</span>，那显然边<span class="math inline">\((u, v)\)</span>还可以加入<span class="math inline">\(M\)</span>，这和<span class="math inline">\(M\)</span>的极大性是矛盾的。</p>
+<p>近似比证明： <span class="math display">\[
+\begin{aligned}
+    |S| = 2|M| \le 2\cdot \mathrm{OPT}
+\end{aligned}
+\]</span> 得证。</p>
 
       
     </div>
@@ -739,7 +882,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/06/21/%E7%BB%84%E5%90%88%E6%B1%82%E5%92%8C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -781,33 +924,70 @@
     
     <div class="post-body" itemprop="articleBody">
           <p>省选结束了，本人作为划水3年的OIer宣告原地退役，唯一写出正解的是D1T2。我其实觉得这道题挺有意思的（虽然大佬们都说只是推式子而已……嘛，毕竟本来没期待自己能做出来），就写篇文章记一下自己的想法吧。</p>
-<h1 id="题意"><a href="#题意" class="headerlink" title="题意"></a>题意</h1><p>给定整数$n, x, P\le 10^9$，以及一个$m \le 1000$次整系数多项式$f$，求<br>$$<br>\left[\sum_{k=0}^nf(k)x^k\binom{n}{k}\right]\bmod P<br>$$</p>
-<h1 id="心路历程"><a href="#心路历程" class="headerlink" title="心路历程"></a>心路历程</h1><h2 id="先乱搞一波"><a href="#先乱搞一波" class="headerlink" title="先乱搞一波"></a>先乱搞一波</h2><p>看到这个题目的第一眼我觉得颇为眼熟。虽然没学过奥数，印象当中《具体数学》里面花了很大笔墨讲由这种指数，多项式以及二项式系数组合而成的和式的处理方法，似乎最后也讲到了机械求和法，然并卵，印象止步于印象，机械求合法太复杂了自己并没有记下来。</p>
+<h1 id="题意">题意</h1>
+<p>给定整数<span class="math inline">\(n, x, P\le 10^9\)</span>，以及一个<span class="math inline">\(m \le 1000\)</span>次整系数多项式<span class="math inline">\(f\)</span>，求 <span class="math display">\[
+\left[\sum_{k=0}^nf(k)x^k\binom{n}{k}\right]\bmod P
+\]</span></p>
+<h1 id="心路历程">心路历程</h1>
+<h2 id="先乱搞一波">先乱搞一波</h2>
+<p>看到这个题目的第一眼我觉得颇为眼熟。虽然没学过奥数，印象当中《具体数学》里面花了很大笔墨讲由这种指数，多项式以及二项式系数组合而成的和式的处理方法，似乎最后也讲到了机械求和法，然并卵，印象止步于印象，机械求合法太复杂了自己并没有记下来。</p>
 <p>但是自己的残存记忆告诉我机械求和法的第一步是把求和式化成超几何函数，虽然后者我更没办法但是本着有逼就要装的思想……为什么不试一试呢？</p>
-<p>什么样的级数是超几何的？《具体数学》里面给出的方法是求相邻项之比<del>幸好这个我还没有忘记</del>，而显而易见地是多项式求比是求不出具有良好形式的结果的，因此<strong>多项式必须转化为性质更优良的下降阶乘幂处理</strong>（关于下降阶乘幂我记得两年之前就写过一篇成套方法和有限微积分的博文，现在想来下降阶乘幂在离散求和问题当中真的有非常良好的性质，我在这里就沿用《具体数学》里的记号了：$k^{\underline m} = \prod_{i=0}^m (k-i)$）：<br>$$<br>\begin{aligned}<br>\frac{(k+1)^{\underline{m}}x^{k+1}\binom{n}{k+1}}{k^{\underline{m}}x^k\binom{n}{k}} &amp;= \frac{(k+1)x(n-k)}{(k-m+1)(k+1)} \<br>&amp;= \frac{(n-k)x}{k-m+1}<br>\end{aligned}<br>$$<br>不出所料，结果是一个有理函数，也就是说可以化成高斯超几何函数呢！</p>
+<p>什么样的级数是超几何的？《具体数学》里面给出的方法是求相邻项之比<del>幸好这个我还没有忘记</del>，而显而易见地是多项式求比是求不出具有良好形式的结果的，因此<strong>多项式必须转化为性质更优良的下降阶乘幂处理</strong>（关于下降阶乘幂我记得两年之前就写过一篇成套方法和有限微积分的博文，现在想来下降阶乘幂在离散求和问题当中真的有非常良好的性质，我在这里就沿用《具体数学》里的记号了：<span class="math inline">\(k^{\underline m} = \prod_{i=0}^m (k-i)\)</span>）： <span class="math display">\[
+\begin{aligned}
+\frac{(k+1)^{\underline{m}}x^{k+1}\binom{n}{k+1}}{k^{\underline{m}}x^k\binom{n}{k}} &amp;= \frac{(k+1)x(n-k)}{(k-m+1)(k+1)} \\
+&amp;= \frac{(n-k)x}{k-m+1}
+\end{aligned}
+\]</span> 不出所料，结果是一个有理函数，也就是说可以化成高斯超几何函数呢！</p>
 <p>不出所料，半瓶水的某人也就知道这些了（悲）。</p>
 <p>但是<strong>下降阶乘幂的思想是可以有的嘛</strong>！</p>
-<h2 id="部分分摸鱼"><a href="#部分分摸鱼" class="headerlink" title="部分分摸鱼"></a>部分分摸鱼</h2><p>在乱搞如预想的那般失败之后我就开始看部分分。</p>
-<p>部分分里面有一个$f$是常数的，愣了一会发现能用二项式定理，答案是$(1+x)^n$。</p>
-<p>然后还有一个$x=1$的。这个要怎么解决？</p>
-<p>从最简单的一次多项式开始：<br>$$<br>\sum_{k=0}^nk\binom{n}{k}=?<br>$$<br>推式子本人是不会的，结论也忘了，但是从组合意义上还是好想的：**$k\binom{n}{k}$就是从$n$个人里面选$k$个人，然后钦定一个做队长的方案数，把它求和，就是从$n$个人里面选若干人，然后从当中钦定一个队长的方案数。**这是先选人再定队长的顺序，我们可以先选队长再选人嘛！从$n$个人里面选一个队长有$n$种方法，剩下的$(n-1)$个人要不要都行，所以是$2^{n-1}$种，二者相乘：<br>$$<br>\sum_{k=0}^nk\binom{n}{k}=n2^{n-1}<br>$$<br>就把一次的式子推出来了。</p>
-<p>那二次的式子呢？<br>$$<br>\sum_{k=0}^nk^2\binom{n}{k}=?<br>$$<br>如果沿用之前运用组合意义化简的思路，那$k^2$就有“可以重复选”的含义在，是不好处理的。但是之前的乱搞告诉我们，是不是化成下降阶乘幂会好处理一点呢？<br>$$<br>\sum_{k=0}^nk(k-1)\binom{n}{k}=?<br>$$<br>答案是肯定的，思路和一次的完全一样，只是从“选队长”变成了“选队长和副队长“，因此很快就可以得出：<br>$$<br>\sum_{k=0}^nk(k-1)\binom{n}{k}=n(n-1)2^{n-2}<br>$$<br>然后就可以很快地推广出去了：<br>$$<br>\sum_{k=0}^nk^{\underline{m}}\binom{n}{k}=n^{\underline{m}}2^{n-m}<br>$$<br>这样几个部分分就基本拿到了。</p>
-<h2 id="把两者组合起来"><a href="#把两者组合起来" class="headerlink" title="把两者组合起来"></a>把两者组合起来</h2><p>那如果$x\neq 1$且$f$非常数要怎么做呢？我们不妨还是把$f$想成下降阶乘幂（怎么拆另说）：<br>$$<br>\sum_{k=0}^nk^{\underline{m}}x^k\binom{n}{k}=?<br>$$<br>然后思考其组合意义，稍开脑洞即可得到：</p>
-<p><strong>$k^{\underline{m}}x^k\binom{n}{k}$是从$n$个人里面挑选$k$个人，再给让当中$m$人担任$m$个不同职位，最后再让每个人从$x$种颜色的帽子当中选一个戴上的方案数</strong>（不要问我怎么想到戴帽子的）。</p>
-<p>因此，由加法原理，对其求和之后就是从$n$个人里面挑选<em>若干</em>个人，再给让当中$m$人担任$m$个不同职位，最后再让每个人从$x$种颜色的帽子当中选一个戴上的方案数。</p>
-<p>那我们故技重施，调换顺序，不妨先从$n$个人当中调出担任$m$个职位的那$m$个人（$n^{\underline{m}}$种取法），再先让他们先选帽子（$x^m$种选法），然后让剩下的$(n-m)$个人要不挑一个颜色的帽子进队要么滚蛋（$(1+x)^{n-m}$种取法）。于是就有了：<br>$$<br>\sum_{k=0}^nk^{\underline{m}}x^k\binom{n}{k}=n^{\underline{m}}x^m(1+x)^{n-m}<br>$$<br>哇，式子就推出来了！</p>
-<h2 id="多项式拆分"><a href="#多项式拆分" class="headerlink" title="多项式拆分"></a>多项式拆分</h2><p>现在基于下降阶乘幂的式子已经推出来了，唯一剩下的就是把给定的$f$拆成若干个下降阶乘幂的线性组合。<br>$$<br>\sum_{i=0}^ma_ik^i = \sum_{j=0}^m b_jk^{\underline{j}}<br>$$<br>即求$b_j$的过程。</p>
+<h2 id="部分分摸鱼">部分分摸鱼</h2>
+<p>在乱搞如预想的那般失败之后我就开始看部分分。</p>
+<p>部分分里面有一个<span class="math inline">\(f\)</span>是常数的，愣了一会发现能用二项式定理，答案是<span class="math inline">\((1+x)^n\)</span>。</p>
+<p>然后还有一个<span class="math inline">\(x=1\)</span>的。这个要怎么解决？</p>
+<p>从最简单的一次多项式开始： <span class="math display">\[
+\sum_{k=0}^nk\binom{n}{k}=?
+\]</span> 推式子本人是不会的，结论也忘了，但是从组合意义上还是好想的：<strong><span class="math inline">\(k\binom{n}{k}\)</span>就是从<span class="math inline">\(n\)</span>个人里面选<span class="math inline">\(k\)</span>个人，然后钦定一个做队长的方案数，把它求和，就是从<span class="math inline">\(n\)</span>个人里面选若干人，然后从当中钦定一个队长的方案数。</strong>这是先选人再定队长的顺序，我们可以先选队长再选人嘛！从<span class="math inline">\(n\)</span>个人里面选一个队长有<span class="math inline">\(n\)</span>种方法，剩下的<span class="math inline">\((n-1)\)</span>个人要不要都行，所以是<span class="math inline">\(2^{n-1}\)</span>种，二者相乘： <span class="math display">\[
+\sum_{k=0}^nk\binom{n}{k}=n2^{n-1}
+\]</span> 就把一次的式子推出来了。</p>
+<p>那二次的式子呢？ <span class="math display">\[
+\sum_{k=0}^nk^2\binom{n}{k}=?
+\]</span> 如果沿用之前运用组合意义化简的思路，那<span class="math inline">\(k^2\)</span>就有“可以重复选”的含义在，是不好处理的。但是之前的乱搞告诉我们，是不是化成下降阶乘幂会好处理一点呢？ <span class="math display">\[
+\sum_{k=0}^nk(k-1)\binom{n}{k}=?
+\]</span> 答案是肯定的，思路和一次的完全一样，只是从“选队长”变成了“选队长和副队长“，因此很快就可以得出： <span class="math display">\[
+\sum_{k=0}^nk(k-1)\binom{n}{k}=n(n-1)2^{n-2}
+\]</span> 然后就可以很快地推广出去了： <span class="math display">\[
+\sum_{k=0}^nk^{\underline{m}}\binom{n}{k}=n^{\underline{m}}2^{n-m}
+\]</span> 这样几个部分分就基本拿到了。</p>
+<h2 id="把两者组合起来">把两者组合起来</h2>
+<p>那如果<span class="math inline">\(x\neq 1\)</span>且<span class="math inline">\(f\)</span>非常数要怎么做呢？我们不妨还是把<span class="math inline">\(f\)</span>想成下降阶乘幂（怎么拆另说）： <span class="math display">\[
+\sum_{k=0}^nk^{\underline{m}}x^k\binom{n}{k}=?
+\]</span> 然后思考其组合意义，稍开脑洞即可得到：</p>
+<p><strong><span class="math inline">\(k^{\underline{m}}x^k\binom{n}{k}\)</span>是从<span class="math inline">\(n\)</span>个人里面挑选<span class="math inline">\(k\)</span>个人，再给让当中<span class="math inline">\(m\)</span>人担任<span class="math inline">\(m\)</span>个不同职位，最后再让每个人从<span class="math inline">\(x\)</span>种颜色的帽子当中选一个戴上的方案数</strong>（不要问我怎么想到戴帽子的）。</p>
+<p>因此，由加法原理，对其求和之后就是从<span class="math inline">\(n\)</span>个人里面挑选<em>若干</em>个人，再给让当中<span class="math inline">\(m\)</span>人担任<span class="math inline">\(m\)</span>个不同职位，最后再让每个人从<span class="math inline">\(x\)</span>种颜色的帽子当中选一个戴上的方案数。</p>
+<p>那我们故技重施，调换顺序，不妨先从<span class="math inline">\(n\)</span>个人当中调出担任<span class="math inline">\(m\)</span>个职位的那<span class="math inline">\(m\)</span>个人（<span class="math inline">\(n^{\underline{m}}\)</span>种取法），再先让他们先选帽子（<span class="math inline">\(x^m\)</span>种选法），然后让剩下的<span class="math inline">\((n-m)\)</span>个人要不挑一个颜色的帽子进队要么滚蛋（<span class="math inline">\((1+x)^{n-m}\)</span>种取法）。于是就有了： <span class="math display">\[
+\sum_{k=0}^nk^{\underline{m}}x^k\binom{n}{k}=n^{\underline{m}}x^m(1+x)^{n-m}
+\]</span> 哇，式子就推出来了！</p>
+<h2 id="多项式拆分">多项式拆分</h2>
+<p>现在基于下降阶乘幂的式子已经推出来了，唯一剩下的就是把给定的<span class="math inline">\(f\)</span>拆成若干个下降阶乘幂的线性组合。 <span class="math display">\[
+\sum_{i=0}^ma_ik^i = \sum_{j=0}^m b_jk^{\underline{j}}
+\]</span> 即求<span class="math inline">\(b_j\)</span>的过程。</p>
 <p>显而易见地，我们需要从高次到低次拆，这样后拆出来的幂才不会对之前的结果造成影响。</p>
 <p>同时显然的是，我们需要知道下降阶乘幂展开后对应多项式的系数。</p>
 <p>现在回过来看，朴素的多项式乘法是完全可以胜任的。但是写多项式乘法毕竟比较繁琐，不如观察多项式系数的规律。</p>
-<p>令$c[m, n]$表示下降阶乘幂$x^{\underline m}$的展开式当中$x^n$的系数。则由下降阶乘幂的定义：<br>$$<br>x^{\underline m} = x^{\underline{m-1}}[x-(m-1)],\quad (m\ge 1)<br>$$<br>可以得出递推式：<br>$$<br>c[m,n]=c[m-1,n-1]-(m-1)c[m-1,n]<br>$$<br>边界条件是$c[0,0] = 1$以及$c[m,0]=0\quad \forall m&gt;0$。这是一个类似杨辉三角的递推式，自然可以在$\mathcal{O}\left(m^2\right)$的时间内算出来，代码也好写。</p>
+<p>令<span class="math inline">\(c[m, n]\)</span>表示下降阶乘幂<span class="math inline">\(x^{\underline m}\)</span>的展开式当中<span class="math inline">\(x^n\)</span>的系数。则由下降阶乘幂的定义： <span class="math display">\[
+x^{\underline m} = x^{\underline{m-1}}[x-(m-1)],\quad (m\ge 1)
+\]</span> 可以得出递推式： <span class="math display">\[
+c[m,n]=c[m-1,n-1]-(m-1)c[m-1,n]
+\]</span> 边界条件是<span class="math inline">\(c[0,0] = 1\)</span>以及<span class="math inline">\(c[m,0]=0\quad \forall m&gt;0\)</span>。这是一个类似杨辉三角的递推式，自然可以在<span class="math inline">\(\mathcal{O}\left(m^2\right)\)</span>的时间内算出来，代码也好写。</p>
 <p>至此，这道题目就完全解决了。</p>
-<p>其实不止如此，这个三角在考场上让我感到非常眼熟，回去查证了一下，果然$c[m,n]$就是所谓的<strong>带符号的第一类斯特林数</strong>，“下降阶乘幂的展开系数”正是其重要的性质之一。</p>
-<h2 id="感想"><a href="#感想" class="headerlink" title="感想"></a>感想</h2><p>这道题对我的感触是比较深刻的，尤其是做出来之后，颇有一种成就感。</p>
+<p>其实不止如此，这个三角在考场上让我感到非常眼熟，回去查证了一下，果然<span class="math inline">\(c[m,n]\)</span>就是所谓的<strong>带符号的第一类斯特林数</strong>，“下降阶乘幂的展开系数”正是其重要的性质之一。</p>
+<h2 id="感想">感想</h2>
+<p>这道题对我的感触是比较深刻的，尤其是做出来之后，颇有一种成就感。</p>
 <p>细想来，我组合数学的公式其实几乎都没有背过，故而几乎所有的式子都是现场推出来的。而且推理的方式也不纯代数的暴算，而是通过combinatorial proof的方式。自从PACT学来这招之后我觉得这种方法实在是精妙。在最后自己还稀里糊涂地推演出了斯特林数的递推公式，或许这种高大上的组合数本身离我们就不遥远吧。</p>
 <p>而话又说回来，大佬们看我写的这篇文章，只怕有些不耐烦与乏味吧。那些认真学习过组合数学的选手，大概看到这道题只剩下满满的套路，毕竟斯特林数名声在外，falling factorial这个套路熟悉了也不难想到，而类似的组合式子大概课后的习题会有很多吧。看到诸多大佬将D1T2云淡风轻地说成“裸的推式子”，他们做这道题时的从容大概可见一斑。只有像自己这样偶尔翻翻《组合数学》和《具体数学》，半瓶水晃荡的，才会在考场上各种心情复杂，一惊一乍了。</p>
 <p>然而换一个角度，我觉得这道题对我来说真的不错，自己之前偶尔翻翻书也是。作为一道数学题，这道题并没有远远超出我的见识让我一筹莫展，也没有远远低于我的见识让我秒杀，恰是我稍微努力一下就能解决的。而这次考试正是给了日渐颓废，游手好闲的我一个“努力一下”的契机。就结果来看，解决这道题不仅给了我市选的信心，也给了我组合数学的信心，还让我在结题过程中观赏到了极佳的风景，似乎确实不赖。尤其是后者，若放在平时做题，随时可以查找资料，正确答案触手可及，那结论得出时大概也不会有考场上那么惊喜，那么愉悦了。</p>
-<h2 id="逆-转"><a href="#逆-转" class="headerlink" title="逆 转"></a>逆 转</h2><p>啊？出分了？！</p>
+<h2 id="逆-转">逆 转</h2>
+<p>啊？出分了？！</p>
 <p>我考个250都能压线进队？！</p>
 <p>我可是根本就没认真复习啊，半年没碰OI了……</p>
 <p>唉，看来这次强行退役失败了，心情复杂……</p>
@@ -840,7 +1020,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/04/17/PanDownload/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -892,7 +1072,7 @@
 <p>这句话很让人恼火，非常让人恼火，但是仔细思考一下，似乎是对的。云盘是一个市场，在市场里哪有永远白嫖的份。这个时候最好的结局是期待着市场竞争逼着百度降价。但是我国云盘市场的竞争着实不够激烈，百度隐隐形成垄断之势，降价看来是遥遥无期了（话又说回来，一个月25块钱的价格换算成美元大概与Google Drive差不多，其实真没那么多好抱怨的）。</p>
 <p>这个时候PanDownload以及一众多线程下载软件出现了。几十个线程一起下，让免费用户看到了曙光。</p>
 <p>我们不妨把PanDownload看做是网盘市场的一个有力的竞争者（虽然竞争并非其初衷），把它的下载服务看做是一个全新的网盘产品，它提供的“网盘产品”的竞争性优势在于</p>
-<ol>
+<ol type="1">
 <li>和已有百度网盘资料的完全兼容</li>
 <li>免费用户的高速下载</li>
 </ol>
@@ -936,7 +1116,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/04/17/IceBoat/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -971,54 +1151,55 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>最近比较无聊，偶尔会和同学们一起在Minecraft的私服上玩一会，现在地狱交通已经初见雏形了，nether hub已经搭好了，然而地狱交通网络应该基于哪一种运输方式还没有确定。常见的快速运输方式有两种：piston bolt和冰船。</p>
+          <h1 id="背景">背景</h1>
+<p>最近比较无聊，偶尔会和同学们一起在Minecraft的私服上玩一会，现在地狱交通已经初见雏形了，nether hub已经搭好了，然而地狱交通网络应该基于哪一种运输方式还没有确定。常见的快速运输方式有两种：piston bolt和冰船。</p>
 <p>很显然按照每天半个小时的游戏时间是不可能有精力做双向的piston bolt的，况且论最高速度冰船比piston bolt还是快上许多的，因此几乎毫无疑议地大家都选择了冰船。</p>
 <p>这篇文章是在代码角度对于高级冰船技术的分析。</p>
 <p>全文的代码均为使用官方mapping以及CFR编译器进行反编译所得（但愿这并不违反EULA）。</p>
-<h1 id="带方向校准的高端冰船"><a href="#带方向校准的高端冰船" class="headerlink" title="带方向校准的高端冰船"></a>带方向校准的高端冰船</h1><p>冰船系统一直为人所诟病，也是其不如piston bolt的一点是：它在运动中是需要玩家控制的。不仅要一直按着W，还要使用AD确保船头一直向前。这在直道冰船上还好，但在斜线冰船道上就非常非常麻烦。</p>
+<h1 id="带方向校准的高端冰船">带方向校准的高端冰船</h1>
+<p>冰船系统一直为人所诟病，也是其不如piston bolt的一点是：它在运动中是需要玩家控制的。不仅要一直按着W，还要使用AD确保船头一直向前。这在直道冰船上还好，但在斜线冰船道上就非常非常麻烦。</p>
 <p>幸好，Rays Works在几个月前分享了<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=hiQTnwqrfEU">解决方案</a>。其方案的思想是：</p>
 <p>如果一开始船就放正，那么就只需要W而不需要左右调整了！</p>
 <p>那怎么把船放正呢？</p>
 <p>观察一下代码（<code>net/minecraft/world/item/BoatItem</code>）：</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Override</span>
-<span class="token keyword">public</span> <span class="token class-name">InteractionResultHolder</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">ItemStack</span><span class="token punctuation">></span></span><span class="token function">use</span><span class="token punctuation">(</span><span class="token class-name">Level</span> level<span class="token punctuation">,</span> <span class="token class-name">Player</span> player<span class="token punctuation">,</span> <span class="token class-name">InteractionHand</span> interactionHand<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token class-name">Object</span> object<span class="token punctuation">;</span>
-    <span class="token class-name">ItemStack</span> itemStack <span class="token operator">=</span> player<span class="token punctuation">.</span><span class="token function">getItemInHand</span><span class="token punctuation">(</span>interactionHand<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token class-name">HitResult</span> hitResult <span class="token operator">=</span> <span class="token class-name">BoatItem</span><span class="token punctuation">.</span><span class="token function">getPlayerPOVHitResult</span><span class="token punctuation">(</span>level<span class="token punctuation">,</span> player<span class="token punctuation">,</span> <span class="token class-name">ClipContext<span class="token punctuation">.</span>Fluid</span><span class="token punctuation">.</span>ANY<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>hitResult<span class="token punctuation">.</span><span class="token function">getType</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token class-name">HitResult<span class="token punctuation">.</span>Type</span><span class="token punctuation">.</span>BLOCK<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        object <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Boat</span><span class="token punctuation">(</span>level<span class="token punctuation">,</span> hitResult<span class="token punctuation">.</span><span class="token function">getLocation</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>x<span class="token punctuation">,</span> hitResult<span class="token punctuation">.</span><span class="token function">getLocation</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>y<span class="token punctuation">,</span> hitResult<span class="token punctuation">.</span><span class="token function">getLocation</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>z<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token class-name">Boat</span><span class="token punctuation">)</span> object<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">setType</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>type<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token class-name">Boat</span><span class="token punctuation">)</span> object<span class="token punctuation">)</span><span class="token punctuation">.</span>yRot <span class="token operator">=</span> player<span class="token punctuation">.</span>yRot<span class="token punctuation">;</span> <span class="token comment">// !</span>
-        <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-        <span class="token keyword">return</span> <span class="token class-name">InteractionResultHolder</span><span class="token punctuation">.</span><span class="token function">success</span><span class="token punctuation">(</span>itemStack<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-    <span class="token keyword">return</span> <span class="token class-name">InteractionResultHolder</span><span class="token punctuation">.</span><span class="token function">pass</span><span class="token punctuation">(</span>itemStack<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+<pre class="line-numbers"><code class="language-java">@Override
+public InteractionResultHolder&lt;ItemStack&gt;use(Level level, Player player, InteractionHand interactionHand) &#123;
+    Object object;
+    ItemStack itemStack = player.getItemInHand(interactionHand);
+    HitResult hitResult = BoatItem.getPlayerPOVHitResult(level, player, ClipContext.Fluid.ANY);
+    ...
+    if (hitResult.getType() == HitResult.Type.BLOCK) &#123;
+        object = new Boat(level, hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z);
+        ((Boat) object).setType(this.type);
+        ((Boat) object).yRot = player.yRot; // !
+        ...
+        return InteractionResultHolder.success(itemStack);
+    &#125;
+    return InteractionResultHolder.pass(itemStack);
+&#125;</code></pre>
 <p><code>yRot</code>自然是Y-axis Rotation的意思，也就是说放下船的方向直接等于当时玩家的视角方向。</p>
 <p>因此如果一开始视角方向， 那么问题就解决了！</p>
 <p>如何确保每一次放船的时候视角方向都是一个固定值呢？</p>
 <p>Rays Works的解决方案是：用另外一艘船！</p>
 <p>在<code>net/minecraft/client/player/LocalPlayer</code>当中：</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Override</span>
-<span class="token keyword">public</span> <span class="token keyword">boolean</span> <span class="token function">startRiding</span><span class="token punctuation">(</span><span class="token class-name">Entity</span> entity<span class="token punctuation">,</span> <span class="token keyword">boolean</span> bl<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token keyword">super</span><span class="token punctuation">.</span><span class="token function">startRiding</span><span class="token punctuation">(</span>entity<span class="token punctuation">,</span> bl<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-    <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>entity <span class="token keyword">instanceof</span> <span class="token class-name">Boat</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span> <span class="token comment">// !!!</span>
-        <span class="token keyword">this</span><span class="token punctuation">.</span>yRotO <span class="token operator">=</span> entity<span class="token punctuation">.</span>yRot<span class="token punctuation">;</span>
-        <span class="token keyword">this</span><span class="token punctuation">.</span>yRot <span class="token operator">=</span> entity<span class="token punctuation">.</span>yRot<span class="token punctuation">;</span>
-        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setYHeadRot</span><span class="token punctuation">(</span>entity<span class="token punctuation">.</span>yRot<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-    <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+<pre class="line-numbers"><code class="language-java">@Override
+public boolean startRiding(Entity entity, boolean bl) &#123;
+    if (!super.startRiding(entity, bl)) &#123;
+        return false;
+    &#125;
+    ...
+    if (entity instanceof Boat) &#123; // !!!
+        this.yRotO = entity.yRot;
+        this.yRot = entity.yRot;
+        this.setYHeadRot(entity.yRot);
+    &#125;
+    return true;
+&#125;</code></pre>
 <p>可以看到，当玩家乘上船的一瞬间，玩家的视角方向会强制调整到船的方向。</p>
 <p>因此我们只需要准备一艘校准船，确保这艘船的角度正确，之后要使用的时候直接先做上这艘船再立刻放船再坐上新放的船就可以了（简单来说就是三连右键）。</p>
 <p>这就是Rays Works视频的主旨，我这里只是找到了对应的源代码而已。</p>
-<h1 id="放置角度与Minecraft的角度系统"><a href="#放置角度与Minecraft的角度系统" class="headerlink" title="放置角度与Minecraft的角度系统"></a>放置角度与Minecraft的角度系统</h1><p>Rays Works在视频当中宣称通过它的方法可以把冰道修到任何角度与朝向。</p>
+<h1 id="放置角度与minecraft的角度系统">放置角度与Minecraft的角度系统</h1>
+<p>Rays Works在视频当中宣称通过它的方法可以把冰道修到任何角度与朝向。</p>
 <p>似乎没有什么不对？只要把校准船放到任意角度就行了。</p>
 <p>然而在Ray的视频当中可以看到，有的时候明明船放下去是45°，不一会就转到了46.4°，Ray坦言这是这套冰船系统唯一比较麻烦的地方。Ray提出的解决方案是：</p>
 <blockquote>
@@ -1028,34 +1209,32 @@
 <p>事实并非如此。有一些角度是无论如何都放不到的，刚放下去一会就会微微一转，然后角度就变了。属实糟心，我在自己服务器里面放了20次都没有放成功。那个时候我终于意识到Ray的claim可能是在扯淡，于是去看了下代码。</p>
 <p>代码里面似乎没有任何一处体现了“微微一转”这种行为。最上面<code>BoatItem</code>的代码就是直接把<code>yRot</code>设成了玩家的<code>yRot</code>。我用全文搜索对于<code>yRot</code>产生修改的片段，没有一处是这样的。<code>yRot</code>是用<code>float</code>存储的，应该不会产生舍入误差这种事情。</p>
 <p>整个事情让我对于Minecraft的屎山代码不由生出一份敬畏，我开始觉得这是玄学问题，直到看见<code>net/minecraft/network/protocol/game/ClientboundAddEntityPacket</code>的构造函数……</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ClientboundAddEntityPacket</span> <span class="token keyword">implements</span> <span class="token class-name">Packet</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">ClientGamePacketListener</span><span class="token punctuation">></span></span> <span class="token punctuation">&#123;</span>
-    <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-    <span class="token keyword">private</span> <span class="token keyword">int</span> xRot<span class="token punctuation">;</span>
-    <span class="token keyword">private</span> <span class="token keyword">int</span> yRot<span class="token punctuation">;</span>
+<pre class="line-numbers"><code class="language-java">public class ClientboundAddEntityPacket implements Packet&lt;ClientGamePacketListener&gt; &#123;
+    ...
+    private int xRot;
+    private int yRot;
 
-    <span class="token keyword">public</span> <span class="token class-name">ClientboundAddEntityPacket</span><span class="token punctuation">(</span><span class="token keyword">int</span> n<span class="token punctuation">,</span> <span class="token class-name">UUID</span> uUID<span class="token punctuation">,</span> <span class="token keyword">double</span> d<span class="token punctuation">,</span> <span class="token keyword">double</span> d2<span class="token punctuation">,</span> <span class="token keyword">double</span> d3<span class="token punctuation">,</span> <span class="token keyword">float</span> f<span class="token punctuation">,</span> <span class="token keyword">float</span> f2<span class="token punctuation">,</span> <span class="token class-name">EntityType</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">></span></span> entityType<span class="token punctuation">,</span> <span class="token keyword">int</span> n2<span class="token punctuation">,</span> <span class="token class-name">Vec3</span> vec3<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-        <span class="token keyword">this</span><span class="token punctuation">.</span>xRot <span class="token operator">=</span> <span class="token class-name">Mth</span><span class="token punctuation">.</span><span class="token function">floor</span><span class="token punctuation">(</span>f <span class="token operator">*</span> <span class="token number">256.0f</span> <span class="token operator">/</span> <span class="token number">360.0f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token keyword">this</span><span class="token punctuation">.</span>yRot <span class="token operator">=</span> <span class="token class-name">Mth</span><span class="token punctuation">.</span><span class="token function">floor</span><span class="token punctuation">(</span>f2 <span class="token operator">*</span> <span class="token number">256.0f</span> <span class="token operator">/</span> <span class="token number">360.0f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+    public ClientboundAddEntityPacket(int n, UUID uUID, double d, double d2, double d3, float f, float f2, EntityType&lt;?&gt; entityType, int n2, Vec3 vec3) &#123;
+        ...
+        this.xRot = Mth.floor(f * 256.0f / 360.0f);
+        this.yRot = Mth.floor(f2 * 256.0f / 360.0f);
+        ...
+    &#125;
+&#125;</code></pre>
 <p>以及<code>net/minecraft/client/multiplayer/PacketListener</code>如何处理这个packet的:</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Override</span>
-<span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">handleAddEntity</span><span class="token punctuation">(</span><span class="token class-name">ClientboundAddEntityPacket</span> clientboundAddEntityPacket<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token class-name">Entity</span> entity<span class="token punctuation">;</span>
-    <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>entity <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        entity<span class="token punctuation">.</span>xRot <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">float</span><span class="token punctuation">)</span><span class="token punctuation">(</span>clientboundAddEntityPacket<span class="token punctuation">.</span><span class="token function">getxRot</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token number">360</span><span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token number">256.0</span> f<span class="token punctuation">;</span>
-        entity<span class="token punctuation">.</span>yRot <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">float</span><span class="token punctuation">)</span><span class="token punctuation">(</span>clientboundAddEntityPacket<span class="token punctuation">.</span><span class="token function">getyRot</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token number">360</span><span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token number">256.0</span> f<span class="token punctuation">;</span>
-        <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+<pre class="line-numbers"><code class="language-java"> @Override
+ public void handleAddEntity(ClientboundAddEntityPacket clientboundAddEntityPacket) &#123;
+     Entity entity;
+     ...
+     if (entity != null) &#123;
+         entity.xRot = (float)(clientboundAddEntityPacket.getxRot() * 360) / 256.0 f;
+         entity.yRot = (float)(clientboundAddEntityPacket.getyRot() * 360) / 256.0 f;
+         ...
+     &#125;
+ &#125;</code></pre>
 <p>哦……原来还真有舍入误差这回事……Mojang大概想省空间，虽然rotation在客户端和服务端内部都是<code>float</code>存储的，但是在网络传输的时候硬是塞到了<code>byte</code>里面。于是在这一层转换的帮助下，Minecraft理论上就只有256种可能的角度了。</p>
 <p>我猜测的整个放船的流程大致如下：</p>
-<ol>
+<ol type="1">
 <li>客户端玩家手持船右键</li>
 <li>客户端发出一个<code>ServerboundUseItemPacket</code></li>
 <li>服务端接收到<code>ServerboundUseItemPacket</code>，然后执行<code>BoatItem</code>有关的代码</li>
@@ -1063,115 +1242,110 @@
 <li>客户端收到<code>ClientboundAddEntityPacket</code>，将本地的船同步为舍入的角度，在10gt的插值作用下体现为“微微一转”</li>
 <li>玩家坐上去，这个时候一系列网络同步把服务端的船的角度也舍入了</li>
 </ol>
-<pre class="line-numbers language-mermaid" data-language="mermaid"><code class="language-mermaid">sequenceDiagram
+<pre class="line-numbers mermaid"><code class="language-none">sequenceDiagram
     participant Client
     participant Server
     Note left of Client: Player right clicks
     Client-&gt;&gt;Server: ServerboundUseItemPacket
-    Note right of Server: Execute code in &lt;br&#x2F;&gt; BoatItem.use
-    Server-&gt;&gt;Client: ClientboundAddEntityPacket<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+    Note right of Server: Execute code in &lt;br/&gt; BoatItem.use
+    Server-&gt;&gt;Client: ClientboundAddEntityPacket</code></pre>
 <p>因此，微微一转的问题其实根本就不是Ray说的随机事件，而是在网络传输当中舍入误差加上客户端线性插值带来的现象。看似的随机只是因为F3的精度不够，44.99和45.01都显示为45.0，虽然从代码当中我们可以清晰地看到两个数的舍入结果是不一样的。</p>
 <p>这么做的好处是对于90°，45°等特殊角这一层舍入可以保证绝对的精确，避免了放成45.01°然后在船上开1000格偏离航道的惨剧。缺点是很多角度就不能精确达到了。两个相邻的可达角度差1.40625°，大概勉强可以接受。</p>
 <p>话又说回来了，<code>ServerboundMovePlayerPacket</code>这种同步玩家信息倒是还是用<code>float</code>作为载体的。所以玩家的角度还是很精确的？难道是因为玩家相对于实体少很多所以有更多流量可以挥霍？</p>
 <p>我再次对于Minecraft的代码肃然起敬。</p>
-<h1 id="辅助高级冰船的Scarpet脚本"><a href="#辅助高级冰船的Scarpet脚本" class="headerlink" title="辅助高级冰船的Scarpet脚本"></a>辅助高级冰船的Scarpet脚本</h1><p>在知道这些之后我们就可以有针对性地设计冰道了，因为人比较懒所以我写了一个scarpet的脚本：</p>
-<pre class="line-numbers language-none"><code class="language-none">__command() -&gt; null;
+<h1 id="辅助高级冰船的scarpet脚本">辅助高级冰船的Scarpet脚本</h1>
+<p>在知道这些之后我们就可以有针对性地设计冰道了，因为人比较懒所以我写了一个scarpet的脚本：</p>
+<pre class="line-numbers"><code class="language-none">__command() -&gt; null;
 
 _ice_mark(x, y, z) -&gt; create_marker(&#39;ICE&#39;, l(x + 0.5, y + 0.5, z + 0.5));
 
 _mark_x(y, x1, z1, x2, z2, w) -&gt; (
-	if(x1 &gt; x2, l(x1, x2, z1, z2) &#x3D; l(x2, x1, z2, z1));
-	k &#x3D; (z2 - z1) &#x2F; (x2 - x1);
-	for(range(x1, x2 + 1),
-		x &#x3D; _; z &#x3D; round((x - x1) * k + z1);
-		for(range(-w + 1, w), _ice_mark(x, y, z + _))
-	)
+    if(x1 &gt; x2, l(x1, x2, z1, z2) = l(x2, x1, z2, z1));
+    k = (z2 - z1) / (x2 - x1);
+    for(range(x1, x2 + 1),
+        x = _; z = round((x - x1) * k + z1);
+        for(range(-w + 1, w), _ice_mark(x, y, z + _))
+    )
 );
 
 _mark_z(y, x1, z1, x2, z2, w) -&gt; (
-	if(z1 &gt; z2, l(x1, x2, z1, z2) &#x3D; l(x2, x1, z2, z1));
-	k &#x3D; (x2 - x1) &#x2F; (z2 - z1);
-	for(range(z1, z2 + 1),
-		z &#x3D; _; x &#x3D; round((z - z1) * k + x1);
-		for(range(-w + 1, w), _ice_mark(x + _, y, z))
-	)
+    if(z1 &gt; z2, l(x1, x2, z1, z2) = l(x2, x1, z2, z1));
+    k = (x2 - x1) / (z2 - z1);
+    for(range(z1, z2 + 1),
+        z = _; x = round((z - z1) * k + x1);
+        for(range(-w + 1, w), _ice_mark(x + _, y, z))
+    )
 );
 
 mark(y, x1, z1, x2, z2, w) -&gt; (
-	dx &#x3D; abs(x1 - x2); dz &#x3D; abs(z1 - z2);
-	if(dx &#x3D;&#x3D; 0 || dx &lt; dz, _mark_z(y, x1, z1, x2, z2, w),
-		_mark_x(y, x1, z1, x2, z2, w))
+    dx = abs(x1 - x2); dz = abs(z1 - z2);
+    if(dx == 0 || dx &lt; dz, _mark_z(y, x1, z1, x2, z2, w),
+        _mark_x(y, x1, z1, x2, z2, w))
 );
 
 clear() -&gt; remove_all_markers();
 
 _wrap_deg(x) -&gt; (
-	tmp &#x3D; x % 360.0;
-	if(tmp &lt; -180, tmp + 360, tmp &gt; 180, tmp - 360, tmp)
+    tmp = x % 360.0;
+    if(tmp &lt; -180, tmp + 360, tmp &gt; 180, tmp - 360, tmp)
 );
 
 _wrap_internal(x) -&gt; (
-	tmp &#x3D; x % 360.0;
-	if (tmp &lt; 0, tmp + 360, tmp)
+    tmp = x % 360.0;
+    if (tmp &lt; 0, tmp + 360, tmp)
 );
 
 _angle(x1, z1, x2, z2) -&gt; -atan2(x2 - x1, z2 - z1);
 
-_floor_angle(x) -&gt; _wrap_deg(floor(x * 256 &#x2F; 360.0) * 360 &#x2F; 256);
+_floor_angle(x) -&gt; _wrap_deg(floor(x * 256 / 360.0) * 360 / 256);
 
 angle(x1, z1, x2, z2) -&gt; (
-	theta &#x3D; _angle(x1, z1, x2, z2);
-	print(str(&#39;exact yaw: %f&#39;, theta));
-	lb &#x3D; floor_angle(_wrap_internal(theta));
-	ub &#x3D; floor_angle(_wrap_internal(theta + 360.0 &#x2F; 256));
-	print(str(&#39;floored yaw (lb): %f&#39;, lb));
-	print(str(&#39;floored yaw (ub): %f&#39;, ub));
-	ret &#x3D; if(abs(lb - theta) &lt; abs(ub - theta), lb, ub);
-	print(str(&#39;suggested yaw: %f&#39;, ret));
+    theta = _angle(x1, z1, x2, z2);
+    print(str(&#39;exact yaw: %f&#39;, theta));
+    lb = floor_angle(_wrap_internal(theta));
+    ub = floor_angle(_wrap_internal(theta + 360.0 / 256));
+    print(str(&#39;floored yaw (lb): %f&#39;, lb));
+    print(str(&#39;floored yaw (ub): %f&#39;, ub));
+    ret = if(abs(lb - theta) &lt; abs(ub - theta), lb, ub);
+    print(str(&#39;suggested yaw: %f&#39;, ret));
 );
 
 _best_angle(x1, z1, x2, z2) -&gt; (
-	theta &#x3D; _angle(x1, z1, x2, z2);
-	lb &#x3D; floor_angle(_wrap_internal(theta));
-	ub &#x3D; floor_angle(_wrap_internal(theta + 360.0 &#x2F; 256));
-	if(abs(lb - theta) &lt; abs(ub - theta), lb, ub)
+    theta = _angle(x1, z1, x2, z2);
+    lb = floor_angle(_wrap_internal(theta));
+    ub = floor_angle(_wrap_internal(theta + 360.0 / 256));
+    if(abs(lb - theta) &lt; abs(ub - theta), lb, ub)
 );
 
 adjust(x1, z1, x2, z2, dir) -&gt; (
-	x &#x3D; _best_angle(x1, z1, x2, z2);
-	ov &#x3D; 360; opt &#x3D; 0;
-	print(str(&#39;yaw: %f&#39;, x));
-	if(
-		dir &#x3D;&#x3D; &#39;x&#39;,
-		for(range(x2 - 1000, x2 + 1000), 
-			tmp &#x3D; abs(_angle(x1, z1, _, z2) - x);
-			if (tmp &lt; ov, ov &#x3D; tmp; opt &#x3D; _)
-		);
-		print(str(&#39;%f %f %f %f&#39;, x1, z1, opt, z2)),
-		dir &#x3D;&#x3D; &#39;z&#39;,
-		for(range(z2 - 1000, z2 + 1000), 
-			tmp &#x3D; abs(_angle(x1, z1, x2, _) - x);
-			if (tmp &lt; ov, ov &#x3D; tmp; opt &#x3D; _)
-		);
-		print(str(&#39;%f %f %f %f&#39;, x1, z1, x2, opt)),
-		print(&#39;direction must either be x or z&#39;)
-	)
-)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+    x = _best_angle(x1, z1, x2, z2);
+    ov = 360; opt = 0;
+    print(str(&#39;yaw: %f&#39;, x));
+    if(
+        dir == &#39;x&#39;,
+        for(range(x2 - 1000, x2 + 1000), 
+            tmp = abs(_angle(x1, z1, _, z2) - x);
+            if (tmp &lt; ov, ov = tmp; opt = _)
+        );
+        print(str(&#39;%f %f %f %f&#39;, x1, z1, opt, z2)),
+        dir == &#39;z&#39;,
+        for(range(z2 - 1000, z2 + 1000), 
+            tmp = abs(_angle(x1, z1, x2, _) - x);
+            if (tmp &lt; ov, ov = tmp; opt = _)
+        );
+        print(str(&#39;%f %f %f %f&#39;, x1, z1, x2, opt)),
+        print(&#39;direction must either be x or z&#39;)
+    )
+)</code></pre>
 <p>用法如下：</p>
-<ol>
-<li><p><code>/iceboat y x1 z1 x2 z2 w</code>标记一条从$(x_1,y,z_1)$到$(x_2,y,z_2)$的，宽度为$2w-1$的冰道。</p>
-</li>
-<li><p><code>/iceboat clear</code>清除标记。</p>
-</li>
-<li><p><code>/iceboat angle x1 z1 x2 z2</code>计算站在$(x_1,z_1)$望向$(x_2,z_2)$的视角方向，最近的两个可达角度，以及推荐的可达角度。</p>
-</li>
-<li><p><code>/iceboat adjust x1 z1 x2 z2 x/z</code>固定$(x_1,z_1)$，沿$x/z$轴在$(x_2,z_2)$附近寻找最贴近可达角度的方块坐标。考虑到在几千格之后哪怕0.7°的角度差都会有导致最终百格的偏差，这个命令非常重要。在算法实现角度，用三分写是最快的，但是考虑到从-180°到180°有一个不连续间断点，导致写三分会涉及到一些繁琐的细节。我比较懒，所以就用了比较慢的写法（这个写法其实也有明显bug，但是我不准备修）。</p>
-</li>
+<ol type="1">
+<li><p><code>/iceboat y x1 z1 x2 z2 w</code>标记一条从<span class="math inline">\((x_1,y,z_1)\)</span>到<span class="math inline">\((x_2,y,z_2)\)</span>的，宽度为<span class="math inline">\(2w-1\)</span>的冰道。</p></li>
+<li><p><code>/iceboat clear</code>清除标记。</p></li>
+<li><p><code>/iceboat angle x1 z1 x2 z2</code>计算站在<span class="math inline">\((x_1,z_1)\)</span>望向<span class="math inline">\((x_2,z_2)\)</span>的视角方向，最近的两个可达角度，以及推荐的可达角度。</p></li>
+<li><p><code>/iceboat adjust x1 z1 x2 z2 x/z</code>固定<span class="math inline">\((x_1,z_1)\)</span>，沿<span class="math inline">\(x/z\)</span>轴在<span class="math inline">\((x_2,z_2)\)</span>附近寻找最贴近可达角度的方块坐标。考虑到在几千格之后哪怕0.7°的角度差都会有导致最终百格的偏差，这个命令非常重要。在算法实现角度，用三分写是最快的，但是考虑到从-180°到180°有一个不连续间断点，导致写三分会涉及到一些繁琐的细节。我比较懒，所以就用了比较慢的写法（这个写法其实也有明显bug，但是我不准备修）。</p></li>
 </ol>
 <p>常见的使用流程：</p>
-<ol>
+<ol type="1">
 <li>确定冰道的两点。</li>
 <li>固定一点（通常是nether hub或者已经固定留好空间的端点），使用<code>/iceboat adjust</code>微调另一端点的位置。同时计算得出角度。</li>
 <li>使用<code>/iceboat mark</code>标记放冰的位置。</li>
@@ -1208,7 +1382,7 @@ adjust(x1, z1, x2, z2, dir) -&gt; (
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/04/03/Gradle%E5%88%9D%E6%8E%A2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -1245,7 +1419,7 @@ adjust(x1, z1, x2, z2, dir) -&gt; (
     <div class="post-body" itemprop="articleBody">
           <p>自己最近又在用JVM系的语言开新坑。这次终于说服自己从Jetbrains的温床里脱离出来改用了大家都在用的Gradle！感觉良好，在这里简单写一下大概咋用，给之后的自己留一个参考吧。</p>
 <p>为什么自己要用Gradle呢？</p>
-<ol>
+<ol type="1">
 <li>Gradle作为一个开源的构建系统不与任何IDE绑定（比如说IDEA），这相当于增加了代码的兼容性。</li>
 <li>Gradle里面可以直接从Maven Central上下库下来，省了我手动下库导入的过程，库更新了也好维护。这对我来说非常地有诱惑力。实测也非常舒服。</li>
 <li>Gradle从设计上来说非常灵活，Gradle默认的构建脚本是用Groovy写的（当然也可以用Kotlin但是这似乎不是主流的样子），而不是只有标记功能的XML，这使Gradle一下子非常强大。</li>
@@ -1253,60 +1427,59 @@ adjust(x1, z1, x2, z2, dir) -&gt; (
 <li>IDEA对于Gradle的支持非常棒！（所以到头来自己还是没有逃脱JB的舒适圈……）</li>
 </ol>
 <p>虽然说Gradle的功能很强大我目前的用法还是最初级的。我目前用的Gradle代码大致如下：</p>
-<pre class="line-numbers language-groovy" data-language="groovy"><code class="language-groovy">plugins <span class="token punctuation">&#123;</span>
-    id <span class="token string">'java'</span>
-    id <span class="token string">'org.jetbrains.kotlin.jvm'</span> version <span class="token string">'1.3.61'</span>
-<span class="token punctuation">&#125;</span>
+<pre class="line-numbers"><code class="language-groovy">plugins &#123;
+    id &#39;java&#39;
+    id &#39;org.jetbrains.kotlin.jvm&#39; version &#39;1.3.61&#39;
+&#125;
 
-group <span class="token string">'chengyuan'</span>
-version <span class="token string">'1.0-SNAPSHOT'</span>
+group &#39;chengyuan&#39;
+version &#39;1.0-SNAPSHOT&#39;
 
-sourceCompatibility <span class="token operator">=</span> <span class="token number">1.8</span>
-project<span class="token punctuation">.</span>ext<span class="token punctuation">.</span>lwjglVersion <span class="token operator">=</span> <span class="token string gstring">"3.2.3"</span>
-project<span class="token punctuation">.</span>ext<span class="token punctuation">.</span>lwjglNatives <span class="token operator">=</span> <span class="token string gstring">"natives-windows"</span>
+sourceCompatibility = 1.8
+project.ext.lwjglVersion = &quot;3.2.3&quot;
+project.ext.lwjglNatives = &quot;natives-windows&quot;
 
-repositories <span class="token punctuation">&#123;</span>
-    maven <span class="token punctuation">&#123;</span> url <span class="token string">'http://maven.aliyun.com/nexus/content/groups/public/'</span> <span class="token punctuation">&#125;</span>
-    maven <span class="token punctuation">&#123;</span> url <span class="token string gstring">"https://oss.sonatype.org/content/repositories/snapshots/"</span> <span class="token punctuation">&#125;</span>
-    <span class="token function">mavenCentral</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">&#125;</span>
+repositories &#123;
+    maven &#123; url &#39;http://maven.aliyun.com/nexus/content/groups/public/&#39; &#125;
+    maven &#123; url &quot;https://oss.sonatype.org/content/repositories/snapshots/&quot; &#125;
+    mavenCentral()
+&#125;
 
-dependencies <span class="token punctuation">&#123;</span>
-    implementation <span class="token function">platform</span><span class="token punctuation">(</span><span class="token string gstring">"org.lwjgl:lwjgl-bom:<span class="token expression"><span class="token punctuation">$</span>lwjglVersion</span>"</span><span class="token punctuation">)</span>
+dependencies &#123;
+    implementation platform(&quot;org.lwjgl:lwjgl-bom:$lwjglVersion&quot;)
     
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-assimp"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-bgfx"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-glfw"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-nanovg"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-nuklear"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-openal"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-opengl"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-par"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-stb"</span>
-    implementation <span class="token string gstring">"org.lwjgl:lwjgl-vulkan"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl-assimp::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl-bgfx::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl-glfw::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl-nanovg::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl-nuklear::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl-openal::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl-opengl::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl-par::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
-    runtimeOnly <span class="token string gstring">"org.lwjgl:lwjgl-stb::<span class="token expression"><span class="token punctuation">$</span>lwjglNatives</span>"</span>
+    implementation &quot;org.lwjgl:lwjgl&quot;
+    implementation &quot;org.lwjgl:lwjgl-assimp&quot;
+    implementation &quot;org.lwjgl:lwjgl-bgfx&quot;
+    implementation &quot;org.lwjgl:lwjgl-glfw&quot;
+    implementation &quot;org.lwjgl:lwjgl-nanovg&quot;
+    implementation &quot;org.lwjgl:lwjgl-nuklear&quot;
+    implementation &quot;org.lwjgl:lwjgl-openal&quot;
+    implementation &quot;org.lwjgl:lwjgl-opengl&quot;
+    implementation &quot;org.lwjgl:lwjgl-par&quot;
+    implementation &quot;org.lwjgl:lwjgl-stb&quot;
+    implementation &quot;org.lwjgl:lwjgl-vulkan&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-assimp::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-bgfx::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-glfw::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-nanovg::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-nuklear::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-openal::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-opengl::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-par::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-stb::$lwjglNatives&quot;
     
-    testCompile group<span class="token punctuation">:</span> <span class="token string gstring">"junit"</span><span class="token punctuation">,</span> name<span class="token punctuation">:</span> <span class="token string gstring">"junit"</span><span class="token punctuation">,</span> version<span class="token punctuation">:</span> <span class="token string gstring">"4.12"</span>
-<span class="token punctuation">&#125;</span>
+    testCompile group: &quot;junit&quot;, name: &quot;junit&quot;, version: &quot;4.12&quot;
+&#125;
 
-compileKotlin <span class="token punctuation">&#123;</span>
-    kotlinOptions<span class="token punctuation">.</span>jvmTarget <span class="token operator">=</span> <span class="token string gstring">"1.8"</span>
-<span class="token punctuation">&#125;</span>
+compileKotlin &#123;
+    kotlinOptions.jvmTarget = &quot;1.8&quot;
+&#125;
 
-compileTestKotlin <span class="token punctuation">&#123;</span>
-    kotlinOptions<span class="token punctuation">.</span>jvmTarget <span class="token operator">=</span> <span class="token string gstring">"1.8"</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+compileTestKotlin &#123;
+    kotlinOptions.jvmTarget = &quot;1.8&quot;
+&#125;</code></pre>
 <p>首先是<code>plugins</code>这段，这一段虽然重要但一般用不着特别操心，按照我的理解大概是语言支持的插件。</p>
 <p>接下来是版本、JVM版本之类的，看着也很明白。</p>
 <p>然后可以申明一些接下来会用到的常量。</p>
@@ -1346,7 +1519,7 @@ compileTestKotlin <span class="token punctuation">&#123;</span>
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/03/29/FuckZhihu/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -1425,7 +1598,7 @@ compileTestKotlin <span class="token punctuation">&#123;</span>
 <p>现在想想我每天干嘛？去知乎看人嘲讽美国防疫，还是看人调侃美股八熔八耻？</p>
 <p>但是我又不是靠知乎获得这些信息的。我每天一大早都是自己去JHU的网站上查人数，自己查道指的。小米内置的资讯在遇到大新闻的时候也没落下。也就是我不断心理暗示知乎是一个获得时政新闻的平台，其实根本不是。那我天天去干嘛？我贱不贱啊？贱不贱啊？</p>
 <p>自己完全是被动地被知乎牵着鼻子走，可太悲哀了。</p>
-<p>另一方面，知乎的产品设计实在是太高明了。 </p>
+<p>另一方面，知乎的产品设计实在是太高明了。</p>
 <p>我觉得我还是要回归搜索引擎。</p>
 <p>搜索引擎有两个好，一个是它没有针对个人的推荐算法，另一个是你永远有主动权。你搜索什么它给什么。你不搜它不给，爽到。搜出来的结果分散于网络，不容易对于一个平台形成粘性。因此，只要搜索引擎的算法不是特别差（比如说Google），用搜索引擎就不会有大问题。</p>
 <p>被搜索引擎带到知乎和直接在知乎搜索栏里搜索是完全两个不一样的概念。</p>
@@ -1441,7 +1614,7 @@ compileTestKotlin <span class="token punctuation">&#123;</span>
 </blockquote>
 <p>把知乎卸了。搜索引擎搜到还是会看一下，但是不会主动逛了。</p>
 <p>但愿不会真香。</p>
-<hr>
+<hr />
 <p>其实吧，我觉得，自己退出知乎的这个决定在我看来也是很可悲的。</p>
 <p>因为这是我对于无法解决实际问题的一个逃避。</p>
 <p>控制不住逛知乎，知乎用户粘性很高是外因，自己不自制是内因。外因通过内因而起作用。</p>
@@ -1449,7 +1622,7 @@ compileTestKotlin <span class="token punctuation">&#123;</span>
 <p>自己究竟什么时候才会认认真真审视自己自制力不够的问题呢？</p>
 <p>我如何才能避免自己看知乎变成看B站呢？</p>
 <p>我自以为知乎比B站容易上瘾，先这么自以为着吧。与自己的颓废欲望做出妥协。</p>
-<hr>
+<hr />
 <p>搜索引擎让我掌握了主动权，但是主动权往往是不够的。我要主动搜啥呢？</p>
 <p>正如YPM里面Humphrey说的，I have to know everything so that I can decide whether I need them!</p>
 <p>我也有同学说知乎平台里面有很多宝藏回答，我自己也觉得很多时候知乎的热榜里有热点新闻，这是知乎的价值。</p>
@@ -1493,7 +1666,7 @@ compileTestKotlin <span class="token punctuation">&#123;</span>
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/02/28/Manjaro-VM/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -1535,105 +1708,96 @@ compileTestKotlin <span class="token punctuation">&#123;</span>
     
     <div class="post-body" itemprop="articleBody">
           <p>我几个月前看到国外有人<a target="_blank" rel="noopener" href="https://castel.dev/post/lecture-notes-1/">分享</a>用LaTeX实时记1700页数学笔记的感受，当时就被惊艳到了，心生向往。这次因为疫情待在家里上在线课程，总算是给了我一个带电脑进课堂的机会。于是我也仿照原作者的做法尝试了用记LaTeX笔记，这篇文章就来写一写我配置环境时遇到的坑和使用感受。</p>
-<h1 id="系统选择"><a href="#系统选择" class="headerlink" title="系统选择"></a>系统选择</h1><p>原文的作者采用的是Ubuntu发行版+bspwm作为桌面管理器，但是bspwm太小众，网上的资料很少。而且实测装在Ubuntu上默认的配置在视觉上不协调（还要自己去装一个像样的状态栏，总之就是太烦了）。相比之下i3作为另一个Tiling Window Manager比bspwm资料多多了，也比较适合我这种小白。权衡之下我选用Manjaro + i3。在Virtual Box下安装。</p>
-<h1 id="配置镜像"><a href="#配置镜像" class="headerlink" title="配置镜像"></a>配置镜像</h1><p>这一步不是必须的，因为Manjaro的默认源在国内的速度也还可以接受（~400kBps）。但是换了交大的源之后可以到10MBps：</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">sudo</span> pacman -Syy
-<span class="token function">sudo</span> pacman-mirrors -i -c China -m rank
-<span class="token function">sudo</span> pacman -Syyu<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
+<h1 id="系统选择">系统选择</h1>
+<p>原文的作者采用的是Ubuntu发行版+bspwm作为桌面管理器，但是bspwm太小众，网上的资料很少。而且实测装在Ubuntu上默认的配置在视觉上不协调（还要自己去装一个像样的状态栏，总之就是太烦了）。相比之下i3作为另一个Tiling Window Manager比bspwm资料多多了，也比较适合我这种小白。权衡之下我选用Manjaro + i3。在Virtual Box下安装。</p>
+<h1 id="配置镜像">配置镜像</h1>
+<p>这一步不是必须的，因为Manjaro的默认源在国内的速度也还可以接受（~400kBps）。但是换了交大的源之后可以到10MBps：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -Syy
+sudo pacman-mirrors -i -c China -m rank
+sudo pacman -Syyu</code></pre>
 <p>然后编辑<code>/etc/pacman.conf</code>加上ArchLinuxCN的交大镜像：</p>
-<pre class="line-numbers language-ini" data-language="ini"><code class="language-ini"><span class="token selector">[archlinuxcn]</span>
-<span class="token constant">SigLevel</span> <span class="token attr-value"><span class="token punctuation">=</span> Optional TrustedOnly</span>
-<span class="token constant">Server</span> <span class="token attr-value"><span class="token punctuation">=</span> https://mirrors.sjtug.sjtu.edu.cn/archlinux-cn/$arch</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
+<pre class="line-numbers"><code class="language-ini">[archlinuxcn]
+SigLevel = Optional TrustedOnly
+Server = https://mirrors.sjtug.sjtu.edu.cn/archlinux-cn/$arch</code></pre>
 <p>最后导入一下密钥环，镜像就配置完了：</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">sudo</span> pacman -Syy <span class="token operator">&amp;&amp;</span> <span class="token function">sudo</span> pacman -S archlinuxcn-keyring<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h1 id="安装Virtual-Box-GA"><a href="#安装Virtual-Box-GA" class="headerlink" title="安装Virtual Box GA"></a>安装Virtual Box GA</h1><p>Manjaro默认对于虚拟机的支持不是很好。我不选择在VMWare上装Manjaro的主要原因也是因为我没有找到VMWare下自动分辨率比较简单的解决方案。在Virtual Box下只要装Virtual Box Guest Addition就可以了，美滋滋。</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -Syy &amp;&amp; sudo pacman -S archlinuxcn-keyring</code></pre>
+<h1 id="安装virtual-box-ga">安装Virtual Box GA</h1>
+<p>Manjaro默认对于虚拟机的支持不是很好。我不选择在VMWare上装Manjaro的主要原因也是因为我没有找到VMWare下自动分辨率比较简单的解决方案。在Virtual Box下只要装Virtual Box Guest Addition就可以了，美滋滋。</p>
 <p>先安装基本的编译套件：</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">sudo</span> pacman -S gcc <span class="token function">make</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -S gcc make</code></pre>
 <p>然后查看一下Linux内核版本：</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">uname</span> -r<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
+<pre class="line-numbers shell"><code class="language-none">uname -r</code></pre>
 <p>是5.4，因此安装5.4的headers：</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">sudo</span> pacman -S linux54-headers<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -S linux54-headers</code></pre>
 <p>之后在Virtual Box菜单下插入GA的iso文件。我最初是手动挂载的（因为找不到i3里面怎么开文件管理器），就是<code>sudo blkid</code>看一下设备然后<code>mount</code>（如果出现不支持<code>iso9660</code>直接重启）。后来意识到文件管理器的名字是<code>pcmanfm</code>，再发现默认可以直接<code>mod + F3</code>打开文件管理器，于是就可以在上面直接操作了。<code>cd</code>进去运行<code>autorun.sh</code>跑完重启。就发现可以自动适应外部分辨率以及共享剪贴板了，非常方便。</p>
-<h1 id="配置键位"><a href="#配置键位" class="headerlink" title="配置键位"></a>配置键位</h1><p>默认Manjaro配置的<code>mod</code>键是<code>super</code>，也就是Win键。但是实测Win键在虚拟机环境下会有小问题（例如Win + L总是会被Windows先拦截导致锁屏）。所以我到<code>~/.i3/config</code>里面把<code>mod</code>键改成了<code>alt</code>。我还把i3默认的<code>jkl:</code>键位改成了和Vim相一致的<code>hjkl</code>键位。</p>
-<h1 id="中文相关"><a href="#中文相关" class="headerlink" title="中文相关"></a>中文相关</h1><p>Manjaro默认的中文渲染很有问题（装系统的时候居然没有中文字体！）。因此需要手动配置中文的渲染。</p>
-<p>我基本上是按照<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/Font_Configuration/Chinese_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)">Arch Wiki</a>上的Android类字体配置的。但是Arch Wiki上没有配置给终端用的等宽字体，需要个人发挥一下。我最喜欢的等宽字体是Sarasa Gothic（因为有中文）（去除中文我现在最喜欢的是Jetbrains Mono）。我发现ArchLinuxCN的源上已经有这款字体了，于是直接安装：</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">sudo</span> pacman -S ttf-sarasa-gothic<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
+<h1 id="配置键位">配置键位</h1>
+<p>默认Manjaro配置的<code>mod</code>键是<code>super</code>，也就是Win键。但是实测Win键在虚拟机环境下会有小问题（例如Win + L总是会被Windows先拦截导致锁屏）。所以我到<code>~/.i3/config</code>里面把<code>mod</code>键改成了<code>alt</code>。我还把i3默认的<code>jkl:</code>键位改成了和Vim相一致的<code>hjkl</code>键位。</p>
+<h1 id="中文相关">中文相关</h1>
+<p>Manjaro默认的中文渲染很有问题（装系统的时候居然没有中文字体！）。因此需要手动配置中文的渲染。</p>
+<p>我基本上是按照<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/Font_Configuration/Chinese_(简体中文)">Arch Wiki</a>上的Android类字体配置的。但是Arch Wiki上没有配置给终端用的等宽字体，需要个人发挥一下。我最喜欢的等宽字体是Sarasa Gothic（因为有中文）（去除中文我现在最喜欢的是Jetbrains Mono）。我发现ArchLinuxCN的源上已经有这款字体了，于是直接安装：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -S ttf-sarasa-gothic</code></pre>
 <p>然后修改<code>~/.Xresources</code></p>
-<pre class="line-numbers language-ini" data-language="ini"><code class="language-ini">URxvt.font: xft:Sarasa Term SC:size<span class="token attr-value"><span class="token punctuation">=</span>12</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
+<pre class="line-numbers"><code class="language-ini">URxvt.font: xft:Sarasa Term SC:size=12</code></pre>
 <p>重启一下就好了（其实不用重启，<code>xrdb ~/.Xresources</code>也行？）</p>
 <p>接着是输入法。我原来准备装搜狗的，但是搜狗因为各种奇奇怪怪的原因（比如说字体找不到，比如说默认装<code>fcitx</code>的时候没有<code>qt4</code>的支持需要额外安装）不能用，在各种坑之后我决定不用它改用sunpinyin+cloud pinyin的组合，试用下来也是相当令人满意的：</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">sudo</span> pacman -S fcitx-im
-<span class="token function">sudo</span> pacman -S fcitx-configtool
-<span class="token function">sudo</span> pacman -S fcitx-sunpinyin fcitx-cloudpinyin<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -S fcitx-im
+sudo pacman -S fcitx-configtool
+sudo pacman -S fcitx-sunpinyin fcitx-cloudpinyin</code></pre>
 <p>安装后在<code>~/.xprofile</code>里面加上下列几行启用fcitx</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token builtin class-name">export</span> <span class="token assign-left variable">GTK_IM_MODULE</span><span class="token operator">=</span>fcitx
-<span class="token builtin class-name">export</span> <span class="token assign-left variable">QT_IM_MODULE</span><span class="token operator">=</span>fcitx
-<span class="token builtin class-name">export</span> <span class="token assign-left variable"><span class="token environment constant">XMODIFIERS</span></span><span class="token operator">=</span><span class="token string">"@im=fcitx"</span>
-fcitx -d<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
+<pre class="line-numbers shell"><code class="language-none">export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=&quot;@im=fcitx&quot;
+fcitx -d</code></pre>
 <p>最后一行是我自己加上的，因为似乎由于一些原因fcitx它开机不自启……</p>
-<h1 id="配置TeX"><a href="#配置TeX" class="headerlink" title="配置TeX"></a>配置TeX</h1><p>终于可以开始进入正题了，首先安装TeXLive：</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">sudo</span> pacman -S texlive-most texlive-langchinese<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
+<h1 id="配置tex">配置TeX</h1>
+<p>终于可以开始进入正题了，首先安装TeXLive：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -S texlive-most texlive-langchinese</code></pre>
 <p>接着安装Vim Plug，在<code>~/.vimrc</code>里面写入自动安装脚本（手动安装亦可）以及一些基本的配置：</p>
-<pre class="line-numbers language-vim" data-language="vim"><code class="language-vim"><span class="token keyword">set</span> <span class="token keyword">number</span>
-<span class="token keyword">set</span> <span class="token builtin">tabstop</span><span class="token operator">=</span><span class="token number">4</span>
-<span class="token keyword">set</span> <span class="token builtin">softtabstop</span><span class="token operator">=</span><span class="token number">4</span>
-<span class="token keyword">set</span> <span class="token builtin">shiftwidth</span><span class="token operator">=</span><span class="token number">4</span>
-<span class="token keyword">set</span> <span class="token builtin">smartindent</span>
+<pre class="line-numbers"><code class="language-vim">set number
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set smartindent
 
-<span class="token builtin">syntax</span> <span class="token keyword">on</span>
+syntax on
 
-<span class="token keyword">if</span> <span class="token function">empty</span><span class="token punctuation">(</span><span class="token function">glob</span><span class="token punctuation">(</span><span class="token string">'~/.vim/autoload/plug.vim'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-	<span class="token keyword">silent</span> <span class="token operator">!</span>curl <span class="token operator">-</span>fLo ~<span class="token operator">/</span><span class="token operator">.</span><span class="token keyword">vim</span><span class="token operator">/</span>autoload<span class="token operator">/</span>plug<span class="token operator">.</span><span class="token keyword">vim</span> <span class="token operator">-</span><span class="token operator">-</span>create<span class="token operator">-</span>dirs
-		\ https<span class="token punctuation">:</span><span class="token operator">/</span><span class="token operator">/</span>raw<span class="token operator">.</span>githubusercontent<span class="token operator">.</span><span class="token builtin">com</span><span class="token operator">/</span>junegunn<span class="token operator">/</span><span class="token keyword">vim</span><span class="token operator">-</span>plug<span class="token operator">/</span>master<span class="token operator">/</span>plug<span class="token operator">.</span><span class="token keyword">vim</span>
-	<span class="token builtin">autocmd</span> VimEnter <span class="token operator">*</span> PlugInstall <span class="token operator">-</span><span class="token operator">-</span>sync | <span class="token keyword">source</span> $MYVIMRC
-<span class="token keyword">endif</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+if empty(glob(&#39;~/.vim/autoload/plug.vim&#39;))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif</code></pre>
 <p>接着安装所必要的VimTeX插件以及UltiSnips插件并进行相关的配置：</p>
-<pre class="line-numbers language-vim" data-language="vim"><code class="language-vim"><span class="token keyword">call</span> plug#<span class="token function">begin</span><span class="token punctuation">(</span><span class="token string">'~/.vim/plugged'</span><span class="token punctuation">)</span>
+<pre class="line-numbers"><code class="language-vim">call plug#begin(&#39;~/.vim/plugged&#39;)
 
-Plug <span class="token string">'lervag/vimtex'</span>
-<span class="token keyword">let</span> g<span class="token punctuation">:</span>tex_flavor<span class="token operator">=</span><span class="token string">'latex'</span>
-<span class="token keyword">let</span> g<span class="token punctuation">:</span>vimtex_view_method<span class="token operator">=</span><span class="token string">'zathura'</span>
-<span class="token keyword">let</span> g<span class="token punctuation">:</span>vimtex_quickfix_mode<span class="token operator">=</span><span class="token number">0</span>
-<span class="token keyword">set</span> conceallevel<span class="token operator">=</span><span class="token number">1</span>
-<span class="token keyword">let</span> g<span class="token punctuation">:</span>tex_conceal<span class="token operator">=</span><span class="token string">'abdmg'</span>
+Plug &#39;lervag/vimtex&#39;
+let g:tex_flavor=&#39;latex&#39;
+let g:vimtex_view_method=&#39;zathura&#39;
+let g:vimtex_quickfix_mode=0
+set conceallevel=1
+let g:tex_conceal=&#39;abdmg&#39;
 
-Plug <span class="token string">'sirver/ultisnips'</span>
-<span class="token keyword">let</span> g<span class="token punctuation">:</span>UltiSnipsExpandTrigger<span class="token operator">=</span><span class="token string">'&lt;tab>'</span>
-<span class="token keyword">let</span> g<span class="token punctuation">:</span>UltiSnipsJumpForwardTrigger<span class="token operator">=</span><span class="token string">'&lt;tab>'</span>
-<span class="token keyword">let</span> g<span class="token punctuation">:</span>UltiSnipsJumpBackwardTrigger<span class="token operator">=</span><span class="token string">'&lt;s-tab>'</span>
-<span class="token keyword">let</span> g<span class="token punctuation">:</span>UltiSnipsSnippetDirectories<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">'mysnippets'</span><span class="token punctuation">]</span>
+Plug &#39;sirver/ultisnips&#39;
+let g:UltiSnipsExpandTrigger=&#39;&lt;tab&gt;&#39;
+let g:UltiSnipsJumpForwardTrigger=&#39;&lt;tab&gt;&#39;
+let g:UltiSnipsJumpBackwardTrigger=&#39;&lt;s-tab&gt;&#39;
+let g:UltiSnipsSnippetDirectories=[&#39;mysnippets&#39;]
 
-<span class="token keyword">call</span> plug#<span class="token function">end</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+call plug#end()</code></pre>
 <p>安装Zathura作为PDF阅读器：</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">sudo</span> pacman -S zathura zathura-pdf-mupdf<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -S zathura zathura-pdf-mupdf</code></pre>
 <p>我查到Manjaro i3终端默认的背景色是<code>#222D31</code>，因此在<code>~/.config/zathura/zathurarc</code>里面写入</p>
-<pre class="line-numbers language-none"><code class="language-none">set default-bg &quot;#222D31&quot;
+<pre class="line-numbers"><code class="language-none">set default-bg &quot;#222D31&quot;
 set recolor &quot;true&quot;
 set recolor-lightcolor &quot;#222D31&quot;
-set recolor-darkcolor &quot;#FFFFFF&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
+set recolor-darkcolor &quot;#FFFFFF&quot;</code></pre>
 <p>这样Zathura打开白色的pdf文档的时候就会自动重新着色，完成了色调上的统一。</p>
 <p>Vimtex默认使用<code>latexmk</code>编译，<code>latexmk</code>默认调用<code>pdflatex</code>。因为要用中文我们希望它调用<code>xelatex</code>，于是在<code>~/.latexmkrc</code>里面加上</p>
-<pre class="line-numbers language-none"><code class="language-none">$pdf_mode &#x3D; 1;
-$pdflatex &#x3D; &#39;xelatex --shell-escape %O %S&#39;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
+<pre class="line-numbers"><code class="language-none">$pdf_mode = 1;
+$pdflatex = &#39;xelatex --shell-escape %O %S&#39;;</code></pre>
 <p>现在随便打开一个tex文档，打出<code>\ll</code>，预览就冒出来了，非常方便。</p>
-<h1 id="配置Snippets"><a href="#配置Snippets" class="headerlink" title="配置Snippets"></a>配置Snippets</h1><p>我基本上复制了作者原博客上的大部分snippets的定义。再加上了一些我觉得比较常用的：</p>
-<pre class="line-numbers language-none"><code class="language-none">snippet exm &quot;example&quot; bA
+<h1 id="配置snippets">配置Snippets</h1>
+<p>我基本上复制了作者原博客上的大部分snippets的定义。再加上了一些我觉得比较常用的：</p>
+<pre class="line-numbers"><code class="language-none">snippet exm &quot;example&quot; bA
 \begin&#123;example&#125;
 $1
 \end&#123;example&#125;
@@ -1691,52 +1855,55 @@ snippet ml &quot;multiline math&quot; bwA
 $1
 \end&#123;gather*&#125;
 $0
-endsnippet<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+endsnippet</code></pre>
 <p>笔记源文件的preamable定义如下，使用<code>fleqn</code>选项对所有方程进行左对齐，并定义<code>example</code>和<code>solution</code>环境方便记例题和解答：</p>
-<pre class="line-numbers language-latex" data-language="latex"><code class="language-latex"><span class="token function selector">\documentclass</span><span class="token punctuation">[</span>fleqn<span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token keyword">ctexart</span><span class="token punctuation">&#125;</span>
+<pre class="line-numbers"><code class="language-latex">\documentclass[fleqn]&#123;ctexart&#125;
 
-<span class="token function selector">\usepackage</span><span class="token punctuation">&#123;</span><span class="token keyword">amsthm</span><span class="token punctuation">&#125;</span>
-<span class="token function selector">\usepackage</span><span class="token punctuation">&#123;</span><span class="token keyword">amsmath</span><span class="token punctuation">&#125;</span>
-<span class="token function selector">\usepackage</span><span class="token punctuation">&#123;</span><span class="token keyword">amssymb</span><span class="token punctuation">&#125;</span>
-<span class="token function selector">\usepackage</span><span class="token punctuation">&#123;</span><span class="token keyword">tikz</span><span class="token punctuation">&#125;</span>
+\usepackage&#123;amsthm&#125;
+\usepackage&#123;amsmath&#125;
+\usepackage&#123;amssymb&#125;
+\usepackage&#123;tikz&#125;
 
-<span class="token function selector">\newtheorem*</span><span class="token punctuation">&#123;</span>solution<span class="token punctuation">&#125;</span><span class="token punctuation">&#123;</span>解<span class="token punctuation">&#125;</span>
-<span class="token function selector">\newtheorem</span><span class="token punctuation">&#123;</span>example<span class="token punctuation">&#125;</span><span class="token punctuation">&#123;</span>例<span class="token punctuation">&#125;</span><span class="token punctuation">[</span>subsection<span class="token punctuation">]</span>
+\newtheorem*&#123;solution&#125;&#123;解&#125;
+\newtheorem&#123;example&#125;&#123;例&#125;[subsection]
 
-<span class="token function selector">\begin</span><span class="token punctuation">&#123;</span><span class="token keyword">document</span><span class="token punctuation">&#125;</span>
-	<span class="token function selector">\maketitle</span>
-	...
-<span class="token function selector">\end</span><span class="token punctuation">&#123;</span><span class="token keyword">document</span><span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+\begin&#123;document&#125;
+    \maketitle
+    ...
+\end&#123;document&#125;</code></pre>
 <p>最后的效果如下：</p>
-<p><img src="https://s2.ax1x.com/2020/03/02/3RRrp6.png" alt="3RRrp6.png"></p>
+<figure>
+<img src="https://s2.ax1x.com/2020/03/02/3RRrp6.png" alt="3RRrp6.png" /><figcaption aria-hidden="true">3RRrp6.png</figcaption>
+</figure>
 <p>成果：</p>
-<p><img src="https://s2.ax1x.com/2020/03/02/3Rojqf.png" alt="3Rojqf.png"></p>
+<figure>
+<img src="https://s2.ax1x.com/2020/03/02/3Rojqf.png" alt="3Rojqf.png" /><figcaption aria-hidden="true">3Rojqf.png</figcaption>
+</figure>
 <p>对比手写版：</p>
-<p><img src="https://s2.ax1x.com/2020/03/02/3Ro6PJ.jpg" alt="3Ro6PJ.jpg"></p>
+<figure>
+<img src="https://s2.ax1x.com/2020/03/02/3Ro6PJ.jpg" alt="3Ro6PJ.jpg" /><figcaption aria-hidden="true">3Ro6PJ.jpg</figcaption>
+</figure>
 <p>是不是看起来还不错？</p>
-<h1 id="使用感受"><a href="#使用感受" class="headerlink" title="使用感受"></a>使用感受</h1><h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h2><ul>
+<h1 id="使用感受">使用感受</h1>
+<h2 id="优点">优点</h2>
+<ul>
 <li>格式内容分离，便于重新排版与整理</li>
 <li>字体统一美观（自己手写的字实在是太丑了哇）</li>
 <li>例题的自动编号很赞！</li>
 </ul>
-<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><ul>
-<li><p>Vim原来就有两个常用的模式，输入法的使用又增加了一个模式。来回shift切换打断了编辑的流畅性，降低了效率。尤其是很多时候输入法还没切回英文就<code>jj</code>一下或者切片段，结果还要删掉，按shift，然后重新打，有的时候着实糟心。</p>
-</li>
-<li><p>Snippets多固然增加了效率，但是也增加了记忆的负担。对于我这种新手来说，过多的snippets只是把打LaTeX的时间转换成回忆用哪个snippet比较好的时间，一下子增加太多snippets也会降低效率。</p>
-</li>
-<li><p>错字的存在。搜狗输入法对于偶尔的打错具有自动修正的功能，但是无论是谷歌拼音还是sunpinyin在这方面都不行，加上很多时候这些输入法的选词并不智能，一个个看过来选词其实也是非常耗费时间的。</p>
-</li>
-<li><p>还是错字，例如“已知”错打成“一直”，英文可以配置spell checker做实时的纠正，这在原文当中也有提到，但是中文目前在这方面还缺乏支持。我听说百度有这方面的接口，但是不知道对于数学笔记专业性这么强的语料效果怎么样。Vim插件我是肯定没找到。</p>
-</li>
+<h2 id="缺点">缺点</h2>
+<ul>
+<li><p>Vim原来就有两个常用的模式，输入法的使用又增加了一个模式。来回shift切换打断了编辑的流畅性，降低了效率。尤其是很多时候输入法还没切回英文就<code>jj</code>一下或者切片段，结果还要删掉，按shift，然后重新打，有的时候着实糟心。</p></li>
+<li><p>Snippets多固然增加了效率，但是也增加了记忆的负担。对于我这种新手来说，过多的snippets只是把打LaTeX的时间转换成回忆用哪个snippet比较好的时间，一下子增加太多snippets也会降低效率。</p></li>
+<li><p>错字的存在。搜狗输入法对于偶尔的打错具有自动修正的功能，但是无论是谷歌拼音还是sunpinyin在这方面都不行，加上很多时候这些输入法的选词并不智能，一个个看过来选词其实也是非常耗费时间的。</p></li>
+<li><p>还是错字，例如“已知”错打成“一直”，英文可以配置spell checker做实时的纠正，这在原文当中也有提到，但是中文目前在这方面还缺乏支持。我听说百度有这方面的接口，但是不知道对于数学笔记专业性这么强的语料效果怎么样。Vim插件我是肯定没找到。</p></li>
 <li><p>笔记的结构比较松散，在笔记本上我们可以拿箭头划来划去，有旁注也可以轻松插入，但是这在LaTeX当中绝非易事。很多时候数学笔记的格式很容易让人陷入纠结，比如说我乱打的一段</p>
 <blockquote>
-<p>设$y=kx+b,\quad (k\neq 0)$</p>
-<p>$\Rightarrow x=\frac{y-b}{k}$又因为已知$k=\tan \alpha$…</p>
+<p>设<span class="math inline">\(y=kx+b,\quad (k\neq 0)\)</span></p>
+<p><span class="math inline">\(\Rightarrow x=\frac{y-b}{k}\)</span>又因为已知<span class="math inline">\(k=\tan \alpha\)</span>...</p>
 </blockquote>
 <p>这种格式要怎么排版呢？</p>
-<ol>
+<ol type="1">
 <li>是整个作为一个大的display style math，中文文字作为<code>\text&#123;&#125;</code>镶嵌其中？</li>
 <li>还是一行一个display-style math?</li>
 <li>还是有中文字的行用inline math，然后纯数学符号的行用display math?</li>
@@ -1744,21 +1911,18 @@ endsnippet<span aria-hidden="true" class="line-numbers-rows"><span></span><span>
 </ol>
 <p>又比如说如下这段：</p>
 <blockquote>
-<p>$\begin{cases}x=1 \y=2\end{cases}$或$\begin{cases}x=2 \y=1\end{cases}$</p>
+<p><span class="math inline">\(\begin{cases}x=1 \\y=2\end{cases}\)</span>或<span class="math inline">\(\begin{cases}x=2 \\y=1\end{cases}\)</span></p>
 </blockquote>
 <p>手写起来非常简单，但是LaTeX代码呢？</p>
-<pre class="line-numbers language-latex" data-language="latex"><code class="language-latex"><span class="token equation string">$<span class="token equation-command regex">\begin</span>&#123;cases&#125; x=1 <span class="token equation-command regex">\\</span> y=2 <span class="token equation-command regex">\end</span>&#123;cases&#125;$</span>
+<pre class="line-numbers"><code class="language-latex">$\begin&#123;cases&#125; x=1 \\ y=2 \end&#123;cases&#125;$
 或
-<span class="token equation string">$<span class="token equation-command regex">\begin</span>&#123;cases&#125; x=2 <span class="token equation-command regex">\\</span> y=1 <span class="token equation-command regex">\end</span>&#123;cases&#125;$</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-<p>一下子复杂了不少，更别说为了中间的“或”字需要输入法切换。这是snippets也难以挽救的低效。</p>
-</li>
-<li><p>我还没有试过画图。但是这一定是一个天坑。</p>
-</li>
-<li><p>如果编译失败那几乎是当场去世（悲）</p>
-</li>
+$\begin&#123;cases&#125; x=2 \\ y=1 \end&#123;cases&#125;$</code></pre>
+<p>一下子复杂了不少，更别说为了中间的“或”字需要输入法切换。这是snippets也难以挽救的低效。</p></li>
+<li><p>我还没有试过画图。但是这一定是一个天坑。</p></li>
+<li><p>如果编译失败那几乎是当场去世（悲）</p></li>
 </ul>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>就我个人体验而言，用LaTeX记笔记虽然能够达到非常高的排版质量，但是并没有传说中的那么高效（尤其是在使用中文的背景之下）。用LaTeX整理笔记自然是极好的，但是用LaTeX在课堂上实时记笔记绝对属于一大作死行为（更别说你也不知道老师收不收LaTeX记得笔记对不？）</p>
+<h1 id="总结">总结</h1>
+<p>就我个人体验而言，用LaTeX记笔记虽然能够达到非常高的排版质量，但是并没有传说中的那么高效（尤其是在使用中文的背景之下）。用LaTeX整理笔记自然是极好的，但是用LaTeX在课堂上实时记笔记绝对属于一大作死行为（更别说你也不知道老师收不收LaTeX记得笔记对不？）</p>
 
       
     </div>
@@ -1837,7 +2001,20 @@ endsnippet<span aria-hidden="true" class="line-numbers-rows"><span></span><span>
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

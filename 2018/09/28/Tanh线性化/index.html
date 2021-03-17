@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="概况由于VEX中PWM频率偏低，因此马达的响应并不是线性的，例如马达指令在较小时存在死区，在较大时对转速的影响可以忽略不计等等。以269马达的数据为例（393也是类似）：  那么如何让马达的响应变得线性呢？从数学角度出发，我们需要试图找到，或者逼近以上马达曲线$f$的反函数$g &#x3D; f^{-1}$，对于输出我们应用反函数再应用到马达上，由于马达曲线是单调的，因此在理想状况下，这波操作以后马达的响应">
+<meta name="description" content="概况 由于VEX中PWM频率偏低，因此马达的响应并不是线性的，例如马达指令在较小时存在死区，在较大时对转速的影响可以忽略不计等等。以269马达的数据为例（393也是类似）：  那么如何让马达的响应变得线性呢？从数学角度出发，我们需要试图找到，或者逼近以上马达曲线\(f\)的反函数\(g &#x3D; f^{-1}\)，对于输出我们应用反函数再应用到马达上，由于马达曲线是单调的，因此在理想状况下，这波操">
 <meta property="og:type" content="article">
 <meta property="og:title" content="基于反双曲正切函数的马达线性化">
 <meta property="og:url" content="https://alan20210202.github.io/2018/09/28/Tanh%E7%BA%BF%E6%80%A7%E5%8C%96/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="概况由于VEX中PWM频率偏低，因此马达的响应并不是线性的，例如马达指令在较小时存在死区，在较大时对转速的影响可以忽略不计等等。以269马达的数据为例（393也是类似）：  那么如何让马达的响应变得线性呢？从数学角度出发，我们需要试图找到，或者逼近以上马达曲线$f$的反函数$g &#x3D; f^{-1}$，对于输出我们应用反函数再应用到马达上，由于马达曲线是单调的，因此在理想状况下，这波操作以后马达的响应">
+<meta property="og:description" content="概况 由于VEX中PWM频率偏低，因此马达的响应并不是线性的，例如马达指令在较小时存在死区，在较大时对转速的影响可以忽略不计等等。以269马达的数据为例（393也是类似）：  那么如何让马达的响应变得线性呢？从数学角度出发，我们需要试图找到，或者逼近以上马达曲线\(f\)的反函数\(g &#x3D; f^{-1}\)，对于输出我们应用反函数再应用到马达上，由于马达曲线是单调的，因此在理想状况下，这波操">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://ovzrr9kke.bkt.clouddn.com/18-9-28/8570621.jpg">
 <meta property="og:image" content="http://ovzrr9kke.bkt.clouddn.com/18-9-28/66159356.jpg">
@@ -53,7 +53,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>基于反双曲正切函数的马达线性化 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -180,6 +181,8 @@
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -245,7 +248,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/28/Tanh%E7%BA%BF%E6%80%A7%E5%8C%96/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -287,54 +290,62 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="概况"><a href="#概况" class="headerlink" title="概况"></a>概况</h1><p>由于VEX中PWM频率偏低，因此马达的响应并不是线性的，例如马达指令在较小时存在死区，在较大时对转速的影响可以忽略不计等等。以269马达的数据为例（393也是类似）：</p>
-<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/8570621.jpg"></p>
-<p>那么如何让马达的响应变得线性呢？从数学角度出发，我们需要试图找到，或者逼近以上马达曲线$f$的<strong>反函数</strong>$g = f^{-1}$，对于输出我们应用反函数再应用到马达上，由于马达曲线是单调的，因此在理想状况下，这波操作以后马达的响应就是线性的了，这一过程也称作<strong>马达线性化</strong>。</p>
-<p>出于简单起见，我们规定这个$g$的定义域和值域都是$[-127, 127]$，这样的话，理论上大部分原来没有使用线性化的PID算法可以较为简单地加上线性化（不然的话就需要从零开始调参）。显然由马达曲线的单调性可得$g(127) = 127$，以及$g(-127) = -127$。</p>
+        <h1 id="概况">概况</h1>
+<p>由于VEX中PWM频率偏低，因此马达的响应并不是线性的，例如马达指令在较小时存在死区，在较大时对转速的影响可以忽略不计等等。以269马达的数据为例（393也是类似）：</p>
+<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/8570621.jpg" /></p>
+<p>那么如何让马达的响应变得线性呢？从数学角度出发，我们需要试图找到，或者逼近以上马达曲线<span class="math inline">\(f\)</span>的<strong>反函数</strong><span class="math inline">\(g = f^{-1}\)</span>，对于输出我们应用反函数再应用到马达上，由于马达曲线是单调的，因此在理想状况下，这波操作以后马达的响应就是线性的了，这一过程也称作<strong>马达线性化</strong>。</p>
+<p>出于简单起见，我们规定这个<span class="math inline">\(g\)</span>的定义域和值域都是<span class="math inline">\([-127, 127]\)</span>，这样的话，理论上大部分原来没有使用线性化的PID算法可以较为简单地加上线性化（不然的话就需要从零开始调参）。显然由马达曲线的单调性可得<span class="math inline">\(g(127) = 127\)</span>，以及<span class="math inline">\(g(-127) = -127\)</span>。</p>
 <p>目前机器人社实践过的线性化算法有：</p>
-<ol>
+<ol type="1">
 <li>去除死区的简单线性化：只比没有线性化好一点，简单来说就是对输出的指令加一个bias，这样就不会有死区的问题。</li>
 <li>三段线性插值线性化：就是被WSJ吹爆的所谓模型，本质是把马达曲线分为三段并分别用线性函数近似，效果很好，缺点是调参较为复杂。</li>
-<li>二次函数线性化：我们发现马达曲线的形状有点像$f(x) = \sqrt x$的图像，因此我们使用二次函数为反函数进行线性化，效果一般。</li>
+<li>二次函数线性化：我们发现马达曲线的形状有点像<span class="math inline">\(f(x) = \sqrt x\)</span>的图像，因此我们使用二次函数为反函数进行线性化，效果一般。</li>
 <li>反双曲正切线性化：本篇主题，效果较好。</li>
 <li>真·模型线性化：使用马达模型直接计算马达曲线进行线性化，效果最好，可以针对不同的电量，场地状况，扭矩实时给出不同的曲线，缺点是计算慢。</li>
 </ol>
-<h1 id="数学推导"><a href="#数学推导" class="headerlink" title="数学推导"></a>数学推导</h1><p>直觉上，有没有觉得马达曲线的图像很像$\tanh$函数的图像？</p>
-<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/66159356.jpg"></p>
-<p>因此我们选择使用双曲正切函数的反函数来进行线性化：<br>$$<br>\tanh^{-1}(x) = \frac{1}{2}\ln\left(\frac{1 + x}{1 - x}\right)<br>$$<br>为了适应死区，以及满足上文中定义域和值域的要求，我们魔改拓展一下上式：<br>$$<br>g(x) = a\operatorname{sgn}(x) + \frac{127 - a}{2b}\ln\left(\frac{c + x}{c - x}\right)<br>$$<br>解释一下各参数的意义：</p>
-<ol>
-<li>$a$是死区，一般来说$5 \le a \le 20$。</li>
-<li>$b$是我叫做“缩放因子”的参数，其图像意义是<strong>把原双曲正切函数自变量$[-b, b]$这一段的图像看做马达函数图像形状上的近似</strong>。从图像上可以看到，一般$2 \le b \le 3$。</li>
-<li>$c$是一个依赖于$a, b$的参数，由$g(127) = 127$，我们反解得$c = 127\frac{e^{2b} + 1}{e^{2b} - 1}$。</li>
+<h1 id="数学推导">数学推导</h1>
+<p>直觉上，有没有觉得马达曲线的图像很像<span class="math inline">\(\tanh\)</span>函数的图像？</p>
+<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/66159356.jpg" /></p>
+<p>因此我们选择使用双曲正切函数的反函数来进行线性化： <span class="math display">\[
+\tanh^{-1}(x) = \frac{1}{2}\ln\left(\frac{1 + x}{1 - x}\right)
+\]</span> 为了适应死区，以及满足上文中定义域和值域的要求，我们魔改拓展一下上式： <span class="math display">\[
+g(x) = a\operatorname{sgn}(x) + \frac{127 - a}{2b}\ln\left(\frac{c + x}{c - x}\right)
+\]</span> 解释一下各参数的意义：</p>
+<ol type="1">
+<li><span class="math inline">\(a\)</span>是死区，一般来说<span class="math inline">\(5 \le a \le 20\)</span>。</li>
+<li><span class="math inline">\(b\)</span>是我叫做“缩放因子”的参数，其图像意义是<strong>把原双曲正切函数自变量<span class="math inline">\([-b, b]\)</span>这一段的图像看做马达函数图像形状上的近似</strong>。从图像上可以看到，一般<span class="math inline">\(2 \le b \le 3\)</span>。</li>
+<li><span class="math inline">\(c\)</span>是一个依赖于<span class="math inline">\(a, b\)</span>的参数，由<span class="math inline">\(g(127) = 127\)</span>，我们反解得<span class="math inline">\(c = 127\frac{e^{2b} + 1}{e^{2b} - 1}\)</span>。</li>
 </ol>
 <p>就完了，不难吧？</p>
-<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p>注意变量名可能和推导中用到的符号并不一致：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">typedef</span> <span class="token keyword">struct</span> <span class="token punctuation">&#123;</span>
-	<span class="token keyword">float</span> a<span class="token punctuation">,</span> b<span class="token punctuation">;</span>
-	<span class="token keyword">float</span> alpha<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span> TanhLinearizer<span class="token punctuation">;</span>
+<h1 id="代码">代码</h1>
+<p>注意变量名可能和推导中用到的符号并不一致：</p>
+<pre class="line-numbers"><code class="language-cpp">typedef struct &#123;
+    float a, b;
+    float alpha;
+&#125; TanhLinearizer;
 
-<span class="token keyword">void</span> <span class="token function">initTanhLinearizer</span><span class="token punctuation">(</span>TanhLinearizer <span class="token operator">*</span>t<span class="token punctuation">,</span> <span class="token keyword">float</span> deadband<span class="token punctuation">,</span> <span class="token keyword">float</span> scale <span class="token operator">=</span> <span class="token number">2.333333</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-	t<span class="token operator">-></span>b <span class="token operator">=</span> scale <span class="token operator">*</span> <span class="token number">2</span><span class="token punctuation">;</span>
-	t<span class="token operator">-></span>a <span class="token operator">=</span> <span class="token number">127</span> <span class="token operator">-</span> deadband<span class="token punctuation">;</span>
-	<span class="token keyword">float</span> x <span class="token operator">=</span> <span class="token function">exp</span><span class="token punctuation">(</span><span class="token number">2</span> <span class="token operator">*</span> scale<span class="token punctuation">)</span><span class="token punctuation">;</span>
-	t<span class="token operator">-></span>alpha <span class="token operator">=</span> <span class="token number">127</span> <span class="token operator">*</span> <span class="token punctuation">(</span>x <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token punctuation">(</span>x <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
+void initTanhLinearizer(TanhLinearizer *t, float deadband, float scale = 2.333333) &#123;
+    t-&gt;b = scale * 2;
+    t-&gt;a = 127 - deadband;
+    float x = exp(2 * scale);
+    t-&gt;alpha = 127 * (x + 1) / (x - 1);
+&#125;
 
-<span class="token keyword">int</span> <span class="token function">getTanhLinearizedOutput</span><span class="token punctuation">(</span>TanhLinearizer <span class="token operator">*</span>t<span class="token punctuation">,</span> <span class="token keyword">int</span> cmd<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-	<span class="token keyword">if</span> <span class="token punctuation">(</span>cmd <span class="token operator">></span> <span class="token number">127</span><span class="token punctuation">)</span> cmd <span class="token operator">=</span> <span class="token number">127</span><span class="token punctuation">;</span>
-	<span class="token keyword">if</span> <span class="token punctuation">(</span>cmd <span class="token operator">&lt;</span> <span class="token operator">-</span><span class="token number">127</span><span class="token punctuation">)</span> cmd <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">127</span><span class="token punctuation">;</span>
-	<span class="token keyword">int</span> s <span class="token operator">=</span> <span class="token function">sgn</span><span class="token punctuation">(</span>cmd<span class="token punctuation">)</span><span class="token punctuation">;</span>
-	cmd <span class="token operator">=</span> <span class="token function">fabs</span><span class="token punctuation">(</span>cmd<span class="token punctuation">)</span><span class="token punctuation">;</span>
-	<span class="token keyword">return</span> <span class="token function">round</span><span class="token punctuation">(</span>t<span class="token operator">-></span>a <span class="token operator">/</span> t<span class="token operator">-></span>b <span class="token operator">*</span> <span class="token function">log</span><span class="token punctuation">(</span><span class="token punctuation">(</span>t<span class="token operator">-></span>alpha <span class="token operator">+</span> cmd<span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token punctuation">(</span>t<span class="token operator">-></span>alpha <span class="token operator">-</span> cmd<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">+</span> s <span class="token operator">*</span> <span class="token punctuation">(</span><span class="token number">127</span> <span class="token operator">-</span> t<span class="token operator">-></span>a<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h1 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h1><p>马达曲线的反函数应该原本是这个样子的（就是原图像转一转）：</p>
-<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/24070987.jpg"></p>
-<p>然后在$a = 8, b = 3$时我们的线性化算法给出的反函数是这个样子的：</p>
-<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/83393060.jpg"></p>
+int getTanhLinearizedOutput(TanhLinearizer *t, int cmd) &#123;
+    if (cmd &gt; 127) cmd = 127;
+    if (cmd &lt; -127) cmd = -127;
+    int s = sgn(cmd);
+    cmd = fabs(cmd);
+    return round(t-&gt;a / t-&gt;b * log((t-&gt;alpha + cmd) / (t-&gt;alpha - cmd)) + s * (127 - t-&gt;a));
+&#125;</code></pre>
+<h1 id="效果">效果</h1>
+<p>马达曲线的反函数应该原本是这个样子的（就是原图像转一转）：</p>
+<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/24070987.jpg" /></p>
+<p>然后在<span class="math inline">\(a = 8, b = 3\)</span>时我们的线性化算法给出的反函数是这个样子的：</p>
+<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/83393060.jpg" /></p>
 <p>是不是很像呢？实测的效果确实也是极好的。</p>
-<h1 id="更多"><a href="#更多" class="headerlink" title="更多"></a>更多</h1><p>其实马达函数的图像不只是像$\tanh$啦，其实观察一下你也可以说它像$\arctan$之类的，自然也可以发展出一套线性化的方法，从的来说看图像猜函数只能说是一种近似，最好自然是找出马达曲线精确的计算方法，也就是建模。但是这类线性化方法的一大好处就是<strong>计算量很小，很快</strong>，因此往往更多地得到应用。</p>
+<h1 id="更多">更多</h1>
+<p>其实马达函数的图像不只是像<span class="math inline">\(\tanh\)</span>啦，其实观察一下你也可以说它像<span class="math inline">\(\arctan\)</span>之类的，自然也可以发展出一套线性化的方法，从的来说看图像猜函数只能说是一种近似，最好自然是找出马达曲线精确的计算方法，也就是建模。但是这类线性化方法的一大好处就是<strong>计算量很小，很快</strong>，因此往往更多地得到应用。</p>
 
     </div>
 
@@ -426,7 +437,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

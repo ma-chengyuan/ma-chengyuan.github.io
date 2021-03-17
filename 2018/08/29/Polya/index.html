@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="引入给定一串$n$个珠子组成的环链，每个珠子可以被染成黑白两色，求本质不同的染色方案的个数？ 群，置换和置换群群的不严谨定义如果我们对于一个集合$G$定义一种运算$\cdot$ ，该运算满足以下性质：  封闭性：$\forall a, b \in G, a \cdot b \in G$ 结合律：$\forall a, b, c \in G, (a \cdot b) \cdot c &#x3D; a \cdo">
+<meta name="description" content="引入 给定一串\(n\)个珠子组成的环链，每个珠子可以被染成黑白两色，求本质不同的染色方案的个数？ 群，置换和置换群 群的不严谨定义 如果我们对于一个集合\(G\)定义一种运算\(\cdot\) ，该运算满足以下性质：  封闭性：\(\forall a, b \in G, a \cdot b \in G\) 结合律：\(\forall a, b, c \in G, (a \cdot">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Polya计数">
 <meta property="og:url" content="https://alan20210202.github.io/2018/08/29/Polya/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="引入给定一串$n$个珠子组成的环链，每个珠子可以被染成黑白两色，求本质不同的染色方案的个数？ 群，置换和置换群群的不严谨定义如果我们对于一个集合$G$定义一种运算$\cdot$ ，该运算满足以下性质：  封闭性：$\forall a, b \in G, a \cdot b \in G$ 结合律：$\forall a, b, c \in G, (a \cdot b) \cdot c &#x3D; a \cdo">
+<meta property="og:description" content="引入 给定一串\(n\)个珠子组成的环链，每个珠子可以被染成黑白两色，求本质不同的染色方案的个数？ 群，置换和置换群 群的不严谨定义 如果我们对于一个集合\(G\)定义一种运算\(\cdot\) ，该运算满足以下性质：  封闭性：\(\forall a, b \in G, a \cdot b \in G\) 结合律：\(\forall a, b, c \in G, (a \cdot">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2018-08-29T06:31:49.879Z">
 <meta property="article:modified_time" content="2021-03-15T09:28:19.529Z">
@@ -48,7 +48,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>Polya计数 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -169,12 +170,14 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%95%E5%85%A5"><span class="nav-number">1.</span> <span class="nav-text">引入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BE%A4%EF%BC%8C%E7%BD%AE%E6%8D%A2%E5%92%8C%E7%BD%AE%E6%8D%A2%E7%BE%A4"><span class="nav-number">2.</span> <span class="nav-text">群，置换和置换群</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BE%A4%E7%9A%84%E4%B8%8D%E4%B8%A5%E8%B0%A8%E5%AE%9A%E4%B9%89"><span class="nav-number">2.1.</span> <span class="nav-text">群的不严谨定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%AE%E6%8D%A2%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">2.2.</span> <span class="nav-text">置换的概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%AE%E6%8D%A2%E7%BE%A4"><span class="nav-number">2.3.</span> <span class="nav-text">置换群</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Burnside%E5%BC%95%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">Burnside引理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Polya%E5%AE%9A%E7%90%86"><span class="nav-number">4.</span> <span class="nav-text">Polya定理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF%E5%90%8C%E6%9E%84%E5%BA%8F%E5%88%97%E8%AE%A1%E6%95%B0"><span class="nav-number">5.</span> <span class="nav-text">循环同构序列计数</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%95%E5%85%A5"><span class="nav-number">1.</span> <span class="nav-text">引入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BE%A4%E7%BD%AE%E6%8D%A2%E5%92%8C%E7%BD%AE%E6%8D%A2%E7%BE%A4"><span class="nav-number">2.</span> <span class="nav-text">群，置换和置换群</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BE%A4%E7%9A%84%E4%B8%8D%E4%B8%A5%E8%B0%A8%E5%AE%9A%E4%B9%89"><span class="nav-number">2.1.</span> <span class="nav-text">群的不严谨定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%AE%E6%8D%A2%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">2.2.</span> <span class="nav-text">置换的概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%AE%E6%8D%A2%E7%BE%A4"><span class="nav-number">2.3.</span> <span class="nav-text">置换群</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#burnside%E5%BC%95%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">Burnside引理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#polya%E5%AE%9A%E7%90%86"><span class="nav-number">4.</span> <span class="nav-text">Polya定理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF%E5%90%8C%E6%9E%84%E5%BA%8F%E5%88%97%E8%AE%A1%E6%95%B0"><span class="nav-number">5.</span> <span class="nav-text">循环同构序列计数</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -240,7 +243,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/08/29/Polya/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -288,46 +291,93 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h1><p>给定一串$n$个珠子组成的环链，每个珠子可以被染成黑白两色，求<strong>本质不同</strong>的染色方案的个数？</p>
-<h1 id="群，置换和置换群"><a href="#群，置换和置换群" class="headerlink" title="群，置换和置换群"></a>群，置换和置换群</h1><h2 id="群的不严谨定义"><a href="#群的不严谨定义" class="headerlink" title="群的不严谨定义"></a>群的不严谨定义</h2><p>如果我们对于一个集合$G$定义一种运算$\cdot$ ，该运算满足以下性质：</p>
-<ol>
-<li>封闭性：$\forall a, b \in G, a \cdot b \in G$</li>
-<li>结合律：$\forall a, b, c \in G, (a \cdot b) \cdot c = a \cdot (b \cdot c)$</li>
-<li>单位元：$\exists e \in G, \forall a \in G, e \cdot a = a$</li>
-<li>逆元：$\forall a \in G, \exists a^{-1} \in G, a \cdot a^{-1} = e$</li>
+        <h1 id="引入">引入</h1>
+<p>给定一串<span class="math inline">\(n\)</span>个珠子组成的环链，每个珠子可以被染成黑白两色，求<strong>本质不同</strong>的染色方案的个数？</p>
+<h1 id="群置换和置换群">群，置换和置换群</h1>
+<h2 id="群的不严谨定义">群的不严谨定义</h2>
+<p>如果我们对于一个集合<span class="math inline">\(G\)</span>定义一种运算<span class="math inline">\(\cdot\)</span> ，该运算满足以下性质：</p>
+<ol type="1">
+<li>封闭性：<span class="math inline">\(\forall a, b \in G, a \cdot b \in G\)</span></li>
+<li>结合律：<span class="math inline">\(\forall a, b, c \in G, (a \cdot b) \cdot c = a \cdot (b \cdot c)\)</span></li>
+<li>单位元：<span class="math inline">\(\exists e \in G, \forall a \in G, e \cdot a = a\)</span></li>
+<li>逆元：<span class="math inline">\(\forall a \in G, \exists a^{-1} \in G, a \cdot a^{-1} = e\)</span></li>
 </ol>
-<p>则称$(G, \cdot)$一起构成了一个<strong>群</strong>。</p>
-<h2 id="置换的概念"><a href="#置换的概念" class="headerlink" title="置换的概念"></a>置换的概念</h2><p>我们抽象并拓展“变换”这个概念，定义集合$G \to G$的一个双射为一个<strong>置换</strong>，举个例子：<br>$$<br>\left(\begin{matrix}<br>1 &amp;2 &amp;3 &amp;4 \<br>2 &amp;3 &amp;4 &amp;1<br>\end{matrix}\right)<br>$$<br>这个置换表示将将集合中的$1$变成$2$，$2$变成$3$，$3$变成$4$，$4$变成$1$。</p>
-<h2 id="置换群"><a href="#置换群" class="headerlink" title="置换群"></a>置换群</h2><p>稍微想一想可知，置换是可以成群的，称为置换群，对于这个置换群我们定义的运算就是<strong>置换的复合</strong>，对于这个运算我们考察其是否满足群的性质：</p>
-<ol>
+<p>则称<span class="math inline">\((G, \cdot)\)</span>一起构成了一个<strong>群</strong>。</p>
+<h2 id="置换的概念">置换的概念</h2>
+<p>我们抽象并拓展“变换”这个概念，定义集合<span class="math inline">\(G \to G\)</span>的一个双射为一个<strong>置换</strong>，举个例子： <span class="math display">\[
+\left(\begin{matrix}
+1 &amp;2 &amp;3 &amp;4 \\
+2 &amp;3 &amp;4 &amp;1
+\end{matrix}\right)
+\]</span> 这个置换表示将将集合中的<span class="math inline">\(1\)</span>变成<span class="math inline">\(2\)</span>，<span class="math inline">\(2\)</span>变成<span class="math inline">\(3\)</span>，<span class="math inline">\(3\)</span>变成<span class="math inline">\(4\)</span>，<span class="math inline">\(4\)</span>变成<span class="math inline">\(1\)</span>。</p>
+<h2 id="置换群">置换群</h2>
+<p>稍微想一想可知，置换是可以成群的，称为置换群，对于这个置换群我们定义的运算就是<strong>置换的复合</strong>，对于这个运算我们考察其是否满足群的性质：</p>
+<ol type="1">
 <li>封闭性：大部分情况下应该是成立的</li>
 <li>结合律：显然</li>
-<li>单位元：$\left(\begin{matrix} 1 &amp;2 &amp;3 &amp;\cdots \ 1 &amp;2 &amp;3 &amp; \cdots \end{matrix}\right)$</li>
+<li>单位元：<span class="math inline">\(\left(\begin{matrix} 1 &amp;2 &amp;3 &amp;\cdots \\ 1 &amp;2 &amp;3 &amp; \cdots \end{matrix}\right)\)</span></li>
 <li>逆元：置换是集合到集合的<strong>双射</strong>，显然</li>
 </ol>
-<p>置换群的引入允许我们使用群论来处理一开始的问题，说抽象了我们刚才的问题就是：<strong>求一个序列的集合$X$，在一个置换群$G$作用下本质不同的元素个数</strong>。</p>
-<h1 id="Burnside引理"><a href="#Burnside引理" class="headerlink" title="Burnside引理"></a>Burnside引理</h1><p>序列集合$X$在置换群$G$的作用下不同的序列数等于<strong>不动点的平均数</strong>：<br>$$<br>|X \setminus G| = \frac{1}{|G|} \sum_{g \in G} |X^g|<br>$$<br>其中$X^g = { x \in X | g(x) = x}$表示在置换$g$作用下不动点的集合，何为不动点呢？</p>
-<p>例如对于置换$\left(\begin{matrix} 1 &amp;2 &amp;3 &amp;4 \ 3 &amp;4 &amp;1 &amp; 2 \end{matrix}\right)$而言，序列$(1, 2, 1, 2)$就是它的一个不动点，因为它在置换后还是原来的样子。</p>
-<p>我们接下来考察对于给定置换如何数出不动点的数目，从例子入手，比如说我们要求的是置换,$\left(\begin{matrix} 1 &amp;2 &amp;3 &amp;4 \ 4 &amp;3 &amp;2 &amp; 1 \end{matrix}\right)$的不动点数目，我们挨个考虑这样的序列拥有什么样的性质：</p>
-<ol>
+<p>置换群的引入允许我们使用群论来处理一开始的问题，说抽象了我们刚才的问题就是：<strong>求一个序列的集合<span class="math inline">\(X\)</span>，在一个置换群<span class="math inline">\(G\)</span>作用下本质不同的元素个数</strong>。</p>
+<h1 id="burnside引理">Burnside引理</h1>
+<p>序列集合<span class="math inline">\(X\)</span>在置换群<span class="math inline">\(G\)</span>的作用下不同的序列数等于<strong>不动点的平均数</strong>： <span class="math display">\[
+|X \setminus G| = \frac{1}{|G|} \sum_{g \in G} |X^g|
+\]</span> 其中<span class="math inline">\(X^g = \{ x \in X | g(x) = x\}\)</span>表示在置换<span class="math inline">\(g\)</span>作用下不动点的集合，何为不动点呢？</p>
+<p>例如对于置换<span class="math inline">\(\left(\begin{matrix} 1 &amp;2 &amp;3 &amp;4 \\ 3 &amp;4 &amp;1 &amp; 2 \end{matrix}\right)\)</span>而言，序列<span class="math inline">\((1, 2, 1, 2)\)</span>就是它的一个不动点，因为它在置换后还是原来的样子。</p>
+<p>我们接下来考察对于给定置换如何数出不动点的数目，从例子入手，比如说我们要求的是置换,<span class="math inline">\(\left(\begin{matrix} 1 &amp;2 &amp;3 &amp;4 \\ 4 &amp;3 &amp;2 &amp; 1 \end{matrix}\right)\)</span>的不动点数目，我们挨个考虑这样的序列拥有什么样的性质：</p>
+<ol type="1">
 <li>第一位与第四位相同</li>
 <li>第二位与第三位相同</li>
 <li>第三位与第二位相同</li>
 <li>第四位与第一位相同</li>
 </ol>
-<p>显然我们最后得到了一个集合${ {1, 4}, {2, 3} }$，其中的每一个集合中的元素必须相等，考虑染色问题，对于每一组“相等”，我们可以把它整个染成两种颜色，因此这个置换共有$2^2 = 4$个不动点。</p>
+<p>显然我们最后得到了一个集合<span class="math inline">\(\{ \{1, 4\}, \{2, 3\} \}\)</span>，其中的每一个集合中的元素必须相等，考虑染色问题，对于每一组“相等”，我们可以把它整个染成两种颜色，因此这个置换共有<span class="math inline">\(2^2 = 4\)</span>个不动点。</p>
 <p>由于等号的传递性，如果我们逐位查看一个置换，把上下的两位并入同一个“相等集合”，那么最后我们一定会得到若干个这样的相等集合，每个“相等集合”都可以被独立地染成不同的颜色，由乘法定理，我们就得到了——</p>
-<h1 id="Polya定理"><a href="#Polya定理" class="headerlink" title="Polya定理"></a>Polya定理</h1><p>$$<br>|X \backslash G| = \frac{1}{|G|} \sum_{g \in G} m^{c(g)}<br>$$</p>
-<p>其中$m$是颜色个数，$c(g)$是置换$g$形成的“循环数”，一个“循环”是指某一位经过不断地置换之后最后回到自身。可以看到Polya定理其实就是我们上面的推论，不需要更多解释。</p>
-<h1 id="循环同构序列计数"><a href="#循环同构序列计数" class="headerlink" title="循环同构序列计数"></a>循环同构序列计数</h1><p>终于进入了我们的正题，循环同构序列计数，到这一步我们终于可以解答一开始的问题了：</p>
-<p>Polya定理的精髓就在于求出一个置换的循环数，而朴素的枚举显然是不够的，我们考察所谓“循环同构”背后依赖的哪些置换，比如说对于一个长度为$4$的序列，以下置换后它与自身是循环同构的：<br>$$<br>\left(\begin{matrix}<br>    1 &amp;2 &amp;3 &amp;4 \<br>    2 &amp;3 &amp;4 &amp;1<br>\end{matrix}\right),<br>\left(\begin{matrix}<br>    1 &amp;2 &amp;3 &amp;4 \<br>    3 &amp;4 &amp;1 &amp;2<br>\end{matrix}\right),<br>\left(\begin{matrix}<br>    1 &amp;2 &amp;3 &amp;4 \<br>    4 &amp;1 &amp;2 &amp;3<br>\end{matrix}\right),<br>\left(\begin{matrix}<br>    1 &amp;2 &amp;3 &amp;4 \<br>    1 &amp;2 &amp;3 &amp;4<br>\end{matrix}\right)<br>$$<br>我们发现一个循环同构的置换就是把它的<em>后面全部移到前面来，前面几位补到后面去</em>。</p>
-<p>为了接下来的推导方便我们让位数起始于$0$。</p>
-<p>那么，对于一个偏移了$k$的置换，第$a$位被置换之后就到了$(a + k) \bmod n$的位置，其中$n$为序列长度，而对于一个长度为$l$的完整循环来说，它必须满足：</p>
-<p>$$<br>\begin{aligned}<br>a + kl &amp;\equiv a &amp;\pmod{n} \<br>kl &amp;\equiv 0 &amp;\pmod{n}<br>\end{aligned}<br>$$<br>显然当$kl = \operatorname{lcm}(k, n)$的时候$l$有最小值$\frac{\operatorname{lcm}(k, n)}{k}$。由于每一位都偏移了$k$位，因此置换中每个循环的长度都是相等的，而因为每个循环都cover了$l$个元素，因此循环的个数为：<br>$$<br>\begin{aligned}<br>\frac{n}{l} &amp;= \frac{n}{\frac{\operatorname{lcm}(k, n)}{k}} \<br>&amp;= \frac{kn}{\operatorname{lcm}(k, n)} \<br>&amp;= \gcd(k, n)<br>\end{aligned}<br>$$<br>这个发现让我们免于枚举每个循环置换，相反，我们枚举$\gcd(k, n)$的每一个取值$d$，即$n$的因数，统计出$\gcd(k, n) = d$的所有$k$的个数，依Polya定理统一累加到答案上。</p>
+<h1 id="polya定理">Polya定理</h1>
+<p><span class="math display">\[
+|X \backslash G| = \frac{1}{|G|} \sum_{g \in G} m^{c(g)}
+\]</span></p>
+<p>其中<span class="math inline">\(m\)</span>是颜色个数，<span class="math inline">\(c(g)\)</span>是置换<span class="math inline">\(g\)</span>形成的“循环数”，一个“循环”是指某一位经过不断地置换之后最后回到自身。可以看到Polya定理其实就是我们上面的推论，不需要更多解释。</p>
+<h1 id="循环同构序列计数">循环同构序列计数</h1>
+<p>终于进入了我们的正题，循环同构序列计数，到这一步我们终于可以解答一开始的问题了：</p>
+<p>Polya定理的精髓就在于求出一个置换的循环数，而朴素的枚举显然是不够的，我们考察所谓“循环同构”背后依赖的哪些置换，比如说对于一个长度为<span class="math inline">\(4\)</span>的序列，以下置换后它与自身是循环同构的： <span class="math display">\[
+\left(\begin{matrix} 
+    1 &amp;2 &amp;3 &amp;4 \\ 
+    2 &amp;3 &amp;4 &amp;1 
+\end{matrix}\right),
+\left(\begin{matrix} 
+    1 &amp;2 &amp;3 &amp;4 \\ 
+    3 &amp;4 &amp;1 &amp;2 
+\end{matrix}\right),
+\left(\begin{matrix} 
+    1 &amp;2 &amp;3 &amp;4 \\ 
+    4 &amp;1 &amp;2 &amp;3 
+\end{matrix}\right),
+\left(\begin{matrix} 
+    1 &amp;2 &amp;3 &amp;4 \\ 
+    1 &amp;2 &amp;3 &amp;4 
+\end{matrix}\right)
+\]</span> 我们发现一个循环同构的置换就是把它的<em>后面全部移到前面来，前面几位补到后面去</em>。</p>
+<p>为了接下来的推导方便我们让位数起始于<span class="math inline">\(0\)</span>。</p>
+<p>那么，对于一个偏移了<span class="math inline">\(k\)</span>的置换，第<span class="math inline">\(a\)</span>位被置换之后就到了<span class="math inline">\((a + k) \bmod n\)</span>的位置，其中<span class="math inline">\(n\)</span>为序列长度，而对于一个长度为<span class="math inline">\(l\)</span>的完整循环来说，它必须满足：</p>
+<p><span class="math display">\[
+\begin{aligned}
+a + kl &amp;\equiv a &amp;\pmod{n} \\
+kl &amp;\equiv 0 &amp;\pmod{n}
+\end{aligned}
+\]</span> 显然当<span class="math inline">\(kl = \operatorname{lcm}(k, n)\)</span>的时候<span class="math inline">\(l\)</span>有最小值<span class="math inline">\(\frac{\operatorname{lcm}(k, n)}{k}\)</span>。由于每一位都偏移了<span class="math inline">\(k\)</span>位，因此置换中每个循环的长度都是相等的，而因为每个循环都cover了<span class="math inline">\(l\)</span>个元素，因此循环的个数为： <span class="math display">\[
+\begin{aligned}
+\frac{n}{l} &amp;= \frac{n}{\frac{\operatorname{lcm}(k, n)}{k}} \\
+&amp;= \frac{kn}{\operatorname{lcm}(k, n)} \\
+&amp;= \gcd(k, n)
+\end{aligned}
+\]</span> 这个发现让我们免于枚举每个循环置换，相反，我们枚举<span class="math inline">\(\gcd(k, n)\)</span>的每一个取值<span class="math inline">\(d\)</span>，即<span class="math inline">\(n\)</span>的因数，统计出<span class="math inline">\(\gcd(k, n) = d\)</span>的所有<span class="math inline">\(k\)</span>的个数，依Polya定理统一累加到答案上。</p>
 <p>那怎么统计呢？枚举？</p>
-<p>我们发现$\gcd(k, n) = d$等价于$\gcd({k \over d}, {n \over d}) = 1$，即小于$n \over d$的与$n \over d$互质的数个数，这显然等于$\varphi({n \over d})$。</p>
+<p>我们发现<span class="math inline">\(\gcd(k, n) = d\)</span>等价于<span class="math inline">\(\gcd({k \over d}, {n \over d}) = 1\)</span>，即小于<span class="math inline">\(n \over d\)</span>的与<span class="math inline">\(n \over d\)</span>互质的数个数，这显然等于<span class="math inline">\(\varphi({n \over d})\)</span>。</p>
 <p>因此最后的答案就是：</p>
-<p>$$<br>\sum_{d|n} \varphi\left(\frac{n}{d}\right)m^d<br>$$</p>
+<p><span class="math display">\[
+\sum_{d|n} \varphi\left(\frac{n}{d}\right)m^d
+\]</span></p>
 
     </div>
 
@@ -419,7 +469,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

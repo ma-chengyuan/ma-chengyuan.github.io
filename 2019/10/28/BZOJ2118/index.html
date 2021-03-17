@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="本地笔记整理重发，原文写于2019&#x2F;10&#x2F;28，2019&#x2F;12&#x2F;8上传 题面题意：求使得关于${x_i}$的方程$$\sum_{i&#x3D;1}^n a_ix_i &#x3D; b$$存在非负整数解的的$b \in [l, r]$的个数。 数据范围：$n \le 12, a_i \le 5\times 10^5, l, r \in 10^{12}$。 神题。不妨设$a_1$为${a_i}$当中的最小值。则若对于任意">
+<meta name="description" content="本地笔记整理重发，原文写于2019&#x2F;10&#x2F;28，2019&#x2F;12&#x2F;8上传 题面 题意：求使得关于\(\{x_i\}\)的方程 \[ \sum_{i&#x3D;1}^n a_ix_i &#x3D; b \] 存在非负整数解的的\(b \in [l, r]\)的个数。 数据范围：\(n \le 12, a_i \le 5\times 10^5, l, r \in 10^{12}\)。 神题。不妨设\(a_1\)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="BZOJ 2118 &#x2F; 同余最短路">
 <meta property="og:url" content="https://alan20210202.github.io/2019/10/28/BZOJ2118/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="本地笔记整理重发，原文写于2019&#x2F;10&#x2F;28，2019&#x2F;12&#x2F;8上传 题面题意：求使得关于${x_i}$的方程$$\sum_{i&#x3D;1}^n a_ix_i &#x3D; b$$存在非负整数解的的$b \in [l, r]$的个数。 数据范围：$n \le 12, a_i \le 5\times 10^5, l, r \in 10^{12}$。 神题。不妨设$a_1$为${a_i}$当中的最小值。则若对于任意">
+<meta property="og:description" content="本地笔记整理重发，原文写于2019&#x2F;10&#x2F;28，2019&#x2F;12&#x2F;8上传 题面 题意：求使得关于\(\{x_i\}\)的方程 \[ \sum_{i&#x3D;1}^n a_ix_i &#x3D; b \] 存在非负整数解的的\(b \in [l, r]\)的个数。 数据范围：\(n \le 12, a_i \le 5\times 10^5, l, r \in 10^{12}\)。 神题。不妨设\(a_1\)">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-10-27T16:00:00.000Z">
 <meta property="article:modified_time" content="2019-12-08T13:38:30.411Z">
@@ -48,7 +48,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>BZOJ 2118 / 同余最短路 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -175,6 +176,8 @@
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -240,7 +243,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/10/28/BZOJ2118/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -289,67 +292,72 @@
     
     <div class="post-body" itemprop="articleBody">
         <p>本地笔记整理重发，原文写于2019/10/28，2019/12/8上传</p>
-<h1 id="题面"><a href="#题面" class="headerlink" title="题面"></a>题面</h1><p><strong>题意：</strong>求使得关于${x_i}$的方程<br>$$<br>\sum_{i=1}^n a_ix_i = b<br>$$<br>存在非负整数解的的$b \in [l, r]$的个数。</p>
-<p><strong>数据范围：</strong>$n \le 12, a_i \le 5\times 10^5, l, r \in 10^{12}$。</p>
-<p>神题。不妨设$a_1$为${a_i}$当中的最小值。则若对于任意的$b \equiv x \pmod{a_1}$当中的$b$如果符合题意有解，那么$b+a_1$也一定有解。令满足这个性质的最小的$b$为$b_x$。</p>
-<p>考虑在此条件下如何计算解的数目，设$m$以下满足题意的$b$有$f(m)$个，则可以得出计算式：<br>$$<br>f(m) = \sum_{x=0}^{a_1-1} [b_x \le m]\left(\left\lfloor\frac{m-b_x}{a_1}\right\rfloor+1\right)<br>$$<br>原理显然。</p>
-<p>答案就是$f(r) - f(l - 1)$。</p>
-<p>接下来考虑如何求取$b_x$。考虑构建具有$a_1$个点，编号分别为$0,1,2,\cdots,a_1 - 1$的图，对于编号$u$的点，向$(u + a_i) \bmod a_1, \ (i=2,3,\cdots, n)$连边。表示在模$a_1$意义下，如果$u$可以有解，那么$u+a_i$也一定有解。</p>
-<p>由于$0$是一定有平凡解的，我们从$0$开始跑最短路，就可以求出$b_x$。这背后的思想无疑是非常巧妙的。</p>
-<p>复杂度就是$\mathcal{O}(na_1(\log n + \log a_1))$，即为Dijkstra的复杂度。</p>
-<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;cstdio></span></span>
-<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;algorithm></span></span>
-<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;queue></span></span>
+<h1 id="题面">题面</h1>
+<p><strong>题意：</strong>求使得关于<span class="math inline">\(\{x_i\}\)</span>的方程 <span class="math display">\[
+\sum_{i=1}^n a_ix_i = b
+\]</span> 存在非负整数解的的<span class="math inline">\(b \in [l, r]\)</span>的个数。</p>
+<p><strong>数据范围：</strong><span class="math inline">\(n \le 12, a_i \le 5\times 10^5, l, r \in 10^{12}\)</span>。</p>
+<p>神题。不妨设<span class="math inline">\(a_1\)</span>为<span class="math inline">\(\{a_i\}\)</span>当中的最小值。则若对于任意的<span class="math inline">\(b \equiv x \pmod{a_1}\)</span>当中的<span class="math inline">\(b\)</span>如果符合题意有解，那么<span class="math inline">\(b+a_1\)</span>也一定有解。令满足这个性质的最小的<span class="math inline">\(b\)</span>为<span class="math inline">\(b_x\)</span>。</p>
+<p>考虑在此条件下如何计算解的数目，设<span class="math inline">\(m\)</span>以下满足题意的<span class="math inline">\(b\)</span>有<span class="math inline">\(f(m)\)</span>个，则可以得出计算式： <span class="math display">\[
+f(m) = \sum_{x=0}^{a_1-1} [b_x \le m]\left(\left\lfloor\frac{m-b_x}{a_1}\right\rfloor+1\right)
+\]</span> 原理显然。</p>
+<p>答案就是<span class="math inline">\(f(r) - f(l - 1)\)</span>。</p>
+<p>接下来考虑如何求取<span class="math inline">\(b_x\)</span>。考虑构建具有<span class="math inline">\(a_1\)</span>个点，编号分别为<span class="math inline">\(0,1,2,\cdots,a_1 - 1\)</span>的图，对于编号<span class="math inline">\(u\)</span>的点，向<span class="math inline">\((u + a_i) \bmod a_1, \ (i=2,3,\cdots, n)\)</span>连边。表示在模<span class="math inline">\(a_1\)</span>意义下，如果<span class="math inline">\(u\)</span>可以有解，那么<span class="math inline">\(u+a_i\)</span>也一定有解。</p>
+<p>由于<span class="math inline">\(0\)</span>是一定有平凡解的，我们从<span class="math inline">\(0\)</span>开始跑最短路，就可以求出<span class="math inline">\(b_x\)</span>。这背后的思想无疑是非常巧妙的。</p>
+<p>复杂度就是<span class="math inline">\(\mathcal{O}(na_1(\log n + \log a_1))\)</span>，即为Dijkstra的复杂度。</p>
+<h1 id="代码">代码</h1>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;algorithm&gt;
+#include &lt;queue&gt;
 
-<span class="token keyword">using</span> <span class="token keyword">namespace</span> std<span class="token punctuation">;</span>
-<span class="token keyword">typedef</span> <span class="token keyword">long</span> <span class="token keyword">long</span> ll<span class="token punctuation">;</span>
-<span class="token keyword">typedef</span> pair<span class="token operator">&lt;</span>ll<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token operator">></span> pli<span class="token punctuation">;</span>
-<span class="token keyword">const</span> <span class="token keyword">int</span> N <span class="token operator">=</span> <span class="token number">13</span><span class="token punctuation">;</span>
-<span class="token keyword">const</span> <span class="token keyword">int</span> V <span class="token operator">=</span> <span class="token number">500010</span><span class="token punctuation">;</span>
-<span class="token keyword">const</span> <span class="token keyword">int</span> E <span class="token operator">=</span> N <span class="token operator">*</span> V<span class="token punctuation">;</span>
-<span class="token keyword">const</span> ll INF <span class="token operator">=</span> <span class="token number">1ll</span> <span class="token operator">&lt;&lt;</span> <span class="token number">60</span><span class="token punctuation">;</span>
-ll n<span class="token punctuation">,</span> Bl<span class="token punctuation">,</span> Br<span class="token punctuation">,</span> a<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">,</span> mn<span class="token punctuation">,</span> len<span class="token punctuation">[</span>E<span class="token punctuation">]</span><span class="token punctuation">;</span>
-<span class="token keyword">int</span> fst<span class="token punctuation">[</span>V<span class="token punctuation">]</span><span class="token punctuation">,</span> nxt<span class="token punctuation">[</span>E<span class="token punctuation">]</span><span class="token punctuation">,</span> to<span class="token punctuation">[</span>E<span class="token punctuation">]</span><span class="token punctuation">,</span> tot <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
-ll dis<span class="token punctuation">[</span>V<span class="token punctuation">]</span><span class="token punctuation">;</span>
-<span class="token keyword">void</span> <span class="token function">link</span><span class="token punctuation">(</span><span class="token keyword">int</span> u<span class="token punctuation">,</span> <span class="token keyword">int</span> v<span class="token punctuation">,</span> ll w<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-	nxt<span class="token punctuation">[</span><span class="token operator">++</span>tot<span class="token punctuation">]</span> <span class="token operator">=</span> fst<span class="token punctuation">[</span>u<span class="token punctuation">]</span><span class="token punctuation">;</span>
-	fst<span class="token punctuation">[</span>u<span class="token punctuation">]</span> <span class="token operator">=</span> tot<span class="token punctuation">;</span> to<span class="token punctuation">[</span>tot<span class="token punctuation">]</span> <span class="token operator">=</span> v<span class="token punctuation">;</span> len<span class="token punctuation">[</span>tot<span class="token punctuation">]</span> <span class="token operator">=</span> w<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token keyword">void</span> <span class="token function">dijkstra</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-	<span class="token keyword">static</span> priority_queue<span class="token operator">&lt;</span>pli<span class="token punctuation">,</span> vector<span class="token operator">&lt;</span>pli<span class="token operator">></span><span class="token punctuation">,</span> greater<span class="token operator">&lt;</span>pli<span class="token operator">></span> <span class="token operator">></span> q<span class="token punctuation">;</span>
-	<span class="token function">fill</span><span class="token punctuation">(</span>dis<span class="token punctuation">,</span> dis <span class="token operator">+</span> mn<span class="token punctuation">,</span> INF<span class="token punctuation">)</span><span class="token punctuation">;</span>
-	dis<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> q<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span><span class="token function">make_pair</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-	<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token operator">!</span>q<span class="token punctuation">.</span><span class="token function">empty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-		pli p <span class="token operator">=</span> q<span class="token punctuation">.</span><span class="token function">top</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> q<span class="token punctuation">.</span><span class="token function">pop</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-		<span class="token keyword">int</span> u <span class="token operator">=</span> p<span class="token punctuation">.</span>second<span class="token punctuation">;</span>
-		<span class="token keyword">if</span> <span class="token punctuation">(</span>dis<span class="token punctuation">[</span>u<span class="token punctuation">]</span> <span class="token operator">!=</span> p<span class="token punctuation">.</span>first<span class="token punctuation">)</span> <span class="token keyword">continue</span><span class="token punctuation">;</span>
-		<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> e <span class="token operator">=</span> fst<span class="token punctuation">[</span>u<span class="token punctuation">]</span><span class="token punctuation">;</span> e<span class="token punctuation">;</span> e <span class="token operator">=</span> nxt<span class="token punctuation">[</span>e<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-			<span class="token keyword">int</span> v <span class="token operator">=</span> to<span class="token punctuation">[</span>e<span class="token punctuation">]</span><span class="token punctuation">;</span>
-			<span class="token keyword">if</span> <span class="token punctuation">(</span>dis<span class="token punctuation">[</span>v<span class="token punctuation">]</span> <span class="token operator">></span> dis<span class="token punctuation">[</span>u<span class="token punctuation">]</span> <span class="token operator">+</span> len<span class="token punctuation">[</span>e<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-				dis<span class="token punctuation">[</span>v<span class="token punctuation">]</span> <span class="token operator">=</span> dis<span class="token punctuation">[</span>u<span class="token punctuation">]</span> <span class="token operator">+</span> len<span class="token punctuation">[</span>e<span class="token punctuation">]</span><span class="token punctuation">;</span>
-				q<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span><span class="token function">make_pair</span><span class="token punctuation">(</span>dis<span class="token punctuation">[</span>v<span class="token punctuation">]</span><span class="token punctuation">,</span> v<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-			<span class="token punctuation">&#125;</span>
-		<span class="token punctuation">&#125;</span>
-	<span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span>
-ll <span class="token function">calc</span><span class="token punctuation">(</span>ll x<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-	ll ans <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-	<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> mn<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
-		<span class="token keyword">if</span> <span class="token punctuation">(</span>x <span class="token operator">>=</span> dis<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> ans <span class="token operator">+=</span> <span class="token punctuation">(</span>x <span class="token operator">-</span> dis<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">/</span> mn <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">;</span>
-	<span class="token keyword">return</span> ans<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-	<span class="token function">scanf</span><span class="token punctuation">(</span><span class="token string">"%lld%lld%lld"</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>n<span class="token punctuation">,</span> <span class="token operator">&amp;</span>Bl<span class="token punctuation">,</span> <span class="token operator">&amp;</span>Br<span class="token punctuation">)</span><span class="token punctuation">;</span>
-	<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token function">scanf</span><span class="token punctuation">(</span><span class="token string">"%lld"</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>a<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-	<span class="token function">sort</span><span class="token punctuation">(</span>a <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> a <span class="token operator">+</span> <span class="token number">1</span> <span class="token operator">+</span> n<span class="token punctuation">)</span><span class="token punctuation">;</span> mn <span class="token operator">=</span> a<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-	<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> mn<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
-		<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> j <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span> j <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> j<span class="token operator">++</span><span class="token punctuation">)</span>
-			<span class="token function">link</span><span class="token punctuation">(</span>i<span class="token punctuation">,</span> <span class="token punctuation">(</span>i <span class="token operator">+</span> a<span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">%</span> mn<span class="token punctuation">,</span> a<span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-	<span class="token function">dijkstra</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-	<span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%lld\n"</span><span class="token punctuation">,</span> <span class="token function">calc</span><span class="token punctuation">(</span>Br<span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token function">calc</span><span class="token punctuation">(</span>Bl <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>	
-	<span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+using namespace std;
+typedef long long ll;
+typedef pair&lt;ll, int&gt; pli;
+const int N = 13;
+const int V = 500010;
+const int E = N * V;
+const ll INF = 1ll &lt;&lt; 60;
+ll n, Bl, Br, a[N], mn, len[E];
+int fst[V], nxt[E], to[E], tot = 1;
+ll dis[V];
+void link(int u, int v, ll w) &#123;
+    nxt[++tot] = fst[u];
+    fst[u] = tot; to[tot] = v; len[tot] = w;
+&#125;
+void dijkstra() &#123;
+    static priority_queue&lt;pli, vector&lt;pli&gt;, greater&lt;pli&gt; &gt; q;
+    fill(dis, dis + mn, INF);
+    dis[0] = 0; q.push(make_pair(0, 0));
+    while (!q.empty()) &#123;
+        pli p = q.top(); q.pop();
+        int u = p.second;
+        if (dis[u] != p.first) continue;
+        for (int e = fst[u]; e; e = nxt[e]) &#123;
+            int v = to[e];
+            if (dis[v] &gt; dis[u] + len[e]) &#123;
+                dis[v] = dis[u] + len[e];
+                q.push(make_pair(dis[v], v));
+            &#125;
+        &#125;
+    &#125;
+&#125;
+ll calc(ll x) &#123;
+    ll ans = 0;
+    for (int i = 0; i &lt; mn; i++)
+        if (x &gt;= dis[i]) ans += (x - dis[i]) / mn + 1;
+    return ans;
+&#125;
+int main() &#123;
+    scanf(&quot;%lld%lld%lld&quot;, &amp;n, &amp;Bl, &amp;Br);
+    for (int i = 1; i &lt;= n; i++) scanf(&quot;%lld&quot;, &amp;a[i]);
+    sort(a + 1, a + 1 + n); mn = a[1];
+    for (int i = 0; i &lt; mn; i++)
+        for (int j = 2; j &lt;= n; j++)
+            link(i, (i + a[j]) % mn, a[j]);
+    dijkstra();
+    printf(&quot;%lld\n&quot;, calc(Br) - calc(Bl - 1));  
+    return 0;
+&#125;</code></pre>
 
     </div>
 
@@ -441,7 +449,20 @@ ll <span class="token function">calc</span><span class="token punctuation">(</sp
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

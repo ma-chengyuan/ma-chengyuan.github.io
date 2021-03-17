@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="本地笔记整理，原文写于2019&#x2F;7&#x2F;8，2019&#x2F;12&#x2F;8上传 Double Dabble算法是二进制转BCD的常用算法。 整数Double Dabble算法（下文当中，”BCD位”指一个十进制位对应的四位二进制） 首先，如果我们要计算一个二进制数的十进制值，除了位权展开以外，可以从左往右如此迭代：$$x_{n + 1} &#x3D; 2x_n + \text{该二进制位}$$这是非常显然的。 在Doubl">
+<meta name="description" content="本地笔记整理，原文写于2019&#x2F;7&#x2F;8，2019&#x2F;12&#x2F;8上传 Double Dabble算法是二进制转BCD的常用算法。 整数Double Dabble算法 （下文当中，&quot;BCD位&quot;指一个十进制位对应的四位二进制） 首先，如果我们要计算一个二进制数的十进制值，除了位权展开以外，可以从左往右如此迭代： \[ x_{n + 1} &#x3D; 2x_n + \text{该二进制位} \] 这是非常">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Double Dabble算法笔记">
 <meta property="og:url" content="https://alan20210202.github.io/2019/07/08/Double%20Dabble%E7%AE%97%E6%B3%95/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="本地笔记整理，原文写于2019&#x2F;7&#x2F;8，2019&#x2F;12&#x2F;8上传 Double Dabble算法是二进制转BCD的常用算法。 整数Double Dabble算法（下文当中，”BCD位”指一个十进制位对应的四位二进制） 首先，如果我们要计算一个二进制数的十进制值，除了位权展开以外，可以从左往右如此迭代：$$x_{n + 1} &#x3D; 2x_n + \text{该二进制位}$$这是非常显然的。 在Doubl">
+<meta property="og:description" content="本地笔记整理，原文写于2019&#x2F;7&#x2F;8，2019&#x2F;12&#x2F;8上传 Double Dabble算法是二进制转BCD的常用算法。 整数Double Dabble算法 （下文当中，&quot;BCD位&quot;指一个十进制位对应的四位二进制） 首先，如果我们要计算一个二进制数的十进制值，除了位权展开以外，可以从左往右如此迭代： \[ x_{n + 1} &#x3D; 2x_n + \text{该二进制位} \] 这是非常">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://i.stack.imgur.com/EQvTh.png">
 <meta property="article:published_time" content="2019-07-07T16:00:00.000Z">
@@ -50,7 +50,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>Double Dabble算法笔记 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -171,12 +172,14 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B4%E6%95%B0Double-Dabble%E7%AE%97%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">整数Double Dabble算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B0%8F%E6%95%B0Double-Dabble%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">小数Double Dabble算法</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B4%E6%95%B0double-dabble%E7%AE%97%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">整数Double Dabble算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B0%8F%E6%95%B0double-dabble%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">小数Double Dabble算法</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -242,7 +245,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/07/08/Double%20Dabble%E7%AE%97%E6%B3%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -292,23 +295,31 @@
     <div class="post-body" itemprop="articleBody">
         <p>本地笔记整理，原文写于2019/7/8，2019/12/8上传</p>
 <p>Double Dabble算法是二进制转BCD的常用算法。</p>
-<h1 id="整数Double-Dabble算法"><a href="#整数Double-Dabble算法" class="headerlink" title="整数Double Dabble算法"></a>整数Double Dabble算法</h1><p>（下文当中，”BCD位”指一个十进制位对应的四位二进制）</p>
-<p>首先，如果我们要计算一个二进制数的十进制值，除了位权展开以外，可以从左往右如此迭代：<br>$$<br>x_{n + 1} = 2x_n + \text{该二进制位}<br>$$<br>这是非常显然的。</p>
+<h1 id="整数double-dabble算法">整数Double Dabble算法</h1>
+<p>（下文当中，"BCD位"指一个十进制位对应的四位二进制）</p>
+<p>首先，如果我们要计算一个二进制数的十进制值，除了位权展开以外，可以从左往右如此迭代： <span class="math display">\[
+x_{n + 1} = 2x_n + \text{该二进制位}
+\]</span> 这是非常显然的。</p>
 <p>在Double Dabble的图示当中，左边一列存储的是BCD的结果：</p>
-<p><img src="https://i.stack.imgur.com/EQvTh.png" alt="Image result for double dabble algorithm"></p>
-<p>Double Dabble算法本身其实就是在这BCD的结果列进行如上的迭代操作（乘$2$加位）。</p>
-<p>为了这样做，直觉上来讲，我们可以按照二进制的方法将BCD列中的结果乘$2$（左移），然后进行一定的矫正（之前的左移可能破坏了BCD的性质），然后在加上原数的一个二进制位（最右边移进）。</p>
-<p>左移是平凡的，加上一位也是平凡的（因为左移之后最右边一位永远是$2$，不会产生进位），问题在乘$2$后为了维护BCD性质所进行的矫正上。</p>
-<p>首先，我们应该注意到，忽略进位，如果一个BCD位大于$10$，我们需要减$10$来获得正确的位，而减$10$在四位二进制意义下就等同于加$6$，即$110_2$。</p>
-<p>Double Double算法的首先高在它甚至在乘$2$<strong>之前</strong>就进行了矫正。我们考虑哪些BCD位乘$2$之后会出现问题，答案非常平凡：满$5$的。而因为是在左移之前，加上的$110_2$也就变成$11_2$，即加$3$。</p>
+<figure>
+<img src="https://i.stack.imgur.com/EQvTh.png" alt="Image result for double dabble algorithm" /><figcaption aria-hidden="true">Image result for double dabble algorithm</figcaption>
+</figure>
+<p>Double Dabble算法本身其实就是在这BCD的结果列进行如上的迭代操作（乘<span class="math inline">\(2\)</span>加位）。</p>
+<p>为了这样做，直觉上来讲，我们可以按照二进制的方法将BCD列中的结果乘<span class="math inline">\(2\)</span>（左移），然后进行一定的矫正（之前的左移可能破坏了BCD的性质），然后在加上原数的一个二进制位（最右边移进）。</p>
+<p>左移是平凡的，加上一位也是平凡的（因为左移之后最右边一位永远是<span class="math inline">\(2\)</span>，不会产生进位），问题在乘<span class="math inline">\(2\)</span>后为了维护BCD性质所进行的矫正上。</p>
+<p>首先，我们应该注意到，忽略进位，如果一个BCD位大于<span class="math inline">\(10\)</span>，我们需要减<span class="math inline">\(10\)</span>来获得正确的位，而减<span class="math inline">\(10\)</span>在四位二进制意义下就等同于加<span class="math inline">\(6\)</span>，即<span class="math inline">\(110_2\)</span>。</p>
+<p>Double Double算法的首先高在它甚至在乘<span class="math inline">\(2\)</span><strong>之前</strong>就进行了矫正。我们考虑哪些BCD位乘<span class="math inline">\(2\)</span>之后会出现问题，答案非常平凡：满<span class="math inline">\(5\)</span>的。而因为是在左移之前，加上的<span class="math inline">\(110_2\)</span>也就变成<span class="math inline">\(11_2\)</span>，即加<span class="math inline">\(3\)</span>。</p>
 <p>这就是“满五加三”的由来。</p>
-<p>不仅如此，Double Dabble算法高在因为这是对于左移之前的四位进行的操作，因而加$3$之后会进位到四位当中的最高位，其左移之后就到左边的BCD位上去了…相当于巧妙handle进位的问题。</p>
-<h1 id="小数Double-Dabble算法"><a href="#小数Double-Dabble算法" class="headerlink" title="小数Double Dabble算法"></a>小数Double Dabble算法</h1><p>小数Double Dabble似乎没多少人提到……但是本质确实是和整数算法一致的。</p>
-<p>我们进行小数二进制-十进制转化可以利用如下的从右往左的迭代过程：<br>$$<br>x_{n + 1} = \frac{x_n + \text{该二进制位}}{2}<br>$$<br>我们同样要对结果列进行这样的操作。</p>
-<p>首先是$x_n + \text{该二进制位}$的部分，由于结果列现在表示小数部分，加上去的二进制列就在整个结果列的左侧（整数部分），这无疑是平凡的。</p>
-<p>接下来是除$2$的部分。基于二进制的思想，我们通过右移来完成除$2$的操作。同时我们需要进行一定的矫正来维护BCD的性质。</p>
-<p>我们观察到，出现问题的BCD位，一定是在右移之前是奇数的位，而奇数最低位上的$1$，在右移之后，就到了右边的最高位上，也就是右边的哪一位右移之后会大于等于$8$。</p>
-<p>而回到十进制，如果一个奇数位除以二，结果应该给右边的位加上$5$，而我们之前算法中右移过来的$1$让它加了$8$，所以要减去$3$。</p>
+<p>不仅如此，Double Dabble算法高在因为这是对于左移之前的四位进行的操作，因而加<span class="math inline">\(3\)</span>之后会进位到四位当中的最高位，其左移之后就到左边的BCD位上去了...相当于巧妙handle进位的问题。</p>
+<h1 id="小数double-dabble算法">小数Double Dabble算法</h1>
+<p>小数Double Dabble似乎没多少人提到……但是本质确实是和整数算法一致的。</p>
+<p>我们进行小数二进制-十进制转化可以利用如下的从右往左的迭代过程： <span class="math display">\[
+x_{n + 1} = \frac{x_n + \text{该二进制位}}{2}
+\]</span> 我们同样要对结果列进行这样的操作。</p>
+<p>首先是<span class="math inline">\(x_n + \text{该二进制位}\)</span>的部分，由于结果列现在表示小数部分，加上去的二进制列就在整个结果列的左侧（整数部分），这无疑是平凡的。</p>
+<p>接下来是除<span class="math inline">\(2\)</span>的部分。基于二进制的思想，我们通过右移来完成除<span class="math inline">\(2\)</span>的操作。同时我们需要进行一定的矫正来维护BCD的性质。</p>
+<p>我们观察到，出现问题的BCD位，一定是在右移之前是奇数的位，而奇数最低位上的<span class="math inline">\(1\)</span>，在右移之后，就到了右边的最高位上，也就是右边的哪一位右移之后会大于等于<span class="math inline">\(8\)</span>。</p>
+<p>而回到十进制，如果一个奇数位除以二，结果应该给右边的位加上<span class="math inline">\(5\)</span>，而我们之前算法中右移过来的<span class="math inline">\(1\)</span>让它加了<span class="math inline">\(8\)</span>，所以要减去<span class="math inline">\(3\)</span>。</p>
 <p>这就是“满八减三”的由来。</p>
 
     </div>
@@ -401,7 +412,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

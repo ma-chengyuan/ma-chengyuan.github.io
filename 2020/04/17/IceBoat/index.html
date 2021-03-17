@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="背景最近比较无聊，偶尔会和同学们一起在Minecraft的私服上玩一会，现在地狱交通已经初见雏形了，nether hub已经搭好了，然而地狱交通网络应该基于哪一种运输方式还没有确定。常见的快速运输方式有两种：piston bolt和冰船。 很显然按照每天半个小时的游戏时间是不可能有精力做双向的piston bolt的，况且论最高速度冰船比piston bolt还是快上许多的，因此几乎毫无疑议地大家">
+<meta name="description" content="背景 最近比较无聊，偶尔会和同学们一起在Minecraft的私服上玩一会，现在地狱交通已经初见雏形了，nether hub已经搭好了，然而地狱交通网络应该基于哪一种运输方式还没有确定。常见的快速运输方式有两种：piston bolt和冰船。 很显然按照每天半个小时的游戏时间是不可能有精力做双向的piston bolt的，况且论最高速度冰船比piston bolt还是快上许多的，因此几乎毫无疑议">
 <meta property="og:type" content="article">
 <meta property="og:title" content="从技术角度看Minecraft的高级冰船技术">
 <meta property="og:url" content="https://alan20210202.github.io/2020/04/17/IceBoat/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="背景最近比较无聊，偶尔会和同学们一起在Minecraft的私服上玩一会，现在地狱交通已经初见雏形了，nether hub已经搭好了，然而地狱交通网络应该基于哪一种运输方式还没有确定。常见的快速运输方式有两种：piston bolt和冰船。 很显然按照每天半个小时的游戏时间是不可能有精力做双向的piston bolt的，况且论最高速度冰船比piston bolt还是快上许多的，因此几乎毫无疑议地大家">
+<meta property="og:description" content="背景 最近比较无聊，偶尔会和同学们一起在Minecraft的私服上玩一会，现在地狱交通已经初见雏形了，nether hub已经搭好了，然而地狱交通网络应该基于哪一种运输方式还没有确定。常见的快速运输方式有两种：piston bolt和冰船。 很显然按照每天半个小时的游戏时间是不可能有精力做双向的piston bolt的，况且论最高速度冰船比piston bolt还是快上许多的，因此几乎毫无疑议">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-04-17T01:09:53.240Z">
 <meta property="article:modified_time" content="2020-04-17T14:43:43.042Z">
@@ -49,7 +49,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>从技术角度看Minecraft的高级冰船技术 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -170,12 +171,14 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%A6%E6%96%B9%E5%90%91%E6%A0%A1%E5%87%86%E7%9A%84%E9%AB%98%E7%AB%AF%E5%86%B0%E8%88%B9"><span class="nav-number">2.</span> <span class="nav-text">带方向校准的高端冰船</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%94%BE%E7%BD%AE%E8%A7%92%E5%BA%A6%E4%B8%8EMinecraft%E7%9A%84%E8%A7%92%E5%BA%A6%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.</span> <span class="nav-text">放置角度与Minecraft的角度系统</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BE%85%E5%8A%A9%E9%AB%98%E7%BA%A7%E5%86%B0%E8%88%B9%E7%9A%84Scarpet%E8%84%9A%E6%9C%AC"><span class="nav-number">4.</span> <span class="nav-text">辅助高级冰船的Scarpet脚本</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%A6%E6%96%B9%E5%90%91%E6%A0%A1%E5%87%86%E7%9A%84%E9%AB%98%E7%AB%AF%E5%86%B0%E8%88%B9"><span class="nav-number">2.</span> <span class="nav-text">带方向校准的高端冰船</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%94%BE%E7%BD%AE%E8%A7%92%E5%BA%A6%E4%B8%8Eminecraft%E7%9A%84%E8%A7%92%E5%BA%A6%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.</span> <span class="nav-text">放置角度与Minecraft的角度系统</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BE%85%E5%8A%A9%E9%AB%98%E7%BA%A7%E5%86%B0%E8%88%B9%E7%9A%84scarpet%E8%84%9A%E6%9C%AC"><span class="nav-number">4.</span> <span class="nav-text">辅助高级冰船的Scarpet脚本</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -241,7 +244,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/04/17/IceBoat/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -283,54 +286,55 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>最近比较无聊，偶尔会和同学们一起在Minecraft的私服上玩一会，现在地狱交通已经初见雏形了，nether hub已经搭好了，然而地狱交通网络应该基于哪一种运输方式还没有确定。常见的快速运输方式有两种：piston bolt和冰船。</p>
+        <h1 id="背景">背景</h1>
+<p>最近比较无聊，偶尔会和同学们一起在Minecraft的私服上玩一会，现在地狱交通已经初见雏形了，nether hub已经搭好了，然而地狱交通网络应该基于哪一种运输方式还没有确定。常见的快速运输方式有两种：piston bolt和冰船。</p>
 <p>很显然按照每天半个小时的游戏时间是不可能有精力做双向的piston bolt的，况且论最高速度冰船比piston bolt还是快上许多的，因此几乎毫无疑议地大家都选择了冰船。</p>
 <p>这篇文章是在代码角度对于高级冰船技术的分析。</p>
 <p>全文的代码均为使用官方mapping以及CFR编译器进行反编译所得（但愿这并不违反EULA）。</p>
-<h1 id="带方向校准的高端冰船"><a href="#带方向校准的高端冰船" class="headerlink" title="带方向校准的高端冰船"></a>带方向校准的高端冰船</h1><p>冰船系统一直为人所诟病，也是其不如piston bolt的一点是：它在运动中是需要玩家控制的。不仅要一直按着W，还要使用AD确保船头一直向前。这在直道冰船上还好，但在斜线冰船道上就非常非常麻烦。</p>
+<h1 id="带方向校准的高端冰船">带方向校准的高端冰船</h1>
+<p>冰船系统一直为人所诟病，也是其不如piston bolt的一点是：它在运动中是需要玩家控制的。不仅要一直按着W，还要使用AD确保船头一直向前。这在直道冰船上还好，但在斜线冰船道上就非常非常麻烦。</p>
 <p>幸好，Rays Works在几个月前分享了<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=hiQTnwqrfEU">解决方案</a>。其方案的思想是：</p>
 <p>如果一开始船就放正，那么就只需要W而不需要左右调整了！</p>
 <p>那怎么把船放正呢？</p>
 <p>观察一下代码（<code>net/minecraft/world/item/BoatItem</code>）：</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Override</span>
-<span class="token keyword">public</span> <span class="token class-name">InteractionResultHolder</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">ItemStack</span><span class="token punctuation">></span></span><span class="token function">use</span><span class="token punctuation">(</span><span class="token class-name">Level</span> level<span class="token punctuation">,</span> <span class="token class-name">Player</span> player<span class="token punctuation">,</span> <span class="token class-name">InteractionHand</span> interactionHand<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token class-name">Object</span> object<span class="token punctuation">;</span>
-    <span class="token class-name">ItemStack</span> itemStack <span class="token operator">=</span> player<span class="token punctuation">.</span><span class="token function">getItemInHand</span><span class="token punctuation">(</span>interactionHand<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token class-name">HitResult</span> hitResult <span class="token operator">=</span> <span class="token class-name">BoatItem</span><span class="token punctuation">.</span><span class="token function">getPlayerPOVHitResult</span><span class="token punctuation">(</span>level<span class="token punctuation">,</span> player<span class="token punctuation">,</span> <span class="token class-name">ClipContext<span class="token punctuation">.</span>Fluid</span><span class="token punctuation">.</span>ANY<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>hitResult<span class="token punctuation">.</span><span class="token function">getType</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token class-name">HitResult<span class="token punctuation">.</span>Type</span><span class="token punctuation">.</span>BLOCK<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        object <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Boat</span><span class="token punctuation">(</span>level<span class="token punctuation">,</span> hitResult<span class="token punctuation">.</span><span class="token function">getLocation</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>x<span class="token punctuation">,</span> hitResult<span class="token punctuation">.</span><span class="token function">getLocation</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>y<span class="token punctuation">,</span> hitResult<span class="token punctuation">.</span><span class="token function">getLocation</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>z<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token class-name">Boat</span><span class="token punctuation">)</span> object<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">setType</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>type<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token class-name">Boat</span><span class="token punctuation">)</span> object<span class="token punctuation">)</span><span class="token punctuation">.</span>yRot <span class="token operator">=</span> player<span class="token punctuation">.</span>yRot<span class="token punctuation">;</span> <span class="token comment">// !</span>
-        <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-        <span class="token keyword">return</span> <span class="token class-name">InteractionResultHolder</span><span class="token punctuation">.</span><span class="token function">success</span><span class="token punctuation">(</span>itemStack<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-    <span class="token keyword">return</span> <span class="token class-name">InteractionResultHolder</span><span class="token punctuation">.</span><span class="token function">pass</span><span class="token punctuation">(</span>itemStack<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+<pre class="line-numbers"><code class="language-java">@Override
+public InteractionResultHolder&lt;ItemStack&gt;use(Level level, Player player, InteractionHand interactionHand) &#123;
+    Object object;
+    ItemStack itemStack = player.getItemInHand(interactionHand);
+    HitResult hitResult = BoatItem.getPlayerPOVHitResult(level, player, ClipContext.Fluid.ANY);
+    ...
+    if (hitResult.getType() == HitResult.Type.BLOCK) &#123;
+        object = new Boat(level, hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z);
+        ((Boat) object).setType(this.type);
+        ((Boat) object).yRot = player.yRot; // !
+        ...
+        return InteractionResultHolder.success(itemStack);
+    &#125;
+    return InteractionResultHolder.pass(itemStack);
+&#125;</code></pre>
 <p><code>yRot</code>自然是Y-axis Rotation的意思，也就是说放下船的方向直接等于当时玩家的视角方向。</p>
 <p>因此如果一开始视角方向， 那么问题就解决了！</p>
 <p>如何确保每一次放船的时候视角方向都是一个固定值呢？</p>
 <p>Rays Works的解决方案是：用另外一艘船！</p>
 <p>在<code>net/minecraft/client/player/LocalPlayer</code>当中：</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Override</span>
-<span class="token keyword">public</span> <span class="token keyword">boolean</span> <span class="token function">startRiding</span><span class="token punctuation">(</span><span class="token class-name">Entity</span> entity<span class="token punctuation">,</span> <span class="token keyword">boolean</span> bl<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token keyword">super</span><span class="token punctuation">.</span><span class="token function">startRiding</span><span class="token punctuation">(</span>entity<span class="token punctuation">,</span> bl<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-    <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>entity <span class="token keyword">instanceof</span> <span class="token class-name">Boat</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span> <span class="token comment">// !!!</span>
-        <span class="token keyword">this</span><span class="token punctuation">.</span>yRotO <span class="token operator">=</span> entity<span class="token punctuation">.</span>yRot<span class="token punctuation">;</span>
-        <span class="token keyword">this</span><span class="token punctuation">.</span>yRot <span class="token operator">=</span> entity<span class="token punctuation">.</span>yRot<span class="token punctuation">;</span>
-        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setYHeadRot</span><span class="token punctuation">(</span>entity<span class="token punctuation">.</span>yRot<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-    <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+<pre class="line-numbers"><code class="language-java">@Override
+public boolean startRiding(Entity entity, boolean bl) &#123;
+    if (!super.startRiding(entity, bl)) &#123;
+        return false;
+    &#125;
+    ...
+    if (entity instanceof Boat) &#123; // !!!
+        this.yRotO = entity.yRot;
+        this.yRot = entity.yRot;
+        this.setYHeadRot(entity.yRot);
+    &#125;
+    return true;
+&#125;</code></pre>
 <p>可以看到，当玩家乘上船的一瞬间，玩家的视角方向会强制调整到船的方向。</p>
 <p>因此我们只需要准备一艘校准船，确保这艘船的角度正确，之后要使用的时候直接先做上这艘船再立刻放船再坐上新放的船就可以了（简单来说就是三连右键）。</p>
 <p>这就是Rays Works视频的主旨，我这里只是找到了对应的源代码而已。</p>
-<h1 id="放置角度与Minecraft的角度系统"><a href="#放置角度与Minecraft的角度系统" class="headerlink" title="放置角度与Minecraft的角度系统"></a>放置角度与Minecraft的角度系统</h1><p>Rays Works在视频当中宣称通过它的方法可以把冰道修到任何角度与朝向。</p>
+<h1 id="放置角度与minecraft的角度系统">放置角度与Minecraft的角度系统</h1>
+<p>Rays Works在视频当中宣称通过它的方法可以把冰道修到任何角度与朝向。</p>
 <p>似乎没有什么不对？只要把校准船放到任意角度就行了。</p>
 <p>然而在Ray的视频当中可以看到，有的时候明明船放下去是45°，不一会就转到了46.4°，Ray坦言这是这套冰船系统唯一比较麻烦的地方。Ray提出的解决方案是：</p>
 <blockquote>
@@ -340,34 +344,32 @@
 <p>事实并非如此。有一些角度是无论如何都放不到的，刚放下去一会就会微微一转，然后角度就变了。属实糟心，我在自己服务器里面放了20次都没有放成功。那个时候我终于意识到Ray的claim可能是在扯淡，于是去看了下代码。</p>
 <p>代码里面似乎没有任何一处体现了“微微一转”这种行为。最上面<code>BoatItem</code>的代码就是直接把<code>yRot</code>设成了玩家的<code>yRot</code>。我用全文搜索对于<code>yRot</code>产生修改的片段，没有一处是这样的。<code>yRot</code>是用<code>float</code>存储的，应该不会产生舍入误差这种事情。</p>
 <p>整个事情让我对于Minecraft的屎山代码不由生出一份敬畏，我开始觉得这是玄学问题，直到看见<code>net/minecraft/network/protocol/game/ClientboundAddEntityPacket</code>的构造函数……</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ClientboundAddEntityPacket</span> <span class="token keyword">implements</span> <span class="token class-name">Packet</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">ClientGamePacketListener</span><span class="token punctuation">></span></span> <span class="token punctuation">&#123;</span>
-    <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-    <span class="token keyword">private</span> <span class="token keyword">int</span> xRot<span class="token punctuation">;</span>
-    <span class="token keyword">private</span> <span class="token keyword">int</span> yRot<span class="token punctuation">;</span>
+<pre class="line-numbers"><code class="language-java">public class ClientboundAddEntityPacket implements Packet&lt;ClientGamePacketListener&gt; &#123;
+    ...
+    private int xRot;
+    private int yRot;
 
-    <span class="token keyword">public</span> <span class="token class-name">ClientboundAddEntityPacket</span><span class="token punctuation">(</span><span class="token keyword">int</span> n<span class="token punctuation">,</span> <span class="token class-name">UUID</span> uUID<span class="token punctuation">,</span> <span class="token keyword">double</span> d<span class="token punctuation">,</span> <span class="token keyword">double</span> d2<span class="token punctuation">,</span> <span class="token keyword">double</span> d3<span class="token punctuation">,</span> <span class="token keyword">float</span> f<span class="token punctuation">,</span> <span class="token keyword">float</span> f2<span class="token punctuation">,</span> <span class="token class-name">EntityType</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">></span></span> entityType<span class="token punctuation">,</span> <span class="token keyword">int</span> n2<span class="token punctuation">,</span> <span class="token class-name">Vec3</span> vec3<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-        <span class="token keyword">this</span><span class="token punctuation">.</span>xRot <span class="token operator">=</span> <span class="token class-name">Mth</span><span class="token punctuation">.</span><span class="token function">floor</span><span class="token punctuation">(</span>f <span class="token operator">*</span> <span class="token number">256.0f</span> <span class="token operator">/</span> <span class="token number">360.0f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token keyword">this</span><span class="token punctuation">.</span>yRot <span class="token operator">=</span> <span class="token class-name">Mth</span><span class="token punctuation">.</span><span class="token function">floor</span><span class="token punctuation">(</span>f2 <span class="token operator">*</span> <span class="token number">256.0f</span> <span class="token operator">/</span> <span class="token number">360.0f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+    public ClientboundAddEntityPacket(int n, UUID uUID, double d, double d2, double d3, float f, float f2, EntityType&lt;?&gt; entityType, int n2, Vec3 vec3) &#123;
+        ...
+        this.xRot = Mth.floor(f * 256.0f / 360.0f);
+        this.yRot = Mth.floor(f2 * 256.0f / 360.0f);
+        ...
+    &#125;
+&#125;</code></pre>
 <p>以及<code>net/minecraft/client/multiplayer/PacketListener</code>如何处理这个packet的:</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Override</span>
-<span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">handleAddEntity</span><span class="token punctuation">(</span><span class="token class-name">ClientboundAddEntityPacket</span> clientboundAddEntityPacket<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token class-name">Entity</span> entity<span class="token punctuation">;</span>
-    <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>entity <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        entity<span class="token punctuation">.</span>xRot <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">float</span><span class="token punctuation">)</span><span class="token punctuation">(</span>clientboundAddEntityPacket<span class="token punctuation">.</span><span class="token function">getxRot</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token number">360</span><span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token number">256.0</span> f<span class="token punctuation">;</span>
-        entity<span class="token punctuation">.</span>yRot <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">float</span><span class="token punctuation">)</span><span class="token punctuation">(</span>clientboundAddEntityPacket<span class="token punctuation">.</span><span class="token function">getyRot</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token number">360</span><span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token number">256.0</span> f<span class="token punctuation">;</span>
-        <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+<pre class="line-numbers"><code class="language-java"> @Override
+ public void handleAddEntity(ClientboundAddEntityPacket clientboundAddEntityPacket) &#123;
+     Entity entity;
+     ...
+     if (entity != null) &#123;
+         entity.xRot = (float)(clientboundAddEntityPacket.getxRot() * 360) / 256.0 f;
+         entity.yRot = (float)(clientboundAddEntityPacket.getyRot() * 360) / 256.0 f;
+         ...
+     &#125;
+ &#125;</code></pre>
 <p>哦……原来还真有舍入误差这回事……Mojang大概想省空间，虽然rotation在客户端和服务端内部都是<code>float</code>存储的，但是在网络传输的时候硬是塞到了<code>byte</code>里面。于是在这一层转换的帮助下，Minecraft理论上就只有256种可能的角度了。</p>
 <p>我猜测的整个放船的流程大致如下：</p>
-<ol>
+<ol type="1">
 <li>客户端玩家手持船右键</li>
 <li>客户端发出一个<code>ServerboundUseItemPacket</code></li>
 <li>服务端接收到<code>ServerboundUseItemPacket</code>，然后执行<code>BoatItem</code>有关的代码</li>
@@ -375,115 +377,110 @@
 <li>客户端收到<code>ClientboundAddEntityPacket</code>，将本地的船同步为舍入的角度，在10gt的插值作用下体现为“微微一转”</li>
 <li>玩家坐上去，这个时候一系列网络同步把服务端的船的角度也舍入了</li>
 </ol>
-<pre class="line-numbers language-mermaid" data-language="mermaid"><code class="language-mermaid">sequenceDiagram
+<pre class="line-numbers mermaid"><code class="language-none">sequenceDiagram
     participant Client
     participant Server
     Note left of Client: Player right clicks
     Client-&gt;&gt;Server: ServerboundUseItemPacket
-    Note right of Server: Execute code in &lt;br&#x2F;&gt; BoatItem.use
-    Server-&gt;&gt;Client: ClientboundAddEntityPacket<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+    Note right of Server: Execute code in &lt;br/&gt; BoatItem.use
+    Server-&gt;&gt;Client: ClientboundAddEntityPacket</code></pre>
 <p>因此，微微一转的问题其实根本就不是Ray说的随机事件，而是在网络传输当中舍入误差加上客户端线性插值带来的现象。看似的随机只是因为F3的精度不够，44.99和45.01都显示为45.0，虽然从代码当中我们可以清晰地看到两个数的舍入结果是不一样的。</p>
 <p>这么做的好处是对于90°，45°等特殊角这一层舍入可以保证绝对的精确，避免了放成45.01°然后在船上开1000格偏离航道的惨剧。缺点是很多角度就不能精确达到了。两个相邻的可达角度差1.40625°，大概勉强可以接受。</p>
 <p>话又说回来了，<code>ServerboundMovePlayerPacket</code>这种同步玩家信息倒是还是用<code>float</code>作为载体的。所以玩家的角度还是很精确的？难道是因为玩家相对于实体少很多所以有更多流量可以挥霍？</p>
 <p>我再次对于Minecraft的代码肃然起敬。</p>
-<h1 id="辅助高级冰船的Scarpet脚本"><a href="#辅助高级冰船的Scarpet脚本" class="headerlink" title="辅助高级冰船的Scarpet脚本"></a>辅助高级冰船的Scarpet脚本</h1><p>在知道这些之后我们就可以有针对性地设计冰道了，因为人比较懒所以我写了一个scarpet的脚本：</p>
-<pre class="line-numbers language-none"><code class="language-none">__command() -&gt; null;
+<h1 id="辅助高级冰船的scarpet脚本">辅助高级冰船的Scarpet脚本</h1>
+<p>在知道这些之后我们就可以有针对性地设计冰道了，因为人比较懒所以我写了一个scarpet的脚本：</p>
+<pre class="line-numbers"><code class="language-none">__command() -&gt; null;
 
 _ice_mark(x, y, z) -&gt; create_marker(&#39;ICE&#39;, l(x + 0.5, y + 0.5, z + 0.5));
 
 _mark_x(y, x1, z1, x2, z2, w) -&gt; (
-	if(x1 &gt; x2, l(x1, x2, z1, z2) &#x3D; l(x2, x1, z2, z1));
-	k &#x3D; (z2 - z1) &#x2F; (x2 - x1);
-	for(range(x1, x2 + 1),
-		x &#x3D; _; z &#x3D; round((x - x1) * k + z1);
-		for(range(-w + 1, w), _ice_mark(x, y, z + _))
-	)
+    if(x1 &gt; x2, l(x1, x2, z1, z2) = l(x2, x1, z2, z1));
+    k = (z2 - z1) / (x2 - x1);
+    for(range(x1, x2 + 1),
+        x = _; z = round((x - x1) * k + z1);
+        for(range(-w + 1, w), _ice_mark(x, y, z + _))
+    )
 );
 
 _mark_z(y, x1, z1, x2, z2, w) -&gt; (
-	if(z1 &gt; z2, l(x1, x2, z1, z2) &#x3D; l(x2, x1, z2, z1));
-	k &#x3D; (x2 - x1) &#x2F; (z2 - z1);
-	for(range(z1, z2 + 1),
-		z &#x3D; _; x &#x3D; round((z - z1) * k + x1);
-		for(range(-w + 1, w), _ice_mark(x + _, y, z))
-	)
+    if(z1 &gt; z2, l(x1, x2, z1, z2) = l(x2, x1, z2, z1));
+    k = (x2 - x1) / (z2 - z1);
+    for(range(z1, z2 + 1),
+        z = _; x = round((z - z1) * k + x1);
+        for(range(-w + 1, w), _ice_mark(x + _, y, z))
+    )
 );
 
 mark(y, x1, z1, x2, z2, w) -&gt; (
-	dx &#x3D; abs(x1 - x2); dz &#x3D; abs(z1 - z2);
-	if(dx &#x3D;&#x3D; 0 || dx &lt; dz, _mark_z(y, x1, z1, x2, z2, w),
-		_mark_x(y, x1, z1, x2, z2, w))
+    dx = abs(x1 - x2); dz = abs(z1 - z2);
+    if(dx == 0 || dx &lt; dz, _mark_z(y, x1, z1, x2, z2, w),
+        _mark_x(y, x1, z1, x2, z2, w))
 );
 
 clear() -&gt; remove_all_markers();
 
 _wrap_deg(x) -&gt; (
-	tmp &#x3D; x % 360.0;
-	if(tmp &lt; -180, tmp + 360, tmp &gt; 180, tmp - 360, tmp)
+    tmp = x % 360.0;
+    if(tmp &lt; -180, tmp + 360, tmp &gt; 180, tmp - 360, tmp)
 );
 
 _wrap_internal(x) -&gt; (
-	tmp &#x3D; x % 360.0;
-	if (tmp &lt; 0, tmp + 360, tmp)
+    tmp = x % 360.0;
+    if (tmp &lt; 0, tmp + 360, tmp)
 );
 
 _angle(x1, z1, x2, z2) -&gt; -atan2(x2 - x1, z2 - z1);
 
-_floor_angle(x) -&gt; _wrap_deg(floor(x * 256 &#x2F; 360.0) * 360 &#x2F; 256);
+_floor_angle(x) -&gt; _wrap_deg(floor(x * 256 / 360.0) * 360 / 256);
 
 angle(x1, z1, x2, z2) -&gt; (
-	theta &#x3D; _angle(x1, z1, x2, z2);
-	print(str(&#39;exact yaw: %f&#39;, theta));
-	lb &#x3D; floor_angle(_wrap_internal(theta));
-	ub &#x3D; floor_angle(_wrap_internal(theta + 360.0 &#x2F; 256));
-	print(str(&#39;floored yaw (lb): %f&#39;, lb));
-	print(str(&#39;floored yaw (ub): %f&#39;, ub));
-	ret &#x3D; if(abs(lb - theta) &lt; abs(ub - theta), lb, ub);
-	print(str(&#39;suggested yaw: %f&#39;, ret));
+    theta = _angle(x1, z1, x2, z2);
+    print(str(&#39;exact yaw: %f&#39;, theta));
+    lb = floor_angle(_wrap_internal(theta));
+    ub = floor_angle(_wrap_internal(theta + 360.0 / 256));
+    print(str(&#39;floored yaw (lb): %f&#39;, lb));
+    print(str(&#39;floored yaw (ub): %f&#39;, ub));
+    ret = if(abs(lb - theta) &lt; abs(ub - theta), lb, ub);
+    print(str(&#39;suggested yaw: %f&#39;, ret));
 );
 
 _best_angle(x1, z1, x2, z2) -&gt; (
-	theta &#x3D; _angle(x1, z1, x2, z2);
-	lb &#x3D; floor_angle(_wrap_internal(theta));
-	ub &#x3D; floor_angle(_wrap_internal(theta + 360.0 &#x2F; 256));
-	if(abs(lb - theta) &lt; abs(ub - theta), lb, ub)
+    theta = _angle(x1, z1, x2, z2);
+    lb = floor_angle(_wrap_internal(theta));
+    ub = floor_angle(_wrap_internal(theta + 360.0 / 256));
+    if(abs(lb - theta) &lt; abs(ub - theta), lb, ub)
 );
 
 adjust(x1, z1, x2, z2, dir) -&gt; (
-	x &#x3D; _best_angle(x1, z1, x2, z2);
-	ov &#x3D; 360; opt &#x3D; 0;
-	print(str(&#39;yaw: %f&#39;, x));
-	if(
-		dir &#x3D;&#x3D; &#39;x&#39;,
-		for(range(x2 - 1000, x2 + 1000), 
-			tmp &#x3D; abs(_angle(x1, z1, _, z2) - x);
-			if (tmp &lt; ov, ov &#x3D; tmp; opt &#x3D; _)
-		);
-		print(str(&#39;%f %f %f %f&#39;, x1, z1, opt, z2)),
-		dir &#x3D;&#x3D; &#39;z&#39;,
-		for(range(z2 - 1000, z2 + 1000), 
-			tmp &#x3D; abs(_angle(x1, z1, x2, _) - x);
-			if (tmp &lt; ov, ov &#x3D; tmp; opt &#x3D; _)
-		);
-		print(str(&#39;%f %f %f %f&#39;, x1, z1, x2, opt)),
-		print(&#39;direction must either be x or z&#39;)
-	)
-)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+    x = _best_angle(x1, z1, x2, z2);
+    ov = 360; opt = 0;
+    print(str(&#39;yaw: %f&#39;, x));
+    if(
+        dir == &#39;x&#39;,
+        for(range(x2 - 1000, x2 + 1000), 
+            tmp = abs(_angle(x1, z1, _, z2) - x);
+            if (tmp &lt; ov, ov = tmp; opt = _)
+        );
+        print(str(&#39;%f %f %f %f&#39;, x1, z1, opt, z2)),
+        dir == &#39;z&#39;,
+        for(range(z2 - 1000, z2 + 1000), 
+            tmp = abs(_angle(x1, z1, x2, _) - x);
+            if (tmp &lt; ov, ov = tmp; opt = _)
+        );
+        print(str(&#39;%f %f %f %f&#39;, x1, z1, x2, opt)),
+        print(&#39;direction must either be x or z&#39;)
+    )
+)</code></pre>
 <p>用法如下：</p>
-<ol>
-<li><p><code>/iceboat y x1 z1 x2 z2 w</code>标记一条从$(x_1,y,z_1)$到$(x_2,y,z_2)$的，宽度为$2w-1$的冰道。</p>
-</li>
-<li><p><code>/iceboat clear</code>清除标记。</p>
-</li>
-<li><p><code>/iceboat angle x1 z1 x2 z2</code>计算站在$(x_1,z_1)$望向$(x_2,z_2)$的视角方向，最近的两个可达角度，以及推荐的可达角度。</p>
-</li>
-<li><p><code>/iceboat adjust x1 z1 x2 z2 x/z</code>固定$(x_1,z_1)$，沿$x/z$轴在$(x_2,z_2)$附近寻找最贴近可达角度的方块坐标。考虑到在几千格之后哪怕0.7°的角度差都会有导致最终百格的偏差，这个命令非常重要。在算法实现角度，用三分写是最快的，但是考虑到从-180°到180°有一个不连续间断点，导致写三分会涉及到一些繁琐的细节。我比较懒，所以就用了比较慢的写法（这个写法其实也有明显bug，但是我不准备修）。</p>
-</li>
+<ol type="1">
+<li><p><code>/iceboat y x1 z1 x2 z2 w</code>标记一条从<span class="math inline">\((x_1,y,z_1)\)</span>到<span class="math inline">\((x_2,y,z_2)\)</span>的，宽度为<span class="math inline">\(2w-1\)</span>的冰道。</p></li>
+<li><p><code>/iceboat clear</code>清除标记。</p></li>
+<li><p><code>/iceboat angle x1 z1 x2 z2</code>计算站在<span class="math inline">\((x_1,z_1)\)</span>望向<span class="math inline">\((x_2,z_2)\)</span>的视角方向，最近的两个可达角度，以及推荐的可达角度。</p></li>
+<li><p><code>/iceboat adjust x1 z1 x2 z2 x/z</code>固定<span class="math inline">\((x_1,z_1)\)</span>，沿<span class="math inline">\(x/z\)</span>轴在<span class="math inline">\((x_2,z_2)\)</span>附近寻找最贴近可达角度的方块坐标。考虑到在几千格之后哪怕0.7°的角度差都会有导致最终百格的偏差，这个命令非常重要。在算法实现角度，用三分写是最快的，但是考虑到从-180°到180°有一个不连续间断点，导致写三分会涉及到一些繁琐的细节。我比较懒，所以就用了比较慢的写法（这个写法其实也有明显bug，但是我不准备修）。</p></li>
 </ol>
 <p>常见的使用流程：</p>
-<ol>
+<ol type="1">
 <li>确定冰道的两点。</li>
 <li>固定一点（通常是nether hub或者已经固定留好空间的端点），使用<code>/iceboat adjust</code>微调另一端点的位置。同时计算得出角度。</li>
 <li>使用<code>/iceboat mark</code>标记放冰的位置。</li>
@@ -583,7 +580,20 @@ adjust(x1, z1, x2, z2, dir) -&gt; (
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

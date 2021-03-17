@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="决定把家里的旧的MBA改装成服务器。如此便要合上盖子。 但是合上盖子系统似乎就自动休眠了，改设置也没有什么很好的效果，即使可以使用caffeinate，重启之后还是会有问题。何况就算避免了休眠，在检测不到Display的时候据说显卡也是不工作的（虽然不知道核显是否也是如此）。网传常见的解决方法是“显卡欺骗器”，也就是Dummy Display，通过在显示端口模拟协议让系统检测到一个并不存在的Dis">
+<meta name="description" content="决定把家里的旧的MBA改装成服务器。如此便要合上盖子。 但是合上盖子系统似乎就自动休眠了，改设置也没有什么很好的效果，即使可以使用caffeinate，重启之后还是会有问题。何况就算避免了休眠，在检测不到Display的时候据说显卡也是不工作的（虽然不知道核显是否也是如此）。网传常见的解决方法是“显卡欺骗器”，也就是Dummy Display，通过在显示端口模拟协议让系统检测到一个并不存在的Di">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用边角料糊一个Dummy Display">
 <meta property="og:url" content="https://alan20210202.github.io/2019/12/10/DummyDisplay/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="决定把家里的旧的MBA改装成服务器。如此便要合上盖子。 但是合上盖子系统似乎就自动休眠了，改设置也没有什么很好的效果，即使可以使用caffeinate，重启之后还是会有问题。何况就算避免了休眠，在检测不到Display的时候据说显卡也是不工作的（虽然不知道核显是否也是如此）。网传常见的解决方法是“显卡欺骗器”，也就是Dummy Display，通过在显示端口模拟协议让系统检测到一个并不存在的Dis">
+<meta property="og:description" content="决定把家里的旧的MBA改装成服务器。如此便要合上盖子。 但是合上盖子系统似乎就自动休眠了，改设置也没有什么很好的效果，即使可以使用caffeinate，重启之后还是会有问题。何况就算避免了休眠，在检测不到Display的时候据说显卡也是不工作的（虽然不知道核显是否也是如此）。网传常见的解决方法是“显卡欺骗器”，也就是Dummy Display，通过在显示端口模拟协议让系统检测到一个并不存在的Di">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://alan20210202.github.io/device.jpg">
 <meta property="og:image" content="https://alan20210202.github.io/VGA_Port.svg">
@@ -51,7 +51,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>使用边角料糊一个Dummy Display | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -177,6 +178,8 @@
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -242,7 +245,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/12/10/DummyDisplay/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -294,21 +297,21 @@
 <p>但是合上盖子系统似乎就自动休眠了，改设置也没有什么很好的效果，即使可以使用<code>caffeinate</code>，重启之后还是会有问题。何况就算避免了休眠，在检测不到Display的时候据说显卡也是不工作的（虽然不知道核显是否也是如此）。网传常见的解决方法是“显卡欺骗器”，也就是Dummy Display，通过在显示端口模拟协议让系统检测到一个并不存在的Display，就行了。</p>
 <p>但是Dummy Display一个现成的就要10块左右，而且对于MBA这种DP的接口还不是很好找。</p>
 <p>于是自己从家里搜刮出了一些边角料糊了一个，效果还不错，成品如下：</p>
-<p><img src="/device.jpg"></p>
+<p><img src="/device.jpg" /></p>
 <p>使用的元件是一个DP转接头以及若干买Arduino送的电阻。</p>
 <p>怎么做到的呢？</p>
 <p>根据<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/VGA_connector">Wikipedia</a>上的表述，下图VGA端口的1, 2, 3线分别表示RGB的模拟信号，6, 7, 8对应返线。</p>
-<p><img src="/VGA_Port.svg"></p>
-<p>再根据Wiki上的资料，RGB线路的阻抗为$75\mathrm{\Omega}$。对于VGA这种老式模拟接口，通常通过线路负载确定是否连接，因此为了欺骗端口，我们只需要在1-6，2-7，3-8分别接上三个$75\mathrm{\Omega}$的电阻即可。</p>
-<p>但是家里面只搜出5个$220\mathrm{\Omega}$的和$5$个$110\mathrm{\Omega}$的电阻，于是乎就有了上图的蜜汁接线。具体来说：</p>
-<ol>
-<li>三个$220\mathrm{\Omega}$并联</li>
-<li>两个$220\mathrm{\Omega}$并上两个$110\mathrm{\Omega}$的串联</li>
-<li>一个$110\mathrm{\Omega}$并上两个$110\mathrm{\Omega}$的串联</li>
+<p><img src="/VGA_Port.svg" /></p>
+<p>再根据Wiki上的资料，RGB线路的阻抗为<span class="math inline">\(75\mathrm{\Omega}\)</span>。对于VGA这种老式模拟接口，通常通过线路负载确定是否连接，因此为了欺骗端口，我们只需要在1-6，2-7，3-8分别接上三个<span class="math inline">\(75\mathrm{\Omega}\)</span>的电阻即可。</p>
+<p>但是家里面只搜出5个<span class="math inline">\(220\mathrm{\Omega}\)</span>的和<span class="math inline">\(5\)</span>个<span class="math inline">\(110\mathrm{\Omega}\)</span>的电阻，于是乎就有了上图的蜜汁接线。具体来说：</p>
+<ol type="1">
+<li>三个<span class="math inline">\(220\mathrm{\Omega}\)</span>并联</li>
+<li>两个<span class="math inline">\(220\mathrm{\Omega}\)</span>并上两个<span class="math inline">\(110\mathrm{\Omega}\)</span>的串联</li>
+<li>一个<span class="math inline">\(110\mathrm{\Omega}\)</span>并上两个<span class="math inline">\(110\mathrm{\Omega}\)</span>的串联</li>
 </ol>
-<p>最后每个电路的等效电阻就是$220/3\approx 73.33\mathrm{\Omega}$，再假装有线阻就是$75\mathrm{\Omega}$的水平，使用下来完全没问题，当然因为其他线没连，分辨率之类的信息是缺失的，我的电脑似乎默认$1024\times768$处理了。</p>
+<p>最后每个电路的等效电阻就是<span class="math inline">\(220/3\approx 73.33\mathrm{\Omega}\)</span>，再假装有线阻就是<span class="math inline">\(75\mathrm{\Omega}\)</span>的水平，使用下来完全没问题，当然因为其他线没连，分辨率之类的信息是缺失的，我的电脑似乎默认<span class="math inline">\(1024\times768\)</span>处理了。</p>
 <p>不得不说还是VGA这种模拟的端口欺骗起来容易，HDMI这种数字端口就要复杂很多。</p>
-<p>（后续万用表测试下来$110\mathrm{\Omega}$的实际电阻是$$1\mathrm{k\Omega}$$，大概是读色环的时候读反了<del>我依然坚持认为就应该按照我的方向读</del>，然而最后成品依然可以工作，只能认为是冗余比较高，或者是玄学了。）</p>
+<p>（后续万用表测试下来<span class="math inline">\(110\mathrm{\Omega}\)</span>的实际电阻是<span class="math display">\[1\mathrm{k\Omega}\]</span>，大概是读色环的时候读反了<del>我依然坚持认为就应该按照我的方向读</del>，然而最后成品依然可以工作，只能认为是冗余比较高，或者是玄学了。）</p>
 <p>（似乎装了Linux之后就可以通过设置避免自动休眠了？）</p>
 
     </div>
@@ -401,7 +404,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

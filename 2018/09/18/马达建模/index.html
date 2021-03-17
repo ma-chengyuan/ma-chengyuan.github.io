@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="电路图 绿色箭头为PWM开段电流方向，红色为闭段电流方向。 模型符号定义   符号 含义    $f_{\text{pwm}} \approx 1250\text{Hz}$ PWM频率   $t_{\text{pwm}} \approx 1 &#x2F; f_{\text{pwm}}$ PWM周期   $t_{\text{on}}$ PWM高电位时间   $t_{\text{off}}$ PWM低电位时间">
+<meta name="description" content="电路图  绿色箭头为PWM开段电流方向，红色为闭段电流方向。 模型 符号定义    符号 含义     \(f_{\text{pwm}} \approx 1250\text{Hz}\) PWM频率   \(t_{\text{pwm}} \approx 1 &#x2F; f_{\text{pwm}}\) PWM周期   \(t_{\text{on}}\) PWM高">
 <meta property="og:type" content="article">
 <meta property="og:title" content="VEX 393 马达电流模型">
 <meta property="og:url" content="https://alan20210202.github.io/2018/09/18/%E9%A9%AC%E8%BE%BE%E5%BB%BA%E6%A8%A1/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="电路图 绿色箭头为PWM开段电流方向，红色为闭段电流方向。 模型符号定义   符号 含义    $f_{\text{pwm}} \approx 1250\text{Hz}$ PWM频率   $t_{\text{pwm}} \approx 1 &#x2F; f_{\text{pwm}}$ PWM周期   $t_{\text{on}}$ PWM高电位时间   $t_{\text{off}}$ PWM低电位时间">
+<meta property="og:description" content="电路图  绿色箭头为PWM开段电流方向，红色为闭段电流方向。 模型 符号定义    符号 含义     \(f_{\text{pwm}} \approx 1250\text{Hz}\) PWM频率   \(t_{\text{pwm}} \approx 1 &#x2F; f_{\text{pwm}}\) PWM周期   \(t_{\text{on}}\) PWM高">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://ovzrr9kke.bkt.clouddn.com/18-9-19/85128984.jpg">
 <meta property="og:image" content="http://ovzrr9kke.bkt.clouddn.com/18-9-28/12974510.jpg">
@@ -52,7 +52,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>VEX 393 马达电流模型 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -179,6 +180,8 @@
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -244,7 +247,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/18/%E9%A9%AC%E8%BE%BE%E5%BB%BA%E6%A8%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -292,107 +295,179 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="电路图"><a href="#电路图" class="headerlink" title="电路图"></a>电路图</h1><p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-19/85128984.jpg"></p>
+        <h1 id="电路图">电路图</h1>
+<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-19/85128984.jpg" /></p>
 <p>绿色箭头为PWM开段电流方向，红色为闭段电流方向。</p>
-<h1 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h1><h2 id="符号定义"><a href="#符号定义" class="headerlink" title="符号定义"></a>符号定义</h2><table>
+<h1 id="模型">模型</h1>
+<h2 id="符号定义">符号定义</h2>
+<table>
 <thead>
-<tr>
-<th align="right">符号</th>
+<tr class="header">
+<th style="text-align: right;">符号</th>
 <th>含义</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="right">$f_{\text{pwm}} \approx 1250\text{Hz}$</td>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(f_{\text{pwm}} \approx 1250\text{Hz}\)</span></td>
 <td>PWM频率</td>
 </tr>
-<tr>
-<td align="right">$t_{\text{pwm}} \approx 1 / f_{\text{pwm}}$</td>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(t_{\text{pwm}} \approx 1 / f_{\text{pwm}}\)</span></td>
 <td>PWM周期</td>
 </tr>
-<tr>
-<td align="right">$t_{\text{on}}$</td>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(t_{\text{on}}\)</span></td>
 <td>PWM高电位时间</td>
 </tr>
-<tr>
-<td align="right">$t_{\text{off}}$</td>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(t_{\text{off}}\)</span></td>
 <td>PWM低电位时间</td>
 </tr>
-<tr>
-<td align="right">$I(t)$</td>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(I(t)\)</span></td>
 <td>电流（随时间变化）</td>
 </tr>
-<tr>
-<td align="right">$I_0$</td>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(I_0\)</span></td>
 <td>PWM周期开始时的电流</td>
 </tr>
-<tr>
-<td align="right">$I_{\text{max}}$</td>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(I_{\text{max}}\)</span></td>
 <td>PWM峰值电流</td>
 </tr>
-<tr>
-<td align="right">$I_{\text{final}}$</td>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(I_{\text{final}}\)</span></td>
 <td>PWM周期结束时的电流</td>
 </tr>
-<tr>
-<td align="right">$U_\text{b} \approx 7.4\text V$</td>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(U_\text{b} \approx 7.4\text V\)</span></td>
 <td>电池电压</td>
 </tr>
-<tr>
-<td align="right">$U_\text{bemf}$</td>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(U_\text{bemf}\)</span></td>
 <td>反电动势</td>
 </tr>
-<tr>
-<td align="right">$U_\text L$</td>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(U_\text L\)</span></td>
 <td>电感电压</td>
 </tr>
-<tr>
-<td align="right">$U_\text D \approx 0.75 \text V$</td>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(U_\text D \approx 0.75 \text V\)</span></td>
 <td>二极管压降</td>
 </tr>
-<tr>
-<td align="right">$L \approx 6.5\times 10^{-4}\text H$</td>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(L \approx 6.5\times 10^{-4}\text H\)</span></td>
 <td>电感</td>
 </tr>
-<tr>
-<td align="right">$R \approx 1.609\Omega$</td>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(R \approx 1.609\Omega\)</span></td>
 <td>马达内阻</td>
 </tr>
-<tr>
-<td align="right">$R_\text s \approx 0.28\Omega$</td>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(R_\text s \approx 0.28\Omega\)</span></td>
 <td>系统内阻</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <p><strong>部分参数可以自行测定，测定方法见文末。</strong></p>
-<h2 id="开段分析"><a href="#开段分析" class="headerlink" title="开段分析"></a>开段分析</h2><p>首先，由基尔霍夫定律和欧姆定律，可得：<br>$$<br>U_\text b - I(t)(R+R_\text s) - U_\text L - U_\text {bemf} = 0<br>$$<br>对上式进行整理，并结合电感电压公式：<br>$$<br>U_\text b = L\frac{dI(t)}{dt} + I(t)(R + R_\text s) + U_\text {bemf}<br>$$<br>我们把它看做一个关于$I$的线性微分方程，初始条件为$I(0) = I_0$解得：<br>$$<br>I(t) = e^{-\frac{t(R + R_\text s)}{L}} \left( I_0 - \frac{U_\text b - U_\text {bemf}}{R + R_\text s}\right) + \frac{U_\text b - U_\text {bemf}}{R + R_\text s}<br>$$<br>我们知道电流在高电压段逐步变大，因此$I_\text{max} = I(t_\text{on})$，即：<br>$$<br>I_\text{max} = e^{-\frac{t_\text{on}(R + R_\text s)}{L}} \left( I_0 - \frac{U_\text b - U_\text {bemf}}{R + R_\text s}\right) + \frac{U_\text b - U_\text {bemf}}{R + R_\text s}<br>$$<br>出于简化式子的需要，令<br>$$<br>\begin{aligned}<br>c_\text{on} &amp;= -\frac{t_\text{on}(R + R_\text s)}{L} \<br>e_\text{on} &amp;= e^{c_\text{on}} = e^{-\frac{t_\text{on}(R + R_\text s)}{L}} \<br>I_\text{on} &amp;= \frac{U_\text b - U_\text {bemf}}{R + R_\text s}<br>\end{aligned}<br>$$<br>注意到$I_\text{on}$为$\frac{dI(t)}{dt} \to 0$时的电流，因此也称作<strong>稳态电流</strong>。</p>
-<p>整理得到：<br>$$<br>I_\text{max} = e_\text{on}I_0 + (1 - e_\text{on})I_\text{on}<br>$$<br>为了之后平均电流的计算需要我们顺便计算一波$I(t)$的积分：<br>$$<br>\int^{t_\text{on}}_0 I(t)dt = t_\text{on}\left(I_\text{on} - \frac{(1 - e_\text{on})(I_0 - I_\text{on})}{c_\text{on}}\right)<br>$$</p>
-<h2 id="闭段分析"><a href="#闭段分析" class="headerlink" title="闭段分析"></a>闭段分析</h2><p>再次由基尔霍夫定律及欧姆定律，有：</p>
-<p>$$<br>I(t)R + U_\text L + U_\text {bemf} + U_\text D = 0<br>$$<br>同样整理：<br>$$<br>I(t)R + L \frac{dI(t)}{dt}+ U_\text {bemf} + U_\text D = 0<br>$$<br>以初始条件$I(0) = I_\text{max}$求解这个微分方程解得：<br>$$<br>I(t) = e^{-\frac{tR}{L}}\left(I_\text{max} + \frac{U_\text {bemf} + U_\text D}{R}\right) - \frac{U_\text {bemf} + U_\text D}{R}<br>$$<br>类似地：<br>$$<br>I_\text{final} = e^{-\frac{t_\text{off}R}{L}}\left(I_\text{max} + \frac{U_\text {bemf} + U_\text D}{R}\right) - \frac{U_\text {bemf} + U_\text D}{R}<br>$$<br>我们也令：<br>$$<br>\begin{aligned}<br>c_\text{off} &amp;= -\frac{t_\text{off}R}{L}\<br>e_\text{off} &amp;= e^{c_\text{off}} = e^{-\frac{t_\text{off}R}{L}} \<br>I_\text{off} &amp;= - \frac{U_\text {bemf} + U_\text D}{R}<br>\end{aligned}<br>$$<br>可见$I_\text{off}$也是$\frac{dI(t)}{dt} \to 0$时的电流，也是稳态电流。</p>
-<p>整理得到：<br>$$<br>I_\text{final} = e_\text{off}I_\text{max} + (1 - e_\text{off})I_\text{off}<br>$$<br>为了后文计算平均电流的需要，我们也计算积分：<br>$$<br>\int^{t_\text{off}}_0 I(t)dt = t_\text{off}\left(I_\text{off} - \frac{(1 - e_\text{off})(I_\text{max} - I_\text{off})}{c_\text{off}}\right)<br>$$</p>
-<p>注意到以上式子都依赖于$t_\text{on}$和$t_\text{off}$，前者就是占空比乘以PWM总周期长度，而后者则有些棘手，因为$t_\text{off} = t_\text{pwm} - t_\text{on}$<strong>并不总是成立</strong>。</p>
+<h2 id="开段分析">开段分析</h2>
+<p>首先，由基尔霍夫定律和欧姆定律，可得： <span class="math display">\[
+U_\text b - I(t)(R+R_\text s) - U_\text L - U_\text {bemf} = 0
+\]</span> 对上式进行整理，并结合电感电压公式： <span class="math display">\[
+U_\text b = L\frac{dI(t)}{dt} + I(t)(R + R_\text s) + U_\text {bemf}
+\]</span> 我们把它看做一个关于<span class="math inline">\(I\)</span>的线性微分方程，初始条件为<span class="math inline">\(I(0) = I_0\)</span>解得： <span class="math display">\[
+I(t) = e^{-\frac{t(R + R_\text s)}{L}} \left( I_0 - \frac{U_\text b - U_\text {bemf}}{R + R_\text s}\right) + \frac{U_\text b - U_\text {bemf}}{R + R_\text s}
+\]</span> 我们知道电流在高电压段逐步变大，因此<span class="math inline">\(I_\text{max} = I(t_\text{on})\)</span>，即： <span class="math display">\[
+I_\text{max} = e^{-\frac{t_\text{on}(R + R_\text s)}{L}} \left( I_0 - \frac{U_\text b - U_\text {bemf}}{R + R_\text s}\right) + \frac{U_\text b - U_\text {bemf}}{R + R_\text s}
+\]</span> 出于简化式子的需要，令 <span class="math display">\[
+\begin{aligned}
+c_\text{on} &amp;= -\frac{t_\text{on}(R + R_\text s)}{L} \\
+e_\text{on} &amp;= e^{c_\text{on}} = e^{-\frac{t_\text{on}(R + R_\text s)}{L}} \\
+I_\text{on} &amp;= \frac{U_\text b - U_\text {bemf}}{R + R_\text s}
+\end{aligned}
+\]</span> 注意到<span class="math inline">\(I_\text{on}\)</span>为<span class="math inline">\(\frac{dI(t)}{dt} \to 0\)</span>时的电流，因此也称作<strong>稳态电流</strong>。</p>
+<p>整理得到： <span class="math display">\[
+I_\text{max} = e_\text{on}I_0 + (1 - e_\text{on})I_\text{on}
+\]</span> 为了之后平均电流的计算需要我们顺便计算一波<span class="math inline">\(I(t)\)</span>的积分： <span class="math display">\[
+\int^{t_\text{on}}_0 I(t)dt = t_\text{on}\left(I_\text{on} - \frac{(1 - e_\text{on})(I_0 - I_\text{on})}{c_\text{on}}\right)
+\]</span></p>
+<h2 id="闭段分析">闭段分析</h2>
+<p>再次由基尔霍夫定律及欧姆定律，有：</p>
+<p><span class="math display">\[
+I(t)R + U_\text L + U_\text {bemf} + U_\text D = 0
+\]</span> 同样整理： <span class="math display">\[
+I(t)R + L \frac{dI(t)}{dt}+ U_\text {bemf} + U_\text D = 0
+\]</span> 以初始条件<span class="math inline">\(I(0) = I_\text{max}\)</span>求解这个微分方程解得： <span class="math display">\[
+I(t) = e^{-\frac{tR}{L}}\left(I_\text{max} + \frac{U_\text {bemf} + U_\text D}{R}\right) - \frac{U_\text {bemf} + U_\text D}{R}
+\]</span> 类似地： <span class="math display">\[
+I_\text{final} = e^{-\frac{t_\text{off}R}{L}}\left(I_\text{max} + \frac{U_\text {bemf} + U_\text D}{R}\right) - \frac{U_\text {bemf} + U_\text D}{R}
+\]</span> 我们也令： <span class="math display">\[
+\begin{aligned}
+c_\text{off} &amp;= -\frac{t_\text{off}R}{L}\\
+e_\text{off} &amp;= e^{c_\text{off}} = e^{-\frac{t_\text{off}R}{L}} \\
+I_\text{off} &amp;= - \frac{U_\text {bemf} + U_\text D}{R}
+\end{aligned}
+\]</span> 可见<span class="math inline">\(I_\text{off}\)</span>也是<span class="math inline">\(\frac{dI(t)}{dt} \to 0\)</span>时的电流，也是稳态电流。</p>
+<p>整理得到： <span class="math display">\[
+I_\text{final} = e_\text{off}I_\text{max} + (1 - e_\text{off})I_\text{off}
+\]</span> 为了后文计算平均电流的需要，我们也计算积分： <span class="math display">\[
+\int^{t_\text{off}}_0 I(t)dt = t_\text{off}\left(I_\text{off} - \frac{(1 - e_\text{off})(I_\text{max} - I_\text{off})}{c_\text{off}}\right)
+\]</span></p>
+<p>注意到以上式子都依赖于<span class="math inline">\(t_\text{on}\)</span>和<span class="math inline">\(t_\text{off}\)</span>，前者就是占空比乘以PWM总周期长度，而后者则有些棘手，因为<span class="math inline">\(t_\text{off} = t_\text{pwm} - t_\text{on}\)</span><strong>并不总是成立</strong>。</p>
 <p>接下来的分析有两种情况：</p>
-<ol>
-<li>连续电流：PWM周期中的电流是连续的，即$I_0 = I_\text{final}$。</li>
-<li>不连续电流：电流在PWM闭段下降至$0$被二极管截断，即$I_0 = I_\text{final} = 0$。</li>
+<ol type="1">
+<li>连续电流：PWM周期中的电流是连续的，即<span class="math inline">\(I_0 = I_\text{final}\)</span>。</li>
+<li>不连续电流：电流在PWM闭段下降至<span class="math inline">\(0\)</span>被二极管截断，即<span class="math inline">\(I_0 = I_\text{final} = 0\)</span>。</li>
 </ol>
 <p>两种情况需要分类讨论。</p>
-<h2 id="连续电流"><a href="#连续电流" class="headerlink" title="连续电流"></a>连续电流</h2><p>由$I_0 = I_\text{final}$，将$I_\text{final}$展开：<br>$$<br>I_0 = I_\text{final} = e_\text{off}(e_\text{on}I_0 + (1 - e_\text{on})I_\text{on}) + (1 - e_\text{off})I_\text{off}<br>$$<br>解出$I_0$：<br>$$<br>I_0 = \frac{e_\text{off}(I_\text{off} + (e_\text{on} - 1)I_\text{on}) - I_\text{off}}{e_\text{off}e_\text{on} - 1}<br>$$</p>
-<h2 id="不连续电流"><a href="#不连续电流" class="headerlink" title="不连续电流"></a>不连续电流</h2><p>这个时候我们知道$I_0 = I_\text{final} = 0$，由$I_\text{final}$的计算式我们可以反解出$t_\text{off}$：<br>$$<br>t_\text{off} = -\frac{L}{R}\ln\left(-\frac{I_\text{off}}{I_\text{max} - I_\text{off}}\right)<br>$$<br><strong>从实现上来说，我们先假定$t_\text{off} = t_\text{pwm} - t_\text{on}$（即假设没有二极管），计算出$I_\text{final}$，检查它的正负性，来判断电流是否被截断</strong>。</p>
-<h2 id="平均电流计算"><a href="#平均电流计算" class="headerlink" title="平均电流计算"></a>平均电流计算</h2><p>最后，我们结合计算出来的$ t_\text{on}, t_\text{off}$，以及开闭段计算出来的两个积分，我们终于可以计算PWM过程中的平均电流：<br>$$<br>\overline{I} = f_\text{pwm}\left(t_\text{on}\left(I_\text{on} - \frac{(1 - e_\text{on})(I_0 - I_\text{on})}{c_\text{on}}\right) + t_\text{off}\left(I_\text{off} - \frac{(1 - e_\text{off})(I_\text{max} - I_\text{off})}{c_\text{off}}\right)\right)<br>$$<br>这也是我们模型计算的最终结果。</p>
+<h2 id="连续电流">连续电流</h2>
+<p>由<span class="math inline">\(I_0 = I_\text{final}\)</span>，将<span class="math inline">\(I_\text{final}\)</span>展开： <span class="math display">\[
+I_0 = I_\text{final} = e_\text{off}(e_\text{on}I_0 + (1 - e_\text{on})I_\text{on}) + (1 - e_\text{off})I_\text{off}
+\]</span> 解出<span class="math inline">\(I_0\)</span>： <span class="math display">\[
+I_0 = \frac{e_\text{off}(I_\text{off} + (e_\text{on} - 1)I_\text{on}) - I_\text{off}}{e_\text{off}e_\text{on} - 1}
+\]</span></p>
+<h2 id="不连续电流">不连续电流</h2>
+<p>这个时候我们知道<span class="math inline">\(I_0 = I_\text{final} = 0\)</span>，由<span class="math inline">\(I_\text{final}\)</span>的计算式我们可以反解出<span class="math inline">\(t_\text{off}\)</span>： <span class="math display">\[
+t_\text{off} = -\frac{L}{R}\ln\left(-\frac{I_\text{off}}{I_\text{max} - I_\text{off}}\right)
+\]</span> <strong>从实现上来说，我们先假定<span class="math inline">\(t_\text{off} = t_\text{pwm} - t_\text{on}\)</span>（即假设没有二极管），计算出<span class="math inline">\(I_\text{final}\)</span>，检查它的正负性，来判断电流是否被截断</strong>。</p>
+<h2 id="平均电流计算">平均电流计算</h2>
+<p>最后，我们结合计算出来的$ t_, t_$，以及开闭段计算出来的两个积分，我们终于可以计算PWM过程中的平均电流： <span class="math display">\[
+\overline{I} = f_\text{pwm}\left(t_\text{on}\left(I_\text{on} - \frac{(1 - e_\text{on})(I_0 - I_\text{on})}{c_\text{on}}\right) + t_\text{off}\left(I_\text{off} - \frac{(1 - e_\text{off})(I_\text{max} - I_\text{off})}{c_\text{off}}\right)\right)
+\]</span> 这也是我们模型计算的最终结果。</p>
 <p><strong>在实际的实现当中需要考虑更多的细节，比如说转速的方向，命令的方向等等……并不总是如以上的公式那么简单，是一项艰苦的体力劳动，具体可以参考In The Zone下的model.c</strong>。</p>
-<h2 id="逆向计算"><a href="#逆向计算" class="headerlink" title="逆向计算"></a>逆向计算</h2><p>很多时候我们不仅需要计算马达一定情况下的电流，<strong>更需要计算马达在某一状态下为了达到某一指定电流（扭矩）所需要的指令大小。</strong>例如：</p>
-<ol>
+<h2 id="逆向计算">逆向计算</h2>
+<p>很多时候我们不仅需要计算马达一定情况下的电流，<strong>更需要计算马达在某一状态下为了达到某一指定电流（扭矩）所需要的指令大小。</strong>例如：</p>
+<ol type="1">
 <li>计算空载情况下马达到达某一速度所需要的指令值（精确的马达线性化）</li>
 <li>把PID的输出看做目标扭矩使用模型再反解出指令。</li>
 </ol>
 <p>针对这个需求，因为马达曲线直观上总是单调的，因此理论上你总可以根据数学反推推出一个公式，但是由于模型当中牵涉到了分类讨论（电流的连续性），因此较为复杂。利用马达曲线的单调性，二分不失为一个更好的做法。由于指令的范围不大，我们至多只需要二分七八次即可。</p>
 <p><strong>注意：模型的计算在Cortex上还是较为耗时间的，实际当中根据当前电压计算一次完整的马达曲线需要4秒左右，优化常数，提高模型计算的效率一直是一个大问题，这也是为什么在实际应用中也许tanh线性化等计算更快的线性化的方法会更好的原因。</strong></p>
-<h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p>这是真实的速度-指令曲线（空载）：</p>
-<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/12974510.jpg"></p>
+<h2 id="结果">结果</h2>
+<p>这是真实的速度-指令曲线（空载）：</p>
+<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/12974510.jpg" /></p>
 <p>这是使用模型计算的速度-指令曲线：</p>
-<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/17697936.jpg"></p>
+<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/17697936.jpg" /></p>
 <p>两者几乎一致，说明建模正确。</p>
-<h1 id="参数测定"><a href="#参数测定" class="headerlink" title="参数测定"></a>参数测定</h1><h2 id="马达内阻"><a href="#马达内阻" class="headerlink" title="马达内阻"></a>马达内阻</h2><p>使用伏安法，我们首先需要测量出马达在<strong>127命令下堵转电流</strong>$I_\text{stall}$，127命令是为了尽可能消除电感的影响（即PWM全开），堵转是为了避免电能转化为机械能消耗掉，则根据开段分析当中的<br>$$<br>U_\text b - I(t)(R+R_\text s) - U_\text L - U_\text {bemf} = 0<br>$$<br>此时$U_\text L = U_\text{bemf} = 0, I(t) = I_\text{stall}$，可反解出<br>$$<br>R = \frac{U_\text b}{I_\text{stall}} - R_\text s<br>$$</p>
-<h2 id="反电动势常数"><a href="#反电动势常数" class="headerlink" title="反电动势常数"></a>反电动势常数</h2><p>我们知道$U_\text{bemf} = K_\text e\omega$，其中$\omega$是转速， $K_\text e$为反电动势常数，为了测定其值，我们测量出马达在<strong>127命令无负载运转电流</strong>$I_\text{free}$和此时的转速$\omega_\text{free}$（单位不论，但是需要保持统一），由<br>$$<br>U_\text b - I(t)(R+R_\text s) - U_\text L - U_\text {bemf} = 0<br>$$<br>此时$U_\text L = 0, I(t) = I_\text{free}$，解得<br>$$<br>U_\text{bemf} = U_\text b - I_\text{free}(R + R_\text s)<br>$$<br>那么<br>$$<br>\begin{aligned}<br>K_\text e &amp;= \frac{U_\text b - I_\text{free}(R + R_\text s)}{\omega_\text{free}} \<br>&amp;= \left(1 - \frac{I_\text{free}}{I_\text{stall}}\right)\frac{U_\text b}{\omega_\text{free}}<br>\end{aligned}<br>$$</p>
+<h1 id="参数测定">参数测定</h1>
+<h2 id="马达内阻">马达内阻</h2>
+<p>使用伏安法，我们首先需要测量出马达在<strong>127命令下堵转电流</strong><span class="math inline">\(I_\text{stall}\)</span>，127命令是为了尽可能消除电感的影响（即PWM全开），堵转是为了避免电能转化为机械能消耗掉，则根据开段分析当中的 <span class="math display">\[
+U_\text b - I(t)(R+R_\text s) - U_\text L - U_\text {bemf} = 0
+\]</span> 此时<span class="math inline">\(U_\text L = U_\text{bemf} = 0, I(t) = I_\text{stall}\)</span>，可反解出 <span class="math display">\[
+R = \frac{U_\text b}{I_\text{stall}} - R_\text s
+\]</span></p>
+<h2 id="反电动势常数">反电动势常数</h2>
+<p>我们知道<span class="math inline">\(U_\text{bemf} = K_\text e\omega\)</span>，其中<span class="math inline">\(\omega\)</span>是转速， <span class="math inline">\(K_\text e\)</span>为反电动势常数，为了测定其值，我们测量出马达在<strong>127命令无负载运转电流</strong><span class="math inline">\(I_\text{free}\)</span>和此时的转速<span class="math inline">\(\omega_\text{free}\)</span>（单位不论，但是需要保持统一），由 <span class="math display">\[
+U_\text b - I(t)(R+R_\text s) - U_\text L - U_\text {bemf} = 0
+\]</span> 此时<span class="math inline">\(U_\text L = 0, I(t) = I_\text{free}\)</span>，解得 <span class="math display">\[
+U_\text{bemf} = U_\text b - I_\text{free}(R + R_\text s)
+\]</span> 那么 <span class="math display">\[
+\begin{aligned}
+K_\text e &amp;= \frac{U_\text b - I_\text{free}(R + R_\text s)}{\omega_\text{free}} \\
+&amp;= \left(1 - \frac{I_\text{free}}{I_\text{stall}}\right)\frac{U_\text b}{\omega_\text{free}}
+\end{aligned}
+\]</span></p>
 
     </div>
 
@@ -484,7 +559,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

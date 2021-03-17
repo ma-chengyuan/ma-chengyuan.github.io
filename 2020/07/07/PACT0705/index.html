@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="什么是线性规划？线性规划，简单地来说就是在一系列线性约束下最优化一个线性函数的过程。 例如如下就是一个线性规划问题：$$\begin{aligned}    \text{minimize}\quad &amp;7x_1+4x_2+3x_3\    \text{subject to}\quad &amp;4x_1+2x_2-x_3\ge 50 \    &amp;2x_1+x_2+3x_3\ge 2">
+<meta name="description" content="什么是线性规划？ 线性规划，简单地来说就是在一系列线性约束下最优化一个线性函数的过程。 例如如下就是一个线性规划问题： \[ \begin{aligned}     \text{minimize}\quad &amp;7x_1+4x_2+3x_3\\     \text{subject to}\quad &amp;4x_1+2x_2-x_3\ge 50 \\     &amp;2x_1">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PACT 07&#x2F;05 我终于明白线性规划对偶是怎么回事了！">
 <meta property="og:url" content="https://alan20210202.github.io/2020/07/07/PACT0705/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="什么是线性规划？线性规划，简单地来说就是在一系列线性约束下最优化一个线性函数的过程。 例如如下就是一个线性规划问题：$$\begin{aligned}    \text{minimize}\quad &amp;7x_1+4x_2+3x_3\    \text{subject to}\quad &amp;4x_1+2x_2-x_3\ge 50 \    &amp;2x_1+x_2+3x_3\ge 2">
+<meta property="og:description" content="什么是线性规划？ 线性规划，简单地来说就是在一系列线性约束下最优化一个线性函数的过程。 例如如下就是一个线性规划问题： \[ \begin{aligned}     \text{minimize}\quad &amp;7x_1+4x_2+3x_3\\     \text{subject to}\quad &amp;4x_1+2x_2-x_3\ge 50 \\     &amp;2x_1">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-07-07T13:05:04.450Z">
 <meta property="article:modified_time" content="2020-07-12T03:14:36.938Z">
@@ -49,7 +49,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>PACT 07/05 我终于明白线性规划对偶是怎么回事了！ | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -170,12 +171,14 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">什么是线性规划？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%AF%B9%E5%81%B6%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">为什么要对偶？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%92%E8%A1%A5%E6%9D%BE%E5%BC%9B%E6%9D%A1%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">互补松弛条件</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92"><span class="nav-number">1.</span> <span class="nav-text">什么是线性规划？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%AF%B9%E5%81%B6"><span class="nav-number">2.</span> <span class="nav-text">为什么要对偶？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%92%E8%A1%A5%E6%9D%BE%E5%BC%9B%E6%9D%A1%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">互补松弛条件</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -241,7 +244,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/07/PACT0705/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -289,29 +292,84 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="什么是线性规划？"><a href="#什么是线性规划？" class="headerlink" title="什么是线性规划？"></a>什么是线性规划？</h1><p>线性规划，简单地来说就是在一系列线性约束下最优化一个线性函数的过程。</p>
-<p>例如如下就是一个线性规划问题：<br>$$<br>\begin{aligned}<br>    \text{minimize}\quad &amp;7x_1+4x_2+3x_3\<br>    \text{subject to}\quad &amp;4x_1+2x_2-x_3\ge 50 \<br>    &amp;2x_1+x_2+3x_3\ge 20 \<br>    &amp;x_1,x_2,x_3 \ge 0<br>\end{aligned}<br>$$<br>这部分自己很早以前就会了。</p>
+        <h1 id="什么是线性规划">什么是线性规划？</h1>
+<p>线性规划，简单地来说就是在一系列线性约束下最优化一个线性函数的过程。</p>
+<p>例如如下就是一个线性规划问题： <span class="math display">\[
+\begin{aligned}
+    \text{minimize}\quad &amp;7x_1+4x_2+3x_3\\
+    \text{subject to}\quad &amp;4x_1+2x_2-x_3\ge 50 \\
+    &amp;2x_1+x_2+3x_3\ge 20 \\
+    &amp;x_1,x_2,x_3 \ge 0
+\end{aligned}
+\]</span> 这部分自己很早以前就会了。</p>
 <p>在近似算法设计当中关于线性规划重要的一点是：<strong>它是可以在多项式时间内求得最优解的</strong>。具体的方法对于我们不重要，可以使椭圆形法或者其他内点法，反正只要知道可以就行了——我们就指望着它来帮助我们设计近似算法呢。</p>
-<h1 id="为什么要对偶？"><a href="#为什么要对偶？" class="headerlink" title="为什么要对偶？"></a>为什么要对偶？</h1><p>对于一个最小化（最大化类似）的线性规划，我们问一个问题：</p>
+<h1 id="为什么要对偶">为什么要对偶？</h1>
+<p>对于一个最小化（最大化类似）的线性规划，我们问一个问题：</p>
 <blockquote>
-<p>目标函数是否可以$\le \alpha$？</p>
+<p>目标函数是否可以<span class="math inline">\(\le \alpha\)</span>？</p>
 </blockquote>
-<p>答案如果是肯定的，这个问题有没有<strong>一个简短的肯定证明</strong>（Yes Certificate）？显然是有的：我们只要把一组目标函数是$\alpha$的变量取值写出来，对方很快就可以验证我们的正确性。（“简短”与“很快”均指多项式空间与时间内，有简短肯定证明的问题被称为$\mathsf{NP}$问题）</p>
-<p>那答案如果是否定的呢？这个问题有没有<strong>一个简短的否定证明</strong>（No Certificate）？直觉上这就难了。（有简短否定证明的问题被称为$\textsf{co-NP}$问题，它和$\mathsf{NP}$的关系是至今计算机界悬而未决的）</p>
-<p>幸好我们知道线性规划$\in \mathsf{P}$，而$\mathsf{P}\subseteq \textsf{NP} \cap \textsf{co-NP}$。也就是说确实是有否定回答的——是什么呢？（嘛，其实对于多项式时间算法，把算法的过程作为否定证明也可以算是“简短”的，因为一样的算法可以在多项式时间内验证它）</p>
-<p>如果我们可以给目标函数一个$&gt;\alpha$的下界，不就证明目标函数不可能$\le \alpha$了吗？</p>
+<p>答案如果是肯定的，这个问题有没有<strong>一个简短的肯定证明</strong>（Yes Certificate）？显然是有的：我们只要把一组目标函数是<span class="math inline">\(\alpha\)</span>的变量取值写出来，对方很快就可以验证我们的正确性。（“简短”与“很快”均指多项式空间与时间内，有简短肯定证明的问题被称为<span class="math inline">\(\mathsf{NP}\)</span>问题）</p>
+<p>那答案如果是否定的呢？这个问题有没有<strong>一个简短的否定证明</strong>（No Certificate）？直觉上这就难了。（有简短否定证明的问题被称为<span class="math inline">\(\textsf{co-NP}\)</span>问题，它和<span class="math inline">\(\mathsf{NP}\)</span>的关系是至今计算机界悬而未决的）</p>
+<p>幸好我们知道线性规划<span class="math inline">\(\in \mathsf{P}\)</span>，而<span class="math inline">\(\mathsf{P}\subseteq \textsf{NP} \cap \textsf{co-NP}\)</span>。也就是说确实是有否定回答的——是什么呢？（嘛，其实对于多项式时间算法，把算法的过程作为否定证明也可以算是“简短”的，因为一样的算法可以在多项式时间内验证它）</p>
+<p>如果我们可以给目标函数一个<span class="math inline">\(&gt;\alpha\)</span>的下界，不就证明目标函数不可能<span class="math inline">\(\le \alpha\)</span>了吗？</p>
 <p>目标函数的下界是什么？</p>
-<p>$0$？这个下界太平凡了。</p>
-<p>观察系数，因为$x_1,x_2,x_3\ge 0$，而约束二式的各项系数都不大于目标函数的各项系数，因此<br>$$<br>\begin{aligned}<br>    7x_1+4x_2+3x_3 \ge 4x_1+2x_2-x_3 \ge 50 \<br>    7x_1+4x_2+3x_3 \ge 2x_1+x_2+3x_3 \ge 20 \<br>\end{aligned}<br>$$<br>这个下界可以更好：<br>$$<br>7x_1+4x_2+3x_3 \ge (4x_1+2x_2-x_3)+(2x_1+x_2+3x_3) \ge 70<br>$$<br>或者更好？<br>$$<br>7x_1+4x_2+3x_3 \ge (4x_1+2x_2-x_3)+\frac{4}{3}(2x_1+x_2+3x_3) \ge \frac{230}{3}<br>$$<br>这样下去会不会没完没了？不妨设两个约束的系数是$y_1,y_2\ge0$，那我们的下界就是$50y_1+20y_2$。<br>$$<br>\begin{aligned}<br>    7x_1+4x_2+3x_3 &amp;\ge y_1(4x_1+2x_2-x_3)+y_2(2x_1+x_2+3x_3) \<br>        &amp;=(4y_1+2y_2)x_1+(2y_1+y_2)x_2+(-y_1+3y_2)x_3 \<br>        &amp;\ge 50y_1+20y_2<br>\end{aligned}<br>$$<br>为了确保我们上面的推理没有问题，约束和的各项系数不应大于目标函数的各项系数，因此又有$4y_1+2y_2\le 7$，$2y_1+y_2\le 4$，$-y_1+3y_2\le 3$。我们希望下界越紧越好，所以$50y_1+20y_2$要越大越好——我们想到了什么？另一个线性规划！<br>$$<br>\begin{aligned}<br>    \text{maximize}\quad &amp;50y_1+20y_2\<br>    \text{subject to}\quad &amp;4y_1+2y_2\le 7 \<br>    &amp;2y_1+y_2\le 4 \<br>    &amp;-y_1+3y_2\le 3 \<br>    &amp;y_1,y_2\ge 0<br>\end{aligned}<br>$$<br>这就是所谓的“对偶线性规划”。如果我们给出一组$y_1,y_2$使得这个的目标函数$&gt;\alpha$，那么我们原来规划的目标函数就不可能$\le \alpha$，即这就是我们所寻找的简短否定证明。</p>
+<p><span class="math inline">\(0\)</span>？这个下界太平凡了。</p>
+<p>观察系数，因为<span class="math inline">\(x_1,x_2,x_3\ge 0\)</span>，而约束二式的各项系数都不大于目标函数的各项系数，因此 <span class="math display">\[
+\begin{aligned}
+    7x_1+4x_2+3x_3 \ge 4x_1+2x_2-x_3 \ge 50 \\
+    7x_1+4x_2+3x_3 \ge 2x_1+x_2+3x_3 \ge 20 \\
+\end{aligned}
+\]</span> 这个下界可以更好： <span class="math display">\[
+7x_1+4x_2+3x_3 \ge (4x_1+2x_2-x_3)+(2x_1+x_2+3x_3) \ge 70
+\]</span> 或者更好？ <span class="math display">\[
+7x_1+4x_2+3x_3 \ge (4x_1+2x_2-x_3)+\frac{4}{3}(2x_1+x_2+3x_3) \ge \frac{230}{3}
+\]</span> 这样下去会不会没完没了？不妨设两个约束的系数是<span class="math inline">\(y_1,y_2\ge0\)</span>，那我们的下界就是<span class="math inline">\(50y_1+20y_2\)</span>。 <span class="math display">\[
+\begin{aligned}
+    7x_1+4x_2+3x_3 &amp;\ge y_1(4x_1+2x_2-x_3)+y_2(2x_1+x_2+3x_3) \\
+        &amp;=(4y_1+2y_2)x_1+(2y_1+y_2)x_2+(-y_1+3y_2)x_3 \\
+        &amp;\ge 50y_1+20y_2 
+\end{aligned}
+\]</span> 为了确保我们上面的推理没有问题，约束和的各项系数不应大于目标函数的各项系数，因此又有<span class="math inline">\(4y_1+2y_2\le 7\)</span>，<span class="math inline">\(2y_1+y_2\le 4\)</span>，<span class="math inline">\(-y_1+3y_2\le 3\)</span>。我们希望下界越紧越好，所以<span class="math inline">\(50y_1+20y_2\)</span>要越大越好——我们想到了什么？另一个线性规划！ <span class="math display">\[
+\begin{aligned}
+    \text{maximize}\quad &amp;50y_1+20y_2\\
+    \text{subject to}\quad &amp;4y_1+2y_2\le 7 \\
+    &amp;2y_1+y_2\le 4 \\
+    &amp;-y_1+3y_2\le 3 \\
+    &amp;y_1,y_2\ge 0
+\end{aligned}
+\]</span> 这就是所谓的“对偶线性规划”。如果我们给出一组<span class="math inline">\(y_1,y_2\)</span>使得这个的目标函数<span class="math inline">\(&gt;\alpha\)</span>，那么我们原来规划的目标函数就不可能<span class="math inline">\(\le \alpha\)</span>，即这就是我们所寻找的简短否定证明。</p>
 <p>如果我们要求这个对偶规划的目标上界（也就是再对偶），不难发现我们又回到了最初的线性规划。</p>
-<p>而由我们构造对偶规划的过程，不难明白为什么所有变量都要非负，为什么对偶问题的变量数等于原问题的约束数，约束数等于原问题的变量数，为什么最小化问题的约数要转化成$\ge$的形式，最大化问题的约数要转化成$\le$的形式，为什么对偶前后不等号方向会变化等问题。</p>
+<p>而由我们构造对偶规划的过程，不难明白为什么所有变量都要非负，为什么对偶问题的变量数等于原问题的约束数，约束数等于原问题的变量数，为什么最小化问题的约数要转化成<span class="math inline">\(\ge\)</span>的形式，最大化问题的约数要转化成<span class="math inline">\(\le\)</span>的形式，为什么对偶前后不等号方向会变化等问题。</p>
 <p>一旦知道对偶的目的，这些步骤豁然开朗，而这些在大多教科书里是略过不讲的，或者先抛给你对偶的方式，再把这个目的冠以“弱对偶定理”的名号塞给你（此处点名《算法导论》），或许我们在阅读证明的时候能够明白这些步骤的用处，但是不免还是有些云里雾里。</p>
-<p>但是严谨地走一遍还是必要的，此处给出线性规划对偶的定义：对于线性规划<br>$$<br>\begin{aligned}<br>    \text{minimize}\quad &amp;\sum_{j=1}^nc_jx_j\<br>    \text{subject to}\quad &amp;\sum_{j=1}^na_{ij}x_j\ge b_i \quad \forall i =1,2,\cdots,m \<br>    &amp;x_1, x_2, \cdots, x_n\ge0<br>\end{aligned}<br>$$<br>其对偶线性规划（Dual）为<br>$$<br>\begin{aligned}<br>    \text{maximize}\quad &amp;\sum_{i=1}^mb_iy_i\<br>    \text{subject to}\quad &amp;\sum_{i=1}^ma_{ij}y_i\le c_j \quad \forall j =1,2,\cdots,n \<br>    &amp;y_1, y_2, \cdots, y_m\ge0<br>\end{aligned}<br>$$<br>此时一开始的线性规划被称为主线性规划（Primal）。反之亦然。</p>
-<p>所谓<strong>弱对偶原理</strong><br>$$<br>\sum_{j=1}^nc_jx_j \ge\sum_{i=1}^mb_iy_i<br>$$<br>的证明：<br>$$<br>\begin{aligned}<br>    \sum_{j=1}^nc_jx_j &amp;\ge \sum_{j=1}^n\left(\sum_{i=1}^ma_{ij}y_i\right)x_j \<br>    &amp;= \sum_{i=1}^m\left(\sum_{j=1}^na_{ij}x_j\right)y_i \<br>    &amp;\ge \sum_{i=1}^m b_iy_i<br>\end{aligned}<br>$$<br>这其实就是我们之前例子中论述的严谨版本，注意到两个不等号之所以成立，不仅仅是因为$\sum_{i=1}^ma_{ij}y_i \le c_j$以及$\sum_{j=1}^na_{ij}x_j\ge b_i$，还有$x_j\ge 0$和$y_i\ge 0$，因此变量必须是非负的。</p>
+<p>但是严谨地走一遍还是必要的，此处给出线性规划对偶的定义：对于线性规划 <span class="math display">\[
+\begin{aligned}
+    \text{minimize}\quad &amp;\sum_{j=1}^nc_jx_j\\
+    \text{subject to}\quad &amp;\sum_{j=1}^na_{ij}x_j\ge b_i \quad \forall i =1,2,\cdots,m \\
+    &amp;x_1, x_2, \cdots, x_n\ge0 
+\end{aligned}
+\]</span> 其对偶线性规划（Dual）为 <span class="math display">\[
+\begin{aligned}
+    \text{maximize}\quad &amp;\sum_{i=1}^mb_iy_i\\
+    \text{subject to}\quad &amp;\sum_{i=1}^ma_{ij}y_i\le c_j \quad \forall j =1,2,\cdots,n \\
+    &amp;y_1, y_2, \cdots, y_m\ge0 
+\end{aligned}
+\]</span> 此时一开始的线性规划被称为主线性规划（Primal）。反之亦然。</p>
+<p>所谓<strong>弱对偶原理</strong> <span class="math display">\[
+\sum_{j=1}^nc_jx_j \ge\sum_{i=1}^mb_iy_i
+\]</span> 的证明： <span class="math display">\[
+\begin{aligned}
+    \sum_{j=1}^nc_jx_j &amp;\ge \sum_{j=1}^n\left(\sum_{i=1}^ma_{ij}y_i\right)x_j \\
+    &amp;= \sum_{i=1}^m\left(\sum_{j=1}^na_{ij}x_j\right)y_i \\
+    &amp;\ge \sum_{i=1}^m b_iy_i
+\end{aligned}
+\]</span> 这其实就是我们之前例子中论述的严谨版本，注意到两个不等号之所以成立，不仅仅是因为<span class="math inline">\(\sum_{i=1}^ma_{ij}y_i \le c_j\)</span>以及<span class="math inline">\(\sum_{j=1}^na_{ij}x_j\ge b_i\)</span>，还有<span class="math inline">\(x_j\ge 0\)</span>和<span class="math inline">\(y_i\ge 0\)</span>，因此变量必须是非负的。</p>
 <p>除此以外，更强的一个结论被称为<strong>强对偶原理</strong>：对偶规划与主规划的最优解相等。证明参见《算法导论》，在近似算法设计中，弱对偶原理才是最重要的。</p>
-<h1 id="互补松弛条件"><a href="#互补松弛条件" class="headerlink" title="互补松弛条件"></a>互补松弛条件</h1><p>令$(x_1^*,x_2^*,\cdots,x_n^*)$与$(y_1^*,y_2^*,\cdots,y_m^*)$为主线性规划和对偶线性规划的最优解，强对偶原理表明<br>$$<br>\sum_{j=1}^nc_jx_j^*=\sum_{i=1}^mb_iy_i^*<br>$$<br>回过头看我们弱对偶原理的证明过程，两个不等号必须同时取等，于是便得到两个条件，成为所谓的互补松弛条件（Complementary Slackness Condition）：</p>
-<p><strong>主互补松弛条件：</strong>$x_j^*=0$或者$\sum_{i=1}^ma_{ij}y_i =  c_j$，即要么变量为$0$，要么对偶规划里面的对应约束取等。</p>
-<p><strong>对偶互补松弛条件：</strong>$y_i^*=0$或者$\sum_{j=1}^na_{ij}x_j = b_i$，即要么变量为$0$，要么主规划里面的对应约束取等。</p>
+<h1 id="互补松弛条件">互补松弛条件</h1>
+<p>令<span class="math inline">\((x_1^*,x_2^*,\cdots,x_n^*)\)</span>与<span class="math inline">\((y_1^*,y_2^*,\cdots,y_m^*)\)</span>为主线性规划和对偶线性规划的最优解，强对偶原理表明 <span class="math display">\[
+\sum_{j=1}^nc_jx_j^*=\sum_{i=1}^mb_iy_i^*
+\]</span> 回过头看我们弱对偶原理的证明过程，两个不等号必须同时取等，于是便得到两个条件，成为所谓的互补松弛条件（Complementary Slackness Condition）：</p>
+<p><strong>主互补松弛条件：</strong><span class="math inline">\(x_j^*=0\)</span>或者<span class="math inline">\(\sum_{i=1}^ma_{ij}y_i = c_j\)</span>，即要么变量为<span class="math inline">\(0\)</span>，要么对偶规划里面的对应约束取等。</p>
+<p><strong>对偶互补松弛条件：</strong><span class="math inline">\(y_i^*=0\)</span>或者<span class="math inline">\(\sum_{j=1}^na_{ij}x_j = b_i\)</span>，即要么变量为<span class="math inline">\(0\)</span>，要么主规划里面的对应约束取等。</p>
 
     </div>
 
@@ -404,7 +462,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

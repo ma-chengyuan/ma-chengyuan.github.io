@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="矩阵向量相乘的意义这部分和LU分解没有多大关系，但是GS的书里一直强调这种理解，想必是极有用的。 当矩阵左乘一个列向量，其结果等同于矩阵每一列以列向量为权的线性组合，例如$$\begin{pmatrix}    1&amp;2&amp;3\    4&amp;5&amp;6\    7&amp;8&amp;9\\end{pmatrix}\begin{pmatrix}1\2\3\end{pmatri">
+<meta name="description" content="矩阵向量相乘的意义 这部分和LU分解没有多大关系，但是GS的书里一直强调这种理解，想必是极有用的。 当矩阵左乘一个列向量，其结果等同于矩阵每一列以列向量为权的线性组合，例如 \[ \begin{pmatrix}     1&amp;2&amp;3\\     4&amp;5&amp;6\\     7&amp;8&amp;9\\ \end{pmatrix} \begin{pmatr">
 <meta property="og:type" content="article">
 <meta property="og:title" content="LU分解笔记">
 <meta property="og:url" content="https://alan20210202.github.io/2019/12/21/LU/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="矩阵向量相乘的意义这部分和LU分解没有多大关系，但是GS的书里一直强调这种理解，想必是极有用的。 当矩阵左乘一个列向量，其结果等同于矩阵每一列以列向量为权的线性组合，例如$$\begin{pmatrix}    1&amp;2&amp;3\    4&amp;5&amp;6\    7&amp;8&amp;9\\end{pmatrix}\begin{pmatrix}1\2\3\end{pmatri">
+<meta property="og:description" content="矩阵向量相乘的意义 这部分和LU分解没有多大关系，但是GS的书里一直强调这种理解，想必是极有用的。 当矩阵左乘一个列向量，其结果等同于矩阵每一列以列向量为权的线性组合，例如 \[ \begin{pmatrix}     1&amp;2&amp;3\\     4&amp;5&amp;6\\     7&amp;8&amp;9\\ \end{pmatrix} \begin{pmatr">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-12-21T06:04:53.610Z">
 <meta property="article:modified_time" content="2019-12-21T06:19:14.955Z">
@@ -48,7 +48,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>LU分解笔记 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -169,12 +170,14 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E5%90%91%E9%87%8F%E7%9B%B8%E4%B9%98%E7%9A%84%E6%84%8F%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">矩阵向量相乘的意义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%9D%E7%AD%89%E8%A1%8C%E5%8F%98%E6%8D%A2%E7%9A%84%E7%9F%A9%E9%98%B5%E8%A1%A8%E7%A4%BA"><span class="nav-number">2.</span> <span class="nav-text">初等行变换的矩阵表示</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E7%9A%84LU%E5%88%86%E8%A7%A3"><span class="nav-number">3.</span> <span class="nav-text">矩阵的LU分解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E7%9A%84LDU%E5%88%86%E8%A7%A3"><span class="nav-number">4.</span> <span class="nav-text">矩阵的LDU分解</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E5%90%91%E9%87%8F%E7%9B%B8%E4%B9%98%E7%9A%84%E6%84%8F%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">矩阵向量相乘的意义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%9D%E7%AD%89%E8%A1%8C%E5%8F%98%E6%8D%A2%E7%9A%84%E7%9F%A9%E9%98%B5%E8%A1%A8%E7%A4%BA"><span class="nav-number">2.</span> <span class="nav-text">初等行变换的矩阵表示</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E7%9A%84lu%E5%88%86%E8%A7%A3"><span class="nav-number">3.</span> <span class="nav-text">矩阵的LU分解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E7%9A%84ldu%E5%88%86%E8%A7%A3"><span class="nav-number">4.</span> <span class="nav-text">矩阵的LDU分解</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -240,7 +243,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/12/21/LU/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -282,43 +285,200 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="矩阵向量相乘的意义"><a href="#矩阵向量相乘的意义" class="headerlink" title="矩阵向量相乘的意义"></a>矩阵向量相乘的意义</h1><p>这部分和LU分解没有多大关系，但是GS的书里一直强调这种理解，想必是极有用的。</p>
-<p>当矩阵左乘一个列向量，其结果等同于矩阵每一列以列向量为权的线性组合，例如<br>$$<br>\begin{pmatrix}<br>    1&amp;2&amp;3\<br>    4&amp;5&amp;6\<br>    7&amp;8&amp;9\<br>\end{pmatrix}<br>\begin{pmatrix}<br>1\<br>2\<br>3<br>\end{pmatrix}<br>=<br>1\begin{pmatrix}<br>1\4\7<br>\end{pmatrix}<br>+2\begin{pmatrix}<br>2\5\8<br>\end{pmatrix}<br>+3\begin{pmatrix}<br>3\6\9<br>\end{pmatrix}<br>$$<br>类似地，当矩阵右乘一个行向量，其结果等于矩阵每一行以行向量为权的线性组合，例如<br>$$<br>\begin{pmatrix}<br>1&amp;2&amp;3<br>\end{pmatrix}<br>\begin{pmatrix}<br>    1&amp;2&amp;3\<br>    4&amp;5&amp;6\<br>    7&amp;8&amp;9\<br>\end{pmatrix}<br>=\begin{matrix}<br>1\begin{pmatrix}<br>1&amp;2&amp;3<br>\end{pmatrix}\<br>+\<br>2\begin{pmatrix}<br>4&amp;5&amp;6<br>\end{pmatrix}\+\<br>3\begin{pmatrix}<br>7&amp;8&amp;9<br>\end{pmatrix}<br>\end{matrix}<br>$$<br>多列，多行的情况也可以以此类推。</p>
-<h1 id="初等行变换的矩阵表示"><a href="#初等行变换的矩阵表示" class="headerlink" title="初等行变换的矩阵表示"></a>初等行变换的矩阵表示</h1><p>注意到初等行变换可以使用矩阵进行表示，例如在一个$3\times 3$的矩阵当中把第$1$行的$3$倍加到第二行就可以表示为：<br>$$<br>\begin{pmatrix}<br>1&amp;0&amp;0 \<br>3&amp;1&amp;0 \<br>0&amp;0&amp;1<br>\end{pmatrix}<br>\begin{pmatrix}<br>1&amp;2&amp;3 \<br>4&amp;5&amp;6 \<br>7&amp;8&amp;9<br>\end{pmatrix}<br>=\begin{pmatrix}<br>1&amp;2&amp;3 \<br>7&amp;11&amp;15 \<br>7&amp;8&amp;9<br>\end{pmatrix}<br>$$<br><strong>注意行变换的矩阵是左乘的，右乘就是列变换了！</strong></p>
-<p>具体来说，如果你把第$i$行的$k$倍加到第$j$行上，那么这个变换对应的矩阵就是在以单位矩阵为基础上$a_{j,i}=k$。</p>
-<p>初等行变换的矩阵常用符号$E$表示。</p>
-<p>由于初等行变换的意义，很容易就可以看出其逆矩阵就是把对应的元素取反，加上的我们就减回去：<br>$$<br>E=\begin{pmatrix}<br>1&amp;0&amp;0 \<br>3&amp;1&amp;0 \<br>0&amp;0&amp;1<br>\end{pmatrix}\Rightarrow<br>E^{-1}=\begin{pmatrix}<br>1&amp;0&amp;0 \<br>-3&amp;1&amp;0 \<br>0&amp;0&amp;1<br>\end{pmatrix}<br>$$</p>
-<h1 id="矩阵的LU分解"><a href="#矩阵的LU分解" class="headerlink" title="矩阵的LU分解"></a>矩阵的LU分解</h1><p>在学习初等行变换的矩阵表示之后再回头考虑我们对着$n\times n$矩阵$A$做消元得到上三角阵$U$的过程，我们就会发现，<strong>在消元过程不涉及交换两行的时候，</strong>消元过程可以表示为：<br>$$<br>E_{n,n-1}\cdots E_{31}E_{21}A=U<br>$$<br>其中$E_{21}$表示我们把$a_{21}$消为$0$所运用的行变换。</p>
-<p>注意到在消元的时候我们是按照$E_{21}, E_{31},\cdots$这个顺序消过来的，但是因为行变换是左乘，因此上式当中从左到右序号是反的。</p>
-<p>如果$A$确实可以顺顺利利地消成$U$，那说明$E_{n,n-1}\cdots E_{31}E_{21}$是可逆的，即：<br>$$<br>\begin{aligned}<br>A&amp;=(E_{n,n-1}\cdots E_{31}E_{21})^{-1}U\<br>&amp;=E_{21}^{-1}E_{31}^{-1}\cdots E_{n,n-1}^{-1}U</p>
-<p>\end{aligned}<br>$$<br>不妨令$L=E_{21}^{-1}E_{31}^{-1}\cdots E_{n,n-1}^{-1}$，则矩阵$A$可以写作：<br>$$<br>A=LU<br>$$<br>这就被称为矩阵$A$的$LU$分解。</p>
-<p>其中$U$是上三角阵无疑，而$L$，其字母暗示我们这是一个<strong>下三角阵</strong>。</p>
-<p>不仅如此，比如说对于$3$阶方阵消元共三步：<br>$$<br>E_{21}^{-1} = \begin{pmatrix}<br>1&amp;0&amp;0\<br>a&amp;1&amp;0\<br>0&amp;0&amp;1<br>\end{pmatrix}<br>,<br>E_{31}^{-1} = \begin{pmatrix}<br>1&amp;0&amp;0\<br>0&amp;1&amp;0\<br>b&amp;0&amp;1<br>\end{pmatrix}<br>,<br>E_{32}^{-1} = \begin{pmatrix}<br>1&amp;0&amp;0\<br>0&amp;1&amp;0\<br>0&amp;c&amp;1<br>\end{pmatrix}<br>$$<br>计算$L$可得<br>$$<br>L=\begin{pmatrix}<br>1&amp;0&amp;0\<br>a&amp;1&amp;0\<br>0&amp;0&amp;1<br>\end{pmatrix}\begin{pmatrix}<br>1&amp;0&amp;0\<br>0&amp;1&amp;0\<br>b&amp;0&amp;1<br>\end{pmatrix}\begin{pmatrix}<br>1&amp;0&amp;0\<br>0&amp;1&amp;0\<br>0&amp;c&amp;1<br>\end{pmatrix}=\begin{pmatrix}<br>1&amp;0&amp;0\<br>a&amp;1&amp;0\<br>b&amp;c&amp;1<br>\end{pmatrix}<br>$$<br>$L$在形式上就是把<strong>所有行变换矩阵“拼起来“</strong>！矩阵乘法平常都会把矩阵里面的数字形式破坏掉，这次为什么那么奇妙呢？</p>
+        <h1 id="矩阵向量相乘的意义">矩阵向量相乘的意义</h1>
+<p>这部分和LU分解没有多大关系，但是GS的书里一直强调这种理解，想必是极有用的。</p>
+<p>当矩阵左乘一个列向量，其结果等同于矩阵每一列以列向量为权的线性组合，例如 <span class="math display">\[
+\begin{pmatrix}
+    1&amp;2&amp;3\\
+    4&amp;5&amp;6\\
+    7&amp;8&amp;9\\
+\end{pmatrix}
+\begin{pmatrix}
+1\\
+2\\
+3
+\end{pmatrix}
+=
+1\begin{pmatrix}
+1\\4\\7
+\end{pmatrix}
++2\begin{pmatrix}
+2\\5\\8
+\end{pmatrix}
++3\begin{pmatrix}
+3\\6\\9
+\end{pmatrix}
+\]</span> 类似地，当矩阵右乘一个行向量，其结果等于矩阵每一行以行向量为权的线性组合，例如 <span class="math display">\[
+\begin{pmatrix}
+1&amp;2&amp;3
+\end{pmatrix}
+\begin{pmatrix}
+    1&amp;2&amp;3\\
+    4&amp;5&amp;6\\
+    7&amp;8&amp;9\\
+\end{pmatrix}
+=\begin{matrix}
+1\begin{pmatrix}
+1&amp;2&amp;3
+\end{pmatrix}\\
++\\
+2\begin{pmatrix}
+4&amp;5&amp;6
+\end{pmatrix}\\+\\
+3\begin{pmatrix}
+7&amp;8&amp;9
+\end{pmatrix}
+\end{matrix}
+\]</span> 多列，多行的情况也可以以此类推。</p>
+<h1 id="初等行变换的矩阵表示">初等行变换的矩阵表示</h1>
+<p>注意到初等行变换可以使用矩阵进行表示，例如在一个<span class="math inline">\(3\times 3\)</span>的矩阵当中把第<span class="math inline">\(1\)</span>行的<span class="math inline">\(3\)</span>倍加到第二行就可以表示为： <span class="math display">\[
+\begin{pmatrix}
+1&amp;0&amp;0 \\
+3&amp;1&amp;0 \\
+0&amp;0&amp;1
+\end{pmatrix}
+\begin{pmatrix}
+1&amp;2&amp;3 \\
+4&amp;5&amp;6 \\
+7&amp;8&amp;9
+\end{pmatrix}
+=\begin{pmatrix}
+1&amp;2&amp;3 \\
+7&amp;11&amp;15 \\
+7&amp;8&amp;9
+\end{pmatrix}
+\]</span> <strong>注意行变换的矩阵是左乘的，右乘就是列变换了！</strong></p>
+<p>具体来说，如果你把第<span class="math inline">\(i\)</span>行的<span class="math inline">\(k\)</span>倍加到第<span class="math inline">\(j\)</span>行上，那么这个变换对应的矩阵就是在以单位矩阵为基础上<span class="math inline">\(a_{j,i}=k\)</span>。</p>
+<p>初等行变换的矩阵常用符号<span class="math inline">\(E\)</span>表示。</p>
+<p>由于初等行变换的意义，很容易就可以看出其逆矩阵就是把对应的元素取反，加上的我们就减回去： <span class="math display">\[
+E=\begin{pmatrix}
+1&amp;0&amp;0 \\
+3&amp;1&amp;0 \\
+0&amp;0&amp;1
+\end{pmatrix}\Rightarrow 
+E^{-1}=\begin{pmatrix}
+1&amp;0&amp;0 \\
+-3&amp;1&amp;0 \\
+0&amp;0&amp;1
+\end{pmatrix}
+\]</span></p>
+<h1 id="矩阵的lu分解">矩阵的LU分解</h1>
+<p>在学习初等行变换的矩阵表示之后再回头考虑我们对着<span class="math inline">\(n\times n\)</span>矩阵<span class="math inline">\(A\)</span>做消元得到上三角阵<span class="math inline">\(U\)</span>的过程，我们就会发现，<strong>在消元过程不涉及交换两行的时候，</strong>消元过程可以表示为： <span class="math display">\[
+E_{n,n-1}\cdots E_{31}E_{21}A=U
+\]</span> 其中<span class="math inline">\(E_{21}\)</span>表示我们把<span class="math inline">\(a_{21}\)</span>消为<span class="math inline">\(0\)</span>所运用的行变换。</p>
+<p>注意到在消元的时候我们是按照<span class="math inline">\(E_{21}, E_{31},\cdots\)</span>这个顺序消过来的，但是因为行变换是左乘，因此上式当中从左到右序号是反的。</p>
+如果<span class="math inline">\(A\)</span>确实可以顺顺利利地消成<span class="math inline">\(U\)</span>，那说明<span class="math inline">\(E_{n,n-1}\cdots E_{31}E_{21}\)</span>是可逆的，即： $$
+<span class="math display">\[\begin{aligned}
+A&amp;=(E_{n,n-1}\cdots E_{31}E_{21})^{-1}U\\ 
+&amp;=E_{21}^{-1}E_{31}^{-1}\cdots E_{n,n-1}^{-1}U
+
+\end{aligned}\]</span>
+<p><span class="math display">\[
+不妨令$L=E_{21}^{-1}E_{31}^{-1}\cdots E_{n,n-1}^{-1}$，则矩阵$A$可以写作：
+\]</span> A=LU $$ 这就被称为矩阵<span class="math inline">\(A\)</span>的<span class="math inline">\(LU\)</span>分解。</p>
+<p>其中<span class="math inline">\(U\)</span>是上三角阵无疑，而<span class="math inline">\(L\)</span>，其字母暗示我们这是一个<strong>下三角阵</strong>。</p>
+<p>不仅如此，比如说对于<span class="math inline">\(3\)</span>阶方阵消元共三步： <span class="math display">\[
+E_{21}^{-1} = \begin{pmatrix}
+1&amp;0&amp;0\\
+a&amp;1&amp;0\\
+0&amp;0&amp;1
+\end{pmatrix}
+,
+E_{31}^{-1} = \begin{pmatrix}
+1&amp;0&amp;0\\
+0&amp;1&amp;0\\
+b&amp;0&amp;1
+\end{pmatrix}
+,
+E_{32}^{-1} = \begin{pmatrix}
+1&amp;0&amp;0\\
+0&amp;1&amp;0\\
+0&amp;c&amp;1
+\end{pmatrix}
+\]</span> 计算<span class="math inline">\(L\)</span>可得 <span class="math display">\[
+L=\begin{pmatrix}
+1&amp;0&amp;0\\
+a&amp;1&amp;0\\
+0&amp;0&amp;1
+\end{pmatrix}\begin{pmatrix}
+1&amp;0&amp;0\\
+0&amp;1&amp;0\\
+b&amp;0&amp;1
+\end{pmatrix}\begin{pmatrix}
+1&amp;0&amp;0\\
+0&amp;1&amp;0\\
+0&amp;c&amp;1
+\end{pmatrix}=\begin{pmatrix}
+1&amp;0&amp;0\\
+a&amp;1&amp;0\\
+b&amp;c&amp;1
+\end{pmatrix}
+\]</span> <span class="math inline">\(L\)</span>在形式上就是把<strong>所有行变换矩阵“拼起来“</strong>！矩阵乘法平常都会把矩阵里面的数字形式破坏掉，这次为什么那么奇妙呢？</p>
 <p><strong>从消元的角度，可以这么理解：</strong></p>
 <p>我们能够把两个行变换矩阵“拼”起来，当且仅当一个变换的结果不会改变另一个变换的源。</p>
-<p>什么意思？如果$E_1$把第$2$行的$3$倍加到第$2$行，$E_2$把第$1$行的$2$倍加到第$2$行。</p>
-<p>如果我们先做$E_1$再做$E_2$即$E_2E_1$，那么这个时候我们是可以直接拼起来的。因为先做的$E_1$没有改变$E_2$所依赖的第$2$行。但是先做$E_2$再做$E_1$即$E_1E_2$就不能直接拼起来，因为先做的$E_2$把$E_1$所依赖的第$2$行改掉了。</p>
-<p>然后我们发现在$LU$分解里面我们是先改第$n$行，再改第$n-1$行这样从下到上地变换上去的。改变第$n$行的变换只会依赖于前$n-1$行，因此出不了问题。</p>
+<p>什么意思？如果<span class="math inline">\(E_1\)</span>把第<span class="math inline">\(2\)</span>行的<span class="math inline">\(3\)</span>倍加到第<span class="math inline">\(2\)</span>行，<span class="math inline">\(E_2\)</span>把第<span class="math inline">\(1\)</span>行的<span class="math inline">\(2\)</span>倍加到第<span class="math inline">\(2\)</span>行。</p>
+<p>如果我们先做<span class="math inline">\(E_1\)</span>再做<span class="math inline">\(E_2\)</span>即<span class="math inline">\(E_2E_1\)</span>，那么这个时候我们是可以直接拼起来的。因为先做的<span class="math inline">\(E_1\)</span>没有改变<span class="math inline">\(E_2\)</span>所依赖的第<span class="math inline">\(2\)</span>行。但是先做<span class="math inline">\(E_2\)</span>再做<span class="math inline">\(E_1\)</span>即<span class="math inline">\(E_1E_2\)</span>就不能直接拼起来，因为先做的<span class="math inline">\(E_2\)</span>把<span class="math inline">\(E_1\)</span>所依赖的第<span class="math inline">\(2\)</span>行改掉了。</p>
+<p>然后我们发现在<span class="math inline">\(LU\)</span>分解里面我们是先改第<span class="math inline">\(n\)</span>行，再改第<span class="math inline">\(n-1\)</span>行这样从下到上地变换上去的。改变第<span class="math inline">\(n\)</span>行的变换只会依赖于前<span class="math inline">\(n-1\)</span>行，因此出不了问题。</p>
 <p><strong>从纯计算的角度，可以这么解释：</strong></p>
-<p>考虑矩阵乘法$L=EL’$，其中$E$是一个行变换矩阵且假设其中$E_{ik}=a$，$L’$是下三角阵。</p>
-<p>则考虑$L$第$i$行第$j$列的值$L_{ij}$（除了第$i$行，结果的其他行显然等于$L’$），必然是$E$的行向量与$L’$列向量之点乘：<br>$$<br>L_{ij}=\begin{pmatrix}<br>0 \<br>\vdots \<br>a\<br>\vdots \<br>\color{red}1\<br>\vdots\<br>0<br>\end{pmatrix}<br>\cdot<br>\begin{pmatrix}<br>0 \<br>\vdots \</p>
-<p>\color{blue}1 \<br>\vdots \<br>b \<br>c \<br>\vdots \<br>\end{pmatrix}<br>$$</p>
-<p>由于三角阵主对角线上都是$1$，在上式中左边向量里面的$\color{red}1$就是从上往下数第$i$个，右边向量里面的$\color{blue}1$就是从上往下数第$j$个。因为是下三角阵$\color{red}1$的下面都是$0$，$\color{blue}1$的上面也都是$0$。接下来讨论$\color{red}1$和$\color{blue} 1$的位置关系。</p>
+<p>考虑矩阵乘法<span class="math inline">\(L=EL&#39;\)</span>，其中<span class="math inline">\(E\)</span>是一个行变换矩阵且假设其中<span class="math inline">\(E_{ik}=a\)</span>，<span class="math inline">\(L&#39;\)</span>是下三角阵。</p>
+则考虑<span class="math inline">\(L\)</span>第<span class="math inline">\(i\)</span>行第<span class="math inline">\(j\)</span>列的值<span class="math inline">\(L_{ij}\)</span>（除了第<span class="math inline">\(i\)</span>行，结果的其他行显然等于<span class="math inline">\(L&#39;\)</span>），必然是<span class="math inline">\(E\)</span>的行向量与<span class="math inline">\(L&#39;\)</span>列向量之点乘： $$ L_{ij}=
+<span class="math display">\[\begin{pmatrix}
+0 \\
+\vdots \\
+a\\
+\vdots \\
+\color{red}1\\
+\vdots\\
+0
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+0 \\
+\vdots \\
+
+\color{blue}1 \\
+\vdots \\
+b \\
+c \\
+\vdots \\
+\end{pmatrix}\]</span>
+<p>$$</p>
+<p>由于三角阵主对角线上都是<span class="math inline">\(1\)</span>，在上式中左边向量里面的<span class="math inline">\(\color{red}1\)</span>就是从上往下数第<span class="math inline">\(i\)</span>个，右边向量里面的<span class="math inline">\(\color{blue}1\)</span>就是从上往下数第<span class="math inline">\(j\)</span>个。因为是下三角阵<span class="math inline">\(\color{red}1\)</span>的下面都是<span class="math inline">\(0\)</span>，<span class="math inline">\(\color{blue}1\)</span>的上面也都是<span class="math inline">\(0\)</span>。接下来讨论<span class="math inline">\(\color{red}1\)</span>和<span class="math inline">\(\color{blue} 1\)</span>的位置关系。</p>
 <ul>
-<li>$i&lt;j$时，$\color{red}1$在$\color{blue}1$的上面。右侧$\color{blue} 1$下面非零的元素对着左边的都是$0$，左侧$\color{red}1$上面的非零$a$对到右边也是$0$，因此$L_{ij}=0$。</li>
-<li>$i=j$时，$\color{red} 1$正对着$\color{blue}1$，因此$L_{ij}=1\times 1=1$。</li>
-<li>$i&gt;j$时，$\color{red} 1$在$\color{blue}1$的下面。$a$是左侧从上往下数第$k$个。<ul>
-<li>$j&gt;k$时，$\color{blue}1$在$a$下面，$a$对着$0$。$L_{ij}=L’_{ij}$。</li>
-<li>$j=k$时，$a$对着$\color{blue}1$，$\color{red}1$对着$L’<em>{ij}，$$L</em>{ij}=a+L’_{ij}$。</li>
-<li>$j&lt;k$时，$a$对着$L’<em>{kj}$，$\color{red}1$对着$L’</em>{ij}$。$L_{ij}=aL’<em>{kj}+L’</em>{ij}$。</li>
+<li><span class="math inline">\(i&lt;j\)</span>时，<span class="math inline">\(\color{red}1\)</span>在<span class="math inline">\(\color{blue}1\)</span>的上面。右侧<span class="math inline">\(\color{blue} 1\)</span>下面非零的元素对着左边的都是<span class="math inline">\(0\)</span>，左侧<span class="math inline">\(\color{red}1\)</span>上面的非零<span class="math inline">\(a\)</span>对到右边也是<span class="math inline">\(0\)</span>，因此<span class="math inline">\(L_{ij}=0\)</span>。</li>
+<li><span class="math inline">\(i=j\)</span>时，<span class="math inline">\(\color{red} 1\)</span>正对着<span class="math inline">\(\color{blue}1\)</span>，因此<span class="math inline">\(L_{ij}=1\times 1=1\)</span>。</li>
+<li><span class="math inline">\(i&gt;j\)</span>时，<span class="math inline">\(\color{red} 1\)</span>在<span class="math inline">\(\color{blue}1\)</span>的下面。<span class="math inline">\(a\)</span>是左侧从上往下数第<span class="math inline">\(k\)</span>个。
+<ul>
+<li><span class="math inline">\(j&gt;k\)</span>时，<span class="math inline">\(\color{blue}1\)</span>在<span class="math inline">\(a\)</span>下面，<span class="math inline">\(a\)</span>对着<span class="math inline">\(0\)</span>。<span class="math inline">\(L_{ij}=L&#39;_{ij}\)</span>。</li>
+<li><span class="math inline">\(j=k\)</span>时，<span class="math inline">\(a\)</span>对着<span class="math inline">\(\color{blue}1\)</span>，<span class="math inline">\(\color{red}1\)</span>对着<span class="math inline">\(L&#39;_{ij}，\)</span><span class="math inline">\(L_{ij}=a+L&#39;_{ij}\)</span>。</li>
+<li><span class="math inline">\(j&lt;k\)</span>时，<span class="math inline">\(a\)</span>对着<span class="math inline">\(L&#39;_{kj}\)</span>，<span class="math inline">\(\color{red}1\)</span>对着<span class="math inline">\(L&#39;_{ij}\)</span>。<span class="math inline">\(L_{ij}=aL&#39;_{kj}+L&#39;_{ij}\)</span>。</li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<p>显然，当我们向左边一个一个行变换矩阵乘过来的时候，$L’<em>{ij}=0$，且$L’</em>{kj}=0\quad \forall j&lt;k$。于是乎<br>$$<br>L_{ij} = \begin{cases}<br>0, &amp; i&lt;j\<br>1, &amp; i=j\<br>L’_{ij}, &amp;k&lt;j&lt;i \<br>a, &amp; j=k\<br>0, &amp; j&lt;k\<br>\end{cases}<br>$$<br>这就是把$a$直接放到$L’$的对应位置里面。结合数学归纳法，可以导出$LU$分解的结果确实就是几个行变换矩阵“拼起来”。</p>
-<h1 id="矩阵的LDU分解"><a href="#矩阵的LDU分解" class="headerlink" title="矩阵的LDU分解"></a>矩阵的LDU分解</h1><p>注意到在$A=LU$当中，我们虽然保证了$L$的主对角线是上$1$，但是$U$的主对角线上就未必了。</p>
-<p>假设$U$的主对角线上的数是$d_1,d_2,\cdots,d_n$，那么不妨令：<br>$$<br>U=DU’<br>$$<br>其中<br>$$<br>D=\begin{pmatrix}<br>d_1&amp;0&amp;\cdots&amp;0\<br>0&amp;d_2&amp;\cdots&amp;0\<br>\vdots&amp;\vdots&amp;\ddots&amp;\vdots\<br>0&amp;0&amp;\cdots&amp;d_n\<br>\end{pmatrix}<br>$$<br>而$U’$是$U$每一行分别除以$d_1,d_2,\cdots,d_n$的结果。</p>
-<p>这样一来分解就变成了<br>$$<br>A=LDU’<br>$$</p>
-<p>这种分解就被称作矩阵$A$的$LDU$分解。</p>
+<p>显然，当我们向左边一个一个行变换矩阵乘过来的时候，<span class="math inline">\(L&#39;_{ij}=0\)</span>，且<span class="math inline">\(L&#39;_{kj}=0\quad \forall j&lt;k\)</span>。于是乎 <span class="math display">\[
+L_{ij} = \begin{cases}
+0, &amp; i&lt;j\\
+1, &amp; i=j\\
+L&#39;_{ij}, &amp;k&lt;j&lt;i \\
+a, &amp; j=k\\
+0, &amp; j&lt;k\\
+\end{cases}
+\]</span> 这就是把<span class="math inline">\(a\)</span>直接放到<span class="math inline">\(L&#39;\)</span>的对应位置里面。结合数学归纳法，可以导出<span class="math inline">\(LU\)</span>分解的结果确实就是几个行变换矩阵“拼起来”。</p>
+<h1 id="矩阵的ldu分解">矩阵的LDU分解</h1>
+<p>注意到在<span class="math inline">\(A=LU\)</span>当中，我们虽然保证了<span class="math inline">\(L\)</span>的主对角线是上<span class="math inline">\(1\)</span>，但是<span class="math inline">\(U\)</span>的主对角线上就未必了。</p>
+<p>假设<span class="math inline">\(U\)</span>的主对角线上的数是<span class="math inline">\(d_1,d_2,\cdots,d_n\)</span>，那么不妨令： <span class="math display">\[
+U=DU&#39;
+\]</span> 其中 <span class="math display">\[
+D=\begin{pmatrix}
+d_1&amp;0&amp;\cdots&amp;0\\
+0&amp;d_2&amp;\cdots&amp;0\\
+\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+0&amp;0&amp;\cdots&amp;d_n\\
+\end{pmatrix}
+\]</span> 而<span class="math inline">\(U&#39;\)</span>是<span class="math inline">\(U\)</span>每一行分别除以<span class="math inline">\(d_1,d_2,\cdots,d_n\)</span>的结果。</p>
+<p>这样一来分解就变成了 <span class="math display">\[
+A=LDU&#39;
+\]</span></p>
+<p>这种分解就被称作矩阵<span class="math inline">\(A\)</span>的<span class="math inline">\(LDU\)</span>分解。</p>
 
     </div>
 
@@ -410,7 +570,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>

@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="简介成套方法（repertoire method）可以用来求解一大类的递归式的封闭形式，由于和式也可以化为特殊的递归式，因而该方法对于处理和式也有很好的效果，具体而言，对于如下类似形式的递归式：$$f(n) &#x3D; \begin{cases}    \alpha &amp; n &#x3D; 0 \    f(n - 1) + \beta + \gamma n + \delta n^2 \cdots &amp;">
+<meta name="description" content="简介 成套方法（repertoire method）可以用来求解一大类的递归式的封闭形式，由于和式也可以化为特殊的递归式，因而该方法对于处理和式也有很好的效果，具体而言，对于如下类似形式的递归式： \[ f(n) &#x3D; \begin{cases}     \alpha &amp; n &#x3D; 0 \\     f(n - 1) + \beta + \gamma n + \delta n^2 \c">
 <meta property="og:type" content="article">
 <meta property="og:title" content="成套方法">
 <meta property="og:url" content="https://alan20210202.github.io/2018/08/27/%E6%88%90%E5%A5%97%E6%96%B9%E6%B3%95/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="简介成套方法（repertoire method）可以用来求解一大类的递归式的封闭形式，由于和式也可以化为特殊的递归式，因而该方法对于处理和式也有很好的效果，具体而言，对于如下类似形式的递归式：$$f(n) &#x3D; \begin{cases}    \alpha &amp; n &#x3D; 0 \    f(n - 1) + \beta + \gamma n + \delta n^2 \cdots &amp;">
+<meta property="og:description" content="简介 成套方法（repertoire method）可以用来求解一大类的递归式的封闭形式，由于和式也可以化为特殊的递归式，因而该方法对于处理和式也有很好的效果，具体而言，对于如下类似形式的递归式： \[ f(n) &#x3D; \begin{cases}     \alpha &amp; n &#x3D; 0 \\     f(n - 1) + \beta + \gamma n + \delta n^2 \c">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2018-08-27T09:37:56.059Z">
 <meta property="article:modified_time" content="2018-11-09T09:17:57.989Z">
@@ -48,7 +48,8 @@
     isPost : true,
     lang   : 'zh-CN'
   };
-</script>
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
 <title>成套方法 | Chengyuan Ma's Blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
@@ -169,12 +170,14 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90%EF%BC%9A%E6%B1%82%E8%A7%A3-sum-k-1-n-k-2"><span class="nav-number">2.</span> <span class="nav-text">例子：求解$\sum_{k&#x3D;1}^n k^2$</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%9D%E8%80%83%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AF%E4%BB%A5%E8%BF%99%E6%A0%B7%E5%81%9A-%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">思考：为什么可以这样做 ？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%9D%E8%80%83%EF%BC%9A%E7%9C%9F%E7%9A%84%E2%80%9C%E4%B8%87%E8%83%BD%E2%80%9D%E5%92%8C%E2%80%9C%E6%9C%BA%E6%A2%B0%E5%8C%96%E2%80%9D%E5%90%97%EF%BC%9F"><span class="nav-number">4.</span> <span class="nav-text">思考：真的“万能”和“机械化”吗？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%9D%E8%80%83%EF%BC%9A%E4%BD%9C%E4%B8%BA%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0%E7%9A%84%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">思考：作为算法实现的复杂度？</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90%E6%B1%82%E8%A7%A3sum_k1n-k2"><span class="nav-number">2.</span> <span class="nav-text">例子：求解\(\sum_{k&#x3D;1}^n k^2\)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%9D%E8%80%83%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AF%E4%BB%A5%E8%BF%99%E6%A0%B7%E5%81%9A"><span class="nav-number">3.</span> <span class="nav-text">思考：为什么可以这样做 ？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%9D%E8%80%83%E7%9C%9F%E7%9A%84%E4%B8%87%E8%83%BD%E5%92%8C%E6%9C%BA%E6%A2%B0%E5%8C%96%E5%90%97"><span class="nav-number">4.</span> <span class="nav-text">思考：真的“万能”和“机械化”吗？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%9D%E8%80%83%E4%BD%9C%E4%B8%BA%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0%E7%9A%84%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">5.</span> <span class="nav-text">思考：作为算法实现的复杂度？</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
   <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
   <div class="site-description" itemprop="description">不务正业高中生一枚</div>
 </div>
@@ -240,7 +243,7 @@
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/08/27/%E6%88%90%E5%A5%97%E6%96%B9%E6%B3%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/avatar.png">
       <meta itemprop="name" content="Chengyuan Ma">
       <meta itemprop="description" content="不务正业高中生一枚">
     </span>
@@ -288,33 +291,110 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>成套方法（repertoire method）可以用来求解一大类的递归式的封闭形式，由于和式也可以化为特殊的递归式，因而该方法对于处理和式也有很好的效果，具体而言，对于如下类似形式的递归式：<br>$$<br>f(n) = \begin{cases}<br>    \alpha &amp; n = 0 \<br>    f(n - 1) + \beta + \gamma n + \delta n^2 \cdots &amp; n &gt; 0<br>\end{cases}<br>$$<br>我们总是可以大胆地猜想：$f(n)$或许有着如下的封闭形式：<br>$$<br>f(n) = A(n)\alpha + B(n)\beta + C(n)\gamma + D(n)\delta \cdots<br>$$<br>成套方法的精髓就是，试图用几组特殊的$f(n)$ （可以让我们相对容易地解出$\alpha,\beta$等的值），来推测$A(n), B(n)$等之间的关系，由于在上面的式子当中$A(n),B(n)$等都是线性组合的，因而最后我们会得到一组线性方程，求解这一组线性方程我们可以得出$A(n),B(n)\cdots$从而解出递归式的特殊形式。这是一个特殊→一般→特殊→一般→特殊的方法，十分巧妙。</p>
-<h1 id="例子：求解-sum-k-1-n-k-2"><a href="#例子：求解-sum-k-1-n-k-2" class="headerlink" title="例子：求解$\sum_{k=1}^n k^2$"></a>例子：求解$\sum_{k=1}^n k^2$</h1><p>这是一个和式，但是不打紧，我们可以把它处理成递归式。</p>
-<p>令$f(n) = \sum_{k = 1}^n k^2$，那么有等价定义<br>$$<br>f(n) = \begin{cases}<br>    0 &amp; n = 0 \<br>    f(n - 1) + n^2 &amp; n &gt; 0<br>\end{cases}<br>$$<br>可以看到从和式到递归式的转化是十分自然的。</p>
-<p>这个递归式自然是满足最前面的形式的，其中$\alpha = \beta = \gamma = 0, \delta = 1$，我们先着手求解一般情况，选取几组“特殊的”$f(n)$：</p>
-<p>首先令$f(n) = 1$，代入最开始的定义：<br>$$<br>\begin{cases}<br>1 &amp;= \alpha \<br>1 &amp;= 1 + \beta + \gamma n + \delta n^2<br>\end{cases}<br>$$<br>显然有$\alpha = 1, \beta = \gamma = \delta = 0$，再把他们带入我们认为的“通用形式”：<br>$$<br>f(n) = 1 = A(n)\cdot 1 + B(n)\cdot 0 + C(n)\cdot 0 + D(n)\cdot 0 \<br>\Rightarrow A(n) = 1<br>$$<br>很好，我们现在得到一组$A(n),B(n),C(n),D(n)$的线性关系了，还需要三组！</p>
-<p>令$f(n) = n$<br>$$<br>\begin{cases}<br>0 &amp;= \alpha \<br>n &amp;= n - 1 + \beta + \gamma n + \delta n^2 \<br>\end{cases} \<br>\begin{aligned}<br>&amp;\Rightarrow \alpha = \gamma = \delta = 0, \beta = 1 \<br>&amp;\Rightarrow B(n) = n<br>\end{aligned}<br>$$<br>令$f(n) = n^2$：<br>$$<br>\begin{cases}<br>0 &amp;= \alpha \<br>n^2 &amp;= (n - 1) ^ 2 + \beta + \gamma n + \delta n^2 \<br>&amp;= n^2 - 2n + 1 + \beta + \gamma n + \delta n^2<br>\end{cases} \<br>\begin{aligned}<br>&amp;\Rightarrow \alpha = \delta = 0, \beta = -1, \gamma = 2 \<br>&amp;\Rightarrow -B(n) + 2C(n) = n^2<br>\end{aligned}<br>$$<br>最后，令$f(n) = n^3$：<br>$$<br>\begin{cases}<br>0 &amp;= \alpha \<br>n^3 &amp;= (n - 1) ^ 3 + \beta + \gamma n + \delta n^2 \<br>&amp;= n^3 - 3n^2 + 3n - 1 + \beta + \gamma n + \delta n^2<br>\end{cases} \<br>\begin{aligned}<br>&amp;\Rightarrow \alpha = 0, \beta = 1,\gamma = -3, \delta = 3 \<br>&amp;\Rightarrow B(n) - 3C(n) + 3D(n) = n^3<br>\end{aligned}<br>$$<br>最后，把这四组关系结合起来：<br>$$<br>\begin{cases}<br>A(n) &amp;&amp; &amp;&amp; &amp;&amp; &amp;= 1 \<br>&amp;&amp;B(n) &amp;&amp;&amp;&amp; &amp;= n \<br>&amp;-&amp;B(n) &amp;+&amp; 2C(n) &amp;&amp; &amp;= n^2 \<br>&amp;&amp;B(n) &amp;-&amp; 3C(n) &amp;+&amp; 3D(n) &amp;= n^3<br>\end{cases}<br>$$<br>非常简单的线性方程组，解得：<br>$$<br>\begin{cases}<br>A(n) = 1 \<br>B(n) = n \<br>C(n) = \frac{n^2 + n}{2} \<br>D(n) = \frac{2n^3 + 3n^2 + n}{6}\<br>\end{cases}<br>$$<br>这个时候，回到我们要解的递归式，其中$\alpha = \beta = \gamma = 0, \delta = 1$,因此<br>$$<br>\begin{aligned}<br>f(n) = \sum_{k = 1}^n k^2 = D(n) &amp;= \frac{2n^3 + 3n^2 + n}{6} \<br>&amp;= \frac{n(n + 1)(2n + 1)}{6}<br>\end{aligned}<br>$$<br>求解到此结束，可以看到这个公式和我们的常识一致。虽然以上过程看似繁琐，但是注意<strong>我们已经求解了一大类的问题，因为$A(n),B(n),C(n),D(n)$是不会因$\alpha, \beta, \gamma, \delta$而变化的！</strong>，现在，对于<strong>任何的二次多项式的和式或者递归式</strong>我们都可以飞快地计算出其封闭形式。更有用的是，不仅仅是二次三项式，如果我们以后要处理三次多项式（意味着我们要加入$\varepsilon$和$E(n)$），<strong>之前的$A(n),B(n),C(n),D(n)$的解也不会变化，因而只要继续带入$f(n) = n^4$即可！</strong> （这是显然的）  </p>
-<p><strong>注意：为了找出线性关系，我们也可以先找出$\alpha, \beta$等的一组特解，然后基于这个解计算$f(n)$，这和代入特殊$f(n)$然后反解$\alpha, \beta$是等价的！</strong></p>
-<h1 id="思考：为什么可以这样做-？"><a href="#思考：为什么可以这样做-？" class="headerlink" title="思考：为什么可以这样做 ？"></a>思考：为什么可以这样做 ？</h1><p>为什么几个看似毫不相关的$f(n)$可以指导我们正在处理的特殊情形，注意到我们的步骤：</p>
-<ol>
-<li>将特殊$f(n)$带入递归式的定义，解出$\alpha, \beta, \gamma, \delta\cdots$</li>
-<li>将1的解带入假设的封闭形式，求出$A(n), B(n), C(n), D(n)\cdots$的关系</li>
+        <h1 id="简介">简介</h1>
+<p>成套方法（repertoire method）可以用来求解一大类的递归式的封闭形式，由于和式也可以化为特殊的递归式，因而该方法对于处理和式也有很好的效果，具体而言，对于如下类似形式的递归式： <span class="math display">\[
+f(n) = \begin{cases}
+    \alpha &amp; n = 0 \\
+    f(n - 1) + \beta + \gamma n + \delta n^2 \cdots &amp; n &gt; 0
+\end{cases}
+\]</span> 我们总是可以大胆地猜想：<span class="math inline">\(f(n)\)</span>或许有着如下的封闭形式： <span class="math display">\[
+f(n) = A(n)\alpha + B(n)\beta + C(n)\gamma + D(n)\delta \cdots
+\]</span> 成套方法的精髓就是，试图用几组特殊的<span class="math inline">\(f(n)\)</span> （可以让我们相对容易地解出<span class="math inline">\(\alpha,\beta\)</span>等的值），来推测<span class="math inline">\(A(n), B(n)\)</span>等之间的关系，由于在上面的式子当中<span class="math inline">\(A(n),B(n)\)</span>等都是线性组合的，因而最后我们会得到一组线性方程，求解这一组线性方程我们可以得出<span class="math inline">\(A(n),B(n)\cdots\)</span>从而解出递归式的特殊形式。这是一个特殊→一般→特殊→一般→特殊的方法，十分巧妙。</p>
+<h1 id="例子求解sum_k1n-k2">例子：求解<span class="math inline">\(\sum_{k=1}^n k^2\)</span></h1>
+<p>这是一个和式，但是不打紧，我们可以把它处理成递归式。</p>
+<p>令<span class="math inline">\(f(n) = \sum_{k = 1}^n k^2\)</span>，那么有等价定义 <span class="math display">\[
+f(n) = \begin{cases}
+    0 &amp; n = 0 \\
+    f(n - 1) + n^2 &amp; n &gt; 0
+\end{cases}
+\]</span> 可以看到从和式到递归式的转化是十分自然的。</p>
+<p>这个递归式自然是满足最前面的形式的，其中<span class="math inline">\(\alpha = \beta = \gamma = 0, \delta = 1\)</span>，我们先着手求解一般情况，选取几组“特殊的”<span class="math inline">\(f(n)\)</span>：</p>
+<p>首先令<span class="math inline">\(f(n) = 1\)</span>，代入最开始的定义： <span class="math display">\[
+\begin{cases}
+1 &amp;= \alpha \\
+1 &amp;= 1 + \beta + \gamma n + \delta n^2 
+\end{cases}
+\]</span> 显然有<span class="math inline">\(\alpha = 1, \beta = \gamma = \delta = 0\)</span>，再把他们带入我们认为的“通用形式”： <span class="math display">\[
+f(n) = 1 = A(n)\cdot 1 + B(n)\cdot 0 + C(n)\cdot 0 + D(n)\cdot 0 \\
+\Rightarrow A(n) = 1
+\]</span> 很好，我们现在得到一组<span class="math inline">\(A(n),B(n),C(n),D(n)\)</span>的线性关系了，还需要三组！</p>
+<p>令<span class="math inline">\(f(n) = n\)</span> <span class="math display">\[
+\begin{cases}
+0 &amp;= \alpha \\
+n &amp;= n - 1 + \beta + \gamma n + \delta n^2 \\
+\end{cases} \\
+\begin{aligned}
+&amp;\Rightarrow \alpha = \gamma = \delta = 0, \beta = 1 \\
+&amp;\Rightarrow B(n) = n
+\end{aligned}
+\]</span> 令<span class="math inline">\(f(n) = n^2\)</span>： <span class="math display">\[
+\begin{cases}
+0 &amp;= \alpha \\
+n^2 &amp;= (n - 1) ^ 2 + \beta + \gamma n + \delta n^2 \\
+&amp;= n^2 - 2n + 1 + \beta + \gamma n + \delta n^2
+\end{cases} \\
+\begin{aligned}
+&amp;\Rightarrow \alpha = \delta = 0, \beta = -1, \gamma = 2 \\
+&amp;\Rightarrow -B(n) + 2C(n) = n^2
+\end{aligned}
+\]</span> 最后，令<span class="math inline">\(f(n) = n^3\)</span>： <span class="math display">\[
+\begin{cases}
+0 &amp;= \alpha \\
+n^3 &amp;= (n - 1) ^ 3 + \beta + \gamma n + \delta n^2 \\
+&amp;= n^3 - 3n^2 + 3n - 1 + \beta + \gamma n + \delta n^2
+\end{cases} \\
+\begin{aligned}
+&amp;\Rightarrow \alpha = 0, \beta = 1,\gamma = -3, \delta = 3 \\
+&amp;\Rightarrow B(n) - 3C(n) + 3D(n) = n^3
+\end{aligned}
+\]</span> 最后，把这四组关系结合起来： <span class="math display">\[
+\begin{cases}
+A(n) &amp;&amp; &amp;&amp; &amp;&amp; &amp;= 1 \\
+&amp;&amp;B(n) &amp;&amp;&amp;&amp; &amp;= n \\
+&amp;-&amp;B(n) &amp;+&amp; 2C(n) &amp;&amp; &amp;= n^2 \\
+&amp;&amp;B(n) &amp;-&amp; 3C(n) &amp;+&amp; 3D(n) &amp;= n^3
+\end{cases}
+\]</span> 非常简单的线性方程组，解得： <span class="math display">\[
+\begin{cases}
+A(n) = 1 \\
+B(n) = n \\
+C(n) = \frac{n^2 + n}{2} \\
+D(n) = \frac{2n^3 + 3n^2 + n}{6}\\
+\end{cases}
+\]</span> 这个时候，回到我们要解的递归式，其中<span class="math inline">\(\alpha = \beta = \gamma = 0, \delta = 1\)</span>,因此 <span class="math display">\[
+\begin{aligned}
+f(n) = \sum_{k = 1}^n k^2 = D(n) &amp;= \frac{2n^3 + 3n^2 + n}{6} \\
+&amp;= \frac{n(n + 1)(2n + 1)}{6}
+\end{aligned}
+\]</span> 求解到此结束，可以看到这个公式和我们的常识一致。虽然以上过程看似繁琐，但是注意<strong>我们已经求解了一大类的问题，因为<span class="math inline">\(A(n),B(n),C(n),D(n)\)</span>是不会因<span class="math inline">\(\alpha, \beta, \gamma, \delta\)</span>而变化的！</strong>，现在，对于<strong>任何的二次多项式的和式或者递归式</strong>我们都可以飞快地计算出其封闭形式。更有用的是，不仅仅是二次三项式，如果我们以后要处理三次多项式（意味着我们要加入<span class="math inline">\(\varepsilon\)</span>和<span class="math inline">\(E(n)\)</span>），<strong>之前的<span class="math inline">\(A(n),B(n),C(n),D(n)\)</span>的解也不会变化，因而只要继续带入<span class="math inline">\(f(n) = n^4\)</span>即可！</strong> （这是显然的）</p>
+<p><strong>注意：为了找出线性关系，我们也可以先找出<span class="math inline">\(\alpha, \beta\)</span>等的一组特解，然后基于这个解计算<span class="math inline">\(f(n)\)</span>，这和代入特殊<span class="math inline">\(f(n)\)</span>然后反解<span class="math inline">\(\alpha, \beta\)</span>是等价的！</strong></p>
+<h1 id="思考为什么可以这样做">思考：为什么可以这样做 ？</h1>
+<p>为什么几个看似毫不相关的<span class="math inline">\(f(n)\)</span>可以指导我们正在处理的特殊情形，注意到我们的步骤：</p>
+<ol type="1">
+<li>将特殊<span class="math inline">\(f(n)\)</span>带入递归式的定义，解出<span class="math inline">\(\alpha, \beta, \gamma, \delta\cdots\)</span></li>
+<li>将1的解带入假设的封闭形式，求出<span class="math inline">\(A(n), B(n), C(n), D(n)\cdots\)</span>的关系</li>
 </ol>
-<p>注意到，我们在第一步解出了$\alpha, \beta$等的值，说明此时我们的特殊$f(n)$本来就是以上的递归式定义可以表出的，而我们假设的通用形式是对任何一组参数通用的，因此求解出来的线性关系也是通用的。</p>
-<h1 id="思考：真的“万能”和“机械化”吗？"><a href="#思考：真的“万能”和“机械化”吗？" class="headerlink" title="思考：真的“万能”和“机械化”吗？"></a>思考：真的“万能”和“机械化”吗？</h1><p>成套方法从刚刚的示例可以看到似乎是非常机械化的，但是其实不然，《具体数学》中有言，成套方法对于线性的递归式最为有效，因此$f(n - 1)$前是不能有系数的（不然直觉上通用形式里就会出现棘手的指数项），但是这不妨碍我们处理和式，其次，对于一开始的“通用形式”的构造和特殊$f(n)$的构造其实不是那么简单的工作，对于多项式，我们可以很简单地构造多项式形式的“通用形式”，但是如果是：</p>
-<p>$$<br>\sum_{k = 1}^n (-1)^k k^2<br>$$<br>最上面的通用形式就不管用了！我们需要自己寻找适合的通用定义和特殊函数值进行求解（这也是《具体数学》当中的习题），虽然找到之后的过程倒是非常地机械化没错。</p>
-<h1 id="思考：作为算法实现的复杂度？"><a href="#思考：作为算法实现的复杂度？" class="headerlink" title="思考：作为算法实现的复杂度？"></a>思考：作为算法实现的复杂度？</h1><p>我们仅在这里思考以上方法<em>在多项式情况下</em>的特例。</p>
+<p>注意到，我们在第一步解出了<span class="math inline">\(\alpha, \beta\)</span>等的值，说明此时我们的特殊<span class="math inline">\(f(n)\)</span>本来就是以上的递归式定义可以表出的，而我们假设的通用形式是对任何一组参数通用的，因此求解出来的线性关系也是通用的。</p>
+<h1 id="思考真的万能和机械化吗">思考：真的“万能”和“机械化”吗？</h1>
+<p>成套方法从刚刚的示例可以看到似乎是非常机械化的，但是其实不然，《具体数学》中有言，成套方法对于线性的递归式最为有效，因此<span class="math inline">\(f(n - 1)\)</span>前是不能有系数的（不然直觉上通用形式里就会出现棘手的指数项），但是这不妨碍我们处理和式，其次，对于一开始的“通用形式”的构造和特殊<span class="math inline">\(f(n)\)</span>的构造其实不是那么简单的工作，对于多项式，我们可以很简单地构造多项式形式的“通用形式”，但是如果是：</p>
+<p><span class="math display">\[
+\sum_{k = 1}^n (-1)^k k^2
+\]</span> 最上面的通用形式就不管用了！我们需要自己寻找适合的通用定义和特殊函数值进行求解（这也是《具体数学》当中的习题），虽然找到之后的过程倒是非常地机械化没错。</p>
+<h1 id="思考作为算法实现的复杂度">思考：作为算法实现的复杂度？</h1>
+<p>我们仅在这里思考以上方法<em>在多项式情况下</em>的特例。</p>
 <p>成套方法分为三步走：</p>
-<ol>
+<ol type="1">
 <li>构造线性方程</li>
 <li>解线性方程</li>
 <li>回代</li>
 </ol>
-<p>第一步，由于是多项式的情况，观察之前的特例并结合二项式定理可以得到， 如果我们带入$f(n) = n^k$的情况，对于对应$n^m$的多项式系数（类似$A(n), B(n)$），其系数为（在$m \neq k$时，在$m = k$时系数自然就是0了）：</p>
-<p>$$<br>-\binom{k}{m}(-1)^{k - m}<br>$$<br>因此，配合杨辉三角递推组合数，这一部分的时间复杂度可以做到$O(n^2)$。</p>
-<p>第二步，考虑到我们解的线性方程当中含有多项式，因此需要采用系数向量的表示方法，基本算数运算代价变为$O(n)$，但是注意到线性方程组列出时已经是简化阶梯形式，因此<strong>不需要高斯消元，只需要代入消元</strong>，时间复杂度是$O(n^2)\cdot O(n) = O(n^3)$。</p>
-<p>第三步的复杂度自然是$O(n^2)$。</p>
-<p>因此，基于成套方法的算法的综合复杂度为$O(n^3)$。</p>
+<p>第一步，由于是多项式的情况，观察之前的特例并结合二项式定理可以得到， 如果我们带入<span class="math inline">\(f(n) = n^k\)</span>的情况，对于对应<span class="math inline">\(n^m\)</span>的多项式系数（类似<span class="math inline">\(A(n), B(n)\)</span>），其系数为（在<span class="math inline">\(m \neq k\)</span>时，在<span class="math inline">\(m = k\)</span>时系数自然就是0了）：</p>
+<p><span class="math display">\[
+-\binom{k}{m}(-1)^{k - m}
+\]</span> 因此，配合杨辉三角递推组合数，这一部分的时间复杂度可以做到<span class="math inline">\(O(n^2)\)</span>。</p>
+<p>第二步，考虑到我们解的线性方程当中含有多项式，因此需要采用系数向量的表示方法，基本算数运算代价变为<span class="math inline">\(O(n)\)</span>，但是注意到线性方程组列出时已经是简化阶梯形式，因此<strong>不需要高斯消元，只需要代入消元</strong>，时间复杂度是<span class="math inline">\(O(n^2)\cdot O(n) = O(n^3)\)</span>。</p>
+<p>第三步的复杂度自然是<span class="math inline">\(O(n^2)\)</span>。</p>
+<p>因此，基于成套方法的算法的综合复杂度为<span class="math inline">\(O(n^3)\)</span>。</p>
 
     </div>
 
@@ -406,7 +486,20 @@
     </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
 
     </div>
   </footer>
