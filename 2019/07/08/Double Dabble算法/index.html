@@ -30,13 +30,13 @@
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
 <meta property="og:description" content="本地笔记整理，原文写于2019&#x2F;7&#x2F;8，2019&#x2F;12&#x2F;8上传 Double Dabble算法是二进制转BCD的常用算法。 整数Double Dabble算法 （下文当中，&quot;BCD位&quot;指一个十进制位对应的四位二进制） 首先，如果我们要计算一个二进制数的十进制值，除了位权展开以外，可以从左往右如此迭代： \[ x_{n + 1} &#x3D; 2x_n + \text{该二进制位} \] 这是非常">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://i.stack.imgur.com/EQvTh.png">
+<meta property="og:image" content="https://alan20210202.github.io/2019/07/08/Double%20Dabble%E7%AE%97%E6%B3%95/EQvTh.png">
 <meta property="article:published_time" content="2019-07-07T16:00:00.000Z">
 <meta property="article:modified_time" content="2019-12-08T13:38:14.866Z">
 <meta property="article:author" content="Chengyuan Ma">
 <meta property="article:tag" content="Minecraft">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.stack.imgur.com/EQvTh.png">
+<meta name="twitter:image" content="https://alan20210202.github.io/2019/07/08/Double%20Dabble%E7%AE%97%E6%B3%95/EQvTh.png">
 
 
 <link rel="canonical" href="https://alan20210202.github.io/2019/07/08/Double%20Dabble%E7%AE%97%E6%B3%95/">
@@ -188,7 +188,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-count">87</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -301,9 +301,7 @@
 x_{n + 1} = 2x_n + \text{该二进制位}
 \]</span> 这是非常显然的。</p>
 <p>在Double Dabble的图示当中，左边一列存储的是BCD的结果：</p>
-<figure>
-<img src="https://i.stack.imgur.com/EQvTh.png" alt="Image result for double dabble algorithm" /><figcaption aria-hidden="true">Image result for double dabble algorithm</figcaption>
-</figure>
+<p><img src="EQvTh.png" alt="Image result for double dabble algorithm" /></p>
 <p>Double Dabble算法本身其实就是在这BCD的结果列进行如上的迭代操作（乘<span class="math inline">\(2\)</span>加位）。</p>
 <p>为了这样做，直觉上来讲，我们可以按照二进制的方法将BCD列中的结果乘<span class="math inline">\(2\)</span>（左移），然后进行一定的矫正（之前的左移可能破坏了BCD的性质），然后在加上原数的一个二进制位（最右边移进）。</p>
 <p>左移是平凡的，加上一位也是平凡的（因为左移之后最右边一位永远是<span class="math inline">\(2\)</span>，不会产生进位），问题在乘<span class="math inline">\(2\)</span>后为了维护BCD性质所进行的矫正上。</p>

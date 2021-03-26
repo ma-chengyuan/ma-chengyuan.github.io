@@ -30,13 +30,13 @@
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
 <meta property="og:description" content="概念 众所周知，BST在特定的插入顺序下常常会退化成链，从而使单次查找的时间复杂度退化为\(O(n)\)，这是很糟糕的，因此出现了一箩筐的平衡树，在保证BST性质的同时，尽量保持BST的平衡。 Treap就是当中概念比较简单而且比较好写的一种真的吗？。Treap是Tree和Heap的合成，即“树堆”，其精髓就在于通过维护，使得一棵树在保有BST性质的同时，也具有大根堆的性质。为此，每个节点都会">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://ovzrr9kke.bkt.clouddn.com/18-9-17/36711485.jpg">
+<meta property="og:image" content="https://alan20210202.github.io/2018/09/17/Treap/36711485.jpg">
 <meta property="article:published_time" content="2018-09-17T12:44:31.383Z">
 <meta property="article:modified_time" content="2018-09-17T13:25:59.288Z">
 <meta property="article:author" content="Chengyuan Ma">
 <meta property="article:tag" content="刷题记录">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://ovzrr9kke.bkt.clouddn.com/18-9-17/36711485.jpg">
+<meta name="twitter:image" content="https://alan20210202.github.io/2018/09/17/Treap/36711485.jpg">
 
 
 <link rel="canonical" href="https://alan20210202.github.io/2018/09/17/Treap/">
@@ -188,7 +188,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-count">87</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -316,7 +316,7 @@ void pushup(int p) &#123; // 维护sz
 &#125;</code></pre>
 <h1 id="旋转">旋转</h1>
 <p>改变BST的形状而不破坏其性质的操作是二叉树的旋转，分为右旋（zig）和左旋（zag）两种，以右旋为例，右旋把一个节点<span class="math inline">\(p\)</span>的左子树<span class="math inline">\(q\)</span>绕其“向右（顺时针）”旋转到原来<span class="math inline">\(p\)</span>的位置，并且让<span class="math inline">\(p\)</span>成为<span class="math inline">\(q\)</span>的右子树，<span class="math inline">\(q\)</span>原来的右子树成为<span class="math inline">\(p\)</span>的左子树，左旋类似：</p>
-<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-17/36711485.jpg" /></p>
+<p><img src="36711485.jpg" /></p>
 <p>落实在代码上，就是：</p>
 <pre class="line-numbers"><code class="language-cpp">void zig(int &amp;p) &#123;
     int q = t[p].l;

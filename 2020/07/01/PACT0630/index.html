@@ -191,7 +191,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-count">87</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -313,7 +313,7 @@ d(u,S) = \min_{v\in S} w_{uv}
 <p>第2步的操作是非常合乎直觉的：如果不把离<span class="math inline">\(S\)</span>最远的顶点加入<span class="math inline">\(S\)</span>的话，这条最远的边权就可能会被计入答案当中，这显然是不合算的，而如果将这个最远点作为新的中心，那么这条最远边就必定不会被计入答案。</p>
 <h2 id="分析">分析</h2>
 <p>这个算法给出方案的代价是什么？在这个算法的背景下，我们不妨说：<em>这个算法结果的代价是如果不跳出循环，下一个选取的中心到当前<span class="math inline">\(S\)</span>的距离</em>（依据第2步）。假设这个中心为<span class="math inline">\(x\)</span>，我们不妨画图：</p>
-<p><img src="./Analysis1.jpg" /></p>
+<p><img src="Analysis1.jpg" /></p>
 <p>其中左边的<span class="math inline">\(S\)</span>是我们的解，右边是最优解（我们这里把他们化成了不重叠的形式，事实上有重叠对于我们的论证也不造成影响）。</p>
 <p>我们的解加上<span class="math inline">\(x\)</span>总共有<span class="math inline">\(k+1\)</span>个点，最优解有<span class="math inline">\(k\)</span>个点，因此由抽屉原理，至少左边有两个点，它们在最优解中的最近点是相同的（即图中的两条横叉边），且由于是最优解，两条边的长度都<span class="math inline">\(\le \mathrm{OPT}\)</span>。</p>
 <p>不妨设这两个点为<span class="math inline">\(u,v\)</span>，由三角不等式，可以得出<span class="math inline">\(w_{uv}\le2\cdot\mathrm{OPT}\)</span>。</p>
@@ -330,12 +330,12 @@ d(x,S) \le w_{uv} \le 2\cdot \mathrm{OPT}
 <li>重复上述步骤，直至图上的所有点都归一个至多<span class="math inline">\(2\cdot \mathrm{OPT}\)</span>远处的中心管。</li>
 </ol>
 <p>画在图上大概是这样的：</p>
-<p><img src="./HS.jpg" /></p>
+<p><img src="HS.jpg" /></p>
 <p>可以看到，可能会有点同时处在多个中心的“势力范围”之内，但这并不重要，我们只需要确保每个点离最近的一个中心至多<span class="math inline">\(2\cdot \mathrm{OPT}\)</span>那么远就行了。</p>
 <h2 id="分析-1">分析</h2>
 <p>我们接下来证明这是一个<span class="math inline">\(2\)</span>近似算法。算法本身的流程确保了<span class="math inline">\(2\)</span>的近似比，因此唯一需要证明的就是这个算法产生的中心不超过要求的<span class="math inline">\(k\)</span>个。</p>
 <p>不妨反证：如果产生了超过<span class="math inline">\(k\)</span>个中心呢？</p>
-<p><img src="./Analysis2.jpg" /></p>
+<p><img src="Analysis2.jpg" /></p>
 <p>那么根据抽屉原理，至少有两个中心在最优解中的最近点是相同的（这和我们分析第一个算法时的逻辑是完全相同的），由三角不等式，这两个中心之间的距离<span class="math inline">\(\le 2\cdot \mathrm{OPT}\)</span>。但是根据算法，中心之间两两距离应该大于<span class="math inline">\(2\cdot \mathrm{OPT}\)</span>，这就产生了矛盾。</p>
 <p>因此必定不会有超过<span class="math inline">\(k\)</span>个中心，证毕。</p>
 <p>还剩下来一个问题：这个算法假定我们知道<span class="math inline">\(\mathrm{OPT}\)</span>，但是实际上我们不知道啊！</p>

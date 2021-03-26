@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-count">87</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,137 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/03/PACT0702/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/03/PACT0702/" class="post-title-link" itemprop="url">PACT 07/02 TSP问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-03 20:34:44" itemprop="dateCreated datePublished" datetime="2020-07-03T20:34:44+08:00">2020-07-03</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-07-04 15:30:36" itemprop="dateModified" datetime="2020-07-04T15:30:36+08:00">2020-07-04</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="定义">定义</h1>
+<p><strong>输入：</strong>完全图<span class="math inline">\(G=(V,E)\)</span>，边带正权，满足三角不等式。</p>
+<p><strong>目标：</strong>构造一个周游所有顶点的最小权回路。</p>
+<h1 id="下界估计">下界估计</h1>
+<p><span class="math inline">\(\mathrm{OPT}\)</span>的下界是什么？</p>
+<blockquote>
+<p>Hasit: <span class="math inline">\(\mathrm{OPT} \ge n\cdot\min_{e \in E}\{w_e\}\)</span></p>
+</blockquote>
+<p>这确实是一个下界，但是太松了一点？</p>
+<blockquote>
+<p>Andrew T: <span class="math inline">\(\mathrm{OPT} \ge\)</span>边权最小的<span class="math inline">\(n\)</span>条边</p>
+</blockquote>
+<p>好一点了，但是还不够！</p>
+<blockquote>
+<p>我: <span class="math inline">\(\mathrm{OPT}\ge\)</span>每个顶点相邻的最小边权</p>
+</blockquote>
+<p>似乎还不够？</p>
+<blockquote>
+<p>Mona: <span class="math inline">\(\mathrm{OPT}\ge\)</span><strong>最小生成树边权和</strong></p>
+</blockquote>
+<p>没错！证明这个并不难，回路首先是一个连通子图，而连通子图中边数最小的当属生成树，而生成树边权和最小的是最小生成树，因此最小生成树的边权和是一张图中所有连通子图边权和的下界。</p>
+<h1 id="基础近似算法以及分析">基础近似算法以及分析</h1>
+<p>这启发我们先去构造<span class="math inline">\(G\)</span>的最小生成树：</p>
+<p><img src="TSP1.svg" /></p>
+<p>如何在其基础上构造回路呢？</p>
+<p>我们不妨给每一条边复制一份：</p>
+<p><img src="TSP2.svg" /></p>
+<p>让后我们走一次DFS，下来的时候走黑边，上去的时候走绿边，整个回路的边权就是最小生成树边权的两倍。</p>
+<p>但是这样的话很多点我们重复走了，因此实际走的时候如果接下来的几个点已经走过了我们就直接跳过，如图，数字表示访问顺序：</p>
+<p><img src="TSP3.svg" /></p>
+<p>（不难发现，节点的访问顺序就是DFS序）</p>
+<p>由于三角不等式的存在，这个回路的边权一定小于最小生成树边权的两倍。</p>
+<p>由于<span class="math inline">\(\mathrm{OPT}\ge\)</span>最小生成树边权，因此这个算法至少是一个<span class="math inline">\(2\)</span>倍近似算法。</p>
+<h1 id="christofides算法">Christofides算法</h1>
+<p>我们为什么要把最小生成树上的每一条边复制一下？我们的目的其实是<strong>让最小生成树变为一张欧拉图</strong>。有了欧拉图之后就可以求出欧拉回路，有了欧拉回路之后就可以通过跳过重复点抄近道（shortcutting）的方式得到哈密尔顿回路，也就是我们近似算法的解。</p>
+<p>由此可见，一开始的欧拉图很重要。最小生成树之所以不是欧拉图，是因为里面可能会有奇度数的点，那么只要<strong>把奇度数的点变成偶度数不就行了嘛！</strong>我们之前把每条边都复制一下那无论度数奇偶都变成偶度数了，未免太粗暴了一点。</p>
+<p>如何把奇度数变成偶度数呢？首先很显然奇度数的点只有偶数个（度数之和必须是偶数），因此我们想到可以把这些奇度数的点两两配对——或者用更专业的术语来讲，<strong>在这些奇度数点的导出子图上计算一个最小权完美匹配</strong>。我们知道一个偶数点图的最小权完美匹配是可以通过带花树算法（Blossom algorithm）在多项式时间内求出的，所以这个思路没有问题。</p>
+<p><img src="TSP4.svg" /></p>
+<p>现在我们有了一张欧拉图，只要求出欧拉回路然后在上面抄近道我们就得到了一条周游路线了。</p>
+<p>这个算法被称为Christofides算法。</p>
+<h1 id="christofides算法分析">Christofides算法分析</h1>
+<p>如何分析这个最小权匹配的代价呢？</p>
+<p>我们不妨考虑最优周游路线，以及在这条路线上的最小生成树的奇度数点：</p>
+<p><img src="TSP6.svg" /></p>
+<p>如果定义连接奇度数点的橘色环的代价是<span class="math inline">\(C\)</span>，显然由三角不等式有<span class="math inline">\(C\le \mathrm{OPT}\)</span>，而如果我们把这个环拆开，便会得到两个完美匹配：</p>
+<p><img src="TSP5.svg" /></p>
+<p>假设两个完美匹配的代价为<span class="math inline">\(C_1,C_2\)</span>，我们最小权匹配的代价为<span class="math inline">\(C^{\ast}\)</span>，显然有 <span class="math display">\[
+C=C_1+C_2\ge C^{\ast} + C^{\ast} = 2C^{\ast}
+\]</span> 因此可得 <span class="math display">\[
+C^{\ast} \le \frac{1}{2}\mathrm{OPT}
+\]</span> 同时我们知道最小生成树的代价<span class="math inline">\(\le \mathrm{OPT}\)</span>，因此整张欧拉图的代价<span class="math inline">\(\le \frac{3}{2}\mathrm{OPT}\)</span>，而抄近路得到的最终回路的代价只会更小，因此这是一个<span class="math inline">\(\frac{3}{2}\)</span>倍近似算法。</p>
+<h1 id="令人绝望的一般tsp问题">令人绝望的一般TSP问题</h1>
+<p><strong>引理：</strong>对于没有三角不等式的一般TSP问题，除非<span class="math inline">\(\mathsf{P}=\mathsf{NP}\)</span>，不存在任何<span class="math inline">\(2\)</span>倍近似算法以及更优的近似。</p>
+<p><strong>证明：</strong>我们使用gap reduction来证明这一点。考虑哈密尔顿回路问题到TSP的规约。</p>
+<p><strong>哈密尔顿回路问题：</strong>给定图<span class="math inline">\(G=(V,E)\)</span>，问是否存在哈密尔顿回路？</p>
+<p><strong>一般TSP问题：</strong>给定边带权完全图<span class="math inline">\(G&#39;=(V&#39;,E&#39;)\)</span>，计算最小权回路。</p>
+<p>如何规约？对于<span class="math inline">\(G\)</span>中有的边，令其在<span class="math inline">\(G&#39;\)</span>中的权值为<span class="math inline">\(1\)</span>；对于<span class="math inline">\(G\)</span>中没有的边，令其在<span class="math inline">\(G&#39;\)</span>中的权值为<span class="math inline">\(n+2\)</span>。</p>
+<p>如此一来，如果<span class="math inline">\(G\)</span>存在哈密尔顿回路，则TSP解的代价为<span class="math inline">\(n\)</span>，反之则TSP的回路必定会至少用到一条<span class="math inline">\(G\)</span>中不存在的边，因此代价至少为<span class="math inline">\((n-1) + (n+2) = 2n+1\)</span>。</p>
+<p>假设有一个TSP的<span class="math inline">\(2\)</span>倍近似算法，那么如果<span class="math inline">\(G\)</span>存在哈密尔顿回路这个算法只能输出<span class="math inline">\(n\)</span>，因为<span class="math inline">\(n\)</span>到<span class="math inline">\(2n+1\)</span>中间有很大的gap，而如果<span class="math inline">\(G\)</span>不存在哈密尔顿回路，算法就会输出至少是<span class="math inline">\(2n+1\)</span>的代价——因此，我们可以使用这个算法在多项式时间内解决NPC的哈密尔顿回路问题！而如果<span class="math inline">\(\mathsf{P} \neq \mathsf{NP}\)</span>，这是不可能的，因此不存在这样的算法。</p>
+<p>绝望吧？</p>
+<p>更绝望的事情是因为没有三角不等式我们的边权可以设得任意大，不止是<span class="math inline">\(n+2\)</span>，还可以是<span class="math inline">\(3n+2\)</span>，<span class="math inline">\(kn+2\)</span>……我们可以用以上的论证在假定<span class="math inline">\(\mathsf{P} \neq \mathsf{NP}\)</span>的前提下否决任意近似比的近似算法——也就是这个问题根本无从近似。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -504,7 +635,7 @@
 \mathrm{Cost} = s_l+p_l
 \]</span> 接下来我们进行放缩。</p>
 <p>考虑<span class="math inline">\(s_l\)</span>的上界是什么？</p>
-<p><img src="./SIPM1.svg" /></p>
+<p><img src="SIPM1.svg" /></p>
 <p>很显然，<strong>在<span class="math inline">\(s_l\)</span>时刻，除了<span class="math inline">\(l\)</span>即将运行的那台机器，其他机器上必须有任务在运行或者刚刚空下来</strong>（如果有机器已经空了一阵子了，那当时<span class="math inline">\(l\)</span>就会被安排到那台机器上去跑），因此不难得出<span class="math inline">\(ms_l \le \sum_{i\neq l} p_i\)</span>，即 <span class="math display">\[
 s_l \le \frac{\sum_{i \neq l}p_i}{m}
 \]</span> 因此 <span class="math display">\[
@@ -532,13 +663,13 @@ s_l \le \frac{\sum_{i \neq l}p_i}{m}
 <p><strong>证明：</strong>我们故技重施：</p>
 <p><strong>情形1. </strong><span class="math inline">\(p_l \le \frac{1}{3}\mathrm{OPT}\)</span>，这个时候我们直接就可以得到<span class="math inline">\(\mathrm{Cost} \le \frac{4}{3}\mathrm{OPT}\)</span>。</p>
 <p><strong>情形2. </strong><span class="math inline">\(p_l &gt; \frac{1}{3}\mathrm{OPT}\)</span>，此时所有<span class="math inline">\(l\)</span>之前的任务也肯定具有大于<span class="math inline">\(\frac{1}{3} \mathrm{OPT}\)</span>的运行时间。我们同样不考虑<span class="math inline">\(l\)</span>之后的任务。可以通过反证证明：<strong>在最优调度里，每一台机器至多只能处理两件任务！</strong>因此，我们确定有足够的机器让我们的算法得以这样调度任务：</p>
-<p><img src="./SIPM2.svg" /></p>
+<p><img src="SIPM2.svg" /></p>
 <p>（看着是不是很像双指针？）</p>
 <p>具体来说，如果我们把机器按照第一个任务的耗时降序排序，那么它们第二个任务的耗时一定成升序排列。（这并不难证明：第一个任务耗时最短的机器一定能够先领到列表中最长的任务作为第二个任务，之后的机器领到的任务时间递减）</p>
 <p>（在这里我们假定<span class="math inline">\(l\)</span>一定是第二个任务，如果<span class="math inline">\(l\)</span>从头开始运行而且时间特别长的话，参考上一节的证明）</p>
 <p>而接下来我们证明这样的分配方式是最优的。</p>
 <p>我们采取反证的方法：不妨假设在最优方案中存在两个机器，两个机器上都有两个任务，耗时分别为<span class="math inline">\((a,b)\)</span>和<span class="math inline">\((c,d)\)</span>，且<span class="math inline">\(a&gt;c,b&gt;d\)</span>。那么我们把两个机器上的第二个任务互换，变成<span class="math inline">\((a,d)\)</span>和<span class="math inline">\((c,b)\)</span>，不难发现此时完成任务的最短时间会减少，和“最优”矛盾。因此，对于最优方案的任意两台机器<span class="math inline">\((a,b)\)</span>和<span class="math inline">\((c,d)\)</span>，如果<span class="math inline">\(a&gt;c\)</span>那么<span class="math inline">\(b&lt;d\)</span>：</p>
-<p><img src="./SIPM3.svg" /></p>
+<p><img src="SIPM3.svg" /></p>
 <p>这正是我们算法所给出的调度方案。因此<span class="math inline">\(\mathrm{OPT}\)</span>不会比我们算法的结果更好了。</p>
 <p>综上所述，近似比为<span class="math inline">\(\frac{4}{3}\)</span>。</p>
 
@@ -628,7 +759,7 @@ d(u,S) = \min_{v\in S} w_{uv}
 <p>第2步的操作是非常合乎直觉的：如果不把离<span class="math inline">\(S\)</span>最远的顶点加入<span class="math inline">\(S\)</span>的话，这条最远的边权就可能会被计入答案当中，这显然是不合算的，而如果将这个最远点作为新的中心，那么这条最远边就必定不会被计入答案。</p>
 <h2 id="分析">分析</h2>
 <p>这个算法给出方案的代价是什么？在这个算法的背景下，我们不妨说：<em>这个算法结果的代价是如果不跳出循环，下一个选取的中心到当前<span class="math inline">\(S\)</span>的距离</em>（依据第2步）。假设这个中心为<span class="math inline">\(x\)</span>，我们不妨画图：</p>
-<p><img src="./Analysis1.jpg" /></p>
+<p><img src="Analysis1.jpg" /></p>
 <p>其中左边的<span class="math inline">\(S\)</span>是我们的解，右边是最优解（我们这里把他们化成了不重叠的形式，事实上有重叠对于我们的论证也不造成影响）。</p>
 <p>我们的解加上<span class="math inline">\(x\)</span>总共有<span class="math inline">\(k+1\)</span>个点，最优解有<span class="math inline">\(k\)</span>个点，因此由抽屉原理，至少左边有两个点，它们在最优解中的最近点是相同的（即图中的两条横叉边），且由于是最优解，两条边的长度都<span class="math inline">\(\le \mathrm{OPT}\)</span>。</p>
 <p>不妨设这两个点为<span class="math inline">\(u,v\)</span>，由三角不等式，可以得出<span class="math inline">\(w_{uv}\le2\cdot\mathrm{OPT}\)</span>。</p>
@@ -645,12 +776,12 @@ d(x,S) \le w_{uv} \le 2\cdot \mathrm{OPT}
 <li>重复上述步骤，直至图上的所有点都归一个至多<span class="math inline">\(2\cdot \mathrm{OPT}\)</span>远处的中心管。</li>
 </ol>
 <p>画在图上大概是这样的：</p>
-<p><img src="./HS.jpg" /></p>
+<p><img src="HS.jpg" /></p>
 <p>可以看到，可能会有点同时处在多个中心的“势力范围”之内，但这并不重要，我们只需要确保每个点离最近的一个中心至多<span class="math inline">\(2\cdot \mathrm{OPT}\)</span>那么远就行了。</p>
 <h2 id="分析-1">分析</h2>
 <p>我们接下来证明这是一个<span class="math inline">\(2\)</span>近似算法。算法本身的流程确保了<span class="math inline">\(2\)</span>的近似比，因此唯一需要证明的就是这个算法产生的中心不超过要求的<span class="math inline">\(k\)</span>个。</p>
 <p>不妨反证：如果产生了超过<span class="math inline">\(k\)</span>个中心呢？</p>
-<p><img src="./Analysis2.jpg" /></p>
+<p><img src="Analysis2.jpg" /></p>
 <p>那么根据抽屉原理，至少有两个中心在最优解中的最近点是相同的（这和我们分析第一个算法时的逻辑是完全相同的），由三角不等式，这两个中心之间的距离<span class="math inline">\(\le 2\cdot \mathrm{OPT}\)</span>。但是根据算法，中心之间两两距离应该大于<span class="math inline">\(2\cdot \mathrm{OPT}\)</span>，这就产生了矛盾。</p>
 <p>因此必定不会有超过<span class="math inline">\(k\)</span>个中心，证毕。</p>
 <p>还剩下来一个问题：这个算法假定我们知道<span class="math inline">\(\mathrm{OPT}\)</span>，但是实际上我们不知道啊！</p>
@@ -824,7 +955,7 @@ d(x,S) \le w_{uv} \le 2\cdot \mathrm{OPT}
     &amp;= \exp\left(-\frac{n}{24}\right)
 \end{aligned}
 \]</span> 各上界的效果：</p>
-<p><img src="/Bounds.png" /></p>
+<p><img src="Bounds.png" /></p>
 <p>看来这个例子里面还是切比雪夫不等式给出的上界最好——是不是切尔诺夫上界我学到的形式本身太loose了？</p>
 <h1 id="近似算法初步">近似算法初步</h1>
 <h2 id="定义">定义</h2>
@@ -1637,292 +1768,6 @@ compileTestKotlin &#123;
 <p>我从未学过认知论也从未学过教育学，但是我推断人类的认知过程本身不可避免地是一个先天的正反馈过程，别人的认可是激励，别人的反驳是惩罚。在基础教育的过程中，“别人”单指老师与同学，因此这个思路被不断提倡，而当到了网络的辩论场，人们自动就会把“别人”的定义延拓了。要逆转这个态势，审慎地对待别人的认可，积极地面对别人的反驳，小心翼翼地避免矫枉过正，在这个时代还要对抗推荐算法，实在是不容易。而如果只有一个人能够做到这一步，那么这个人被孤立于群体之中，也未必如之前一样快乐。</p>
 <p>因此我越看《理想国》，越觉得像里面的苏格拉底一样在辩论中不恼羞成怒诉诸于人身攻击，反而通过设问，在多个立场之间来回切换，将辩论用作真正探寻真理的途径而非自我膨胀的乱骂一通，实在是一种非常高明的智慧。我觉得自己离这个境界差远了，而对于是否所有人都能拥有这个智慧，是否应该拥有这份智慧，拥有这份智慧之后是否会感到快乐，我现在很悲观。</p>
 <p>唉，自己社科不行，也只能乱发牢骚一通。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/02/28/Manjaro-VM/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/02/28/Manjaro-VM/" class="post-title-link" itemprop="url">用LaTeX实时记数学笔记？！</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-02-28 08:42:53" itemprop="dateCreated datePublished" datetime="2020-02-28T08:42:53+08:00">2020-02-28</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-03-02 14:50:03" itemprop="dateModified" datetime="2020-03-02T14:50:03+08:00">2020-03-02</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>我几个月前看到国外有人<a target="_blank" rel="noopener" href="https://castel.dev/post/lecture-notes-1/">分享</a>用LaTeX实时记1700页数学笔记的感受，当时就被惊艳到了，心生向往。这次因为疫情待在家里上在线课程，总算是给了我一个带电脑进课堂的机会。于是我也仿照原作者的做法尝试了用记LaTeX笔记，这篇文章就来写一写我配置环境时遇到的坑和使用感受。</p>
-<h1 id="系统选择">系统选择</h1>
-<p>原文的作者采用的是Ubuntu发行版+bspwm作为桌面管理器，但是bspwm太小众，网上的资料很少。而且实测装在Ubuntu上默认的配置在视觉上不协调（还要自己去装一个像样的状态栏，总之就是太烦了）。相比之下i3作为另一个Tiling Window Manager比bspwm资料多多了，也比较适合我这种小白。权衡之下我选用Manjaro + i3。在Virtual Box下安装。</p>
-<h1 id="配置镜像">配置镜像</h1>
-<p>这一步不是必须的，因为Manjaro的默认源在国内的速度也还可以接受（~400kBps）。但是换了交大的源之后可以到10MBps：</p>
-<pre class="line-numbers shell"><code class="language-none">sudo pacman -Syy
-sudo pacman-mirrors -i -c China -m rank
-sudo pacman -Syyu</code></pre>
-<p>然后编辑<code>/etc/pacman.conf</code>加上ArchLinuxCN的交大镜像：</p>
-<pre class="line-numbers"><code class="language-ini">[archlinuxcn]
-SigLevel = Optional TrustedOnly
-Server = https://mirrors.sjtug.sjtu.edu.cn/archlinux-cn/$arch</code></pre>
-<p>最后导入一下密钥环，镜像就配置完了：</p>
-<pre class="line-numbers shell"><code class="language-none">sudo pacman -Syy &amp;&amp; sudo pacman -S archlinuxcn-keyring</code></pre>
-<h1 id="安装virtual-box-ga">安装Virtual Box GA</h1>
-<p>Manjaro默认对于虚拟机的支持不是很好。我不选择在VMWare上装Manjaro的主要原因也是因为我没有找到VMWare下自动分辨率比较简单的解决方案。在Virtual Box下只要装Virtual Box Guest Addition就可以了，美滋滋。</p>
-<p>先安装基本的编译套件：</p>
-<pre class="line-numbers shell"><code class="language-none">sudo pacman -S gcc make</code></pre>
-<p>然后查看一下Linux内核版本：</p>
-<pre class="line-numbers shell"><code class="language-none">uname -r</code></pre>
-<p>是5.4，因此安装5.4的headers：</p>
-<pre class="line-numbers shell"><code class="language-none">sudo pacman -S linux54-headers</code></pre>
-<p>之后在Virtual Box菜单下插入GA的iso文件。我最初是手动挂载的（因为找不到i3里面怎么开文件管理器），就是<code>sudo blkid</code>看一下设备然后<code>mount</code>（如果出现不支持<code>iso9660</code>直接重启）。后来意识到文件管理器的名字是<code>pcmanfm</code>，再发现默认可以直接<code>mod + F3</code>打开文件管理器，于是就可以在上面直接操作了。<code>cd</code>进去运行<code>autorun.sh</code>跑完重启。就发现可以自动适应外部分辨率以及共享剪贴板了，非常方便。</p>
-<h1 id="配置键位">配置键位</h1>
-<p>默认Manjaro配置的<code>mod</code>键是<code>super</code>，也就是Win键。但是实测Win键在虚拟机环境下会有小问题（例如Win + L总是会被Windows先拦截导致锁屏）。所以我到<code>~/.i3/config</code>里面把<code>mod</code>键改成了<code>alt</code>。我还把i3默认的<code>jkl:</code>键位改成了和Vim相一致的<code>hjkl</code>键位。</p>
-<h1 id="中文相关">中文相关</h1>
-<p>Manjaro默认的中文渲染很有问题（装系统的时候居然没有中文字体！）。因此需要手动配置中文的渲染。</p>
-<p>我基本上是按照<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/Font_Configuration/Chinese_(简体中文)">Arch Wiki</a>上的Android类字体配置的。但是Arch Wiki上没有配置给终端用的等宽字体，需要个人发挥一下。我最喜欢的等宽字体是Sarasa Gothic（因为有中文）（去除中文我现在最喜欢的是Jetbrains Mono）。我发现ArchLinuxCN的源上已经有这款字体了，于是直接安装：</p>
-<pre class="line-numbers shell"><code class="language-none">sudo pacman -S ttf-sarasa-gothic</code></pre>
-<p>然后修改<code>~/.Xresources</code></p>
-<pre class="line-numbers"><code class="language-ini">URxvt.font: xft:Sarasa Term SC:size=12</code></pre>
-<p>重启一下就好了（其实不用重启，<code>xrdb ~/.Xresources</code>也行？）</p>
-<p>接着是输入法。我原来准备装搜狗的，但是搜狗因为各种奇奇怪怪的原因（比如说字体找不到，比如说默认装<code>fcitx</code>的时候没有<code>qt4</code>的支持需要额外安装）不能用，在各种坑之后我决定不用它改用sunpinyin+cloud pinyin的组合，试用下来也是相当令人满意的：</p>
-<pre class="line-numbers shell"><code class="language-none">sudo pacman -S fcitx-im
-sudo pacman -S fcitx-configtool
-sudo pacman -S fcitx-sunpinyin fcitx-cloudpinyin</code></pre>
-<p>安装后在<code>~/.xprofile</code>里面加上下列几行启用fcitx</p>
-<pre class="line-numbers shell"><code class="language-none">export GTK_IM_MODULE=fcitx
-export QT_IM_MODULE=fcitx
-export XMODIFIERS=&quot;@im=fcitx&quot;
-fcitx -d</code></pre>
-<p>最后一行是我自己加上的，因为似乎由于一些原因fcitx它开机不自启……</p>
-<h1 id="配置tex">配置TeX</h1>
-<p>终于可以开始进入正题了，首先安装TeXLive：</p>
-<pre class="line-numbers shell"><code class="language-none">sudo pacman -S texlive-most texlive-langchinese</code></pre>
-<p>接着安装Vim Plug，在<code>~/.vimrc</code>里面写入自动安装脚本（手动安装亦可）以及一些基本的配置：</p>
-<pre class="line-numbers"><code class="language-vim">set number
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
-set smartindent
-
-syntax on
-
-if empty(glob(&#39;~/.vim/autoload/plug.vim&#39;))
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif</code></pre>
-<p>接着安装所必要的VimTeX插件以及UltiSnips插件并进行相关的配置：</p>
-<pre class="line-numbers"><code class="language-vim">call plug#begin(&#39;~/.vim/plugged&#39;)
-
-Plug &#39;lervag/vimtex&#39;
-let g:tex_flavor=&#39;latex&#39;
-let g:vimtex_view_method=&#39;zathura&#39;
-let g:vimtex_quickfix_mode=0
-set conceallevel=1
-let g:tex_conceal=&#39;abdmg&#39;
-
-Plug &#39;sirver/ultisnips&#39;
-let g:UltiSnipsExpandTrigger=&#39;&lt;tab&gt;&#39;
-let g:UltiSnipsJumpForwardTrigger=&#39;&lt;tab&gt;&#39;
-let g:UltiSnipsJumpBackwardTrigger=&#39;&lt;s-tab&gt;&#39;
-let g:UltiSnipsSnippetDirectories=[&#39;mysnippets&#39;]
-
-call plug#end()</code></pre>
-<p>安装Zathura作为PDF阅读器：</p>
-<pre class="line-numbers shell"><code class="language-none">sudo pacman -S zathura zathura-pdf-mupdf</code></pre>
-<p>我查到Manjaro i3终端默认的背景色是<code>#222D31</code>，因此在<code>~/.config/zathura/zathurarc</code>里面写入</p>
-<pre class="line-numbers"><code class="language-none">set default-bg &quot;#222D31&quot;
-set recolor &quot;true&quot;
-set recolor-lightcolor &quot;#222D31&quot;
-set recolor-darkcolor &quot;#FFFFFF&quot;</code></pre>
-<p>这样Zathura打开白色的pdf文档的时候就会自动重新着色，完成了色调上的统一。</p>
-<p>Vimtex默认使用<code>latexmk</code>编译，<code>latexmk</code>默认调用<code>pdflatex</code>。因为要用中文我们希望它调用<code>xelatex</code>，于是在<code>~/.latexmkrc</code>里面加上</p>
-<pre class="line-numbers"><code class="language-none">$pdf_mode = 1;
-$pdflatex = &#39;xelatex --shell-escape %O %S&#39;;</code></pre>
-<p>现在随便打开一个tex文档，打出<code>\ll</code>，预览就冒出来了，非常方便。</p>
-<h1 id="配置snippets">配置Snippets</h1>
-<p>我基本上复制了作者原博客上的大部分snippets的定义。再加上了一些我觉得比较常用的：</p>
-<pre class="line-numbers"><code class="language-none">snippet exm &quot;example&quot; bA
-\begin&#123;example&#125;
-$1
-\end&#123;example&#125;
-$0
-endsnippet
-
-snippet sln &quot;solution&quot; bA
-\begin&#123;solution&#125;
-$1
-\end&#123;solution&#125;
-$0
-endsnippet
-
-snippet -&gt; &quot;arrow&quot; A
-\Rightarrow
-endsnippet
-
-snippet sc &quot;since&quot; wA
-\because
-endsnippet
-
-snippet tf &quot;therefore&quot; wA
-\therefore
-endsnippet
-
-snippet tx &quot;text&quot; wA
-\text&#123;$1&#125;$0
-endsnippet
-
-snippet par &quot;()&quot; wA
-\left($1\right)$0
-endsnippet
-
-snippet pbk &quot;[]&quot; wA
-\left[$1\right]$0
-endsnippet
-
-snippet pbr &quot;&#123;&#125;&quot; wA
-\left\\&#123;$1\right\\&#125;$0
-endsnippet
-
-snippet pabs &quot;||&quot; wA
-\left|$1\right|$0
-endsnippet
-
-snippet enum &quot;enumerate&quot; bwA
-\begin&#123;enumerate&#125;
-$1
-\end&#123;enumerate&#125;
-$0
-endsnippet
-
-snippet ml &quot;multiline math&quot; bwA
-\begin&#123;gather*&#125;
-$1
-\end&#123;gather*&#125;
-$0
-endsnippet</code></pre>
-<p>笔记源文件的preamable定义如下，使用<code>fleqn</code>选项对所有方程进行左对齐，并定义<code>example</code>和<code>solution</code>环境方便记例题和解答：</p>
-<pre class="line-numbers"><code class="language-latex">\documentclass[fleqn]&#123;ctexart&#125;
-
-\usepackage&#123;amsthm&#125;
-\usepackage&#123;amsmath&#125;
-\usepackage&#123;amssymb&#125;
-\usepackage&#123;tikz&#125;
-
-\newtheorem*&#123;solution&#125;&#123;解&#125;
-\newtheorem&#123;example&#125;&#123;例&#125;[subsection]
-
-\begin&#123;document&#125;
-    \maketitle
-    ...
-\end&#123;document&#125;</code></pre>
-<p>最后的效果如下：</p>
-<figure>
-<img src="https://s2.ax1x.com/2020/03/02/3RRrp6.png" alt="3RRrp6.png" /><figcaption aria-hidden="true">3RRrp6.png</figcaption>
-</figure>
-<p>成果：</p>
-<figure>
-<img src="https://s2.ax1x.com/2020/03/02/3Rojqf.png" alt="3Rojqf.png" /><figcaption aria-hidden="true">3Rojqf.png</figcaption>
-</figure>
-<p>对比手写版：</p>
-<figure>
-<img src="https://s2.ax1x.com/2020/03/02/3Ro6PJ.jpg" alt="3Ro6PJ.jpg" /><figcaption aria-hidden="true">3Ro6PJ.jpg</figcaption>
-</figure>
-<p>是不是看起来还不错？</p>
-<h1 id="使用感受">使用感受</h1>
-<h2 id="优点">优点</h2>
-<ul>
-<li>格式内容分离，便于重新排版与整理</li>
-<li>字体统一美观（自己手写的字实在是太丑了哇）</li>
-<li>例题的自动编号很赞！</li>
-</ul>
-<h2 id="缺点">缺点</h2>
-<ul>
-<li><p>Vim原来就有两个常用的模式，输入法的使用又增加了一个模式。来回shift切换打断了编辑的流畅性，降低了效率。尤其是很多时候输入法还没切回英文就<code>jj</code>一下或者切片段，结果还要删掉，按shift，然后重新打，有的时候着实糟心。</p></li>
-<li><p>Snippets多固然增加了效率，但是也增加了记忆的负担。对于我这种新手来说，过多的snippets只是把打LaTeX的时间转换成回忆用哪个snippet比较好的时间，一下子增加太多snippets也会降低效率。</p></li>
-<li><p>错字的存在。搜狗输入法对于偶尔的打错具有自动修正的功能，但是无论是谷歌拼音还是sunpinyin在这方面都不行，加上很多时候这些输入法的选词并不智能，一个个看过来选词其实也是非常耗费时间的。</p></li>
-<li><p>还是错字，例如“已知”错打成“一直”，英文可以配置spell checker做实时的纠正，这在原文当中也有提到，但是中文目前在这方面还缺乏支持。我听说百度有这方面的接口，但是不知道对于数学笔记专业性这么强的语料效果怎么样。Vim插件我是肯定没找到。</p></li>
-<li><p>笔记的结构比较松散，在笔记本上我们可以拿箭头划来划去，有旁注也可以轻松插入，但是这在LaTeX当中绝非易事。很多时候数学笔记的格式很容易让人陷入纠结，比如说我乱打的一段</p>
-<blockquote>
-<p>设<span class="math inline">\(y=kx+b,\quad (k\neq 0)\)</span></p>
-<p><span class="math inline">\(\Rightarrow x=\frac{y-b}{k}\)</span>又因为已知<span class="math inline">\(k=\tan \alpha\)</span>...</p>
-</blockquote>
-<p>这种格式要怎么排版呢？</p>
-<ol type="1">
-<li>是整个作为一个大的display style math，中文文字作为<code>\text&#123;&#125;</code>镶嵌其中？</li>
-<li>还是一行一个display-style math?</li>
-<li>还是有中文字的行用inline math，然后纯数学符号的行用display math?</li>
-<li>要不要用<code>gather*</code>这种环境？</li>
-</ol>
-<p>又比如说如下这段：</p>
-<blockquote>
-<p><span class="math inline">\(\begin{cases}x=1 \\y=2\end{cases}\)</span>或<span class="math inline">\(\begin{cases}x=2 \\y=1\end{cases}\)</span></p>
-</blockquote>
-<p>手写起来非常简单，但是LaTeX代码呢？</p>
-<pre class="line-numbers"><code class="language-latex">$\begin&#123;cases&#125; x=1 \\ y=2 \end&#123;cases&#125;$
-或
-$\begin&#123;cases&#125; x=2 \\ y=1 \end&#123;cases&#125;$</code></pre>
-<p>一下子复杂了不少，更别说为了中间的“或”字需要输入法切换。这是snippets也难以挽救的低效。</p></li>
-<li><p>我还没有试过画图。但是这一定是一个天坑。</p></li>
-<li><p>如果编译失败那几乎是当场去世（悲）</p></li>
-</ul>
-<h1 id="总结">总结</h1>
-<p>就我个人体验而言，用LaTeX记笔记虽然能够达到非常高的排版质量，但是并没有传说中的那么高效（尤其是在使用中文的背景之下）。用LaTeX整理笔记自然是极好的，但是用LaTeX在课堂上实时记笔记绝对属于一大作死行为（更别说你也不知道老师收不收LaTeX记得笔记对不？）</p>
 
       
     </div>

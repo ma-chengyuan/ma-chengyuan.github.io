@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-count">87</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,117 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/15/DDNS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/15/DDNS/" class="post-title-link" itemprop="url">自己写一个DDNS</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-15 21:38:08" itemprop="dateCreated datePublished" datetime="2020-07-15T21:38:08+08:00">2020-07-15</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-12-18 19:51:53" itemprop="dateModified" datetime="2020-12-18T19:51:53+08:00">2020-12-18</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>前几天借着Github的学生优惠在name.com上嫖了一个域名，这个域名是带SSL的，而恰巧家里的主机因为443端口被封的缘故无法通过Let's Encrypt获得证书，所以把这个域名给家里的主机升级HTTPS再合适不过了。</p>
+<p>唯一的问题是name.com只提供静态DNS服务，而服务器放在家里自然是动态IP的。虽然IP不是经常换但是如果换了IP没有及时更新记录就会出问题，何况手动更新记录也有点烦。有两个方案：</p>
+<ol type="1">
+<li>我目前使用的是花生壳的DDNS，这个的记录是动态更新的。我可以在新域名下面新建一条CNAME记录指向动态域名。这样的好处是省事，坏处是可能会增加DNS解析的时间，我目前还不清楚HTTPS要不要求CNAME指向的域名也有证书，如果要求的话这个方法就更不行了。</li>
+<li>name.com作为一家比较大的域名商有自己的API以及<a target="_blank" rel="noopener" href="https://www.name.com/api-docs">完备的文档</a>，可以自己写一个定时更新脚本来实现类似DDNS的功能。</li>
+</ol>
+<p>经过考虑之后我选择后者。自己写的脚本如下：</p>
+<pre class="line-numbers"><code class="language-bash">#!/bin/sh
+
+domain=&#39;&lt;DOMAIN&gt;&#39;
+credential=&#39;&lt;ACCESS TOKEN&gt;&#39;
+ttl=300
+interval=10
+
+echo &#39;Querying type A record ID...&#39;
+rec_id=$(curl -su $credential &quot;https://api.name.com/v4/domains/$&#123;domain&#125;/records&quot; | jq &#39;.records|map(select(.type==&quot;A&quot;))|.[0].id&#39;)
+echo &#39;Found type A record ID:&#39; $rec_id
+
+while true; do
+    res_ip=$(host $domain | grep -ohP &#39;\b(?:\d&#123;1,3&#125;\.)&#123;3&#125;\d&#123;1,3&#125;\b&#39;)
+    real_ip=$(curl -s myip.ipip.net | grep -ohP &#39;\b(?:\d&#123;1,3&#125;\.)&#123;3&#125;\d&#123;1,3&#125;\b&#39;)
+    echo &#39;Resolution IP:&#39; $res_ip &#39;Real IP:&#39; $real_ip
+    if [[ $real_ip != $res_ip ]]; then
+        echo &quot;Resolution mismatch! Updating record...&quot;  
+        req_data=&quot;&#123;\&quot;type\&quot;:\&quot;A\&quot;,\&quot;fqdn\&quot;:\&quot;$&#123;domain&#125;.\&quot;,\&quot;answer\&quot;:\&quot;$&#123;real_ip&#125;\&quot;,\&quot;ttl\&quot;:$&#123;ttl&#125;&#125;&quot;
+        echo &quot;Request data:&quot; $(echo $req_data | jq &#39;.&#39;)
+        req_res=$(curl -m 30 -su $credential &quot;https://api.name.com/v4/domains/$&#123;domain&#125;/records/$&#123;rec_id&#125;&quot; \
+            -X PUT -H &#39;Content-Type: application/json&#39; --data $req_data | jq &#39;.&#39;)
+        echo &quot;Request result:&quot; $req_res 
+        sleep $ttl
+    fi
+    sleep $interval
+done</code></pre>
+<p>其实很简单，主要分为一下几个部分：</p>
+<ol type="1">
+<li>记录id的获取。name.com对每一个记录都分配了一个id以便于API操作，这个id在网站管理面板上是不可见的，因此需要在运行时查询，命令为<code>curl -su $credential "https://api.name.com/v4/domains/$&#123;domain&#125;/records"</code>。查询之后需要解析JSON，这里我使用的是<code>jq</code>这个第三方JSON parser。</li>
+<li>当前DNS解析的IP。这个使用<code>host</code>结合<code>grep</code>提取IP字符串即可。</li>
+<li>获取本机真实IP。这个接口就多了，我这里用的是<code>myip.ipip.net</code>的接口。据我所知还有接口是直接返回IP字符串的，还可以后处理的功夫。</li>
+<li>如果解析IP和真实IP不符，那就调用API更新记录。注意在更新完之后最好等待TTL的时间以避免更新生效前多次更新。</li>
+</ol>
+<p>写完这个脚本再写一个配套的systemd service file，然后<code>systemctl</code>挂在后台运行就好了。运行到现在效果非常好。如果有name.com的域名同时也有类似需求的或许可以参考一下。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -310,7 +421,7 @@
 <p>由于我们的引理和弱对偶原理，我们的总服务成本<span class="math inline">\(\le \sum_{j\in D}\alpha_j^* \le \mathrm{OPT}\)</span>。如果我们开放设施的成本也有个上界就好了。</p>
 <p>然而并不行。</p>
 <p>考虑如下反例：</p>
-<p><img src="./P1.svg" /></p>
+<p><img src="P1.svg" /></p>
 <p>如果按照我们的算法，我们会为<span class="math inline">\(j\)</span>和<span class="math inline">\(j&#39;\)</span>分别开放一个代价<span class="math inline">\(24\)</span>的设施。而事实上开那个代价<span class="math inline">\(25\)</span>的设施就够了。我们差不多浪费了两倍的钱，而这个倍数可以任意高（只要让代价稍高一点的设施处在所有顾客的邻域当中，而使每个顾客的邻域中都有比其代价略低的设施即可）。</p>
 <p>但是我们知道，<strong>对于任何一组邻域不交的顾客，开放设施的代价确实是不大于<span class="math inline">\(\mathrm{OPT}\)</span>的</strong>（为什么？因为那些设施只服务一个顾客，而那个顾客有可能“部分”光顾其他设施。比如说一个顾客光顾了<span class="math inline">\(0.5\)</span>的设施<span class="math inline">\(1\)</span>（代价为<span class="math inline">\(10\)</span>）和<span class="math inline">\(0.5\)</span>的设施<span class="math inline">\(2\)</span>（代价为<span class="math inline">\(20\)</span>），那么这个顾客就给目标函数贡献了<span class="math inline">\(0.5\times10+0.5\times 20\)</span>，显然这个时候如果我去开代价<span class="math inline">\(10\)</span>的那个设施，开店费是<span class="math inline">\(10\)</span>，是小于最优目标函数的）</p>
 <p>那我不妨先任选一组邻域不交的顾客（不妨称之为“幸运顾客”）按照就近原则开放他们的设施，然后再让那些邻域和幸运顾客有交集的顾客（不妨称之为“倒霉顾客”）去这些设施。</p>
@@ -499,7 +610,7 @@ C^{\text N}_i \le \max_{1 \le k \le i} \{r_k\}+ \sum_{k=1}^i p_k \le C_i^{\text 
 \end{aligned}
 \]</span></p>
 <p>若嫌代数证明太不直观，则下图在几何上说明了这一点：</p>
-<p><img src="./C1.svg" /></p>
+<p><img src="C1.svg" /></p>
 <p>在实际的调度当中，几个任务未必无缝衔接，因此<span class="math inline">\(C_i \ge \sum_{j=1}^i p_j\)</span>，而我们的证明依然成立。因此对于可行的非竞争性调度，以上约束总是成立。虽反之不然，却也比一开始那个过于简陋的线性规划更多地刻画了“非竞争性”的特点。对于我们的算法来说，这个线性规划已经足够。我们的算法为：</p>
 <ol type="1">
 <li>求解以上线性规划。</li>
@@ -701,15 +812,15 @@ B &lt; 2\sum_{i=1}^na_i + 1 \Rightarrow B\le 2\sum_{i=1}^na_i
 <p>由定义，每件大物品大小<span class="math inline">\(&gt;\varepsilon\)</span>，因此每个箱子能够放的大物品数目<span class="math inline">\(m&lt;\frac{1}{\varepsilon}\)</span>，如果我们想要用暴力，只要再把<span class="math inline">\(k\)</span>限制住就行了。</p>
 <p>为此，我们将所有物品按大小升序（或者说不降）排序，然后将排完的物品分成<span class="math inline">\(k\)</span>组，除了最后一组，每一组都有<span class="math inline">\(\lceil n/k \rceil\)</span>个物品。</p>
 <p>假设我们现在的要处理的问题实例为<span class="math inline">\(I\)</span>，我们创建一个新实例<span class="math inline">\(J\)</span>，其中每一个物品的大小被高估为它所在组最大物品的大小：</p>
-<p><img src="./IJ.svg" /></p>
+<p><img src="IJ.svg" /></p>
 <p>很显然，因为做<span class="math inline">\(J\)</span>的时候我们高估了物品的大小，也就是让问题更难了，每个<span class="math inline">\(J\)</span>的解都是<span class="math inline">\(I\)</span>的可行解。而<span class="math inline">\(J\)</span>当中物品的大小只有<span class="math inline">\(k\)</span>种，加上<span class="math inline">\(m\)</span>的限制，是可以暴力解决的。我们可以暴力把<span class="math inline">\(J\)</span>解出来，然后套到<span class="math inline">\(I\)</span>上面作为我们算法的解。但是如何分析呢？或者说，如何用<span class="math inline">\(I\)</span>的最优解来给我们<span class="math inline">\(J\)</span>的最优解一个上界呢？</p>
 <p>出于分析的目的，我们再考虑另一个问题实例<span class="math inline">\(J&#39;\)</span>，其中每一个物品的大小被低估为它所在组最小物品的大小：</p>
-<p><img src="./IJ_.svg" /></p>
+<p><img src="IJ_.svg" /></p>
 <p>类似地，我们可以得出：每一个<span class="math inline">\(I\)</span>的可行解一定是<span class="math inline">\(J&#39;\)</span>的一个可行解，反之未必然，即 <span class="math display">\[
 \mathrm{OPT}_{J&#39;} \le \mathrm{OPT}_{I}
 \]</span> 现在思考一个问题：如果我们有一组<span class="math inline">\(J&#39;\)</span>的最优解，如何把它尽可能地转换成一组<span class="math inline">\(J\)</span>的可行解呢？</p>
 <p>一个方案是让<span class="math inline">\(J\)</span>的每个物品对应<span class="math inline">\(J&#39;\)</span>当中更大一组中的物品，然后就按照<span class="math inline">\(J’\)</span>最优解的方式装箱，这样除了最大的一组以外<span class="math inline">\(J\)</span>中的所有物品都有办法装箱了。令最大的那一组不知道怎么装箱的物品集合为<span class="math inline">\(Q\)</span>。</p>
-<p><img src="./JJ.svg" /></p>
+<p><img src="JJ.svg" /></p>
 <p>因为对于<span class="math inline">\(Q\)</span>里面的物品我们大不了一个箱子装一个，因此我们得到 <span class="math display">\[
 \mathrm{OPT}_{J} \le \mathrm{OPT}_{J&#39;}+|Q| \le \mathrm{OPT}_{I} + \left\lceil\frac{n}{k}\right\rceil
 \]</span> 注意因为我们是暴力解<span class="math inline">\(J\)</span>的，现在不等式的左边<span class="math inline">\(\mathrm{OPT}_J\)</span>就是我们算法的代价。为了证明近似比，我们希望上面不等式的右边变成一个<span class="math inline">\((1+\varepsilon)\mathrm{OPT}_I\)</span>。</p>
@@ -1237,13 +1348,13 @@ v(S_k) - v(S_{k-1}) \ge \frac{v(\mathrm{OPT}) - v(S_{k-1})}{k} \Rightarrow v(S_k
     
     <div class="post-body" itemprop="articleBody">
           <p>数学出分了，我最后一题分数被扣光。</p>
-<p><img src="./prob.jpg" /></p>
+<p><img src="prob.jpg" /></p>
 <p>我的答案是</p>
-<p><img src="./mine.jpg" /></p>
+<p><img src="mine.jpg" /></p>
 <p>而很显然参考答案是</p>
-<p><img src="./chen.jpg" /></p>
+<p><img src="chen.jpg" /></p>
 <p>嘛确实是不一样的。但是我的答案和参考答案是等价的啊！</p>
-<p><img src="./proof.png" /></p>
+<p><img src="proof.png" /></p>
 <p>最多形式不优美，怎落得如此下场？</p>
 <p>大概是老师批high了没注意到吧，我想，然后加了老师微信，自信满满地去讨回我失去的6分。</p>
 <p>事实证明我还是太天真了。</p>
@@ -1375,7 +1486,7 @@ v(S_k) - v(S_{k-1}) \ge \frac{v(\mathrm{OPT}) - v(S_{k-1})}{k} \Rightarrow v(S_k
 <h2 id="定义">定义</h2>
 <p><strong>输入：</strong>全集<span class="math inline">\(\mathcal{U}\)</span>，以及一些集合的集合<span class="math inline">\(S=\{S_1,S_2,S_3,\cdots,S_n\}\)</span>，满足<span class="math inline">\(\forall i, S_i\subseteq \mathcal{U}\)</span>。</p>
 <p><strong>目标：</strong>从<span class="math inline">\(S\)</span>中选择一个最小数目的集合，使得它们能够覆盖<span class="math inline">\(\mathcal{U}\)</span>中所有的元素（即并集为<span class="math inline">\(\mathcal U\)</span>）</p>
-<p><img src="./SC1.svg" /></p>
+<p><img src="SC1.svg" /></p>
 <p>如图，<span class="math inline">\(S_1,S_2,S_4\)</span>就构成一个集合覆盖。</p>
 <h2 id="贪心算法及其分析">贪心算法及其分析</h2>
 <p>我们的想法很简单：<strong>每次都取含有最多未覆盖元素的集合加入我们的覆盖集</strong>，不断循环直至所有集合都被覆盖。</p>
@@ -1418,7 +1529,7 @@ v(S_k) - v(S_{k-1}) \ge \frac{v(\mathrm{OPT}) - v(S_{k-1})}{k} \Rightarrow v(S_k
 \]</span> 证毕。</p>
 <h2 id="跑满上界的输入样例">跑满上界的输入样例</h2>
 <p>对于这个算法而言我们的分析能不能更好一点呢？这里有一个可以让满足这个上界的例子：</p>
-<p><img src="./SC2.svg" /></p>
+<p><img src="SC2.svg" /></p>
 <p>最优解显然是<span class="math inline">\(2\)</span>个集合，但是我们的贪心算法每一次都可能选到红色的集合，而这样就需要<span class="math inline">\(\mathcal{O}\left(\log n\right)\)</span>个集合完成覆盖了。</p>
 <h1 id="带权集合覆盖问题">带权集合覆盖问题</h1>
 <p>如果把给每个集合赋予一个权重，而我们需要寻找一个权重和最小的覆盖集呢？这个问题被称作带权集合覆盖。</p>
@@ -1503,137 +1614,6 @@ w(S_k) \le w(\mathrm{OPT})
 <p>还有<span class="math inline">\(n\)</span>个只包含一个元素的小集合，权值为<span class="math inline">\(\frac{1}{n}, \frac{1}{n-1}, \frac{1}{n-2},\cdots\)</span>。</p>
 <p>对于这个输入，我们的贪心算法会把所有小集合选掉，总权重为<span class="math inline">\(H_n = \mathcal{O}(\log n )\)</span>。而最优解为那个大集合，总权重为<span class="math inline">\(1+\varepsilon\)</span>，二者差<span class="math inline">\(\mathcal{O}(\log n )\)</span>倍，和我们的分析一致，这也说明如果算法不变，我们没办法单纯通过分析得出更好的结果了。</p>
 <p>其实集合覆盖问题可以证明hardness就是<span class="math inline">\(\mathcal{O}(\log n )\)</span>的，只是这个证明不简单，上课的时候只是顺带提了一下。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/03/PACT0702/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/07/03/PACT0702/" class="post-title-link" itemprop="url">PACT 07/02 TSP问题</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-07-03 20:34:44" itemprop="dateCreated datePublished" datetime="2020-07-03T20:34:44+08:00">2020-07-03</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-07-04 15:30:36" itemprop="dateModified" datetime="2020-07-04T15:30:36+08:00">2020-07-04</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="定义">定义</h1>
-<p><strong>输入：</strong>完全图<span class="math inline">\(G=(V,E)\)</span>，边带正权，满足三角不等式。</p>
-<p><strong>目标：</strong>构造一个周游所有顶点的最小权回路。</p>
-<h1 id="下界估计">下界估计</h1>
-<p><span class="math inline">\(\mathrm{OPT}\)</span>的下界是什么？</p>
-<blockquote>
-<p>Hasit: <span class="math inline">\(\mathrm{OPT} \ge n\cdot\min_{e \in E}\{w_e\}\)</span></p>
-</blockquote>
-<p>这确实是一个下界，但是太松了一点？</p>
-<blockquote>
-<p>Andrew T: <span class="math inline">\(\mathrm{OPT} \ge\)</span>边权最小的<span class="math inline">\(n\)</span>条边</p>
-</blockquote>
-<p>好一点了，但是还不够！</p>
-<blockquote>
-<p>我: <span class="math inline">\(\mathrm{OPT}\ge\)</span>每个顶点相邻的最小边权</p>
-</blockquote>
-<p>似乎还不够？</p>
-<blockquote>
-<p>Mona: <span class="math inline">\(\mathrm{OPT}\ge\)</span><strong>最小生成树边权和</strong></p>
-</blockquote>
-<p>没错！证明这个并不难，回路首先是一个连通子图，而连通子图中边数最小的当属生成树，而生成树边权和最小的是最小生成树，因此最小生成树的边权和是一张图中所有连通子图边权和的下界。</p>
-<h1 id="基础近似算法以及分析">基础近似算法以及分析</h1>
-<p>这启发我们先去构造<span class="math inline">\(G\)</span>的最小生成树：</p>
-<p><img src="./TSP1.svg" /></p>
-<p>如何在其基础上构造回路呢？</p>
-<p>我们不妨给每一条边复制一份：</p>
-<p><img src="./TSP2.svg" /></p>
-<p>让后我们走一次DFS，下来的时候走黑边，上去的时候走绿边，整个回路的边权就是最小生成树边权的两倍。</p>
-<p>但是这样的话很多点我们重复走了，因此实际走的时候如果接下来的几个点已经走过了我们就直接跳过，如图，数字表示访问顺序：</p>
-<p><img src="./TSP3.svg" /></p>
-<p>（不难发现，节点的访问顺序就是DFS序）</p>
-<p>由于三角不等式的存在，这个回路的边权一定小于最小生成树边权的两倍。</p>
-<p>由于<span class="math inline">\(\mathrm{OPT}\ge\)</span>最小生成树边权，因此这个算法至少是一个<span class="math inline">\(2\)</span>倍近似算法。</p>
-<h1 id="christofides算法">Christofides算法</h1>
-<p>我们为什么要把最小生成树上的每一条边复制一下？我们的目的其实是<strong>让最小生成树变为一张欧拉图</strong>。有了欧拉图之后就可以求出欧拉回路，有了欧拉回路之后就可以通过跳过重复点抄近道（shortcutting）的方式得到哈密尔顿回路，也就是我们近似算法的解。</p>
-<p>由此可见，一开始的欧拉图很重要。最小生成树之所以不是欧拉图，是因为里面可能会有奇度数的点，那么只要<strong>把奇度数的点变成偶度数不就行了嘛！</strong>我们之前把每条边都复制一下那无论度数奇偶都变成偶度数了，未免太粗暴了一点。</p>
-<p>如何把奇度数变成偶度数呢？首先很显然奇度数的点只有偶数个（度数之和必须是偶数），因此我们想到可以把这些奇度数的点两两配对——或者用更专业的术语来讲，<strong>在这些奇度数点的导出子图上计算一个最小权完美匹配</strong>。我们知道一个偶数点图的最小权完美匹配是可以通过带花树算法（Blossom algorithm）在多项式时间内求出的，所以这个思路没有问题。</p>
-<p><img src="./TSP4.svg" /></p>
-<p>现在我们有了一张欧拉图，只要求出欧拉回路然后在上面抄近道我们就得到了一条周游路线了。</p>
-<p>这个算法被称为Christofides算法。</p>
-<h1 id="christofides算法分析">Christofides算法分析</h1>
-<p>如何分析这个最小权匹配的代价呢？</p>
-<p>我们不妨考虑最优周游路线，以及在这条路线上的最小生成树的奇度数点：</p>
-<p><img src="./TSP6.svg" /></p>
-<p>如果定义连接奇度数点的橘色环的代价是<span class="math inline">\(C\)</span>，显然由三角不等式有<span class="math inline">\(C\le \mathrm{OPT}\)</span>，而如果我们把这个环拆开，便会得到两个完美匹配：</p>
-<p><img src="./TSP5.svg" /></p>
-<p>假设两个完美匹配的代价为<span class="math inline">\(C_1,C_2\)</span>，我们最小权匹配的代价为<span class="math inline">\(C^{\ast}\)</span>，显然有 <span class="math display">\[
-C=C_1+C_2\ge C^{\ast} + C^{\ast} = 2C^{\ast}
-\]</span> 因此可得 <span class="math display">\[
-C^{\ast} \le \frac{1}{2}\mathrm{OPT}
-\]</span> 同时我们知道最小生成树的代价<span class="math inline">\(\le \mathrm{OPT}\)</span>，因此整张欧拉图的代价<span class="math inline">\(\le \frac{3}{2}\mathrm{OPT}\)</span>，而抄近路得到的最终回路的代价只会更小，因此这是一个<span class="math inline">\(\frac{3}{2}\)</span>倍近似算法。</p>
-<h1 id="令人绝望的一般tsp问题">令人绝望的一般TSP问题</h1>
-<p><strong>引理：</strong>对于没有三角不等式的一般TSP问题，除非<span class="math inline">\(\mathsf{P}=\mathsf{NP}\)</span>，不存在任何<span class="math inline">\(2\)</span>倍近似算法以及更优的近似。</p>
-<p><strong>证明：</strong>我们使用gap reduction来证明这一点。考虑哈密尔顿回路问题到TSP的规约。</p>
-<p><strong>哈密尔顿回路问题：</strong>给定图<span class="math inline">\(G=(V,E)\)</span>，问是否存在哈密尔顿回路？</p>
-<p><strong>一般TSP问题：</strong>给定边带权完全图<span class="math inline">\(G&#39;=(V&#39;,E&#39;)\)</span>，计算最小权回路。</p>
-<p>如何规约？对于<span class="math inline">\(G\)</span>中有的边，令其在<span class="math inline">\(G&#39;\)</span>中的权值为<span class="math inline">\(1\)</span>；对于<span class="math inline">\(G\)</span>中没有的边，令其在<span class="math inline">\(G&#39;\)</span>中的权值为<span class="math inline">\(n+2\)</span>。</p>
-<p>如此一来，如果<span class="math inline">\(G\)</span>存在哈密尔顿回路，则TSP解的代价为<span class="math inline">\(n\)</span>，反之则TSP的回路必定会至少用到一条<span class="math inline">\(G\)</span>中不存在的边，因此代价至少为<span class="math inline">\((n-1) + (n+2) = 2n+1\)</span>。</p>
-<p>假设有一个TSP的<span class="math inline">\(2\)</span>倍近似算法，那么如果<span class="math inline">\(G\)</span>存在哈密尔顿回路这个算法只能输出<span class="math inline">\(n\)</span>，因为<span class="math inline">\(n\)</span>到<span class="math inline">\(2n+1\)</span>中间有很大的gap，而如果<span class="math inline">\(G\)</span>不存在哈密尔顿回路，算法就会输出至少是<span class="math inline">\(2n+1\)</span>的代价——因此，我们可以使用这个算法在多项式时间内解决NPC的哈密尔顿回路问题！而如果<span class="math inline">\(\mathsf{P} \neq \mathsf{NP}\)</span>，这是不可能的，因此不存在这样的算法。</p>
-<p>绝望吧？</p>
-<p>更绝望的事情是因为没有三角不等式我们的边权可以设得任意大，不止是<span class="math inline">\(n+2\)</span>，还可以是<span class="math inline">\(3n+2\)</span>，<span class="math inline">\(kn+2\)</span>……我们可以用以上的论证在假定<span class="math inline">\(\mathsf{P} \neq \mathsf{NP}\)</span>的前提下否决任意近似比的近似算法——也就是这个问题根本无从近似。</p>
 
       
     </div>

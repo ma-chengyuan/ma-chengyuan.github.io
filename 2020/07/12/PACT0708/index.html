@@ -189,7 +189,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-count">87</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -383,7 +383,7 @@ C^{\text N}_i \le \max_{1 \le k \le i} \{r_k\}+ \sum_{k=1}^i p_k \le C_i^{\text 
 \end{aligned}
 \]</span></p>
 <p>若嫌代数证明太不直观，则下图在几何上说明了这一点：</p>
-<p><img src="./C1.svg" /></p>
+<p><img src="C1.svg" /></p>
 <p>在实际的调度当中，几个任务未必无缝衔接，因此<span class="math inline">\(C_i \ge \sum_{j=1}^i p_j\)</span>，而我们的证明依然成立。因此对于可行的非竞争性调度，以上约束总是成立。虽反之不然，却也比一开始那个过于简陋的线性规划更多地刻画了“非竞争性”的特点。对于我们的算法来说，这个线性规划已经足够。我们的算法为：</p>
 <ol type="1">
 <li>求解以上线性规划。</li>

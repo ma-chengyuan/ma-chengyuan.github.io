@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-count">87</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,249 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/18/%E9%A9%AC%E8%BE%BE%E5%BB%BA%E6%A8%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/09/18/%E9%A9%AC%E8%BE%BE%E5%BB%BA%E6%A8%A1/" class="post-title-link" itemprop="url">VEX 393 马达电流模型</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-09-18 19:24:59" itemprop="dateCreated datePublished" datetime="2018-09-18T19:24:59+08:00">2018-09-18</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2018-12-15 16:02:15" itemprop="dateModified" datetime="2018-12-15T16:02:15+08:00">2018-12-15</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="电路图">电路图</h1>
+<p><img src="85128984.jpg" /></p>
+<p>绿色箭头为PWM开段电流方向，红色为闭段电流方向。</p>
+<h1 id="模型">模型</h1>
+<h2 id="符号定义">符号定义</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">符号</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(f_{\text{pwm}} \approx 1250\text{Hz}\)</span></td>
+<td>PWM频率</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(t_{\text{pwm}} \approx 1 / f_{\text{pwm}}\)</span></td>
+<td>PWM周期</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(t_{\text{on}}\)</span></td>
+<td>PWM高电位时间</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(t_{\text{off}}\)</span></td>
+<td>PWM低电位时间</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(I(t)\)</span></td>
+<td>电流（随时间变化）</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(I_0\)</span></td>
+<td>PWM周期开始时的电流</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(I_{\text{max}}\)</span></td>
+<td>PWM峰值电流</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(I_{\text{final}}\)</span></td>
+<td>PWM周期结束时的电流</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(U_\text{b} \approx 7.4\text V\)</span></td>
+<td>电池电压</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(U_\text{bemf}\)</span></td>
+<td>反电动势</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(U_\text L\)</span></td>
+<td>电感电压</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(U_\text D \approx 0.75 \text V\)</span></td>
+<td>二极管压降</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(L \approx 6.5\times 10^{-4}\text H\)</span></td>
+<td>电感</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(R \approx 1.609\Omega\)</span></td>
+<td>马达内阻</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(R_\text s \approx 0.28\Omega\)</span></td>
+<td>系统内阻</td>
+</tr>
+</tbody>
+</table>
+<p><strong>部分参数可以自行测定，测定方法见文末。</strong></p>
+<h2 id="开段分析">开段分析</h2>
+<p>首先，由基尔霍夫定律和欧姆定律，可得： <span class="math display">\[
+U_\text b - I(t)(R+R_\text s) - U_\text L - U_\text {bemf} = 0
+\]</span> 对上式进行整理，并结合电感电压公式： <span class="math display">\[
+U_\text b = L\frac{dI(t)}{dt} + I(t)(R + R_\text s) + U_\text {bemf}
+\]</span> 我们把它看做一个关于<span class="math inline">\(I\)</span>的线性微分方程，初始条件为<span class="math inline">\(I(0) = I_0\)</span>解得： <span class="math display">\[
+I(t) = e^{-\frac{t(R + R_\text s)}{L}} \left( I_0 - \frac{U_\text b - U_\text {bemf}}{R + R_\text s}\right) + \frac{U_\text b - U_\text {bemf}}{R + R_\text s}
+\]</span> 我们知道电流在高电压段逐步变大，因此<span class="math inline">\(I_\text{max} = I(t_\text{on})\)</span>，即： <span class="math display">\[
+I_\text{max} = e^{-\frac{t_\text{on}(R + R_\text s)}{L}} \left( I_0 - \frac{U_\text b - U_\text {bemf}}{R + R_\text s}\right) + \frac{U_\text b - U_\text {bemf}}{R + R_\text s}
+\]</span> 出于简化式子的需要，令 <span class="math display">\[
+\begin{aligned}
+c_\text{on} &amp;= -\frac{t_\text{on}(R + R_\text s)}{L} \\
+e_\text{on} &amp;= e^{c_\text{on}} = e^{-\frac{t_\text{on}(R + R_\text s)}{L}} \\
+I_\text{on} &amp;= \frac{U_\text b - U_\text {bemf}}{R + R_\text s}
+\end{aligned}
+\]</span> 注意到<span class="math inline">\(I_\text{on}\)</span>为<span class="math inline">\(\frac{dI(t)}{dt} \to 0\)</span>时的电流，因此也称作<strong>稳态电流</strong>。</p>
+<p>整理得到： <span class="math display">\[
+I_\text{max} = e_\text{on}I_0 + (1 - e_\text{on})I_\text{on}
+\]</span> 为了之后平均电流的计算需要我们顺便计算一波<span class="math inline">\(I(t)\)</span>的积分： <span class="math display">\[
+\int^{t_\text{on}}_0 I(t)dt = t_\text{on}\left(I_\text{on} - \frac{(1 - e_\text{on})(I_0 - I_\text{on})}{c_\text{on}}\right)
+\]</span></p>
+<h2 id="闭段分析">闭段分析</h2>
+<p>再次由基尔霍夫定律及欧姆定律，有：</p>
+<p><span class="math display">\[
+I(t)R + U_\text L + U_\text {bemf} + U_\text D = 0
+\]</span> 同样整理： <span class="math display">\[
+I(t)R + L \frac{dI(t)}{dt}+ U_\text {bemf} + U_\text D = 0
+\]</span> 以初始条件<span class="math inline">\(I(0) = I_\text{max}\)</span>求解这个微分方程解得： <span class="math display">\[
+I(t) = e^{-\frac{tR}{L}}\left(I_\text{max} + \frac{U_\text {bemf} + U_\text D}{R}\right) - \frac{U_\text {bemf} + U_\text D}{R}
+\]</span> 类似地： <span class="math display">\[
+I_\text{final} = e^{-\frac{t_\text{off}R}{L}}\left(I_\text{max} + \frac{U_\text {bemf} + U_\text D}{R}\right) - \frac{U_\text {bemf} + U_\text D}{R}
+\]</span> 我们也令： <span class="math display">\[
+\begin{aligned}
+c_\text{off} &amp;= -\frac{t_\text{off}R}{L}\\
+e_\text{off} &amp;= e^{c_\text{off}} = e^{-\frac{t_\text{off}R}{L}} \\
+I_\text{off} &amp;= - \frac{U_\text {bemf} + U_\text D}{R}
+\end{aligned}
+\]</span> 可见<span class="math inline">\(I_\text{off}\)</span>也是<span class="math inline">\(\frac{dI(t)}{dt} \to 0\)</span>时的电流，也是稳态电流。</p>
+<p>整理得到： <span class="math display">\[
+I_\text{final} = e_\text{off}I_\text{max} + (1 - e_\text{off})I_\text{off}
+\]</span> 为了后文计算平均电流的需要，我们也计算积分： <span class="math display">\[
+\int^{t_\text{off}}_0 I(t)dt = t_\text{off}\left(I_\text{off} - \frac{(1 - e_\text{off})(I_\text{max} - I_\text{off})}{c_\text{off}}\right)
+\]</span></p>
+<p>注意到以上式子都依赖于<span class="math inline">\(t_\text{on}\)</span>和<span class="math inline">\(t_\text{off}\)</span>，前者就是占空比乘以PWM总周期长度，而后者则有些棘手，因为<span class="math inline">\(t_\text{off} = t_\text{pwm} - t_\text{on}\)</span><strong>并不总是成立</strong>。</p>
+<p>接下来的分析有两种情况：</p>
+<ol type="1">
+<li>连续电流：PWM周期中的电流是连续的，即<span class="math inline">\(I_0 = I_\text{final}\)</span>。</li>
+<li>不连续电流：电流在PWM闭段下降至<span class="math inline">\(0\)</span>被二极管截断，即<span class="math inline">\(I_0 = I_\text{final} = 0\)</span>。</li>
+</ol>
+<p>两种情况需要分类讨论。</p>
+<h2 id="连续电流">连续电流</h2>
+<p>由<span class="math inline">\(I_0 = I_\text{final}\)</span>，将<span class="math inline">\(I_\text{final}\)</span>展开： <span class="math display">\[
+I_0 = I_\text{final} = e_\text{off}(e_\text{on}I_0 + (1 - e_\text{on})I_\text{on}) + (1 - e_\text{off})I_\text{off}
+\]</span> 解出<span class="math inline">\(I_0\)</span>： <span class="math display">\[
+I_0 = \frac{e_\text{off}(I_\text{off} + (e_\text{on} - 1)I_\text{on}) - I_\text{off}}{e_\text{off}e_\text{on} - 1}
+\]</span></p>
+<h2 id="不连续电流">不连续电流</h2>
+<p>这个时候我们知道<span class="math inline">\(I_0 = I_\text{final} = 0\)</span>，由<span class="math inline">\(I_\text{final}\)</span>的计算式我们可以反解出<span class="math inline">\(t_\text{off}\)</span>： <span class="math display">\[
+t_\text{off} = -\frac{L}{R}\ln\left(-\frac{I_\text{off}}{I_\text{max} - I_\text{off}}\right)
+\]</span> <strong>从实现上来说，我们先假定<span class="math inline">\(t_\text{off} = t_\text{pwm} - t_\text{on}\)</span>（即假设没有二极管），计算出<span class="math inline">\(I_\text{final}\)</span>，检查它的正负性，来判断电流是否被截断</strong>。</p>
+<h2 id="平均电流计算">平均电流计算</h2>
+<p>最后，我们结合计算出来的$ t_, t_$，以及开闭段计算出来的两个积分，我们终于可以计算PWM过程中的平均电流： <span class="math display">\[
+\overline{I} = f_\text{pwm}\left(t_\text{on}\left(I_\text{on} - \frac{(1 - e_\text{on})(I_0 - I_\text{on})}{c_\text{on}}\right) + t_\text{off}\left(I_\text{off} - \frac{(1 - e_\text{off})(I_\text{max} - I_\text{off})}{c_\text{off}}\right)\right)
+\]</span> 这也是我们模型计算的最终结果。</p>
+<p><strong>在实际的实现当中需要考虑更多的细节，比如说转速的方向，命令的方向等等……并不总是如以上的公式那么简单，是一项艰苦的体力劳动，具体可以参考In The Zone下的model.c</strong>。</p>
+<h2 id="逆向计算">逆向计算</h2>
+<p>很多时候我们不仅需要计算马达一定情况下的电流，<strong>更需要计算马达在某一状态下为了达到某一指定电流（扭矩）所需要的指令大小。</strong>例如：</p>
+<ol type="1">
+<li>计算空载情况下马达到达某一速度所需要的指令值（精确的马达线性化）</li>
+<li>把PID的输出看做目标扭矩使用模型再反解出指令。</li>
+</ol>
+<p>针对这个需求，因为马达曲线直观上总是单调的，因此理论上你总可以根据数学反推推出一个公式，但是由于模型当中牵涉到了分类讨论（电流的连续性），因此较为复杂。利用马达曲线的单调性，二分不失为一个更好的做法。由于指令的范围不大，我们至多只需要二分七八次即可。</p>
+<p><strong>注意：模型的计算在Cortex上还是较为耗时间的，实际当中根据当前电压计算一次完整的马达曲线需要4秒左右，优化常数，提高模型计算的效率一直是一个大问题，这也是为什么在实际应用中也许tanh线性化等计算更快的线性化的方法会更好的原因。</strong></p>
+<h2 id="结果">结果</h2>
+<p>这是真实的速度-指令曲线（空载）：</p>
+<p><img src="12974510.jpg" /></p>
+<p>这是使用模型计算的速度-指令曲线：</p>
+<p><img src="17697936.jpg" /></p>
+<p>两者几乎一致，说明建模正确。</p>
+<h1 id="参数测定">参数测定</h1>
+<h2 id="马达内阻">马达内阻</h2>
+<p>使用伏安法，我们首先需要测量出马达在<strong>127命令下堵转电流</strong><span class="math inline">\(I_\text{stall}\)</span>，127命令是为了尽可能消除电感的影响（即PWM全开），堵转是为了避免电能转化为机械能消耗掉，则根据开段分析当中的 <span class="math display">\[
+U_\text b - I(t)(R+R_\text s) - U_\text L - U_\text {bemf} = 0
+\]</span> 此时<span class="math inline">\(U_\text L = U_\text{bemf} = 0, I(t) = I_\text{stall}\)</span>，可反解出 <span class="math display">\[
+R = \frac{U_\text b}{I_\text{stall}} - R_\text s
+\]</span></p>
+<h2 id="反电动势常数">反电动势常数</h2>
+<p>我们知道<span class="math inline">\(U_\text{bemf} = K_\text e\omega\)</span>，其中<span class="math inline">\(\omega\)</span>是转速， <span class="math inline">\(K_\text e\)</span>为反电动势常数，为了测定其值，我们测量出马达在<strong>127命令无负载运转电流</strong><span class="math inline">\(I_\text{free}\)</span>和此时的转速<span class="math inline">\(\omega_\text{free}\)</span>（单位不论，但是需要保持统一），由 <span class="math display">\[
+U_\text b - I(t)(R+R_\text s) - U_\text L - U_\text {bemf} = 0
+\]</span> 此时<span class="math inline">\(U_\text L = 0, I(t) = I_\text{free}\)</span>，解得 <span class="math display">\[
+U_\text{bemf} = U_\text b - I_\text{free}(R + R_\text s)
+\]</span> 那么 <span class="math display">\[
+\begin{aligned}
+K_\text e &amp;= \frac{U_\text b - I_\text{free}(R + R_\text s)}{\omega_\text{free}} \\
+&amp;= \left(1 - \frac{I_\text{free}}{I_\text{stall}}\right)\frac{U_\text b}{\omega_\text{free}}
+\end{aligned}
+\]</span></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -302,7 +545,7 @@ void pushup(int p) &#123; // 维护sz
 &#125;</code></pre>
 <h1 id="旋转">旋转</h1>
 <p>改变BST的形状而不破坏其性质的操作是二叉树的旋转，分为右旋（zig）和左旋（zag）两种，以右旋为例，右旋把一个节点<span class="math inline">\(p\)</span>的左子树<span class="math inline">\(q\)</span>绕其“向右（顺时针）”旋转到原来<span class="math inline">\(p\)</span>的位置，并且让<span class="math inline">\(p\)</span>成为<span class="math inline">\(q\)</span>的右子树，<span class="math inline">\(q\)</span>原来的右子树成为<span class="math inline">\(p\)</span>的左子树，左旋类似：</p>
-<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-17/36711485.jpg" /></p>
+<p><img src="36711485.jpg" /></p>
 <p>落实在代码上，就是：</p>
 <pre class="line-numbers"><code class="language-cpp">void zig(int &amp;p) &#123;
     int q = t[p].l;
@@ -1681,90 +1924,6 @@ f &amp;= g \times \mu \\
 <p>观察这个式子，我们发现和上面实例中式子的唯一不同就是我们把<span class="math inline">\(\varepsilon\)</span>换成了<span class="math inline">\(id\)</span>，对应下来就是<span class="math inline">\(\mu\)</span>换成了<span class="math inline">\(\varphi\)</span>，因此我们可以得到： <span class="math display">\[
 \sum_{i = 1}^n \sum_{j = 1}^m \gcd(i, j) = \sum_{d = 1}^n \varphi(d) \left\lfloor \frac{n}{d} \right\rfloor \left\lfloor \frac{m}{d} \right\rfloor
 \]</span> 依然是<span class="math inline">\(O(n)\)</span>预处理<span class="math inline">\(O(\sqrt n)\)</span>查询！</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/02/01%E5%88%86%E6%95%B0%E8%A7%84%E5%88%92/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/02/01%E5%88%86%E6%95%B0%E8%A7%84%E5%88%92/" class="post-title-link" itemprop="url">01分数规划</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-09-02 13:17:25" itemprop="dateCreated datePublished" datetime="2018-09-02T13:17:25+08:00">2018-09-02</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-11-03 10:37:43" itemprop="dateModified" datetime="2018-11-03T10:37:43+08:00">2018-11-03</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="题意">题意</h1>
-<p>给定<span class="math inline">\(a_1,a_2,\cdots a_n\)</span>以及<span class="math inline">\(b_1,b_2,\cdots b_n\)</span>，要求最大化： <span class="math display">\[
-\frac{\sum_{i = 1}^n a_ix_i}{\sum_{i = 1}^n b_ix_i}
-\]</span> 其中<span class="math inline">\(\forall 1\le i \le n, x_i \in \{0, 1\}\)</span>。</p>
-<h1 id="解法">解法</h1>
-<p>我们可以二分答案<span class="math inline">\(L​\)</span>，这样这个问题就转变为：能否求出一组解<span class="math inline">\(x​\)</span>，使得<span class="math inline">\(\frac{\sum_{i = 1}^n a_ix_i}{\sum_{i = 1}^n b_ix_i} \ge L​\)</span>？</p>
-<p>对不等式进行变形： <span class="math display">\[
-\begin{aligned}
-\frac{\sum_{i = 1}^n a_ix_i}{\sum_{i = 1}^n b_ix_i} &amp;\ge L \\
-\sum_{i = 1}^n a_ix_i &amp;\ge L\sum_{i = 1}^n b_ix_i \\
-\sum_{i = 1}^n a_ix_i - L\sum_{i = 1}^n b_ix_i &amp;\ge 0 \\
-\sum_{i = 1}^n (a_i - Lb_i)x_i &amp;\ge 0
-\end{aligned}
-\]</span> 我们计算<span class="math inline">\(\sum_{i = 1}^n (a_i - Lb_i)x_i\)</span>的最大值，即构造<span class="math inline">\(x\)</span>使<span class="math inline">\(x_i = 1\)</span>当且仅当<span class="math inline">\(a_i - Lb_i &gt; 0\)</span>，并判断最大值的正负性，在此基础上不断二分答案即可。时间复杂度为<span class="math inline">\(O(n\log L_{max})\)</span>。</p>
 
       
     </div>

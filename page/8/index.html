@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-count">87</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,90 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/02/01%E5%88%86%E6%95%B0%E8%A7%84%E5%88%92/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/09/02/01%E5%88%86%E6%95%B0%E8%A7%84%E5%88%92/" class="post-title-link" itemprop="url">01分数规划</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-09-02 13:17:25" itemprop="dateCreated datePublished" datetime="2018-09-02T13:17:25+08:00">2018-09-02</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2018-11-03 10:37:43" itemprop="dateModified" datetime="2018-11-03T10:37:43+08:00">2018-11-03</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="题意">题意</h1>
+<p>给定<span class="math inline">\(a_1,a_2,\cdots a_n\)</span>以及<span class="math inline">\(b_1,b_2,\cdots b_n\)</span>，要求最大化： <span class="math display">\[
+\frac{\sum_{i = 1}^n a_ix_i}{\sum_{i = 1}^n b_ix_i}
+\]</span> 其中<span class="math inline">\(\forall 1\le i \le n, x_i \in \{0, 1\}\)</span>。</p>
+<h1 id="解法">解法</h1>
+<p>我们可以二分答案<span class="math inline">\(L​\)</span>，这样这个问题就转变为：能否求出一组解<span class="math inline">\(x​\)</span>，使得<span class="math inline">\(\frac{\sum_{i = 1}^n a_ix_i}{\sum_{i = 1}^n b_ix_i} \ge L​\)</span>？</p>
+<p>对不等式进行变形： <span class="math display">\[
+\begin{aligned}
+\frac{\sum_{i = 1}^n a_ix_i}{\sum_{i = 1}^n b_ix_i} &amp;\ge L \\
+\sum_{i = 1}^n a_ix_i &amp;\ge L\sum_{i = 1}^n b_ix_i \\
+\sum_{i = 1}^n a_ix_i - L\sum_{i = 1}^n b_ix_i &amp;\ge 0 \\
+\sum_{i = 1}^n (a_i - Lb_i)x_i &amp;\ge 0
+\end{aligned}
+\]</span> 我们计算<span class="math inline">\(\sum_{i = 1}^n (a_i - Lb_i)x_i\)</span>的最大值，即构造<span class="math inline">\(x\)</span>使<span class="math inline">\(x_i = 1\)</span>当且仅当<span class="math inline">\(a_i - Lb_i &gt; 0\)</span>，并判断最大值的正负性，在此基础上不断二分答案即可。时间复杂度为<span class="math inline">\(O(n\log L_{max})\)</span>。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1653,239 +1737,6 @@ kl &amp;\equiv 0 &amp;\pmod{n}
 <p><span class="math display">\[
 \sum_{d|n} \varphi\left(\frac{n}{d}\right)m^d
 \]</span></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/08/28/%E6%9C%89%E9%99%90%E5%BE%AE%E7%A7%AF%E5%88%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/08/28/%E6%9C%89%E9%99%90%E5%BE%AE%E7%A7%AF%E5%88%86/" class="post-title-link" itemprop="url">有限微积分</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-08-28 17:34:17" itemprop="dateCreated datePublished" datetime="2018-08-28T17:34:17+08:00">2018-08-28</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-09-04 22:34:48" itemprop="dateModified" datetime="2019-09-04T22:34:48+08:00">2019-09-04</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="回顾">回顾</h1>
-<p>微积分是数学分析中一类极为有力的工具，其中微分的核心是微分算子<span class="math inline">\(D\)</span>，定义为： <span class="math display">\[
-Df(x) = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
-\]</span> 若<span class="math inline">\(DF(x) = f(x)\)</span>我们称<span class="math inline">\(F(x)\)</span>是<span class="math inline">\(f(x)\)</span>的原函数，他们两个一起构成了积分的核心——牛顿-莱布尼茨公式： <span class="math display">\[
-\int_a^b f(x)dx = F(b) - F(a)
-\]</span> 在微积分当中我们有一整套系统的规则来方便地计算各种形式的微分和积分，而依稀记得一句话：<strong>积分是黎曼和的极限</strong>，即积分是求和的连续情况，求和是积分的离散情况，既然我们可以系统地计算积分，那么我们可不可以系统地计算和式呢？答案是肯定的，《具体数学》中为我们引入的一类工具便是——<strong>有限微积分</strong>。（个人觉得叫离散微积分更好？）</p>
-<h1 id="定义和记号">定义和记号</h1>
-<p>仿照微分算子<span class="math inline">\(D\)</span>的定义我们首先定义差分算子<span class="math inline">\(D\)</span>： <span class="math display">\[
-\Delta f(x) = f(x + 1) - f(x)
-\]</span> 可以发现，差分算子本质是微分算子定义中<span class="math inline">\(h = 1\)</span>的特例，只不过在微分中<span class="math inline">\(h\)</span>无限接近于0，而在差分当中最小只能为1。</p>
-<p>类似地，若<span class="math inline">\(\Delta F(x) = f(x)\)</span>我们也可以称<span class="math inline">\(F(x)\)</span>是<span class="math inline">\(f(x)\)</span>的“原函数”，显然我们有： <span class="math display">\[
-\sum_a^b f(x) \delta x  = F(b) - F(a)
-\]</span> 我们在这里仿照定积分引入了一个新的记号<span class="math inline">\(\sum_a^b f(x)\delta x\)</span>，不难发现： <span class="math display">\[
-\sum_a^b f(x) \delta x = \sum_{x = a}^{b - 1}f(x)
-\]</span> 类似地，仿照不定积分的定义，我们还可以定义一个更为抽象的概念”不定和式“，即 <span class="math display">\[
-\sum f(x) \delta x = F(x) + C
-\]</span> <span class="math inline">\(C\)</span>也起类似积分常数的作用。</p>
-<h1 id="注入灵魂">注入灵魂</h1>
-<p>照葫芦画瓢到此为止，然而如果只有这么些记号是没有卵用的，就像你不能只靠微分的极限定义和莱布尼茨公式计算微积分一样，我们也不能指望靠这些记号就可以快速计算和式了，我们还需要类似于微积分当中的幂法则等一系列规则的支持。</p>
-<p>首先不证自明的一点是：<strong>在有限微积分中，差分算子对于加法和减法的分配率成立</strong>。</p>
-<h2 id="幂法则">幂法则</h2>
-<p>我们先考察微积分当中的幂法则在这里有没有等价的替代品，众所周知，幂法则是： <span class="math display">\[
-Dx^m = mx^{m-1}
-\]</span> 如果简单地把微分算子换成差分我们会得到： <span class="math display">\[
-\Delta x^m = (x + 1)^m - x^m
-\]</span> 接下来的展开势必就要用到二项式定理了，事到如今只要是正常人都知道最后是得不到$ mx^{m-1} $的，我们发现直接把幂法则照搬过来是行不通的，如果问题不是出在差分算子上那就是出在“幂”上了，那么现在问题变成了：<strong>我们能不能找到一种“幂”的定义，使它在差分算子作用下表现出类似幂法则的性质呢？</strong></p>
-<p>答案是肯定的，这种“幂”被称作下降阶乘幂，记作<span class="math inline">\(x^{\underline m}\)</span>，《具体数学》中对它的定义是： <span class="math display">\[
-x^{\underline m} = x(x - 1)(x - 2)\cdots(x - m + 1)
-\]</span> 显然无论是从形式还是从名字来看它都有一个更简洁的阶乘定义： <span class="math display">\[
-x^{\underline m} = \frac{x!}{(x - m)!}
-\]</span> 在《具体数学》中作者花了不少笔墨来把它最上面的定义推广到<span class="math inline">\(m &lt; 0\)</span>的情形，但是一切在阶乘定义中就很显然了，对于<span class="math inline">\(m &gt; 0\)</span>，我们有： <span class="math display">\[
-x^{\underline{-m}} = \frac{1}{(x + 1)(x + 2)\cdots(x + m)}
-\]</span> 我们也有类似<span class="math inline">\(x^{m + n} = x^mx^n\)</span>的规则： <span class="math display">\[
-x^{\underline{m + n}} = x^{\underline m}(x - m)^{\underline n}
-\]</span> 好的，让我们回到幂法则，那么如果我们结合下降阶乘幂和差分算子，我们会得到什么呢？ <span class="math display">\[
-\begin{aligned}
-\Delta x^{\underline m} &amp;= (x + 1)^{\underline m} - x^{\underline m} \\
-&amp;= \frac{(x + 1)!}{(x + 1 - m)!} - \frac{x!}{(x - m)!} \\
-&amp;= \frac{(x + 1)! - (x + 1 - m)x!}{(x + 1 - m)!} \\
-&amp;= \frac{x![(x + 1) - (x + 1 - m)]}{(x + 1 - m)!} \\
-&amp;= \frac{mx!}{[x - (m - 1)]!} \\
-&amp;= mx^{\underline{m - 1}}
-\end{aligned}
-\]</span> 我们成功地推出了“幂法则”！</p>
-<p>顺带一提，除了下降阶乘幂之外还有上升阶乘幂，定义为<span class="math inline">\(x^{\overline m} = \frac{(x + m - 1)!}{(x - 1)!}\)</span>，也有类似幂法则的性质，但是用起来比较麻烦，故我们使用下降阶乘幂。</p>
-<p>既然我们已经成功导出了有限微积分中差分算子的幂法则，那么对于不定和式，其幂法则也呼之欲出： <span class="math display">\[
-\sum x^{\underline m}\delta x = \frac{x^{\underline{m + 1}}}{m + 1} + C
-\]</span> 正如积分中对于幂法则在<span class="math inline">\(m = -1\)</span>的时候需要特殊处理，即<span class="math inline">\(\int x^{-1} dx = \ln x + C\)</span>，在求和当中，我们也有类似的： <span class="math display">\[
-\sum x^{\underline{-1}}\delta x = H_x + C
-\]</span> 其中<span class="math inline">\(H_x\)</span>表示调和级数的第<span class="math inline">\(x\)</span>项部分和，我们知道当<span class="math inline">\(x \to \infty\)</span>时有<span class="math inline">\(H_x = \ln x + \gamma\)</span>，其中<span class="math inline">\(\gamma\)</span>是欧拉-马歇罗尼常数。从此我们也可以看出上述规则确实是积分中对应公式的一个离散模拟。</p>
-<p>那么这些法则有什么用呢？我们可以再试试看求解如下和式： <span class="math display">\[
-\sum_{x = 1}^n x^2
-\]</span> 我在先前成套方法的介绍中曾利用成套方法对它进行过求解，过程相对来说比较繁琐，我们看看怎么用有限微积分秒杀这道题。</p>
-<p>首先，注意到： <span class="math display">\[
-x^2 = x^{\underline 2} + x^{\underline 1}
-\]</span> 所以： <span class="math display">\[
-\begin{aligned}
-\sum x^2 \delta x &amp;= \sum x^{\underline 2}\delta x + \sum x^{\underline 1}\delta x \\
-&amp;= \frac{x^{\underline 3}}{3} + \frac{x^{\underline 2}}{2} + C \\
-&amp;= \frac{2x(x - 1)(x - 2) + 3x(x - 1)}{6} + C \\
-&amp;= \frac{x(x - 1)(2x - 1)}{6} + C
-\end{aligned}
-\]</span> 接下来就是展现真正技术的时刻： <span class="math display">\[
-\begin{aligned}
-\sum_{x = 1}^n x^2 &amp;= \sum_1^{n + 1} x^2 \delta x \\
-&amp;= \frac{n(n + 1)(2n + 1)}{6} + C - \frac{1 \cdot 0 \cdot 1}{6} - C \\
-&amp;= \frac{n(n + 1)(2n + 1)}{6}
-\end{aligned}
-\]</span> 就非常舒服。<strong>通过归纳法可以证明，对于任何多项式，我们总是可以把它转换为若干个下降阶乘幂的线性组合</strong>，因此，对于一切多项式的和式，我们都能用有限微积分系统地求取！</p>
-<p><strong>运用指数为<span class="math inline">\(-2\)</span>的幂法则，你就会发现你得到了所谓的裂项公式。</strong></p>
-<h2 id="ex的对等"><span class="math inline">\(e^x\)</span>的对等</h2>
-<p>在微积分中，<span class="math inline">\(e^x\)</span>的具有非常好的性质，即导数和积分都等于自身，那么在有限微积分当中有没有类似的函数呢，幸运的是，找到这样的函数并不困难： <span class="math display">\[
-\begin{aligned}
-\Delta f(x) &amp;= f(x) \\ 
-f(x + 1) - f(x) &amp;= f(x) \\
-f(x + 1) &amp;= 2f(x)
-\end{aligned}
-\]</span> 这就很明显了，<span class="math inline">\(f(x) = 2^x\)</span>，或者对其平移的结果都满足差分等于自身的性质。</p>
-<p>因此，无惑乎我们有： <span class="math display">\[
-\begin{aligned}
-\sum_{x = 1}^n 2^x &amp;= \sum_1^{n + 1} 2^x \delta x \\
-&amp;= 2^{n + 1} - 2^0 \\
-&amp;= 2^{n + 1} - 1
-\end{aligned}
-\]</span></p>
-<h2 id="指数函数">指数函数</h2>
-<p>我们知道在微积分当中： <span class="math display">\[
-\int a^xdx = \frac{a^x}{\ln a} + C
-\]</span> 我们接下来探究在有限微积分当中是否有类似结论的出现，我们先猜想： <span class="math display">\[
-\sum a^x\delta x = ka^x + C
-\]</span> 两边取差分： <span class="math display">\[
-\begin{aligned}
-a^x &amp;= ka^{x + 1} - ka^x \\
-a^x &amp;= ka^x(a - 1) \\
-k &amp;= \frac{1}{a - 1}
-\end{aligned}
-\]</span> 因此： <span class="math display">\[
-\sum a^x\delta x = \frac{a^x}{a - 1} + C
-\]</span> <strong>使用这一规则可以直接推出等比数列求和公式</strong>。</p>
-<h2 id="其他法则">其他法则？</h2>
-<p>我们要不要把链式法则，积法则，商法则之类的全部搬到有限微积分里面了呢？其实是不用的，因为这些法则都是辅助我们计算微分的，其存在的原因便是使用微分的极限定义计算导数实在是太困难了，而差分算子则不然，计算一个函数的差分只要代进去就行了。</p>
-<p>但是，为了后文的方便，在此我们着重来讨论积法则在有限微积分当中的对等，在微积分当中，积法则是： <span class="math display">\[
-D(uv) = uDv + vDu
-\]</span> 那么在有限微积分当中： <span class="math display">\[
-\begin{aligned}
-\Delta(u(x)v(x)) &amp;= u(x + 1)v(x + 1) - u(x)v(x) \\
-&amp;= u(x + 1)v(x + 1) - u(x)v(x + 1) + u(x)v(x + 1) - u(x)v(x) \\
-&amp;= u(x)\Delta v(x) + v(x + 1)\Delta u(x)
-\end{aligned}
-\]</span> 记移进算子<span class="math inline">\(Ef(x) = f(x + 1)\)</span>，则有限微积分的积法则可以被表示为： <span class="math display">\[
-\begin{aligned}
-\Delta(uv) &amp;= u\Delta v + Ev\Delta u \\
-&amp;= Eu\Delta v + v\Delta u
-\end{aligned}
-\]</span></p>
-<h1 id="分部求和">分部求和</h1>
-<p>对于积分，我们有分部积分公式： <span class="math display">\[
-\int udv = uv - \int vdu
-\]</span> 其本质是对微分积法则移项并两边积分得到的成果，我们能不能也用上面推导出的有限微积分的“积法则”推导出分部求和呢？ <span class="math display">\[
-\begin{aligned}
-\Delta(uv) &amp;= u\Delta v + Ev\Delta u \\
-\Rightarrow u\Delta v &amp;= \Delta(uv) - Ev\Delta u \\
-\Rightarrow \sum u \Delta v &amp;= uv - \sum Ev\Delta u
-\end{aligned}
-\]</span> 最后的结果就是分部求和的公式，分部积分的经典例题是<span class="math inline">\(\int xe^xdx\)</span>，对应到有限微积分当中就是<span class="math inline">\(\sum x2^x\delta x\)</span>，运用我们刚得到的分部求和公式，令<span class="math inline">\(u = x, \Delta u = 1, v = 2^x, \Delta v = 2^x\)</span>我们就得到了： <span class="math display">\[
-\begin{aligned}
-\sum x2^x\delta x &amp;= x2^x - \sum 2^{x + 1}\delta x + C\\
-&amp;=x2^x - 2^{x + 1} + C
-\end{aligned}
-\]</span> 因此 <span class="math display">\[
-\begin{aligned}
-\sum_{i = 0}^nx2^x &amp;= \sum_0^{n + 1} x2^x\delta x \\
-&amp;= (n + 1)2^{n + 1} - 2^{n + 2} - 0\cdot 1 + 2 \\
-&amp;= (n - 1)2^{n + 1} + 2
-\end{aligned}
-\]</span> 计算这个和式甚至不需要思考！</p>
-<p>我们来试试上次成套方法博客中我说需要一定技巧的<span class="math inline">\(\sum_{x = 1}^n (-1)^xx^2\)</span>吧！</p>
-<p>令<span class="math inline">\(u = x^2, \Delta v = (-1)^x\)</span>可得<span class="math inline">\(\Delta u = 2x + 1, v = -\frac{ (-1)^x}{2}\)</span>： <span class="math display">\[
-\begin{aligned}
-\sum (-1)^xx^2\delta x &amp;= -\frac{x^2(-1)^x}{2} - \sum-\frac{ (-1)^{x + 1}}{2}(2x + 1)\delta x + C\\
-&amp;= -\frac{x^2(-1)^x}{2} - \sum\frac{(-1)^x(2x + 1)}{2}\delta x + C\\
-&amp;= -\frac{x^2(-1)^x}{2} - \sum\frac{(2x + 1)}{2}(-1)^x\delta x + C
-\end{aligned}
-\]</span> 观察这个式子的后项，我们故技重施，令<span class="math inline">\(u = \frac{(2x + 1)}{2}, \Delta u = 1, \Delta v = (-1)^x\)</span>： <span class="math display">\[
-\begin{aligned}
-\sum\frac{(2x + 1)}{2}(-1)^x\delta x &amp;= -\frac{(2x + 1)(-1)^x}{4} - \sum-\frac{ (-1)^{x + 1}}{2}\delta x + C\\
-&amp;= -\frac{(2x + 1)(-1)^x}{4} - \frac{1}{2}\sum(-1)^x\delta x + C\\
-&amp;= -\frac{(2x + 1)(-1)^x}{4} + \frac{1}{4}(-1)^x + C\\
-&amp;= -\frac{(-1)^xx}{2} + C
-\end{aligned}
-\]</span> 回到上式： <span class="math display">\[
-\begin{aligned}
-\sum (-1)^xx^2\delta x &amp;= -\frac{x^2(-1)^x}{2} + \frac{(-1)^xx}{2} + C\\
-&amp;= -\frac{(-1)^xx(x - 1)}{2} + C
-\end{aligned}
-\]</span> 给这个和式加上下界： <span class="math display">\[
-\begin{aligned}
-\sum_{x = 1}^n (-1)^xx^2 &amp;= -\frac{(-1)^{n + 1}n(n + 1)}{2} + -\frac{(-1)^1\cdot 0 \cdot 1}{2} \\
-&amp;= \frac{(-1)^nn(n + 1)}{2}
-\end{aligned}
-\]</span> 以上的过程如行云流水一般地系统化和顺畅，只要熟悉我们拆分出指数项，然后对多项式项不断使用差分降次——这其实是分部积分的技巧，但是得益于有限微积分和微积分的联系我们得以直接拿来用了。</p>
-<h1 id="总结">总结</h1>
-<p>综上所述，基于整数建立起来的有限微积分虽然不一定有传统的微积分那么好的性质，但是依然可以系统地高效地处理很多的求和问题，我们在有限微积分的公式推导中还顺便导出了平方和公式，裂项公式和等比数列公式等，而这一切公式的导出在有限微积分的背景下是那么地自然，以至于让人无法相信第一个属于小学奥数，第二个属于初中数学，而最后一个要在高中才能教到。虽然这也和我们独到的证明方法有关（一般来说这三个公式分别需要用到归纳法，叠缩和扰动法证明），但是可以预见的是，有限微积分的确在和式的处理上具有<strong>提纲掣领</strong>的作用，不容小觑。</p>
 
       
     </div>

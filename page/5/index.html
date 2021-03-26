@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-count">87</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,87 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/12/16/Nginx%20Proxy/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/12/16/Nginx%20Proxy/" class="post-title-link" itemprop="url">Nginx带子路径的反向代理配置文件的正确写法</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2019-12-16 22:10:03 / 修改时间：22:09:49" itemprop="dateCreated datePublished" datetime="2019-12-16T22:10:03+08:00">2019-12-16</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>最近折腾服务器把Aria2、H5AI、Jellyfin、Jupyter等集合到一个端口访问（因为开端口映射实在是一件麻烦事），于是需要经常用到Nginx的反向代理。之前的配置文件的效果一直都不是最完美，瑕疵体现在redirect之后就会忽略到子路径导致404。在网上多方搜索之后我终于找到了一个总体靠谱的写法（感觉Nginx的流行度还是比不上Apache），记下来留自己备用。</p>
+<pre class="line-numbers"><code class="language-nginx">location /SUB_PATH &#123;
+    return 302 $scheme://$host:$port/SUB_PATH/;
+&#125;
+location /SUB_PATH/ &#123;
+    proxy_pass xxxxx;
+    proxy_pass_request_headers on;
+    proxy_redirect ~^/(.*) $scheme://$host:$port/SUB_PATH/$1;        
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Host $http_host;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $http_connection;
+    # proxy_buffering off; 
+&#125;</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -539,11 +620,11 @@ m_0T_0=(m_0-vt_f)\left[T_a+\left(\frac{m_0-vt_f}{m_0}\right)^{\frac{k}{cv}}(T_0-
 <p>但是合上盖子系统似乎就自动休眠了，改设置也没有什么很好的效果，即使可以使用<code>caffeinate</code>，重启之后还是会有问题。何况就算避免了休眠，在检测不到Display的时候据说显卡也是不工作的（虽然不知道核显是否也是如此）。网传常见的解决方法是“显卡欺骗器”，也就是Dummy Display，通过在显示端口模拟协议让系统检测到一个并不存在的Display，就行了。</p>
 <p>但是Dummy Display一个现成的就要10块左右，而且对于MBA这种DP的接口还不是很好找。</p>
 <p>于是自己从家里搜刮出了一些边角料糊了一个，效果还不错，成品如下：</p>
-<p><img src="/device.jpg" /></p>
+<p><img src="device.jpg" /></p>
 <p>使用的元件是一个DP转接头以及若干买Arduino送的电阻。</p>
 <p>怎么做到的呢？</p>
 <p>根据<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/VGA_connector">Wikipedia</a>上的表述，下图VGA端口的1, 2, 3线分别表示RGB的模拟信号，6, 7, 8对应返线。</p>
-<p><img src="/VGA_Port.svg" /></p>
+<p><img src="VGA_Port.svg" /></p>
 <p>再根据Wiki上的资料，RGB线路的阻抗为<span class="math inline">\(75\mathrm{\Omega}\)</span>。对于VGA这种老式模拟接口，通常通过线路负载确定是否连接，因此为了欺骗端口，我们只需要在1-6，2-7，3-8分别接上三个<span class="math inline">\(75\mathrm{\Omega}\)</span>的电阻即可。</p>
 <p>但是家里面只搜出5个<span class="math inline">\(220\mathrm{\Omega}\)</span>的和<span class="math inline">\(5\)</span>个<span class="math inline">\(110\mathrm{\Omega}\)</span>的电阻，于是乎就有了上图的蜜汁接线。具体来说：</p>
 <ol type="1">
@@ -1707,98 +1788,6 @@ int main() &#123;
     printf(&quot;%lld\n&quot;, mn);
     return 0;
 &#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/08/22/%E6%96%AF%E5%9D%A6%E7%BA%B3%E6%A0%91/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/08/22/%E6%96%AF%E5%9D%A6%E7%BA%B3%E6%A0%91/" class="post-title-link" itemprop="url">斯坦纳树</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-08-22 21:14:38" itemprop="dateCreated datePublished" datetime="2019-08-22T21:14:38+08:00">2019-08-22</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-12-08 21:37:53" itemprop="dateModified" datetime="2019-12-08T21:37:53+08:00">2019-12-08</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>本地笔记整理，原文写于2019/8/22，2019/12/8上传 <span class="math display">\[
-\newcommand{\dp}{\mathrm{dp}}
-\newcommand{\len}{\mathrm{len}}
-\newcommand{\stf}{\mathrm{dp_{forest}}}
-\]</span></p>
-<hr />
-<p>斯坦纳树是生成树的推广形式，只要求所有顶点的一个子集联通即可。</p>
-<h1 id="最小斯坦纳树">最小斯坦纳树</h1>
-<p>一般的所求的都是最小斯坦纳树问题，使用状压DP解决。定义<span class="math inline">\(\dp[i][S]\)</span>为从<span class="math inline">\(i\)</span>点出发，与<span class="math inline">\(S\)</span>集合当中的点保持联通的最小代价。首先我们有子集转移： <span class="math display">\[
-\dp[i][S] = \min_{T\subset S}\left\{\dp[i][T]+\dp[i][S\setminus T]\right\}
-\]</span></p>
-<p>但是这样有些边就会被多算，因此在这一步过后还要加上转移： <span class="math display">\[
-\dp[i][S] = \min\left\{\dp[i][S], \min_{i \to j} \left\{\dp[j][S]+\len[i\to j]\right\}\right\}
-\]</span> 这个转移就有后效性，但是可以使用SPFA解决。</p>
-<h1 id="最小斯坦纳森林">最小斯坦纳森林</h1>
-<p>最小斯坦纳森林是最小斯坦纳树的升级版本，要求构造一棵最小权森林使得每一类顶点之间两两连通。</p>
-<p>定义 <span class="math display">\[
-\stf[S]=\min_{i\in V}\left\{\dp[i][S]\right\}
-\]</span> 表示<span class="math inline">\(S\)</span>中节点都在一棵树上的最小值。</p>
-<p>然后由类似的转移： <span class="math display">\[
-\stf[S] = \min_{T\subset S}\left\{\stf[T]+\stf[S\setminus T]\right\}
-\]</span> 但是注意，转移时的<span class="math inline">\(S\)</span>和<span class="math inline">\(T\)</span>要满足某一个种类的节点要么都在，要么都不在。</p>
 
       
     </div>

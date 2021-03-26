@@ -23,24 +23,24 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="问题 自从Office Lens，扫描全能王等App问世以来，人们越来越习惯使用手机代替扫描仪的功能来拍摄文档，而这些App对于一般的平面文档也确实起到了很好的效果。但是对于比较厚重的书本，由于页面向书籍弯折，拍摄到的页面往往是弯曲的，不仅影响美观也影响阅读体验。这些App也均没有针对这一情形进行特殊的优化。 例如：  Dewarp  如何在算法层面解决这个问题呢？ 先前研究 这个">
+<meta name="description" content="问题 自从Office Lens，扫描全能王等App问世以来，人们越来越习惯使用手机代替扫描仪的功能来拍摄文档，而这些App对于一般的平面文档也确实起到了很好的效果。但是对于比较厚重的书本，由于页面向书籍弯折，拍摄到的页面往往是弯曲的，不仅影响美观也影响阅读体验。这些App也均没有针对这一情形进行特殊的优化。 例如：  如何在算法层面解决这个问题呢？ 先前研究 这个问题的英文似乎是Pa">
 <meta property="og:type" content="article">
 <meta property="og:title" content="卷曲页面复原 1 ——平面重建">
 <meta property="og:url" content="https://alan20210202.github.io/2019/12/24/Dewarp1/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="问题 自从Office Lens，扫描全能王等App问世以来，人们越来越习惯使用手机代替扫描仪的功能来拍摄文档，而这些App对于一般的平面文档也确实起到了很好的效果。但是对于比较厚重的书本，由于页面向书籍弯折，拍摄到的页面往往是弯曲的，不仅影响美观也影响阅读体验。这些App也均没有针对这一情形进行特殊的优化。 例如：  Dewarp  如何在算法层面解决这个问题呢？ 先前研究 这个">
+<meta property="og:description" content="问题 自从Office Lens，扫描全能王等App问世以来，人们越来越习惯使用手机代替扫描仪的功能来拍摄文档，而这些App对于一般的平面文档也确实起到了很好的效果。但是对于比较厚重的书本，由于页面向书籍弯折，拍摄到的页面往往是弯曲的，不仅影响美观也影响阅读体验。这些App也均没有针对这一情形进行特殊的优化。 例如：  如何在算法层面解决这个问题呢？ 先前研究 这个问题的英文似乎是Pa">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://alan20210202.github.io/Original.jpg">
-<meta property="og:image" content="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/24-21-45-11-Projection.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/26-18-45-20-Points1.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/24-21-45-38-Linear.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/26-20-20-02-Marked.jpg">
+<meta property="og:image" content="https://alan20210202.github.io/2019/12/24/Dewarp1/Original.jpg">
+<meta property="og:image" content="https://alan20210202.github.io/2019/12/24/Dewarp1/24-21-45-11-Projection.png">
+<meta property="og:image" content="https://alan20210202.github.io/2019/12/24/Dewarp1/26-18-45-20-Points1.png">
+<meta property="og:image" content="https://alan20210202.github.io/2019/12/24/Dewarp1/24-21-45-38-Linear.png">
+<meta property="og:image" content="https://alan20210202.github.io/2019/12/24/Dewarp1/26-20-20-02-Marked.jpg">
 <meta property="article:published_time" content="2019-12-24T12:48:37.443Z">
 <meta property="article:modified_time" content="2019-12-26T12:51:30.831Z">
 <meta property="article:author" content="Chengyuan Ma">
 <meta property="article:tag" content="乱搞">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://alan20210202.github.io/Original.jpg">
+<meta name="twitter:image" content="https://alan20210202.github.io/2019/12/24/Dewarp1/Original.jpg">
 
 
 <link rel="canonical" href="https://alan20210202.github.io/2019/12/24/Dewarp1/">
@@ -192,7 +192,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-count">87</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -300,9 +300,7 @@
         <h1 id="问题">问题</h1>
 <p>自从Office Lens，扫描全能王等App问世以来，人们越来越习惯使用手机代替扫描仪的功能来拍摄文档，而这些App对于一般的<em>平面</em>文档也确实起到了很好的效果。但是对于比较厚重的书本，由于页面向书籍弯折，拍摄到的页面往往是弯曲的，不仅影响美观也影响阅读体验。这些App也均没有针对这一情形进行特殊的优化。</p>
 <p>例如：</p>
-<figure>
-<img src="/Original.jpg" alt="Dewarp" /><figcaption aria-hidden="true">Dewarp</figcaption>
-</figure>
+<p><img src="Original.jpg" alt="Dewarp" /></p>
 <p>如何在算法层面解决这个问题呢？</p>
 <h1 id="先前研究">先前研究</h1>
 <p>这个问题的英文似乎是Page Dewarping。以这个为关键词Google了一番，确实有一些相关的研究，但是几乎都是通过判断字的走向以及表格中直线的走向判断来判断纸的弯曲方向的。</p>
@@ -316,9 +314,7 @@
 <p>众所周知，将三维空间当中的物体转变为二维空间中的像的过程被称作<strong>投影</strong>。</p>
 <p>拍照显然就是一个投影的过程，因此在开始解决问题之前，我们先要确定投影的方式。</p>
 <p>我们的眼睛，包括摄像头，获取到的画面之所以有着近大远小的特征，是因为无论是我们的眼睛，还是相机，采用的投影都是<strong>透视投影</strong>的缘故。透视投影的示意图如下：</p>
-<figure>
-<img src="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/24-21-45-11-Projection.png" alt="Projection.png" /><figcaption aria-hidden="true">Projection.png</figcaption>
-</figure>
+<p><img src="24-21-45-11-Projection.png" alt="Projection.png" /></p>
 <p>如图所示，透视投影需要定义一个<strong>视点</strong>，即我们的眼睛或者相机感光元件所在的位置。然后所有远处物体反射到达视点的光线与一特定平面的交点，就是这一点所对应的投影点。</p>
 <p>透视投影虽然是最符合直觉，也是最自然的投影方式，但是这并不意味着这就是唯一的投影方式。另一个较为常见的投影被称作<strong>正交投影</strong>。可以想象为透视投影中视点在无限远处的情形。（在正交投影当中，远近等大。也正是因为这个原因，正交投影广泛地被CAD软件所采用）因此，在对问题下手之前确定投影的类型是十分重要的。</p>
 <p>OK，回到透视投影。之前的文字只给出了透视投影的定性叙述，这对于算法来说显然是不够的。透视投影可以在数学上可以如下定义：</p>
@@ -342,7 +338,7 @@
 </ol>
 <h1 id="明确问题">明确问题</h1>
 <p>如下图所示：</p>
-<p><img src="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/26-18-45-20-Points1.png" /></p>
+<p><img src="26-18-45-20-Points1.png" /></p>
 <p>我们已经手动标记出页面四角<span class="math inline">\(A,B,C,D\)</span>的投影点<span class="math inline">\(A^{\ast}(x_1,y_1),B^{\ast}(x_2,y_2),C^{\ast}(x_3,y_3),D^{\ast}(x_4,y_4)\)</span>。在这篇文章当中我们的目标是反推出<span class="math inline">\(A,B,C,D\)</span>以及平面。</p>
 <p>假设<span class="math inline">\(O\)</span>是坐标原点，以后会一直用<span class="math inline">\(\vec{OP}\)</span>表示点<span class="math inline">\(P\)</span>的坐标向量。</p>
 <h1 id="解决问题">解决问题</h1>
@@ -368,9 +364,7 @@ E={D^{\ast}}&#39;D^{\ast}
 <p>接下来只剩下<span class="math inline">\(A\)</span>了，<span class="math inline">\(A\)</span>需要枚举吗？</p>
 <p>需要，也不需要。</p>
 <p>直觉上来说<span class="math inline">\(A,B,C,D\)</span>的坐标应当存在某种线性的关系，如下所示：</p>
-<figure>
-<img src="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/24-21-45-38-Linear.png" alt="Linear.png" /><figcaption aria-hidden="true">Linear.png</figcaption>
-</figure>
+<p><img src="24-21-45-38-Linear.png" alt="Linear.png" /></p>
 <p>即无论<span class="math inline">\(z_1\)</span>是多少，平面<span class="math inline">\(ABCD\)</span>的总是不会发生变化的，因此我们只要随便选取一个<span class="math inline">\(A\)</span>的坐标，通过二重三分把<span class="math inline">\(B,C,D\)</span>算出来就行了。</p>
 <p>看着不错，计算量也不高。但是……似乎依赖直觉的地方还是太多了。</p>
 <p>之前论证单调性的过程的insight似乎暗示这问题的解析解应该不难？于是……</p>
@@ -444,9 +438,7 @@ y_4
 <p>看来这个问题其实没有我想象的那样复杂啊。一开始直觉告诉我这东西解析解算起来很麻烦甚至不存在解析解，所以先从算法角度分析了一波。第二天开始想几个直觉结论的证明的时候才意识到似乎解析解不难算，后来发现正是如此。</p>
 <h1 id="结果">结果</h1>
 <p>最后的结果如下所示，加了法向量组成长方体证明确实这个建模没有问题。</p>
-<figure>
-<img src="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/26-20-20-02-Marked.jpg" alt="Marked.jpg" /><figcaption aria-hidden="true">Marked.jpg</figcaption>
-</figure>
+<p><img src="26-20-20-02-Marked.jpg" alt="Marked.jpg" /></p>
 <p>下一篇文章大概会写如何基于这些信息计算纸面弯曲的参数方程吧……</p>
 <p>但是手动标点这种东西四个点一个一个画图上查然后输入还可以忍受，标定横向边缘好几个点实在是懒啊……或许会先写一个标点的工具吧……</p>
 
