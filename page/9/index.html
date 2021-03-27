@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-count">88</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,163 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/08/29/Polya/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/08/29/Polya/" class="post-title-link" itemprop="url">Polya计数</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-08-29 14:31:49" itemprop="dateCreated datePublished" datetime="2018-08-29T14:31:49+08:00">2018-08-29</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-03-15 17:28:19" itemprop="dateModified" datetime="2021-03-15T17:28:19+08:00">2021-03-15</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="引入">引入</h1>
+<p>给定一串<span class="math inline">\(n\)</span>个珠子组成的环链，每个珠子可以被染成黑白两色，求<strong>本质不同</strong>的染色方案的个数？</p>
+<h1 id="群置换和置换群">群，置换和置换群</h1>
+<h2 id="群的不严谨定义">群的不严谨定义</h2>
+<p>如果我们对于一个集合<span class="math inline">\(G\)</span>定义一种运算<span class="math inline">\(\cdot\)</span> ，该运算满足以下性质：</p>
+<ol type="1">
+<li>封闭性：<span class="math inline">\(\forall a, b \in G, a \cdot b \in G\)</span></li>
+<li>结合律：<span class="math inline">\(\forall a, b, c \in G, (a \cdot b) \cdot c = a \cdot (b \cdot c)\)</span></li>
+<li>单位元：<span class="math inline">\(\exists e \in G, \forall a \in G, e \cdot a = a\)</span></li>
+<li>逆元：<span class="math inline">\(\forall a \in G, \exists a^{-1} \in G, a \cdot a^{-1} = e\)</span></li>
+</ol>
+<p>则称<span class="math inline">\((G, \cdot)\)</span>一起构成了一个<strong>群</strong>。</p>
+<h2 id="置换的概念">置换的概念</h2>
+<p>我们抽象并拓展“变换”这个概念，定义集合<span class="math inline">\(G \to G\)</span>的一个双射为一个<strong>置换</strong>，举个例子： <span class="math display">\[
+\left(\begin{matrix}
+1 &amp;2 &amp;3 &amp;4 \\
+2 &amp;3 &amp;4 &amp;1
+\end{matrix}\right)
+\]</span> 这个置换表示将将集合中的<span class="math inline">\(1\)</span>变成<span class="math inline">\(2\)</span>，<span class="math inline">\(2\)</span>变成<span class="math inline">\(3\)</span>，<span class="math inline">\(3\)</span>变成<span class="math inline">\(4\)</span>，<span class="math inline">\(4\)</span>变成<span class="math inline">\(1\)</span>。</p>
+<h2 id="置换群">置换群</h2>
+<p>稍微想一想可知，置换是可以成群的，称为置换群，对于这个置换群我们定义的运算就是<strong>置换的复合</strong>，对于这个运算我们考察其是否满足群的性质：</p>
+<ol type="1">
+<li>封闭性：大部分情况下应该是成立的</li>
+<li>结合律：显然</li>
+<li>单位元：<span class="math inline">\(\left(\begin{matrix} 1 &amp;2 &amp;3 &amp;\cdots \\ 1 &amp;2 &amp;3 &amp; \cdots \end{matrix}\right)\)</span></li>
+<li>逆元：置换是集合到集合的<strong>双射</strong>，显然</li>
+</ol>
+<p>置换群的引入允许我们使用群论来处理一开始的问题，说抽象了我们刚才的问题就是：<strong>求一个序列的集合<span class="math inline">\(X\)</span>，在一个置换群<span class="math inline">\(G\)</span>作用下本质不同的元素个数</strong>。</p>
+<h1 id="burnside引理">Burnside引理</h1>
+<p>序列集合<span class="math inline">\(X\)</span>在置换群<span class="math inline">\(G\)</span>的作用下不同的序列数等于<strong>不动点的平均数</strong>： <span class="math display">\[
+|X \setminus G| = \frac{1}{|G|} \sum_{g \in G} |X^g|
+\]</span> 其中<span class="math inline">\(X^g = \{ x \in X | g(x) = x\}\)</span>表示在置换<span class="math inline">\(g\)</span>作用下不动点的集合，何为不动点呢？</p>
+<p>例如对于置换<span class="math inline">\(\left(\begin{matrix} 1 &amp;2 &amp;3 &amp;4 \\ 3 &amp;4 &amp;1 &amp; 2 \end{matrix}\right)\)</span>而言，序列<span class="math inline">\((1, 2, 1, 2)\)</span>就是它的一个不动点，因为它在置换后还是原来的样子。</p>
+<p>我们接下来考察对于给定置换如何数出不动点的数目，从例子入手，比如说我们要求的是置换,<span class="math inline">\(\left(\begin{matrix} 1 &amp;2 &amp;3 &amp;4 \\ 4 &amp;3 &amp;2 &amp; 1 \end{matrix}\right)\)</span>的不动点数目，我们挨个考虑这样的序列拥有什么样的性质：</p>
+<ol type="1">
+<li>第一位与第四位相同</li>
+<li>第二位与第三位相同</li>
+<li>第三位与第二位相同</li>
+<li>第四位与第一位相同</li>
+</ol>
+<p>显然我们最后得到了一个集合<span class="math inline">\(\{ \{1, 4\}, \{2, 3\} \}\)</span>，其中的每一个集合中的元素必须相等，考虑染色问题，对于每一组“相等”，我们可以把它整个染成两种颜色，因此这个置换共有<span class="math inline">\(2^2 = 4\)</span>个不动点。</p>
+<p>由于等号的传递性，如果我们逐位查看一个置换，把上下的两位并入同一个“相等集合”，那么最后我们一定会得到若干个这样的相等集合，每个“相等集合”都可以被独立地染成不同的颜色，由乘法定理，我们就得到了——</p>
+<h1 id="polya定理">Polya定理</h1>
+<p><span class="math display">\[
+|X \backslash G| = \frac{1}{|G|} \sum_{g \in G} m^{c(g)}
+\]</span></p>
+<p>其中<span class="math inline">\(m\)</span>是颜色个数，<span class="math inline">\(c(g)\)</span>是置换<span class="math inline">\(g\)</span>形成的“循环数”，一个“循环”是指某一位经过不断地置换之后最后回到自身。可以看到Polya定理其实就是我们上面的推论，不需要更多解释。</p>
+<h1 id="循环同构序列计数">循环同构序列计数</h1>
+<p>终于进入了我们的正题，循环同构序列计数，到这一步我们终于可以解答一开始的问题了：</p>
+<p>Polya定理的精髓就在于求出一个置换的循环数，而朴素的枚举显然是不够的，我们考察所谓“循环同构”背后依赖的哪些置换，比如说对于一个长度为<span class="math inline">\(4\)</span>的序列，以下置换后它与自身是循环同构的： <span class="math display">\[
+\left(\begin{matrix} 
+    1 &amp;2 &amp;3 &amp;4 \\ 
+    2 &amp;3 &amp;4 &amp;1 
+\end{matrix}\right),
+\left(\begin{matrix} 
+    1 &amp;2 &amp;3 &amp;4 \\ 
+    3 &amp;4 &amp;1 &amp;2 
+\end{matrix}\right),
+\left(\begin{matrix} 
+    1 &amp;2 &amp;3 &amp;4 \\ 
+    4 &amp;1 &amp;2 &amp;3 
+\end{matrix}\right),
+\left(\begin{matrix} 
+    1 &amp;2 &amp;3 &amp;4 \\ 
+    1 &amp;2 &amp;3 &amp;4 
+\end{matrix}\right)
+\]</span> 我们发现一个循环同构的置换就是把它的<em>后面全部移到前面来，前面几位补到后面去</em>。</p>
+<p>为了接下来的推导方便我们让位数起始于<span class="math inline">\(0\)</span>。</p>
+<p>那么，对于一个偏移了<span class="math inline">\(k\)</span>的置换，第<span class="math inline">\(a\)</span>位被置换之后就到了<span class="math inline">\((a + k) \bmod n\)</span>的位置，其中<span class="math inline">\(n\)</span>为序列长度，而对于一个长度为<span class="math inline">\(l\)</span>的完整循环来说，它必须满足：</p>
+<p><span class="math display">\[
+\begin{aligned}
+a + kl &amp;\equiv a &amp;\pmod{n} \\
+kl &amp;\equiv 0 &amp;\pmod{n}
+\end{aligned}
+\]</span> 显然当<span class="math inline">\(kl = \operatorname{lcm}(k, n)\)</span>的时候<span class="math inline">\(l\)</span>有最小值<span class="math inline">\(\frac{\operatorname{lcm}(k, n)}{k}\)</span>。由于每一位都偏移了<span class="math inline">\(k\)</span>位，因此置换中每个循环的长度都是相等的，而因为每个循环都cover了<span class="math inline">\(l\)</span>个元素，因此循环的个数为： <span class="math display">\[
+\begin{aligned}
+\frac{n}{l} &amp;= \frac{n}{\frac{\operatorname{lcm}(k, n)}{k}} \\
+&amp;= \frac{kn}{\operatorname{lcm}(k, n)} \\
+&amp;= \gcd(k, n)
+\end{aligned}
+\]</span> 这个发现让我们免于枚举每个循环置换，相反，我们枚举<span class="math inline">\(\gcd(k, n)\)</span>的每一个取值<span class="math inline">\(d\)</span>，即<span class="math inline">\(n\)</span>的因数，统计出<span class="math inline">\(\gcd(k, n) = d\)</span>的所有<span class="math inline">\(k\)</span>的个数，依Polya定理统一累加到答案上。</p>
+<p>那怎么统计呢？枚举？</p>
+<p>我们发现<span class="math inline">\(\gcd(k, n) = d\)</span>等价于<span class="math inline">\(\gcd({k \over d}, {n \over d}) = 1\)</span>，即小于<span class="math inline">\(n \over d\)</span>的与<span class="math inline">\(n \over d\)</span>互质的数个数，这显然等于<span class="math inline">\(\varphi({n \over d})\)</span>。</p>
+<p>因此最后的答案就是：</p>
+<p><span class="math display">\[
+\sum_{d|n} \varphi\left(\frac{n}{d}\right)m^d
+\]</span></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1213,6 +1370,7 @@ void sieve(int n) &#123;
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-nginx.min.js" integrity="sha512-/MNzg8GlnVrAau/TZClh1jxgHNX0HDgidbGnHS5x1OtbKiNoK3e0XNd1oV16xmmeDHjisa3GKLArUau+43GZ4A==" crossorigin="anonymous"></script>
 <script type = "text/javascript">
     document.addEventListener('pjax:complete', function() {
         if (typeof Prism !== 'undefined') {

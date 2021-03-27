@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-count">88</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,179 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/08/28/BZOJ2085/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/08/28/BZOJ2085/" class="post-title-link" itemprop="url">BZOJ 2085</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-08-28 00:00:00" itemprop="dateCreated datePublished" datetime="2019-08-28T00:00:00+08:00">2019-08-28</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2019-12-08 21:39:01" itemprop="dateModified" datetime="2019-12-08T21:39:01+08:00">2019-12-08</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>本地笔记整理重发，原文写于2019/8/28，2019/12/8上传</p>
+<h1 id="分析">分析</h1>
+<p>首先使用哈希计算字符串两两之间的overlap，这个的时间复杂度不是特别显然： <span class="math display">\[
+\sum_{i=1}^n\sum_{j=1}^n\min\{a_i,a_j\}
+\]</span> 其中<span class="math inline">\(a_i, a_j\)</span>分别是第<span class="math inline">\(i\)</span>个和第<span class="math inline">\(j\)</span>个字符串的长度。假设<span class="math inline">\(a_i\)</span>从小到大排了序，那么就变为： <span class="math display">\[
+\sum_{i=1}^n \left[\sum_{j=1}^ia_j+(n-i)a_i\right]
+\]</span> 这样每一个<span class="math inline">\(a_i\)</span>都会被计算<span class="math inline">\(n-i+1+n-i=2n-2i+1\)</span>次，则时间复杂度为： <span class="math display">\[
+\begin{aligned}
+\sum_{i=1}^n (2n-2i+1)a_i
+\end{aligned}
+\]</span> 显然这个时候越前面的<span class="math inline">\(a_i\)</span>越大越好，但是<span class="math inline">\(a_i\)</span>是递增的，所以极限情况是各<span class="math inline">\(a_i\)</span>相等取最大值，时间复杂度就是<span class="math inline">\(O\left(n\sum_{i=1}^na_i\right)\)</span>。</p>
+<p>然后Floyd 矩阵乘法即可。</p>
+<p><del>双哈希大法好</del></p>
+<p><del>卡常Nice</del></p>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+#include &lt;cstring&gt;
+
+using namespace std;
+const int MOD1 = 998244353, MOD2 = 1e9 + 7;
+const int EPS = 26;
+const int N = 210;
+const int S = 100010;
+typedef long long ll;
+typedef pair&lt;int, int&gt; hsh;
+int n, m;
+vector&lt;hsh&gt; h[N];
+hsh p[S];
+inline hsh operator +(const hsh &amp;a, const hsh &amp;b) &#123;
+    hsh ret = make_pair(a.first + b.first, a.second + b.second);
+    if (ret.first &gt;= MOD1) ret.first -= MOD1;
+    if (ret.second &gt;= MOD2) ret.second -= MOD2;
+    return ret;
+&#125;
+inline hsh operator -(const hsh &amp;a, const hsh &amp;b) &#123;
+    hsh ret = make_pair(a.first - b.first, a.second - b.second);
+    if (ret.first &lt; 0) ret.first += MOD1;
+    if (ret.second &lt; 0) ret.second += MOD2;
+    return ret;
+&#125;
+inline hsh operator +(const hsh &amp;a, char b) &#123;
+    int c = b - &#39;a&#39;;
+    return make_pair(((ll)a.first * EPS + c) % MOD1, 
+            ((ll)a.second * EPS + c) % MOD2);
+&#125;
+inline hsh operator *(const hsh &amp;a, const hsh &amp;b) &#123;
+    return make_pair((ll)a.first * b.first % MOD1, 
+            (ll)a.second * b.second % MOD2);
+&#125;
+inline hsh cut(int i, int l, int r) &#123;
+    return h[i][r] - h[i][l] * p[r - l];    
+&#125;
+inline int intersect(int a, int b) &#123;
+    int la = h[a].size() - 1, lb = h[b].size() - 1;
+    int lim = a == b ? la - 1 : min(la, lb);
+    int ret = 0;
+    for (int i = 1; i &lt;= lim; i++)
+        if (cut(a, la - i, la) == cut(b, 0, i)) ret = i;
+    return ret;
+&#125;
+struct floyd &#123;
+    ll d[N][N];
+    floyd() &#123; memset(d, 0x3f, sizeof d); &#125;
+    ll *operator [](int x) &#123; return d[x]; &#125;
+    const ll *operator [](int x) const &#123; return d[x]; &#125;
+    floyd operator *(const floyd &amp;b) const &#123;
+        floyd ret;
+        for (int k = 1; k &lt;= n; k++)
+            for (int i = 1; i &lt;= n; i++)
+                for (int j = 1; j &lt;= n; j++) 
+                    ret[i][j] = min(ret[i][j], d[i][k] + b[k][j]);
+        return ret;
+    &#125;
+&#125; f;
+int main() &#123;
+    scanf(&quot;%d%d&quot;, &amp;n, &amp;m);
+    int maxlen = 0;
+    for (int i = 1; i &lt;= n; i++) &#123;
+        static char tmp[S]; scanf(&quot;%s&quot;, tmp + 1);
+        int len = strlen(tmp + 1);
+        maxlen = max(maxlen, len);
+        h[i].push_back(make_pair(0, 0));
+        for (int j = 1; j &lt;= len; j++)
+            h[i].push_back(h[i].back() + tmp[j]);
+    &#125;
+    p[0] = make_pair(1, 1);
+    for (int i = 1; i &lt;= maxlen; i++) p[i] = p[i - 1] * make_pair(EPS, EPS);
+    for (int i = 1; i &lt;= n; i++)
+        for (int j = 1; j &lt;= n; j++) 
+            f[i][j] = h[j].size() - 1 - intersect(i, j);
+    floyd ans; for (int i = 1; i &lt;= n; i++) ans[i][i] = h[i].size() - 1;
+    int y = m - 1;
+    for (; y; y &gt;&gt;= 1) &#123;
+        if (y &amp; 1) ans = ans * f;
+        f = f * f;
+    &#125;   
+    ll mn = 1ll &lt;&lt; 60;
+    for (int i = 1; i &lt;= n; i++)
+        for (int j = 1; j &lt;= n; j++) mn = min(mn, ans[i][j]);
+    printf(&quot;%lld\n&quot;, mn);
+    return 0;
+&#125;</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1592,126 +1765,6 @@ void fft(int len, cplx *x, cplx *X, int dir = 1) &#123;
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/28/Tanh%E7%BA%BF%E6%80%A7%E5%8C%96/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/28/Tanh%E7%BA%BF%E6%80%A7%E5%8C%96/" class="post-title-link" itemprop="url">基于反双曲正切函数的马达线性化</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2018-09-28 16:27:33 / 修改时间：17:15:02" itemprop="dateCreated datePublished" datetime="2018-09-28T16:27:33+08:00">2018-09-28</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="概况">概况</h1>
-<p>由于VEX中PWM频率偏低，因此马达的响应并不是线性的，例如马达指令在较小时存在死区，在较大时对转速的影响可以忽略不计等等。以269马达的数据为例（393也是类似）：</p>
-<p><img src="8570621.jpg" /></p>
-<p>那么如何让马达的响应变得线性呢？从数学角度出发，我们需要试图找到，或者逼近以上马达曲线<span class="math inline">\(f\)</span>的<strong>反函数</strong><span class="math inline">\(g = f^{-1}\)</span>，对于输出我们应用反函数再应用到马达上，由于马达曲线是单调的，因此在理想状况下，这波操作以后马达的响应就是线性的了，这一过程也称作<strong>马达线性化</strong>。</p>
-<p>出于简单起见，我们规定这个<span class="math inline">\(g\)</span>的定义域和值域都是<span class="math inline">\([-127, 127]\)</span>，这样的话，理论上大部分原来没有使用线性化的PID算法可以较为简单地加上线性化（不然的话就需要从零开始调参）。显然由马达曲线的单调性可得<span class="math inline">\(g(127) = 127\)</span>，以及<span class="math inline">\(g(-127) = -127\)</span>。</p>
-<p>目前机器人社实践过的线性化算法有：</p>
-<ol type="1">
-<li>去除死区的简单线性化：只比没有线性化好一点，简单来说就是对输出的指令加一个bias，这样就不会有死区的问题。</li>
-<li>三段线性插值线性化：就是被WSJ吹爆的所谓模型，本质是把马达曲线分为三段并分别用线性函数近似，效果很好，缺点是调参较为复杂。</li>
-<li>二次函数线性化：我们发现马达曲线的形状有点像<span class="math inline">\(f(x) = \sqrt x\)</span>的图像，因此我们使用二次函数为反函数进行线性化，效果一般。</li>
-<li>反双曲正切线性化：本篇主题，效果较好。</li>
-<li>真·模型线性化：使用马达模型直接计算马达曲线进行线性化，效果最好，可以针对不同的电量，场地状况，扭矩实时给出不同的曲线，缺点是计算慢。</li>
-</ol>
-<h1 id="数学推导">数学推导</h1>
-<p>直觉上，有没有觉得马达曲线的图像很像<span class="math inline">\(\tanh\)</span>函数的图像？</p>
-<p><img src="66159356.jpg" /></p>
-<p>因此我们选择使用双曲正切函数的反函数来进行线性化： <span class="math display">\[
-\tanh^{-1}(x) = \frac{1}{2}\ln\left(\frac{1 + x}{1 - x}\right)
-\]</span> 为了适应死区，以及满足上文中定义域和值域的要求，我们魔改拓展一下上式： <span class="math display">\[
-g(x) = a\operatorname{sgn}(x) + \frac{127 - a}{2b}\ln\left(\frac{c + x}{c - x}\right)
-\]</span> 解释一下各参数的意义：</p>
-<ol type="1">
-<li><span class="math inline">\(a\)</span>是死区，一般来说<span class="math inline">\(5 \le a \le 20\)</span>。</li>
-<li><span class="math inline">\(b\)</span>是我叫做“缩放因子”的参数，其图像意义是<strong>把原双曲正切函数自变量<span class="math inline">\([-b, b]\)</span>这一段的图像看做马达函数图像形状上的近似</strong>。从图像上可以看到，一般<span class="math inline">\(2 \le b \le 3\)</span>。</li>
-<li><span class="math inline">\(c\)</span>是一个依赖于<span class="math inline">\(a, b\)</span>的参数，由<span class="math inline">\(g(127) = 127\)</span>，我们反解得<span class="math inline">\(c = 127\frac{e^{2b} + 1}{e^{2b} - 1}\)</span>。</li>
-</ol>
-<p>就完了，不难吧？</p>
-<h1 id="代码">代码</h1>
-<p>注意变量名可能和推导中用到的符号并不一致：</p>
-<pre class="line-numbers"><code class="language-cpp">typedef struct &#123;
-    float a, b;
-    float alpha;
-&#125; TanhLinearizer;
-
-void initTanhLinearizer(TanhLinearizer *t, float deadband, float scale = 2.333333) &#123;
-    t-&gt;b = scale * 2;
-    t-&gt;a = 127 - deadband;
-    float x = exp(2 * scale);
-    t-&gt;alpha = 127 * (x + 1) / (x - 1);
-&#125;
-
-int getTanhLinearizedOutput(TanhLinearizer *t, int cmd) &#123;
-    if (cmd &gt; 127) cmd = 127;
-    if (cmd &lt; -127) cmd = -127;
-    int s = sgn(cmd);
-    cmd = fabs(cmd);
-    return round(t-&gt;a / t-&gt;b * log((t-&gt;alpha + cmd) / (t-&gt;alpha - cmd)) + s * (127 - t-&gt;a));
-&#125;</code></pre>
-<h1 id="效果">效果</h1>
-<p>马达曲线的反函数应该原本是这个样子的（就是原图像转一转）：</p>
-<p><img src="24070987.jpg" /></p>
-<p>然后在<span class="math inline">\(a = 8, b = 3\)</span>时我们的线性化算法给出的反函数是这个样子的：</p>
-<p><img src="83393060.jpg" /></p>
-<p>是不是很像呢？实测的效果确实也是极好的。</p>
-<h1 id="更多">更多</h1>
-<p>其实马达函数的图像不只是像<span class="math inline">\(\tanh\)</span>啦，其实观察一下你也可以说它像<span class="math inline">\(\arctan\)</span>之类的，自然也可以发展出一套线性化的方法，从的来说看图像猜函数只能说是一种近似，最好自然是找出马达曲线精确的计算方法，也就是建模。但是这类线性化方法的一大好处就是<strong>计算量很小，很快</strong>，因此往往更多地得到应用。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
@@ -1786,6 +1839,7 @@ int getTanhLinearizedOutput(TanhLinearizer *t, int cmd) &#123;
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-nginx.min.js" integrity="sha512-/MNzg8GlnVrAau/TZClh1jxgHNX0HDgidbGnHS5x1OtbKiNoK3e0XNd1oV16xmmeDHjisa3GKLArUau+43GZ4A==" crossorigin="anonymous"></script>
 <script type = "text/javascript">
     document.addEventListener('pjax:complete', function() {
         if (typeof Prism !== 'undefined') {

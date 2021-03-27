@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="又一次在网上看到中文编程的日经贴后，我觉得这似乎会是一个不错的博文题目。 这篇文章我计划讲的内容在标题里写得很明白——“迷思”。 迷思，经常被用作英文myth的音译，衍生出“神话”、“传言”的意项。在这个定义下，“中文编程”或许可以称得上是一个迷思了，初学编程的萌新和温饱思扯淡的键盘程序语言设计家（我或许可以忝列后者）一天到晚在讲，Github上偶尔有个小项目也会有不少的曝光率，但是也就止步于">
+<meta property="og:type" content="article">
+<meta property="og:title" content="中文编程迷思">
+<meta property="og:url" content="https://alan20210202.github.io/2021/03/14/%E4%B8%AD%E6%96%87%E7%BC%96%E7%A8%8B%E8%BF%B7%E6%80%9D/index.html">
+<meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
+<meta property="og:description" content="又一次在网上看到中文编程的日经贴后，我觉得这似乎会是一个不错的博文题目。 这篇文章我计划讲的内容在标题里写得很明白——“迷思”。 迷思，经常被用作英文myth的音译，衍生出“神话”、“传言”的意项。在这个定义下，“中文编程”或许可以称得上是一个迷思了，初学编程的萌新和温饱思扯淡的键盘程序语言设计家（我或许可以忝列后者）一天到晚在讲，Github上偶尔有个小项目也会有不少的曝光率，但是也就止步于">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://alan20210202.github.io/2021/03/14/%E4%B8%AD%E6%96%87%E7%BC%96%E7%A8%8B%E8%BF%B7%E6%80%9D/中文编程演示.svg">
+<meta property="og:image" content="https://alan20210202.github.io/2021/03/14/%E4%B8%AD%E6%96%87%E7%BC%96%E7%A8%8B%E8%BF%B7%E6%80%9D/Completion.svg">
+<meta property="article:published_time" content="2021-03-14T08:11:44.709Z">
+<meta property="article:modified_time" content="2021-03-27T08:13:30.164Z">
+<meta property="article:author" content="Chengyuan Ma">
+<meta property="article:tag" content="乱想">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://alan20210202.github.io/2021/03/14/%E4%B8%AD%E6%96%87%E7%BC%96%E7%A8%8B%E8%BF%B7%E6%80%9D/中文编程演示.svg">
+
+
+<link rel="canonical" href="https://alan20210202.github.io/2021/03/14/%E4%B8%AD%E6%96%87%E7%BC%96%E7%A8%8B%E8%BF%B7%E6%80%9D/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
+<title>中文编程迷思 | Chengyuan Ma's Blog</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
+    <script data-pjax>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-65HSG5NCY6');
+      }
+    </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Chengyuan Ma's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-pagedewarp"><a href="/dewarp/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>PageDewarp</a></li>
+        <li class="menu-item menu-item-english"><a href="/english/" rel="section"><i class="fa fa-globe-americas fa-fw"></i>English</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
+  <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
+  <div class="site-description" itemprop="description">不务正业高中生一枚</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">88</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://kalasearch.cn/" title="https:&#x2F;&#x2F;kalasearch.cn&#x2F;" rel="noopener" target="_blank">卡拉搜索</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/03/14/%E4%B8%AD%E6%96%87%E7%BC%96%E7%A8%8B%E8%BF%B7%E6%80%9D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          中文编程迷思
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-03-14 16:11:44" itemprop="dateCreated datePublished" datetime="2021-03-14T16:11:44+08:00">2021-03-14</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-03-27 16:13:30" itemprop="dateModified" datetime="2021-03-27T16:13:30+08:00">2021-03-27</time>
+      </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>又一次在网上看到中文编程的日经贴后，我觉得这似乎会是一个不错的博文题目。</p>
+<p>这篇文章我计划讲的内容在标题里写得很明白——“迷思”。</p>
+<p>迷思，经常被用作英文myth的音译，衍生出“神话”、“传言”的意项。在这个定义下，“中文编程”或许可以称得上是一个迷思了，初学编程的萌新和温饱思扯淡的键盘程序语言设计家（我或许可以忝列后者）一天到晚在讲，Github上偶尔有个小项目也会有不少的曝光率，但是也就止步于笑谈中了，现实的应用几乎没有（唯一勉强成气候的易语言常年处于鄙视链的最低端）。这样一种现状，似乎和动漫当中的“都市传说”颇有共同点。可是动漫的“都市传说”最后都是真的，“中文编程”则未必然。</p>
+<p>若纯粹地拆字组词，“迷思”又有一种“胡思乱想”的意项在，这是我对于我想法的总结——胡思乱想。这篇文章就是胡思乱想，想着想着觉得有暴论出现可以写一下，仅此而已。我会尽力组织自己的逻辑，但是要这篇文章变成如同高考作文一般逻辑严密，既非我愿，也非我力所能及。</p>
+<p>对中文编程我一直保有比较浓厚的兴趣，记得小学刚毕业的时候简短地用过所谓易语言。后来自己以前闲着无聊的时候写过自己脚本语言的解释器所以对于语言设计实现大约还算有一点点心得。恰好最近手痒又想写parser，我就想：为什么不试试看写一个中文的脚本语言呢？</p>
+<p>然而思前想后，哪怕只是纸上谈兵的幻想，结果都不算乐观。</p>
+<p>做个暴论吧：<strong>目前的所谓中文编程语言不过花瓶，真正实用的中文编程（如果真的有必要的话）任重而道远。</strong></p>
+<hr />
+<p>我一直认为，要大致把握一个编程语言的特征，写一段快速排序的代码是一个非常好的选择。快排是一个不简单且不平凡的算法，在传统命令式语言的理论框架内，顺序，分支和循环结构都用到了；如果更特殊的特性，快排的复杂度也勉强允许一些语言施展一下其特殊的语言构造。例如Haskell经典的四行快排我觉得就是对函数式语言哲学的一种不错的体现，C++或许也可以炫一波模板元编程和新出的concept。与此同时快速排序也不是特别复杂，让人能够多花心思在语言的特征而不是辨认算法本身上。最后的最后，它还能让我复习一下快排咋写，何乐而不为？</p>
+<p>先放一段快排的C代码，代码是我从网上随手拉来的，显然还有很大的优化空间，但这并不重要：</p>
+<pre class="line-numbers"><code class="language-c">void quick_sort(int *arr, int left, int right) &#123;
+    if (left &gt;= right) return; 
+    int p = arr[left];
+    int i = left, j = right;
+    while (i &lt; j) &#123;
+        while (arr[j] &gt;= p &amp;&amp; i &lt; j) j--;         
+        while (arr[i] &lt;= p &amp;&amp; i &lt; j) i++;
+        int temp = arr[j];
+        arr[j] = arr[i];
+        arr[i] = temp;
+    &#125;
+    arr[left] = arr[i]; 
+    arr[i] = p;
+    quick_sort(arr, left, j - 1);
+    quick_sort(arr, j + 1, right);
+&#125;</code></pre>
+<p>那么问题来了：<strong>人们心目中与上面这一段C对应的“中文代码”应该是什么个样子呢？</strong></p>
+<p>是这样吗？</p>
+<pre class="line-numbers"><code class="language-none">定义 函数 快速排序（输入：整数 数组，左边界：整数，右边界：整数）：
+    如果（左边界 &gt;= 右边界）：返回
+    令 基准 为 输入【左边界】
+    令 甲 为 左边界
+    令 乙 为 左边界
+    当（甲 &lt; 乙）时循环：
+        当（输入【乙】 &gt;= 基准 且 甲 &lt; 乙）时循环：
+            乙 自减
+        当（输入【甲】 &lt;= 基准 且 甲 &lt; 乙）时循环：
+            甲 自增
+        交换（输入【甲】，输入【乙】）
+    令 输入【左边界】 为 输入【甲】
+    令 输入【甲】 为 基准
+    快速排序（输入，左边界，乙 - 1）
+    快速排序（输入，乙 + 1，右边界）</code></pre>
+<p><strong>中文编程是为了接地气，不是接地府</strong></p>
+<p>以上文法的所谓“中文编程语言”在现实开发中是极为不便的。</p>
+<p>但很遗憾，这就是现在网络上通行的“中文编程”的现状。</p>
+<p>有错吗？乍一看似乎是没有的，在某种意义上这还是“要素完全”的：</p>
+<ol type="1">
+<li>上面的代码一个拉丁字母都没有用到——“完全汉化”</li>
+<li>尽量使用全角字符——“贴合国人使用习惯”</li>
+<li>可读性勉强令人满意。</li>
+</ol>
+<p>然而上面这坨东西我写的时候血压直线飙升。是哪里出了问题？</p>
+<p>不妨再看看下一种可能的情况：</p>
+<pre class="line-numbers"><code class="language-none">定义快排（整数组输入，整数左界，整数右界）：
+    若左界&gt;=右界：返回
+    基准赋输入于左界
+    甲赋左界；乙赋右界
+    当甲&lt;乙：
+        当输入于乙&gt;=基准且甲&lt;乙：
+            乙自减
+        当输入于甲&lt;=基准且甲&lt;乙：
+            甲自增
+        交换（输入于甲，输入于乙）
+    输入于左界赋输入于甲
+    输入于甲赋基准
+    快排（输入，左界，乙-1）
+    快排（输入，乙+1，右界）</code></pre>
+<p>看起来似乎比最上面一个例子要好一点是不是？</p>
+<p>如果在这个基础上进行一定的代码高亮，那感觉就更上一个台阶：</p>
+<p><img src="中文编程演示.svg" alt="中文编程演示" /></p>
+<p>虽然一开始的那一版“中文编程”也可以通过适当的代码高亮在效果上进行优化，但各位试一试就知道，效果应当还是不如上图的。那么，两种文法，都是“中文编程”，是什么导致了舒适度上的巨大差异？</p>
+<hr />
+<p>回顾编程语言的历史，我们发现，编程语言正逐渐以语言本身的定位为基础，探寻如下三者的最优平衡：</p>
+<ol type="1">
+<li>对于机器来说好读：文法无二义性，且运行效率高</li>
+<li>对于人类来说好读：文法大致贴合阅读习惯，或者说，在训练之后可以快速阅读</li>
+<li>对于人类来说好写：文法“废话少”，开发效率高。</li>
+</ol>
+<p>在文法解析技术、编译器优化技术、以及硬件技术如此发达的当下，第一点的重要性正在逐渐被弱化。那么剩下的，就只有对人好读好写的要求了。既然是“对人”，就自然需要考虑编程语言所依附的自然语言的语言特性。所有人都知道英语和中文无论是在直觉上还是在语言学意义上都有着巨大的差异，因此基于中文的编程语言，又怎么可以生搬硬套基于英语的编程语言的结构呢？以上示例中的两门语言之所以在观感上具有差距，就是因为前者是可以通过直接的单词替换预处理还原为另一门语言的“套皮”，而后者则做了一定程度上的“本地化”。</p>
+<p>我们首先注意到，<strong>中文当中是没有空格分词的</strong>。在输入大段中文的时候，空格键往往只作为输入法选词的快捷键而本身不进入文本。这是很多中文编程语言所忽视的。例如</p>
+<blockquote>
+<p>每 个 中文 词 之间 都有 空格， 写 起来 很 别扭， 读 起来 也 不 习惯。</p>
+</blockquote>
+<blockquote>
+<p>每个中文词之间没有空格读写起来会更为自然。</p>
+</blockquote>
+<p>这是很多中文编程语言所忽视的一点。然而也必须承认，空格的存在给词法分析提供了极大的便利。联系到当下对于大段中文的分词往往采用，也只能采用启发式的算法的现状，可以说<strong>在一门中文编程语言当中删去空格，虽然可以让读写更为顺畅，但对文法的设计与解析提出了更大的挑战</strong>。（同时，空格的去除让代码开起来更为紧凑，在汉字本省就结构相对复杂的情况下就更会对可读性产生一定的影响，因此在这种情况下，<strong>代码高亮是必要的</strong>）</p>
+<p>我们还发现，当下的编程语言在英语的基础上对于关键词进行大量的<strong>简化</strong>。例如，define在Python中被简化为<code>def</code>；function在Go中被简化为<code>func</code>，在Kotlin中被简化为<code>fun</code>，在Rust中更是被简化到<code>fn</code>；integer在很多语言当中都被简化到<code>int</code>，structure被简化到<code>struct</code>……对于英语等拼音文字，这种简化往往是通过去除辅音，删去末音节等完成的，较为简单。但是对于中文象形文字，这种简化就很难了，因为一个词往往就双音节两个字，去了哪个都不行，而仿照去除辅音搞去除笔画之类的毫无意义：<code>结构</code>变成<code>吉勾</code>？还是两个汉字不说，词本身的辨识性已经被破坏殆尽。</p>
+<p>然而，我们关注的是目的而不是手段，抛开如此简单粗暴的类比，事情就豁然开朗了。编程语言简化关键词拼写的目的何在？一方面是<strong>让代码更加简洁，阅读效率更高</strong>。另一方面则是<strong>提升输入效率</strong>。中文或许在阅读效率方面已经无可挑剔，但是在输入效率上一直差强人意——我不是说中文本身的输入效率，而是写代码本身的效率。二者有何区别？</p>
+<p>如今不用代码补全写代码的人已经不多了。代码补全的本质，是在用户敲击键盘进行原始输入的同时，结合上下文，给出符合编程语言语法以及（理想情况下）代码语义的代码建议。仔细想想，这和中文的输入法何其相似！然而现在并没有专为写代码而生的输入法。要写中文代码，就必须先敲键盘，再输入法选词，等到中文字实实在在地落到了编辑器里，代码补全才会出现，然后用户就要再次选词，如图</p>
+<p><img src="Completion.svg" alt="Completion" /></p>
+<p>显然，在上例中，如果能把输入法整合进自动补全（或者反过来），使得在键入<code>ks</code>时就自动跳出<code>快速排序</code>的提示项，对于开发效率和流畅性会有可观的提升（在没有空格分词的中文编程语言中，这样的融合自动补全可以综合考虑到关键词以及文法结构，这种流畅性提升会更为显著）。否则，对于针对自然语言输入而设计的输入法而言，编程的上下文不免会让提词非常别扭；对于代码补全而言，变量名一般就三四个字个字，在输入法打完两个字后再补全一般似乎也如同鸡肋。两者没有沟通各自为战，折磨的就是开发者。理想情况下，<strong>中文编程中的输入法和代码补全不说是合二为一也应当是互相合作的</strong>。相比于独立地弹出一个下拉框，代码补全应当使用一个输入法提供的接口访问用户在键盘上的原始输入并给出建议，这样用户在输入法的选词界面就可以直接看到代码提示，效率何止提升了两倍。然而，现实中的各输入法都热衷于闭门造车，即使是以开源闻名的Rime都不提供这种动态提词接口。因此，如果要实现前文的创想，倒是IDE的开发者自己从零写一个兼容自动补全的输入法更现实一点。而后者可就造轮子造大了去了。</p>
+<p>简单的总结一下，如果要实现我心目中理想的中文编程语言，应当有这两个特点：</p>
+<ol type="1">
+<li><strong>本土化的语言文法：</strong>在不引入二义性的前提下，降低空格分词的必要性，或更多地从中文本身借鉴一部分文法结构，使得汉字的输入和阅读更符合自然语言的习惯。不满足这一点，则不免对于阅读的流畅性产生影响，产生生硬之观感，被好事者讥为“套皮”。</li>
+<li><strong>高效率的开发环境：</strong>在开发环境上完成输入法和自动补全的整合，提升写代码的流畅性，同时提供靠谱的代码高亮方案以辅助阅读。不满足这一点，则读起来再赏心悦目的编程语言写起来都有不便，难免花瓶一个，华而不实。</li>
+</ol>
+<p>这两点的难度不是一般的大，因此我觉得实用的中文编程任重而道远。当然，考虑到中文编程除了看着一乐以外未必有其他特殊的吸引力，实际上这种编程语言大概是遥遥无期了。</p>
+<p>迷思迷思，思到这大概也就结束了。整篇文章想到哪里写到哪里，估计很乱吧（笑），如果有人读着这个觉得摸不着头脑，实在是抱歉。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%B9%B1%E6%83%B3/" rel="tag"># 乱想</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/03/13/LaTeX%E6%8A%80%E5%B7%A7/" rel="prev" title="LaTeX小技巧整理">
+                  <i class="fa fa-chevron-left"></i> LaTeX小技巧整理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/03/17/MITAdmitted/" rel="next" title="被MIT录取杂感">
+                  被MIT录取杂感 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chengyuan Ma</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-nginx.min.js" integrity="sha512-/MNzg8GlnVrAau/TZClh1jxgHNX0HDgidbGnHS5x1OtbKiNoK3e0XNd1oV16xmmeDHjisa3GKLArUau+43GZ4A==" crossorigin="anonymous"></script>
+<script type = "text/javascript">
+    document.addEventListener('pjax:complete', function() {
+        if (typeof Prism !== 'undefined') {
+            Prism.highlightAll();
+        }
+    });
+</script>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+    <div class="pjax">
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+    </div>
+</body>
+</html>

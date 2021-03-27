@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-count">88</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,202 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/04/PACT0703/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/04/PACT0703/" class="post-title-link" itemprop="url">PACT 07/03 集合覆盖问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-07-04 15:31:50 / 修改时间：18:29:24" itemprop="dateCreated datePublished" datetime="2020-07-04T15:31:50+08:00">2020-07-04</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="集合覆盖问题">集合覆盖问题</h1>
+<h2 id="定义">定义</h2>
+<p><strong>输入：</strong>全集<span class="math inline">\(\mathcal{U}\)</span>，以及一些集合的集合<span class="math inline">\(S=\{S_1,S_2,S_3,\cdots,S_n\}\)</span>，满足<span class="math inline">\(\forall i, S_i\subseteq \mathcal{U}\)</span>。</p>
+<p><strong>目标：</strong>从<span class="math inline">\(S\)</span>中选择一个最小数目的集合，使得它们能够覆盖<span class="math inline">\(\mathcal{U}\)</span>中所有的元素（即并集为<span class="math inline">\(\mathcal U\)</span>）</p>
+<p><img src="SC1.svg" /></p>
+<p>如图，<span class="math inline">\(S_1,S_2,S_4\)</span>就构成一个集合覆盖。</p>
+<h2 id="贪心算法及其分析">贪心算法及其分析</h2>
+<p>我们的想法很简单：<strong>每次都取含有最多未覆盖元素的集合加入我们的覆盖集</strong>，不断循环直至所有集合都被覆盖。</p>
+<p>我们定义<span class="math inline">\(\mathcal U_i\)</span>表示第<span class="math inline">\(i\)</span>次循环开始时未覆盖的元素集合，定义<span class="math inline">\(S_i\)</span>表示第<span class="math inline">\(i\)</span>次循环选择的集合，假设我们选了<span class="math inline">\(k\)</span>个集合。有引理：</p>
+<p><strong>引理：</strong> <span class="math display">\[
+\left|S_i \cap\mathcal{U}_i \right| \ge \frac{\left|\mathcal{U}_i\right|}{|\mathrm{OPT}|}
+\]</span> 这个引理其实反映了一个“优于平均”的思想。</p>
+<p><strong>证明：</strong> <span class="math display">\[
+\begin{aligned}
+    \left|\mathcal{U}_i\right| &amp;= \left|\bigcup_{Z\in\mathrm{OPT}}\left(Z\cap\mathcal{U}_i\right)\right| \\
+    &amp;\le \sum_{Z\in\mathrm{OPT}}\left|Z\cap\mathcal{U}_i\right| \\
+    &amp;\le \sum_{Z\in\mathrm{OPT}}\left|S_i\cap\mathcal{U}_i \right| \\
+    &amp;= |\mathrm{OPT}||S_i\cap\mathcal{U}_i |
+\end{aligned}
+\]</span> 得证。</p>
+<p><strong>定理：</strong>我们的算法是一个<span class="math inline">\(\mathcal{O}\left(\log n\right)\)</span>倍近似算法。</p>
+<p><strong>证明：</strong>考虑每次循环开始时未覆盖元素的数量： <span class="math display">\[
+\begin{aligned}
+    |\mathcal U_1| &amp;= n \\
+    |\mathcal U_2| &amp;= |\mathcal U_1| - |S_1\cap\mathcal{U}_1| \\
+    &amp;\le |\mathcal U_1|\left(1-\frac{1}{|\mathrm{OPT}|}\right) \\
+    |\mathcal U_3| &amp;= |\mathcal U_2| - |S_2\cap\mathcal{U}_2| \\
+    &amp;\le |\mathcal U_2|\left(1-\frac{1}{|\mathrm{OPT}|}\right) \\
+    &amp;\le |\mathcal U_1|\left(1-\frac{1}{|\mathrm{OPT}|}\right)^2 \\
+    &amp;\vdots \\
+    |\mathcal U_k| 
+    &amp;\le |\mathcal U_1|\left(1-\frac{1}{|\mathrm{OPT}|}\right)^{k-1} \\
+    &amp;= n\left(1-\frac{1}{|\mathrm{OPT}|}\right)^{k-1}
+\end{aligned}
+\]</span></p>
+<p>因为<span class="math inline">\(\mathcal{U}_k\neq \emptyset\)</span>，有 <span class="math display">\[
+\begin{aligned}
+    1\le |\mathcal U_k| &amp;\le n\left(1-\frac{1}{|\mathrm{OPT}|}\right)^{k-1} \\
+    1\le n\left(1-\frac{1}{|\mathrm{OPT}|}\right)^k &amp;\le n\left(e^{-\frac{1}{|\mathrm{OPT}|}}\right)^{k-1} \\ 
+    e^{-\frac{k-1}{|\mathrm{OPT}|}} &amp;\ge  \frac{1}{n} \\
+    -\frac{k-1}{|\mathrm{OPT}|} &amp;\ge -\ln n \\
+    k &amp;\le  \ln n\cdot |\mathrm{OPT}|+1 \\
+    k &amp;\le \mathcal O\left(\log n\right)|\mathrm{OPT}|
+\end{aligned}
+\]</span> 证毕。</p>
+<h2 id="跑满上界的输入样例">跑满上界的输入样例</h2>
+<p>对于这个算法而言我们的分析能不能更好一点呢？这里有一个可以让满足这个上界的例子：</p>
+<p><img src="SC2.svg" /></p>
+<p>最优解显然是<span class="math inline">\(2\)</span>个集合，但是我们的贪心算法每一次都可能选到红色的集合，而这样就需要<span class="math inline">\(\mathcal{O}\left(\log n\right)\)</span>个集合完成覆盖了。</p>
+<h1 id="带权集合覆盖问题">带权集合覆盖问题</h1>
+<p>如果把给每个集合赋予一个权重，而我们需要寻找一个权重和最小的覆盖集呢？这个问题被称作带权集合覆盖。</p>
+<h2 id="贪心算法及其分析-1">贪心算法及其分析</h2>
+<p>我们依然贪心，这个时候我们每次选择“性价比”最优的集合加入我们的覆盖集，设一个集合的权重为<span class="math inline">\(w(\cdot)\)</span>，那么<strong>我们每一次循环都挑选<span class="math inline">\(\frac{w(\cdot)}{|\cdot|}\)</span>最小的集合</strong>（<span class="math inline">\(|\cdot|\)</span>这里不算已经被覆盖的元素）。</p>
+<p>如何分析这个算法？沿用分析不带权覆盖的记号，我们有引理：</p>
+<p><strong>引理：</strong> <span class="math display">\[
+\frac{w(S_i)}{|S_i\cap \mathcal{U}_i|} \le \frac{w(\mathrm{OPT})}{|\mathcal{U}_i|}
+\]</span> <strong>证明：</strong> <span class="math display">\[
+\begin{aligned}
+    \left|\mathcal{U}_i\right| &amp;= \left|\bigcup_{Z\in\mathrm{OPT}}\left(Z\cap\mathcal{U}_i\right)\right| \\
+    &amp;\le \sum_{Z\in\mathrm{OPT}}\left|Z\cap\mathcal{U}_i\right|
+\end{aligned}
+\]</span> 而由我们算法贪心的本质可知， <span class="math display">\[
+\frac{w(S_i)}{|S_i \cap \mathcal{U}_i|} \le \frac{w(Z)}{|Z \cap \mathcal{U}_i|}, \quad \forall Z\in\mathrm{OPT}, Z\cap\mathcal{U}_i\neq\emptyset
+\]</span> 也就是 <span class="math display">\[
+|Z \cap \mathcal{U}_i| \le \frac{w(Z)}{w(S_i)}|S_i \cap \mathcal{U}_i|,\quad \forall Z\in\mathrm{OPT}, Z\cap\mathcal{U}_i\neq\emptyset
+\]</span> 因此 <span class="math display">\[
+\begin{aligned}
+    \left|\mathcal{U}_i\right| &amp;\le \sum_{Z\in\mathrm{OPT}}\left|Z\cap\mathcal{U}_i\right| \\
+    &amp;\le \sum_{Z\in\mathrm{OPT}}\frac{w(Z)}{w(S_i)}|S_i \cap \mathcal{U}_i| \\
+    &amp;= \frac{|S_i \cap \mathcal{U}_i|}{w(S_i)}\sum_{Z\in\mathrm{OPT}}w(Z) \\
+    &amp;= \frac{|S_i \cap \mathcal{U}_i|}{w(S_i)}w(\mathrm{OPT})
+\end{aligned}
+\]</span> 随后稍加变形便得引理，证毕。</p>
+<p><strong>定理：</strong>我们的算法是一个<span class="math inline">\(\mathcal O\left(\log n\right)\)</span>倍近似算法。</p>
+<p><strong>证明：</strong> <span class="math display">\[
+\begin{aligned}
+    |\mathcal U_1| &amp;= n \\
+    |\mathcal U_2| &amp;= |\mathcal U_1| - |S_1\cap\mathcal{U}_1| \\
+    &amp;\le |\mathcal U_1|\left(1-\frac{w(S_1)}{w(\mathrm{OPT})}\right) \\
+    &amp;\le |\mathcal U_1|\exp\left(-\frac{w(S_1)}{w(\mathrm{OPT})}\right)\\
+    |\mathcal U_3| &amp;= |\mathcal U_2| - |S_2\cap\mathcal{U}_2| \\
+    &amp;\le |\mathcal U_2|\exp\left(-\frac{w(S_2)}{w(\mathrm{OPT})}\right) \\
+    &amp;\le |\mathcal U_1|\exp\left(-\frac{w(S_1)+w(S_2)}{w(\mathrm{OPT})}\right) \\
+    &amp;\vdots \\
+    |\mathcal U_k| 
+    &amp;\le |\mathcal U_1|\exp\left(-\frac{\sum_{i=1}^{k-1}w(S_i)}{w(\mathrm{OPT})}\right) \\
+    &amp;= n\exp\left(-\frac{\sum_{i=1}^{k-1}w(S_i)}{w(\mathrm{OPT})}\right)
+\end{aligned}
+\]</span> 又因<span class="math inline">\(|\mathcal U_k| \ge 1\)</span>： <span class="math display">\[
+\begin{aligned}
+    n\exp\left(-\frac{\sum_{i=1}^{k-1}w(S_i)}{w(\mathrm{OPT})}\right) &amp;\ge 1 \\
+    -\frac{\sum_{i=1}^{k-1}w(S_i)}{w(\mathrm{OPT})} &amp;\ge -\ln n \\
+    \sum_{i=1}^{k-1}w(S_i) &amp;\le \ln n\cdot w(\mathrm{OPT})
+\end{aligned}
+\]</span> 证完了？还没有！我们的覆盖集的总代价是<span class="math inline">\(\sum_{i=1}^k w(S_i)\)</span>，还差一个<span class="math inline">\(S_k\)</span>没有处理呢！</p>
+<p>但是注意到之前的结论： <span class="math display">\[
+\frac{w(S_i)}{|S_i\cap \mathcal{U}_i|} \le \frac{w(\mathrm{OPT})}{|\mathcal{U}_i|}
+\]</span> 而当<span class="math inline">\(i=k\)</span>时因为是最后一轮，自然有<span class="math inline">\(|S_k\cap \mathcal{U}_k| = |\mathcal{U}_k|\)</span>，因此便有 <span class="math display">\[
+w(S_k) \le w(\mathrm{OPT})
+\]</span> 和之前的式子相加： <span class="math display">\[
+\begin{aligned}
+    \sum_{i=1}^{k-1}w(S_i) + w(S_k) &amp;\le \ln n\cdot w(\mathrm{OPT}) + w(\mathrm{OPT})\\
+    \sum_{i=1}^{k}w(S_i) &amp;\le (\ln n +1)w(\mathrm{OPT})  \\
+    \sum_{i=1}^{k}w(S_i) &amp;\le \mathcal O(\log n) w(\mathrm{OPT})
+\end{aligned}
+\]</span> 证毕。</p>
+<p>其实，如果我们不知道如何给<span class="math inline">\(w(S_k)\)</span>定界也没有关系。参考<span class="math inline">\(k\)</span>中心问题时我们使用的技巧，我们<strong>可以枚举尝试<span class="math inline">\(\mathrm{OPT}\)</span>当中权值最大的集合</strong>。</p>
+<p>显然如果我们知道<span class="math inline">\(\mathrm{OPT}\)</span>当中权值最大的集合是什么，我们就会把权值大于这个集合的其他集合全部丢掉。这个时候我们算法的<span class="math inline">\(w(S_k)\)</span>自然就不大于<span class="math inline">\(w(\mathrm{OPT})\)</span>了。</p>
+<p>但是我们怎么知道我们猜的对不对呢？对不对不重要，重要的是因为我们尝试了每一个集合，我们至少会猜对一次——而对于猜对的那一次，我们的分析全部成立，我们的代价一定是不大于<span class="math inline">\(\mathcal O(\log n) w(\mathrm{OPT})\)</span>的。因此，如果<strong>我们最后取所有尝试的最小值作为我们的解</strong>，我们的最终代价一定也是不大于<span class="math inline">\(\mathcal O(\log n) w(\mathrm{OPT})\)</span>（虽然最终代价未必是猜对的那一次的代价），我们的算法依然有效，而时间复杂度不过是多了一个<span class="math inline">\(n\)</span>而已。</p>
+<p>这个技巧是很有意思的：如果可能性是多项式种，那么在只关注是否是多项式时间的近似算法当中，枚举一遍不失为一种好的思路。</p>
+<h2 id="另外一种分析方法">另外一种分析方法</h2>
+<p>令<span class="math inline">\(e_1,e_2,e_3,\cdots,e_n\)</span>表示第<span class="math inline">\(1,2,3,\cdots,n\)</span>个被覆盖的元素（我们一次选的集合很可能一次性覆盖好几个元素，在这种情况下这些元素的排列可以任意）。我们接下来<strong>把集合的权重分摊到元素上</strong>，对于被集合<span class="math inline">\(S_y\)</span>覆盖的元素<span class="math inline">\(e_i\)</span>，定义其代价为 <span class="math display">\[
+\operatorname{price}(e_i) = \frac{w(S_y)}{|S_y \cap \mathcal{U}_y|}
+\]</span> 很显然，因为覆盖到<span class="math inline">\(e_i\)</span>的时候<span class="math inline">\(e_i\)</span>后面的元素一定没有覆盖到，因此<span class="math inline">\(|S_y \cap \mathcal{U}_y| \ge n-i+1\)</span>。因此 <span class="math display">\[
+\operatorname{price}(e_i) \le \frac{w(S_y)}{n-i+1}
+\]</span> 又由之前的引理以及<span class="math inline">\(|S_y \cap \mathcal U_y| \le |\mathcal U_y|\)</span>，可得<span class="math inline">\(w(S_y) \le w(\mathrm{OPT})\)</span>，因此 <span class="math display">\[
+\operatorname{price}(e_i) \le \frac{w(\mathrm{OPT})}{n-i+1}
+\]</span> 而我们的覆盖集的总代价为 <span class="math display">\[
+\begin{aligned}
+    \sum_{i=1}^n w(S_i) &amp;= \sum_{i=1}^n \operatorname{price}(e_i) \\
+        &amp;\le  \sum_{i=1}^n \frac{w(\mathrm{OPT})}{n-i+1} \\
+        &amp;= w(\mathrm{OPT})\sum_{i=1}^n \frac{1}{n-i+1} \\
+        &amp;= w(\mathrm{OPT})\sum_{i=1}^n  \frac{1}{i} \\
+        &amp;= w(\mathrm{OPT}) H_n \\
+        &amp;=  O(\log n) w(\mathrm{OPT})
+\end{aligned}
+\]</span></p>
+<h2 id="跑满上界的输入样例-1">跑满上界的输入样例</h2>
+<p>有一个大集合，包含所有元素，权值为<span class="math inline">\(1+\varepsilon\)</span>。</p>
+<p>还有<span class="math inline">\(n\)</span>个只包含一个元素的小集合，权值为<span class="math inline">\(\frac{1}{n}, \frac{1}{n-1}, \frac{1}{n-2},\cdots\)</span>。</p>
+<p>对于这个输入，我们的贪心算法会把所有小集合选掉，总权重为<span class="math inline">\(H_n = \mathcal{O}(\log n )\)</span>。而最优解为那个大集合，总权重为<span class="math inline">\(1+\varepsilon\)</span>，二者差<span class="math inline">\(\mathcal{O}(\log n )\)</span>倍，和我们的分析一致，这也说明如果算法不变，我们没办法单纯通过分析得出更好的结果了。</p>
+<p>其实集合覆盖问题可以证明hardness就是<span class="math inline">\(\mathcal{O}(\log n )\)</span>的，只是这个证明不简单，上课的时候只是顺带提了一下。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1639,153 +1835,6 @@ compileTestKotlin &#123;
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/03/29/FuckZhihu/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/03/29/FuckZhihu/" class="post-title-link" itemprop="url">退乎，与自省</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-03-29 21:08:26" itemprop="dateCreated datePublished" datetime="2020-03-29T21:08:26+08:00">2020-03-29</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-03-30 10:45:22" itemprop="dateModified" datetime="2020-03-30T10:45:22+08:00">2020-03-30</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>上一次发文章已经是三个星期以前了。</p>
-<p>感到一丝焦虑，但三个星期中确实没有做成值得写一写的事情是一个令人沮丧的事实。</p>
-<p>开学了人忙了是一个原因。人一忙，一个矛盾愈发凸显。</p>
-<p><strong>理性上对于系统化学习的追求与感性上沉溺于碎片化知识平台的矛盾。</strong></p>
-<p>自己要应付AP考试还有一整本的Gregory Mankiw的经济学要看。</p>
-<p>自己现在还在看柏拉图的《理想国》，书很好看，觉得很有启发。</p>
-<p>地理的等级考也是要准备起来的。</p>
-<p>文书也是要做起准备的。</p>
-<p>个人的项目也是要做的。</p>
-<p>退一步讲，自己还有一个追番TODO List还要十几部番要追，轻小说TODO List还有几部要抽空看。</p>
-<p>当时间就剩下这么一点，知乎这么一个搅屎棍的存在就显得令人恼火了。</p>
-<p>自己之前一直看不起快手和抖音，觉得这种垃圾玩意纯粹就是让人上瘾的。</p>
-<p>可悲的是，自己也成了知乎的奴隶。</p>
-<p>确实我在鄙视链上比抖音快手高一级，但是当鄙视链的每一根链环都足够拴着你吃屎的时候，其实区别不大。</p>
-<p>知乎不知不觉成为了我常逛的唯一平台。居然占据了30%的耗电，难道这不恐怖吗？</p>
-<p>只是为了看时事，结果刷了一个小时，难道这不恐怖吗？</p>
-<p>我觉得是时候好好反思反思了。</p>
-<p>要是这一个小时有营养就算了。</p>
-<p>现在的知乎，90%的回答就是在玩烂梗。时政问题下就是两个极端的口诛笔伐，喊入关的喊入关，吹国外的吹国外，骂公知的骂公知。党同伐异，贴上标签就开骂，评论区里友善度堪比电竞祖安。</p>
-<p>国家自信的大旗已经举起，反公知的政治正确俨然形成。这着实是好事，但是被这股情绪裹挟着消磨时间又是另一回事了。</p>
-<p>人们说政治是一个门槛看起来低实际上高得很的学科。谁都能对政治发表一番高论，但是要使理论逻辑自洽，预测准确一致就需要非常高的水平。</p>
-<p>知乎上大体是前者。山高死而入关兴，大家都在喊入关，要么就国家拟人化走一波，大家还就好这一口。</p>
-<p>敢情我是来看波兰球动画的呢？</p>
-<p>不然要么就恶政隐或者膜蛤走一波，下面的评论狂喊冲塔冲塔枪毙枪毙药丸药丸下个账号再见，不亦乐乎，谁说天朝子民不可妄议朝政？</p>
-<p>但是我现在真的觉得让我们普罗大众表达诉求可以，玩键盘政治或许不值得提倡。</p>
-<p>我记得16年刚玩知乎的时候，还是有很多很有意义的回答的。比如说人民群众喜闻乐见的知乎如意勺系列，虽然问题虚构荒诞，但是科普的目的确实达到了。每一篇文章洋洋洒洒干货十足，比起现在一千万和蜗牛的虚构问题不知道高到哪里去了。</p>
-<p>现在还有这么多干货文章吗？有的，引经据典的回答终究是有的，之前在知乎上看到的毕导的科普视频也是很好的。但是这些都被大大稀释了，到现在，为了这么一篇好文章刷过50篇朱一旦，营销号，观察者网或者环球时报似乎不值得。</p>
-<p>我不知道是资本的入驻使知乎变了味，还是推荐算法使然。</p>
-<p>我倾向于后者。</p>
-<p>推荐算法实在是太恐怖了。</p>
-<p>它恐怖就恐怖在它是一个正反馈系统，平衡点是不稳定的。只要思想稍有偏差，就会迅速滚到一个极端去。</p>
-<p>它迎合你，让你每一时刻都享受英雄所见略同的快感。很多时候看前两句句你就知道这篇文章要讲啥，但是禁不住讲的东西你喜欢，于是又看了下去。很多时候回答就只有两句，篇幅完全不重要。我逛知乎的心态已经从以往的获取知识，到寻求附和与认同为主，能看到啥就学啥为辅的情况了，非常可悲。自己当真就没有独立思考的能力和对此的自信？</p>
-<p>小群体内的自我认同除了加深偏执以外不会引入新的思想，甚至还会降低你对异见的容忍度，看到不一样的观点就烦躁，哪怕它的长篇大论是真的有论点有论据有深度可以学到东西的。知乎里现在键政领域两极分化，推荐算法功不可没。</p>
-<p>当一个问答网站将迎合用户，附和用户作为首要任务，而不是去挑战用户的认知，扩充用户的头脑的话，这个网站可就真的忘了初心，出了大问题了。</p>
-<p>或许也没有忘初心，万一人家初心就是赚钱呢。</p>
-<p>现在想想我每天干嘛？去知乎看人嘲讽美国防疫，还是看人调侃美股八熔八耻？</p>
-<p>但是我又不是靠知乎获得这些信息的。我每天一大早都是自己去JHU的网站上查人数，自己查道指的。小米内置的资讯在遇到大新闻的时候也没落下。也就是我不断心理暗示知乎是一个获得时政新闻的平台，其实根本不是。那我天天去干嘛？我贱不贱啊？贱不贱啊？</p>
-<p>自己完全是被动地被知乎牵着鼻子走，可太悲哀了。</p>
-<p>另一方面，知乎的产品设计实在是太高明了。</p>
-<p>我觉得我还是要回归搜索引擎。</p>
-<p>搜索引擎有两个好，一个是它没有针对个人的推荐算法，另一个是你永远有主动权。你搜索什么它给什么。你不搜它不给，爽到。搜出来的结果分散于网络，不容易对于一个平台形成粘性。因此，只要搜索引擎的算法不是特别差（比如说Google），用搜索引擎就不会有大问题。</p>
-<p>被搜索引擎带到知乎和直接在知乎搜索栏里搜索是完全两个不一样的概念。</p>
-<p>搜索引擎的覆盖面比知乎高，那我为啥不用搜索引擎呢？</p>
-<p>我要学习技术，我为啥不去SO、V2EX、SF之类的呢？</p>
-<p>同样是刷手机，我为啥不去B站上看看罗翔追追番呢？前者能普法，后者比看垃圾梗更娱乐一点。</p>
-<p>为什么呢？</p>
-<p>自己之前真的是懒。妄想着知乎一个平台就够了，结果被灌屎，被偶尔尝到的糖吊着胃口，持续地被喂屎。</p>
-<p>太糟糕了，实在是太糟糕了。</p>
-<p>丹麦哲学家 Søren Kierkegaard 讲过一句话，现在想起来觉得实在是太对了。</p>
-<blockquote>
-<p>People demand freedom of speech as a compensation for the freedom of thought which they seldom use.</p>
-</blockquote>
-<p>把知乎卸了。搜索引擎搜到还是会看一下，但是不会主动逛了。</p>
-<p>但愿不会真香。</p>
-<hr />
-<p>其实吧，我觉得，自己退出知乎的这个决定在我看来也是很可悲的。</p>
-<p>因为这是我对于无法解决实际问题的一个逃避。</p>
-<p>控制不住逛知乎，知乎用户粘性很高是外因，自己不自制是内因。外因通过内因而起作用。</p>
-<p>有的时候我觉得虽然学校的政治课大多弱智，但是一些矛盾论以及唯物辩证的思路终究还是受用的。</p>
-<p>自己究竟什么时候才会认认真真审视自己自制力不够的问题呢？</p>
-<p>我如何才能避免自己看知乎变成看B站呢？</p>
-<p>我自以为知乎比B站容易上瘾，先这么自以为着吧。与自己的颓废欲望做出妥协。</p>
-<hr />
-<p>搜索引擎让我掌握了主动权，但是主动权往往是不够的。我要主动搜啥呢？</p>
-<p>正如YPM里面Humphrey说的，I have to know everything so that I can decide whether I need them!</p>
-<p>我也有同学说知乎平台里面有很多宝藏回答，我自己也觉得很多时候知乎的热榜里有热点新闻，这是知乎的价值。</p>
-<p>可以料想到的是，我现在退出知乎以后，终究要有一个信息平台顶替它的位置，keeping myself well-informed.</p>
-<p>这个平台会是什么呢？</p>
-<p>我不期望是一个正反馈的系统，今日头条之类的肯定不行。</p>
-<p>直接看新闻？新闻是一个无反馈的系统，但为了避免被带入一家的政治立场当中去就要各种立场的新闻都看，不知道有没有时间。</p>
-<p>并没有人设计过负反馈的信息平台，估计也不会有人设计这种吃力不讨好的玩意，虽然这是最好的。</p>
-<p>朋友圈或许可以，让亲戚朋友代我受这些正反馈平台的戕害自然是最好不过的了（感觉自己的思想还是有点阴暗），反正他们在朋友圈几句话也不足以左右我本身的判断，他们转发的文章我也未必要看，我要的就是这件事情本身，这样我就可以自己去搜了。</p>
-<p>唉。有的时候我觉得学数理之类的不用区分立场，逻辑与实验自有定论，省了我的脑细胞，是我作为理科生的幸运，但让我缺乏批判性思考的锻炼，又是我作为理科生的不幸。以至于面对正反馈带来的立场极端化不得不采取“闭关锁国”的战略，我也不知道是不是好事。我一直认为，如果有人能够依靠自己的批判性思维带来的负反馈效用力压推荐算法的正反馈，以至于在主流平台当中依然可以保持相对地客观，那是真的厉害。</p>
-<p>另一种自暴自弃的思路莫过于，创造一种统一的政治立场，有一个绝对的权威来树立绝对的政治正确，这样大家都处在同一个立场，提前到达了正反馈的极限，正反馈也就没用了。这正如西方对于我国的态度。一个小圈子里互相认同而偏执是悲哀，但是如果几十亿人不断地相互认同而产生的根深蒂固的思潮，我也不知道是好是坏。它确实湮灭了所有的异见也降低了头脑在这个问题的负担，但也导致新思维的短缺。站在民智发展的角度来看，这样很危险，但是站在统战的角度上，这样似乎又不是不行。</p>
-<p>我从未学过认知论也从未学过教育学，但是我推断人类的认知过程本身不可避免地是一个先天的正反馈过程，别人的认可是激励，别人的反驳是惩罚。在基础教育的过程中，“别人”单指老师与同学，因此这个思路被不断提倡，而当到了网络的辩论场，人们自动就会把“别人”的定义延拓了。要逆转这个态势，审慎地对待别人的认可，积极地面对别人的反驳，小心翼翼地避免矫枉过正，在这个时代还要对抗推荐算法，实在是不容易。而如果只有一个人能够做到这一步，那么这个人被孤立于群体之中，也未必如之前一样快乐。</p>
-<p>因此我越看《理想国》，越觉得像里面的苏格拉底一样在辩论中不恼羞成怒诉诸于人身攻击，反而通过设问，在多个立场之间来回切换，将辩论用作真正探寻真理的途径而非自我膨胀的乱骂一通，实在是一种非常高明的智慧。我觉得自己离这个境界差远了，而对于是否所有人都能拥有这个智慧，是否应该拥有这份智慧，拥有这份智慧之后是否会感到快乐，我现在很悲观。</p>
-<p>唉，自己社科不行，也只能乱发牢骚一通。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
@@ -1860,6 +1909,7 @@ compileTestKotlin &#123;
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-nginx.min.js" integrity="sha512-/MNzg8GlnVrAau/TZClh1jxgHNX0HDgidbGnHS5x1OtbKiNoK3e0XNd1oV16xmmeDHjisa3GKLArUau+43GZ4A==" crossorigin="anonymous"></script>
 <script type = "text/javascript">
     document.addEventListener('pjax:complete', function() {
         if (typeof Prism !== 'undefined') {

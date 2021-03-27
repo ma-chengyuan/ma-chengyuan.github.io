@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-count">88</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,126 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/28/Tanh%E7%BA%BF%E6%80%A7%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/09/28/Tanh%E7%BA%BF%E6%80%A7%E5%8C%96/" class="post-title-link" itemprop="url">基于反双曲正切函数的马达线性化</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2018-09-28 16:27:33 / 修改时间：17:15:02" itemprop="dateCreated datePublished" datetime="2018-09-28T16:27:33+08:00">2018-09-28</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="概况">概况</h1>
+<p>由于VEX中PWM频率偏低，因此马达的响应并不是线性的，例如马达指令在较小时存在死区，在较大时对转速的影响可以忽略不计等等。以269马达的数据为例（393也是类似）：</p>
+<p><img src="8570621.jpg" /></p>
+<p>那么如何让马达的响应变得线性呢？从数学角度出发，我们需要试图找到，或者逼近以上马达曲线<span class="math inline">\(f\)</span>的<strong>反函数</strong><span class="math inline">\(g = f^{-1}\)</span>，对于输出我们应用反函数再应用到马达上，由于马达曲线是单调的，因此在理想状况下，这波操作以后马达的响应就是线性的了，这一过程也称作<strong>马达线性化</strong>。</p>
+<p>出于简单起见，我们规定这个<span class="math inline">\(g\)</span>的定义域和值域都是<span class="math inline">\([-127, 127]\)</span>，这样的话，理论上大部分原来没有使用线性化的PID算法可以较为简单地加上线性化（不然的话就需要从零开始调参）。显然由马达曲线的单调性可得<span class="math inline">\(g(127) = 127\)</span>，以及<span class="math inline">\(g(-127) = -127\)</span>。</p>
+<p>目前机器人社实践过的线性化算法有：</p>
+<ol type="1">
+<li>去除死区的简单线性化：只比没有线性化好一点，简单来说就是对输出的指令加一个bias，这样就不会有死区的问题。</li>
+<li>三段线性插值线性化：就是被WSJ吹爆的所谓模型，本质是把马达曲线分为三段并分别用线性函数近似，效果很好，缺点是调参较为复杂。</li>
+<li>二次函数线性化：我们发现马达曲线的形状有点像<span class="math inline">\(f(x) = \sqrt x\)</span>的图像，因此我们使用二次函数为反函数进行线性化，效果一般。</li>
+<li>反双曲正切线性化：本篇主题，效果较好。</li>
+<li>真·模型线性化：使用马达模型直接计算马达曲线进行线性化，效果最好，可以针对不同的电量，场地状况，扭矩实时给出不同的曲线，缺点是计算慢。</li>
+</ol>
+<h1 id="数学推导">数学推导</h1>
+<p>直觉上，有没有觉得马达曲线的图像很像<span class="math inline">\(\tanh\)</span>函数的图像？</p>
+<p><img src="66159356.jpg" /></p>
+<p>因此我们选择使用双曲正切函数的反函数来进行线性化： <span class="math display">\[
+\tanh^{-1}(x) = \frac{1}{2}\ln\left(\frac{1 + x}{1 - x}\right)
+\]</span> 为了适应死区，以及满足上文中定义域和值域的要求，我们魔改拓展一下上式： <span class="math display">\[
+g(x) = a\operatorname{sgn}(x) + \frac{127 - a}{2b}\ln\left(\frac{c + x}{c - x}\right)
+\]</span> 解释一下各参数的意义：</p>
+<ol type="1">
+<li><span class="math inline">\(a\)</span>是死区，一般来说<span class="math inline">\(5 \le a \le 20\)</span>。</li>
+<li><span class="math inline">\(b\)</span>是我叫做“缩放因子”的参数，其图像意义是<strong>把原双曲正切函数自变量<span class="math inline">\([-b, b]\)</span>这一段的图像看做马达函数图像形状上的近似</strong>。从图像上可以看到，一般<span class="math inline">\(2 \le b \le 3\)</span>。</li>
+<li><span class="math inline">\(c\)</span>是一个依赖于<span class="math inline">\(a, b\)</span>的参数，由<span class="math inline">\(g(127) = 127\)</span>，我们反解得<span class="math inline">\(c = 127\frac{e^{2b} + 1}{e^{2b} - 1}\)</span>。</li>
+</ol>
+<p>就完了，不难吧？</p>
+<h1 id="代码">代码</h1>
+<p>注意变量名可能和推导中用到的符号并不一致：</p>
+<pre class="line-numbers"><code class="language-cpp">typedef struct &#123;
+    float a, b;
+    float alpha;
+&#125; TanhLinearizer;
+
+void initTanhLinearizer(TanhLinearizer *t, float deadband, float scale = 2.333333) &#123;
+    t-&gt;b = scale * 2;
+    t-&gt;a = 127 - deadband;
+    float x = exp(2 * scale);
+    t-&gt;alpha = 127 * (x + 1) / (x - 1);
+&#125;
+
+int getTanhLinearizedOutput(TanhLinearizer *t, int cmd) &#123;
+    if (cmd &gt; 127) cmd = 127;
+    if (cmd &lt; -127) cmd = -127;
+    int s = sgn(cmd);
+    cmd = fabs(cmd);
+    return round(t-&gt;a / t-&gt;b * log((t-&gt;alpha + cmd) / (t-&gt;alpha - cmd)) + s * (127 - t-&gt;a));
+&#125;</code></pre>
+<h1 id="效果">效果</h1>
+<p>马达曲线的反函数应该原本是这个样子的（就是原图像转一转）：</p>
+<p><img src="24070987.jpg" /></p>
+<p>然后在<span class="math inline">\(a = 8, b = 3\)</span>时我们的线性化算法给出的反函数是这个样子的：</p>
+<p><img src="83393060.jpg" /></p>
+<p>是不是很像呢？实测的效果确实也是极好的。</p>
+<h1 id="更多">更多</h1>
+<p>其实马达函数的图像不只是像<span class="math inline">\(\tanh\)</span>啦，其实观察一下你也可以说它像<span class="math inline">\(\arctan\)</span>之类的，自然也可以发展出一套线性化的方法，从的来说看图像猜函数只能说是一种近似，最好自然是找出马达曲线精确的计算方法，也就是建模。但是这类线性化方法的一大好处就是<strong>计算量很小，很快</strong>，因此往往更多地得到应用。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1705,243 +1825,6 @@ ll bsgs(ll a, ll b, ll p) &#123;
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/02/%E8%8E%AB%E6%AF%94%E4%B9%8C%E6%96%AF%E5%8F%8D%E6%BC%94/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/02/%E8%8E%AB%E6%AF%94%E4%B9%8C%E6%96%AF%E5%8F%8D%E6%BC%94/" class="post-title-link" itemprop="url">莫比乌斯反演</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-09-02 16:59:23" itemprop="dateCreated datePublished" datetime="2018-09-02T16:59:23+08:00">2018-09-02</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-07-30 16:26:46" itemprop="dateModified" datetime="2020-07-30T16:26:46+08:00">2020-07-30</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>莫比乌斯反演是OI中应对数论问题的一大杀器，可以把很多以前需要脑子想的问题无脑化，把很多脑子想不通的问题机械化，非常方便。</p>
-<h1 id="狄利克雷卷积">狄利克雷卷积</h1>
-<p>对于函数<span class="math inline">\(f, g\)</span>，定义它们的狄利克雷卷积<span class="math inline">\(f \times g\)</span>为： <span class="math display">\[
-(f \times g)(n) = \sum_{d \mid n} f(d)g\left(\frac{n}{d}\right)
-\]</span></p>
-<h2 id="性质">性质</h2>
-<h3 id="积性">积性</h3>
-<p>若<span class="math inline">\(f, g\)</span>为积性函数，那么<span class="math inline">\(f \times g\)</span>继承它们的积性。</p>
-<p><strong>证明：</strong>令<span class="math inline">\(n, m\)</span>为互素正整数，则易证<span class="math inline">\(nm\)</span>的全体约数可以<em>不重不漏地</em>表示为<span class="math inline">\(\{d_nd_m \mid d_n \mid n, d_m \mid m\}\)</span>。</p>
-<p>因此： <span class="math display">\[
-\begin{aligned}
-(f \times g)(nm) &amp;= \sum_{d | n} f(d)g\left(\frac{nm}{d}\right) \\
-&amp;= \sum_{d_n\mid n} \sum_{d_m \mid m} f(d_nd_m)g\left(\frac{nm}{d_nd_m}\right)
-\end{aligned}
-\]</span> 由<span class="math inline">\(n, m\)</span>互素可知<span class="math inline">\(d_n, d_m\)</span>互素以及<span class="math inline">\(\frac{n}{d_n}, \frac{m}{d_m}\)</span>互素，结合<span class="math inline">\(f, g\)</span>的积性： <span class="math display">\[
-\begin{aligned}
-\begin{aligned}
-(f \times g)(nm) &amp;= \sum_{d_n\mid n} \sum_{d_m \mid m} f(d_n)f(d_m)g\left(\frac{n}{d_n}\right)g\left(\frac{m}{d_m}\right) \\
-&amp;= \sum_{d_n\mid n} f(d_n)g\left(\frac{n}{d_n}\right) \sum_{d_m \mid m} f(d_m)g\left(\frac{m}{d_m}\right) \\
-&amp;= (f \times g)(n) \cdot (f \times g)(m)
-\end{aligned}
-\end{aligned}
-\]</span> 证毕。</p>
-<h3 id="交换律">交换律</h3>
-<p><span class="math display">\[
-f \times g = g \times f
-\]</span></p>
-<p><strong>证明：</strong>由于约数是成对出现的，显然。</p>
-<h3 id="结合律">结合律</h3>
-<p><span class="math display">\[
-(f \times g) \times h = f \times (g \times h)
-\]</span></p>
-<p><strong>证明：</strong>我们需要稍微改变一下下标的写法，然后就非常清楚了： <span class="math display">\[
-\begin{aligned}
-\left[(f \times g) \times h \right](n) &amp;= \sum_{ab = n} (f \times g)(a) h(b) \\
-&amp;= \sum_{ab = n} \sum_{cd = a}f(c)g(d) h(b) \\
-&amp;= \sum_{bcd = n} f(c)g(d)h(b) \\
-&amp;= \sum_{ce = n} f(c) \sum_{bd = e} g(d)h(b) \\
-&amp;= \sum_{ce = n} f(c) (g \times h)(b) \\
-&amp;= \left[f \times (g \times h)\right](n)
-\end{aligned}
-\]</span></p>
-<p>得证。</p>
-<h3 id="单位元">单位元</h3>
-<p>定义 <span class="math display">\[
-\varepsilon(n) = [n = 1]
-\]</span> 易证<span class="math inline">\(\varepsilon\)</span>为狄利克雷卷积的单位元，<em>也是一个积性函数</em>，在之后的反演当中，我们也经常会把<span class="math inline">\(\varepsilon\)</span>作为艾弗森括号<span class="math inline">\([]\)</span>的替代品，因为它具有更优良的性质，简单来说： <span class="math display">\[
-[f(x) = y] = \varepsilon\left(\frac{f(x)}{y}\right)
-\]</span></p>
-<h2 id="推论">推论</h2>
-<p>关于狄利克雷卷积我们有两条非常重要的推论： <span class="math display">\[
-\begin{aligned}
-\mu \times 1 &amp;= \varepsilon \\
-\varphi \times 1 &amp;= I
-\end{aligned}
-\]</span> 当中<span class="math inline">\(1\)</span>为值恒为<span class="math inline">\(1\)</span>的常值函数，<span class="math inline">\(I(x) = x\)</span>为恒等函数，易证这两个都是完全积性函数。</p>
-<p><strong>证明：</strong>我们先证明第一条，假设<span class="math inline">\(n &gt; 1\)</span>有<span class="math inline">\(r\)</span>个素因子，从当中挑去若干个相乘组成<span class="math inline">\(n\)</span>的<strong>不含平方素因子</strong>的约数（如果约数含平方素因子则约数的<span class="math inline">\(\mu\)</span>为<span class="math inline">\(0\)</span>，可以直接忽略）则我们有： <span class="math display">\[
-\begin{aligned}
-(\mu \times 1)(n) &amp;= \sum_{i = 0}^r \binom{r}{i} (-1)^i \\
-&amp;= \sum_{i = 0}^r \binom{r}{i} (-1)^i\cdot 1^{r - i}
-\end{aligned}
-\]</span> 结合二项式定理，得到<span class="math inline">\((\mu \times 1)(n) = (1-1)^r=0\)</span>，而如果<span class="math inline">\(n = 1\)</span>，手动展开得到<span class="math inline">\((\mu \times 1)(1) = \mu(1) = 1\)</span>。两种情况结合起来得到<span class="math inline">\(\mu \times 1 = \varepsilon\)</span>，第一条推论得证。</p>
-<p>对于第二条推论，我们将其展开： <span class="math display">\[
-\sum_{d \mid n} \varphi(i) = n
-\]</span> 我们先考察<span class="math inline">\(n\)</span>为素数（或其幂次）的情况，设<span class="math inline">\(n = p^k\)</span>，则原式左边变为： <span class="math display">\[
-\begin{aligned}
-\sum_{i = 0}^k \varphi(p^i) &amp;= 1 +\sum_{i = 1} ^ k p^i\left(1 - {1 \over p}\right) \\
-&amp;= 1 + \left(1 - {1 \over p}\right)\sum_{i = 1} ^ k p^i \\
-&amp;= 1 + \frac{p - 1}{p} \cdot \frac{p^{k + 1} - p}{p - 1} \\
-&amp;= 1 + p^k - 1 \\
-&amp;= p^k
-\end{aligned}
-\]</span> 因此在<span class="math inline">\(n\)</span>为素数或其幂次时推论得证，而我们知道<span class="math inline">\(\varphi \times 1\)</span><strong>继承了积性</strong>，因此我们可以<strong>利用积性把推论推广到<span class="math inline">\(n\)</span>不为素数的情况</strong>（通过分解素因数即可），证毕。</p>
-<h1 id="莫比乌斯反演">莫比乌斯反演</h1>
-<p><strong>定理：</strong><span class="math inline">\(f \times 1 = g\)</span>当且仅当<span class="math inline">\(f = g \times \mu\)</span>。</p>
-<p><strong>证明：</strong>本质上是狄利克雷卷积的推论的推论，先正着来一轮，两边同时乘以<span class="math inline">\(\mu\)</span>： <span class="math display">\[
-\begin{aligned}
-f \times 1 &amp;= g \\
-\Rightarrow f \times 1 \times \mu &amp;= g \times \mu \\
-\Rightarrow f \times \varepsilon &amp;= g \times \mu \\
-\Rightarrow f &amp;= g \times \mu \\
-\end{aligned}
-\]</span> 我们再反着来一轮，两边同时乘上<span class="math inline">\(1\)</span>： <span class="math display">\[
-\begin{aligned}
-f &amp;= g \times \mu \\
-\Rightarrow f \times 1 &amp;= g \times \mu \times 1 \\
-\Rightarrow f \times 1 &amp;= g \times \varepsilon \\
-\Rightarrow f \times 1 &amp;= g
-\end{aligned}
-\]</span> （所以说不要迷行网上那种大力出奇迹几个<span class="math inline">\(\sum\)</span>展开来回套的证明，看这个多简单）</p>
-<p><strong>虽然存在这个莫比乌斯反演定理，但是我们更多的时候还是习惯逆用狄利克雷卷积的那两个推论。</strong></p>
-<h2 id="示例varphin">示例：<span class="math inline">\(\varphi(n)\)</span></h2>
-<p><span class="math display">\[
-\begin{aligned}
-\varphi(n) &amp;= \sum_{i = 1}^n [\gcd(i, n) = 1] \\
-&amp;= \sum_{i = 1}^n \varepsilon(\gcd(i, n)) \\
-\end{aligned}
-\]</span></p>
-<p>此时我们使用推论<span class="math inline">\(\varepsilon = \mu \times 1\)</span>： <span class="math display">\[
-\begin{aligned}
-\varphi(n) &amp;= \sum_{i = 1}^n \varepsilon(\gcd(i, n)) \\
-&amp;= \sum_{i = 1}^n \sum_{d \mid \gcd(i, n)} \mu(d) \\
-&amp;= \sum_{i = 1}^n \sum_{d \mid i, d \mid n} \mu(d) \\
-\end{aligned}
-\]</span> 接下来我们把<span class="math inline">\(d\)</span>的求和拖到前面去，本质上是从<strong>对约数求和变为对倍数算贡献</strong>： <span class="math display">\[
-\begin{aligned}
-\varphi(n) &amp;= \sum_{i = 1}^n \sum_{d \mid i, d \mid n} \mu(d) \\
-&amp;= \sum_{d \mid n} \mu(d) \sum_{i = 1, d \mid i}^n 1 \\
-&amp;= \sum_{d \mid n} \mu(d) \sum_{i = 1}^{n \over d} 1 \\
-&amp;= \sum_{d \mid n} \mu(d) \frac{n}{d} \\
-&amp;= \sum_{d \mid n} \mu(d) I\left(\frac{n}{d}\right) \\
-&amp;= (\mu \times id)(n)
-\end{aligned}
-\]</span> 因此我们证明了<span class="math inline">\(\varphi = \mu \times id\)</span>，虽然这个结论是可以直接从莫比乌斯反演定理推得的，但是呢，这个例子确实展示了莫比乌斯反演的很多常用套路：</p>
-<ol type="1">
-<li>把式子写下来</li>
-<li>用<span class="math inline">\(id\)</span>或者<span class="math inline">\(\varepsilon\)</span>修饰</li>
-<li>逆用狄利克雷卷积的推论，把求和式后面反演成卷积形式</li>
-<li>通过算贡献的方式设法把<span class="math inline">\(d\)</span>的求和项连带着只和<span class="math inline">\(d\)</span>有关的函数值一起拖到最前面</li>
-<li>化简后半部分</li>
-</ol>
-<p>这一路下来其实是非常套路的，但往往效果拔群。</p>
-<h2 id="示例sum_i-1n-varphii">示例：<span class="math inline">\(\sum_{i = 1}^n \varphi(i)\)</span></h2>
-<p><strong>以下为了方便起见，如果出现<span class="math inline">\(n, m\)</span>，皆假设<span class="math inline">\(n \le m\)</span>！</strong></p>
-<p>我们试试看刚刚学到的套路，来反演欧拉函数的前缀和： <span class="math display">\[
-\begin{aligned}
-\sum_{i = 1}^n \varphi(i) &amp;= \sum_{i = 1}^n \sum_{j = 1}^i [\gcd(i, j) = 1] \\
-&amp;= \sum_{i = 1}^n \sum_{j = 1}^i \varepsilon(\gcd(i, j) = 1) \\
-&amp;= \sum_{i = 1}^n \sum_{j = 1}^i \sum_{d \mid \gcd(i, j)} \mu(d) \\
-&amp;= \sum_{i = 1}^n \sum_{j = 1}^i \sum_{d \mid i, d \mid j} \mu(d) \\
-&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1, d \mid i}^n \sum_{j = 1, d \mid j}^i 1\\
-&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} \sum_{j = 1}^i 1\\
-&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} i\\
-&amp;= \sum_{d = 1}^n \mu(d) \frac{\left\lfloor \frac{n}{d} \right\rfloor \left(\left\lfloor \frac{n}{d} \right\rfloor + 1\right)}{2}\\
-&amp;= \frac{1}{2} \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \left(\left\lfloor \frac{n}{d} \right\rfloor + 1\right)
-\end{aligned}
-\]</span> 嗯，很好，很强大，但是这个有什么用呢？</p>
-<h2 id="示例sum_i-1n-sum_j-1n-gcdi-j-1">示例：<span class="math inline">\(\sum_{i = 1}^n \sum_{j = 1}^n [\gcd(i, j) = 1]\)</span></h2>
-<p>这个式子对应POJ3090，即有一个<span class="math inline">\(n \times n\)</span>个格点，问从最左下角能够看到几个格点，我们发现如果格点<span class="math inline">\((i, j)\)</span>不互素的话，它一定不会被看到，因此题目就被转化成了我们要求的式子，常规做法是通过把格点劈成三角形，进行转化得到答案为<span class="math inline">\(2\sum_{i = 1}^n \varphi(n) - 1\)</span>，但是这毕竟还需要一点智商，而如果你莫比乌斯反演熟练的话，这个东西推起来是非常机械化的： <span class="math display">\[
-\begin{aligned}
-\sum_{i = 1}^n \sum_{j = 1}^n [\gcd(i, j) = 1] &amp;= \sum_{i = 1}^n \sum_{j = 1}^n \varepsilon(\gcd(i, j) = 1)\\
-&amp;= \sum_{i = 1}^n \sum_{j = 1}^n \sum_{d \mid i, d \mid j} \mu(d)\\
-&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1, d \mid i}^n \sum_{j = 1, d \mid j}^n 1 \\
-&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} \sum_{j = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} 1 \\
-&amp;= \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor^2 \\
-&amp;= 2 \left( \frac{1}{2} \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \left(\left\lfloor \frac{n}{d} \right\rfloor + 1\right) \right) - \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \\
-&amp;= 2\sum_{i = 1}^n \varphi(i) - \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor
-\end{aligned}
-\]</span> 那么<span class="math inline">\(\sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor\)</span>又是什么呢？我们借着套路反着反演： <span class="math display">\[
-\begin{aligned}
-\sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor &amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1, d \mid i}^n 1 \\
-&amp;= \sum_{i = 1}^n \sum_{d \mid i} \mu(d) \\
-&amp;= \sum_{i = 1}^n (\mu \times 1)(d) \\
-&amp;= \sum_{i = 1}^n \varepsilon(i) \\
-&amp;= 1
-\end{aligned}
-\]</span> 原来这个是<span class="math inline">\(1\)</span>啊，那么带回去我们就得到了： <span class="math display">\[
-\sum_{i = 1}^n \sum_{j = 1}^n [\gcd(i, j) = 1] = 2\sum_{i = 1}^n \varphi(i) - 1
-\]</span> 以上推导中我们完全没有用到<span class="math inline">\(\varphi, \mu\)</span>的数学意义，而是顺着我们推导出的狄利克雷卷积的规则和推论进行着机械化的推导，最后也殊途同归，也许有些人会觉得这样没有卵用，那么试解： <span class="math display">\[
-\sum_{i = 1}^n \sum_{j = 1}^m [\gcd(i, j) = 1]
-\]</span> 借助图形和数学意义的人看到这个式子大概就去世了，但是如果我们利用反演的话，类似以上的过程可以推得： <span class="math display">\[
-\sum_{i = 1}^n \sum_{j = 1}^m [\gcd(i, j) = 1] = \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \left\lfloor \frac{m}{d} \right\rfloor
-\]</span> 结合整除分块和<span class="math inline">\(O(n)\)</span>预处理莫比乌斯函数的前缀和我们就可以在<span class="math inline">\(O(\sqrt n)\)</span>的时间里回答每一个询问，这就是莫比乌斯反演的强大之处。</p>
-<h2 id="示例sum_i-1n-sum_j-1m-gcdi-j">示例：<span class="math inline">\(\sum_{i = 1}^n \sum_{j = 1}^m \gcd(i, j)\)</span></h2>
-<p>观察这个式子，我们发现和上面实例中式子的唯一不同就是我们把<span class="math inline">\(\varepsilon\)</span>换成了<span class="math inline">\(id\)</span>，对应下来就是<span class="math inline">\(\mu\)</span>换成了<span class="math inline">\(\varphi\)</span>，因此我们可以得到： <span class="math display">\[
-\sum_{i = 1}^n \sum_{j = 1}^m \gcd(i, j) = \sum_{d = 1}^n \varphi(d) \left\lfloor \frac{n}{d} \right\rfloor \left\lfloor \frac{m}{d} \right\rfloor
-\]</span> 依然是<span class="math inline">\(O(n)\)</span>预处理<span class="math inline">\(O(\sqrt n)\)</span>查询！</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
@@ -2016,6 +1899,7 @@ f &amp;= g \times \mu \\
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-nginx.min.js" integrity="sha512-/MNzg8GlnVrAau/TZClh1jxgHNX0HDgidbGnHS5x1OtbKiNoK3e0XNd1oV16xmmeDHjisa3GKLArUau+43GZ4A==" crossorigin="anonymous"></script>
 <script type = "text/javascript">
     document.addEventListener('pjax:complete', function() {
         if (typeof Prism !== 'undefined') {

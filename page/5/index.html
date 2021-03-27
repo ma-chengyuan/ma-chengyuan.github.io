@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-count">88</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,264 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/12/21/LU/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/12/21/LU/" class="post-title-link" itemprop="url">LU分解笔记</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2019-12-21 14:04:53 / 修改时间：14:19:14" itemprop="dateCreated datePublished" datetime="2019-12-21T14:04:53+08:00">2019-12-21</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="矩阵向量相乘的意义">矩阵向量相乘的意义</h1>
+<p>这部分和LU分解没有多大关系，但是GS的书里一直强调这种理解，想必是极有用的。</p>
+<p>当矩阵左乘一个列向量，其结果等同于矩阵每一列以列向量为权的线性组合，例如 <span class="math display">\[
+\begin{pmatrix}
+    1&amp;2&amp;3\\
+    4&amp;5&amp;6\\
+    7&amp;8&amp;9\\
+\end{pmatrix}
+\begin{pmatrix}
+1\\
+2\\
+3
+\end{pmatrix}
+=
+1\begin{pmatrix}
+1\\4\\7
+\end{pmatrix}
++2\begin{pmatrix}
+2\\5\\8
+\end{pmatrix}
++3\begin{pmatrix}
+3\\6\\9
+\end{pmatrix}
+\]</span> 类似地，当矩阵右乘一个行向量，其结果等于矩阵每一行以行向量为权的线性组合，例如 <span class="math display">\[
+\begin{pmatrix}
+1&amp;2&amp;3
+\end{pmatrix}
+\begin{pmatrix}
+    1&amp;2&amp;3\\
+    4&amp;5&amp;6\\
+    7&amp;8&amp;9\\
+\end{pmatrix}
+=\begin{matrix}
+1\begin{pmatrix}
+1&amp;2&amp;3
+\end{pmatrix}\\
++\\
+2\begin{pmatrix}
+4&amp;5&amp;6
+\end{pmatrix}\\+\\
+3\begin{pmatrix}
+7&amp;8&amp;9
+\end{pmatrix}
+\end{matrix}
+\]</span> 多列，多行的情况也可以以此类推。</p>
+<h1 id="初等行变换的矩阵表示">初等行变换的矩阵表示</h1>
+<p>注意到初等行变换可以使用矩阵进行表示，例如在一个<span class="math inline">\(3\times 3\)</span>的矩阵当中把第<span class="math inline">\(1\)</span>行的<span class="math inline">\(3\)</span>倍加到第二行就可以表示为： <span class="math display">\[
+\begin{pmatrix}
+1&amp;0&amp;0 \\
+3&amp;1&amp;0 \\
+0&amp;0&amp;1
+\end{pmatrix}
+\begin{pmatrix}
+1&amp;2&amp;3 \\
+4&amp;5&amp;6 \\
+7&amp;8&amp;9
+\end{pmatrix}
+=\begin{pmatrix}
+1&amp;2&amp;3 \\
+7&amp;11&amp;15 \\
+7&amp;8&amp;9
+\end{pmatrix}
+\]</span> <strong>注意行变换的矩阵是左乘的，右乘就是列变换了！</strong></p>
+<p>具体来说，如果你把第<span class="math inline">\(i\)</span>行的<span class="math inline">\(k\)</span>倍加到第<span class="math inline">\(j\)</span>行上，那么这个变换对应的矩阵就是在以单位矩阵为基础上<span class="math inline">\(a_{j,i}=k\)</span>。</p>
+<p>初等行变换的矩阵常用符号<span class="math inline">\(E\)</span>表示。</p>
+<p>由于初等行变换的意义，很容易就可以看出其逆矩阵就是把对应的元素取反，加上的我们就减回去： <span class="math display">\[
+E=\begin{pmatrix}
+1&amp;0&amp;0 \\
+3&amp;1&amp;0 \\
+0&amp;0&amp;1
+\end{pmatrix}\Rightarrow 
+E^{-1}=\begin{pmatrix}
+1&amp;0&amp;0 \\
+-3&amp;1&amp;0 \\
+0&amp;0&amp;1
+\end{pmatrix}
+\]</span></p>
+<h1 id="矩阵的lu分解">矩阵的LU分解</h1>
+<p>在学习初等行变换的矩阵表示之后再回头考虑我们对着<span class="math inline">\(n\times n\)</span>矩阵<span class="math inline">\(A\)</span>做消元得到上三角阵<span class="math inline">\(U\)</span>的过程，我们就会发现，<strong>在消元过程不涉及交换两行的时候，</strong>消元过程可以表示为： <span class="math display">\[
+E_{n,n-1}\cdots E_{31}E_{21}A=U
+\]</span> 其中<span class="math inline">\(E_{21}\)</span>表示我们把<span class="math inline">\(a_{21}\)</span>消为<span class="math inline">\(0\)</span>所运用的行变换。</p>
+<p>注意到在消元的时候我们是按照<span class="math inline">\(E_{21}, E_{31},\cdots\)</span>这个顺序消过来的，但是因为行变换是左乘，因此上式当中从左到右序号是反的。</p>
+如果<span class="math inline">\(A\)</span>确实可以顺顺利利地消成<span class="math inline">\(U\)</span>，那说明<span class="math inline">\(E_{n,n-1}\cdots E_{31}E_{21}\)</span>是可逆的，即： $$
+<span class="math display">\[\begin{aligned}
+A&amp;=(E_{n,n-1}\cdots E_{31}E_{21})^{-1}U\\ 
+&amp;=E_{21}^{-1}E_{31}^{-1}\cdots E_{n,n-1}^{-1}U
+
+\end{aligned}\]</span>
+<p><span class="math display">\[
+不妨令$L=E_{21}^{-1}E_{31}^{-1}\cdots E_{n,n-1}^{-1}$，则矩阵$A$可以写作：
+\]</span> A=LU $$ 这就被称为矩阵<span class="math inline">\(A\)</span>的<span class="math inline">\(LU\)</span>分解。</p>
+<p>其中<span class="math inline">\(U\)</span>是上三角阵无疑，而<span class="math inline">\(L\)</span>，其字母暗示我们这是一个<strong>下三角阵</strong>。</p>
+<p>不仅如此，比如说对于<span class="math inline">\(3\)</span>阶方阵消元共三步： <span class="math display">\[
+E_{21}^{-1} = \begin{pmatrix}
+1&amp;0&amp;0\\
+a&amp;1&amp;0\\
+0&amp;0&amp;1
+\end{pmatrix}
+,
+E_{31}^{-1} = \begin{pmatrix}
+1&amp;0&amp;0\\
+0&amp;1&amp;0\\
+b&amp;0&amp;1
+\end{pmatrix}
+,
+E_{32}^{-1} = \begin{pmatrix}
+1&amp;0&amp;0\\
+0&amp;1&amp;0\\
+0&amp;c&amp;1
+\end{pmatrix}
+\]</span> 计算<span class="math inline">\(L\)</span>可得 <span class="math display">\[
+L=\begin{pmatrix}
+1&amp;0&amp;0\\
+a&amp;1&amp;0\\
+0&amp;0&amp;1
+\end{pmatrix}\begin{pmatrix}
+1&amp;0&amp;0\\
+0&amp;1&amp;0\\
+b&amp;0&amp;1
+\end{pmatrix}\begin{pmatrix}
+1&amp;0&amp;0\\
+0&amp;1&amp;0\\
+0&amp;c&amp;1
+\end{pmatrix}=\begin{pmatrix}
+1&amp;0&amp;0\\
+a&amp;1&amp;0\\
+b&amp;c&amp;1
+\end{pmatrix}
+\]</span> <span class="math inline">\(L\)</span>在形式上就是把<strong>所有行变换矩阵“拼起来“</strong>！矩阵乘法平常都会把矩阵里面的数字形式破坏掉，这次为什么那么奇妙呢？</p>
+<p><strong>从消元的角度，可以这么理解：</strong></p>
+<p>我们能够把两个行变换矩阵“拼”起来，当且仅当一个变换的结果不会改变另一个变换的源。</p>
+<p>什么意思？如果<span class="math inline">\(E_1\)</span>把第<span class="math inline">\(2\)</span>行的<span class="math inline">\(3\)</span>倍加到第<span class="math inline">\(2\)</span>行，<span class="math inline">\(E_2\)</span>把第<span class="math inline">\(1\)</span>行的<span class="math inline">\(2\)</span>倍加到第<span class="math inline">\(2\)</span>行。</p>
+<p>如果我们先做<span class="math inline">\(E_1\)</span>再做<span class="math inline">\(E_2\)</span>即<span class="math inline">\(E_2E_1\)</span>，那么这个时候我们是可以直接拼起来的。因为先做的<span class="math inline">\(E_1\)</span>没有改变<span class="math inline">\(E_2\)</span>所依赖的第<span class="math inline">\(2\)</span>行。但是先做<span class="math inline">\(E_2\)</span>再做<span class="math inline">\(E_1\)</span>即<span class="math inline">\(E_1E_2\)</span>就不能直接拼起来，因为先做的<span class="math inline">\(E_2\)</span>把<span class="math inline">\(E_1\)</span>所依赖的第<span class="math inline">\(2\)</span>行改掉了。</p>
+<p>然后我们发现在<span class="math inline">\(LU\)</span>分解里面我们是先改第<span class="math inline">\(n\)</span>行，再改第<span class="math inline">\(n-1\)</span>行这样从下到上地变换上去的。改变第<span class="math inline">\(n\)</span>行的变换只会依赖于前<span class="math inline">\(n-1\)</span>行，因此出不了问题。</p>
+<p><strong>从纯计算的角度，可以这么解释：</strong></p>
+<p>考虑矩阵乘法<span class="math inline">\(L=EL&#39;\)</span>，其中<span class="math inline">\(E\)</span>是一个行变换矩阵且假设其中<span class="math inline">\(E_{ik}=a\)</span>，<span class="math inline">\(L&#39;\)</span>是下三角阵。</p>
+则考虑<span class="math inline">\(L\)</span>第<span class="math inline">\(i\)</span>行第<span class="math inline">\(j\)</span>列的值<span class="math inline">\(L_{ij}\)</span>（除了第<span class="math inline">\(i\)</span>行，结果的其他行显然等于<span class="math inline">\(L&#39;\)</span>），必然是<span class="math inline">\(E\)</span>的行向量与<span class="math inline">\(L&#39;\)</span>列向量之点乘： $$ L_{ij}=
+<span class="math display">\[\begin{pmatrix}
+0 \\
+\vdots \\
+a\\
+\vdots \\
+\color{red}1\\
+\vdots\\
+0
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+0 \\
+\vdots \\
+
+\color{blue}1 \\
+\vdots \\
+b \\
+c \\
+\vdots \\
+\end{pmatrix}\]</span>
+<p>$$</p>
+<p>由于三角阵主对角线上都是<span class="math inline">\(1\)</span>，在上式中左边向量里面的<span class="math inline">\(\color{red}1\)</span>就是从上往下数第<span class="math inline">\(i\)</span>个，右边向量里面的<span class="math inline">\(\color{blue}1\)</span>就是从上往下数第<span class="math inline">\(j\)</span>个。因为是下三角阵<span class="math inline">\(\color{red}1\)</span>的下面都是<span class="math inline">\(0\)</span>，<span class="math inline">\(\color{blue}1\)</span>的上面也都是<span class="math inline">\(0\)</span>。接下来讨论<span class="math inline">\(\color{red}1\)</span>和<span class="math inline">\(\color{blue} 1\)</span>的位置关系。</p>
+<ul>
+<li><span class="math inline">\(i&lt;j\)</span>时，<span class="math inline">\(\color{red}1\)</span>在<span class="math inline">\(\color{blue}1\)</span>的上面。右侧<span class="math inline">\(\color{blue} 1\)</span>下面非零的元素对着左边的都是<span class="math inline">\(0\)</span>，左侧<span class="math inline">\(\color{red}1\)</span>上面的非零<span class="math inline">\(a\)</span>对到右边也是<span class="math inline">\(0\)</span>，因此<span class="math inline">\(L_{ij}=0\)</span>。</li>
+<li><span class="math inline">\(i=j\)</span>时，<span class="math inline">\(\color{red} 1\)</span>正对着<span class="math inline">\(\color{blue}1\)</span>，因此<span class="math inline">\(L_{ij}=1\times 1=1\)</span>。</li>
+<li><span class="math inline">\(i&gt;j\)</span>时，<span class="math inline">\(\color{red} 1\)</span>在<span class="math inline">\(\color{blue}1\)</span>的下面。<span class="math inline">\(a\)</span>是左侧从上往下数第<span class="math inline">\(k\)</span>个。
+<ul>
+<li><span class="math inline">\(j&gt;k\)</span>时，<span class="math inline">\(\color{blue}1\)</span>在<span class="math inline">\(a\)</span>下面，<span class="math inline">\(a\)</span>对着<span class="math inline">\(0\)</span>。<span class="math inline">\(L_{ij}=L&#39;_{ij}\)</span>。</li>
+<li><span class="math inline">\(j=k\)</span>时，<span class="math inline">\(a\)</span>对着<span class="math inline">\(\color{blue}1\)</span>，<span class="math inline">\(\color{red}1\)</span>对着<span class="math inline">\(L&#39;_{ij}，\)</span><span class="math inline">\(L_{ij}=a+L&#39;_{ij}\)</span>。</li>
+<li><span class="math inline">\(j&lt;k\)</span>时，<span class="math inline">\(a\)</span>对着<span class="math inline">\(L&#39;_{kj}\)</span>，<span class="math inline">\(\color{red}1\)</span>对着<span class="math inline">\(L&#39;_{ij}\)</span>。<span class="math inline">\(L_{ij}=aL&#39;_{kj}+L&#39;_{ij}\)</span>。</li>
+</ul></li>
+</ul>
+<p>显然，当我们向左边一个一个行变换矩阵乘过来的时候，<span class="math inline">\(L&#39;_{ij}=0\)</span>，且<span class="math inline">\(L&#39;_{kj}=0\quad \forall j&lt;k\)</span>。于是乎 <span class="math display">\[
+L_{ij} = \begin{cases}
+0, &amp; i&lt;j\\
+1, &amp; i=j\\
+L&#39;_{ij}, &amp;k&lt;j&lt;i \\
+a, &amp; j=k\\
+0, &amp; j&lt;k\\
+\end{cases}
+\]</span> 这就是把<span class="math inline">\(a\)</span>直接放到<span class="math inline">\(L&#39;\)</span>的对应位置里面。结合数学归纳法，可以导出<span class="math inline">\(LU\)</span>分解的结果确实就是几个行变换矩阵“拼起来”。</p>
+<h1 id="矩阵的ldu分解">矩阵的LDU分解</h1>
+<p>注意到在<span class="math inline">\(A=LU\)</span>当中，我们虽然保证了<span class="math inline">\(L\)</span>的主对角线是上<span class="math inline">\(1\)</span>，但是<span class="math inline">\(U\)</span>的主对角线上就未必了。</p>
+<p>假设<span class="math inline">\(U\)</span>的主对角线上的数是<span class="math inline">\(d_1,d_2,\cdots,d_n\)</span>，那么不妨令： <span class="math display">\[
+U=DU&#39;
+\]</span> 其中 <span class="math display">\[
+D=\begin{pmatrix}
+d_1&amp;0&amp;\cdots&amp;0\\
+0&amp;d_2&amp;\cdots&amp;0\\
+\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+0&amp;0&amp;\cdots&amp;d_n\\
+\end{pmatrix}
+\]</span> 而<span class="math inline">\(U&#39;\)</span>是<span class="math inline">\(U\)</span>每一行分别除以<span class="math inline">\(d_1,d_2,\cdots,d_n\)</span>的结果。</p>
+<p>这样一来分解就变成了 <span class="math display">\[
+A=LDU&#39;
+\]</span></p>
+<p>这种分解就被称作矩阵<span class="math inline">\(A\)</span>的<span class="math inline">\(LDU\)</span>分解。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1633,179 +1891,6 @@ x^2 = x^{\underline 2} + x^{\underline 1}
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/08/28/BZOJ2085/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/08/28/BZOJ2085/" class="post-title-link" itemprop="url">BZOJ 2085</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-08-28 00:00:00" itemprop="dateCreated datePublished" datetime="2019-08-28T00:00:00+08:00">2019-08-28</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-12-08 21:39:01" itemprop="dateModified" datetime="2019-12-08T21:39:01+08:00">2019-12-08</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>本地笔记整理重发，原文写于2019/8/28，2019/12/8上传</p>
-<h1 id="分析">分析</h1>
-<p>首先使用哈希计算字符串两两之间的overlap，这个的时间复杂度不是特别显然： <span class="math display">\[
-\sum_{i=1}^n\sum_{j=1}^n\min\{a_i,a_j\}
-\]</span> 其中<span class="math inline">\(a_i, a_j\)</span>分别是第<span class="math inline">\(i\)</span>个和第<span class="math inline">\(j\)</span>个字符串的长度。假设<span class="math inline">\(a_i\)</span>从小到大排了序，那么就变为： <span class="math display">\[
-\sum_{i=1}^n \left[\sum_{j=1}^ia_j+(n-i)a_i\right]
-\]</span> 这样每一个<span class="math inline">\(a_i\)</span>都会被计算<span class="math inline">\(n-i+1+n-i=2n-2i+1\)</span>次，则时间复杂度为： <span class="math display">\[
-\begin{aligned}
-\sum_{i=1}^n (2n-2i+1)a_i
-\end{aligned}
-\]</span> 显然这个时候越前面的<span class="math inline">\(a_i\)</span>越大越好，但是<span class="math inline">\(a_i\)</span>是递增的，所以极限情况是各<span class="math inline">\(a_i\)</span>相等取最大值，时间复杂度就是<span class="math inline">\(O\left(n\sum_{i=1}^na_i\right)\)</span>。</p>
-<p>然后Floyd 矩阵乘法即可。</p>
-<p><del>双哈希大法好</del></p>
-<p><del>卡常Nice</del></p>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-#include &lt;algorithm&gt;
-#include &lt;vector&gt;
-#include &lt;cstring&gt;
-
-using namespace std;
-const int MOD1 = 998244353, MOD2 = 1e9 + 7;
-const int EPS = 26;
-const int N = 210;
-const int S = 100010;
-typedef long long ll;
-typedef pair&lt;int, int&gt; hsh;
-int n, m;
-vector&lt;hsh&gt; h[N];
-hsh p[S];
-inline hsh operator +(const hsh &amp;a, const hsh &amp;b) &#123;
-    hsh ret = make_pair(a.first + b.first, a.second + b.second);
-    if (ret.first &gt;= MOD1) ret.first -= MOD1;
-    if (ret.second &gt;= MOD2) ret.second -= MOD2;
-    return ret;
-&#125;
-inline hsh operator -(const hsh &amp;a, const hsh &amp;b) &#123;
-    hsh ret = make_pair(a.first - b.first, a.second - b.second);
-    if (ret.first &lt; 0) ret.first += MOD1;
-    if (ret.second &lt; 0) ret.second += MOD2;
-    return ret;
-&#125;
-inline hsh operator +(const hsh &amp;a, char b) &#123;
-    int c = b - &#39;a&#39;;
-    return make_pair(((ll)a.first * EPS + c) % MOD1, 
-            ((ll)a.second * EPS + c) % MOD2);
-&#125;
-inline hsh operator *(const hsh &amp;a, const hsh &amp;b) &#123;
-    return make_pair((ll)a.first * b.first % MOD1, 
-            (ll)a.second * b.second % MOD2);
-&#125;
-inline hsh cut(int i, int l, int r) &#123;
-    return h[i][r] - h[i][l] * p[r - l];    
-&#125;
-inline int intersect(int a, int b) &#123;
-    int la = h[a].size() - 1, lb = h[b].size() - 1;
-    int lim = a == b ? la - 1 : min(la, lb);
-    int ret = 0;
-    for (int i = 1; i &lt;= lim; i++)
-        if (cut(a, la - i, la) == cut(b, 0, i)) ret = i;
-    return ret;
-&#125;
-struct floyd &#123;
-    ll d[N][N];
-    floyd() &#123; memset(d, 0x3f, sizeof d); &#125;
-    ll *operator [](int x) &#123; return d[x]; &#125;
-    const ll *operator [](int x) const &#123; return d[x]; &#125;
-    floyd operator *(const floyd &amp;b) const &#123;
-        floyd ret;
-        for (int k = 1; k &lt;= n; k++)
-            for (int i = 1; i &lt;= n; i++)
-                for (int j = 1; j &lt;= n; j++) 
-                    ret[i][j] = min(ret[i][j], d[i][k] + b[k][j]);
-        return ret;
-    &#125;
-&#125; f;
-int main() &#123;
-    scanf(&quot;%d%d&quot;, &amp;n, &amp;m);
-    int maxlen = 0;
-    for (int i = 1; i &lt;= n; i++) &#123;
-        static char tmp[S]; scanf(&quot;%s&quot;, tmp + 1);
-        int len = strlen(tmp + 1);
-        maxlen = max(maxlen, len);
-        h[i].push_back(make_pair(0, 0));
-        for (int j = 1; j &lt;= len; j++)
-            h[i].push_back(h[i].back() + tmp[j]);
-    &#125;
-    p[0] = make_pair(1, 1);
-    for (int i = 1; i &lt;= maxlen; i++) p[i] = p[i - 1] * make_pair(EPS, EPS);
-    for (int i = 1; i &lt;= n; i++)
-        for (int j = 1; j &lt;= n; j++) 
-            f[i][j] = h[j].size() - 1 - intersect(i, j);
-    floyd ans; for (int i = 1; i &lt;= n; i++) ans[i][i] = h[i].size() - 1;
-    int y = m - 1;
-    for (; y; y &gt;&gt;= 1) &#123;
-        if (y &amp; 1) ans = ans * f;
-        f = f * f;
-    &#125;   
-    ll mn = 1ll &lt;&lt; 60;
-    for (int i = 1; i &lt;= n; i++)
-        for (int j = 1; j &lt;= n; j++) mn = min(mn, ans[i][j]);
-    printf(&quot;%lld\n&quot;, mn);
-    return 0;
-&#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
@@ -1880,6 +1965,7 @@ int main() &#123;
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-nginx.min.js" integrity="sha512-/MNzg8GlnVrAau/TZClh1jxgHNX0HDgidbGnHS5x1OtbKiNoK3e0XNd1oV16xmmeDHjisa3GKLArUau+43GZ4A==" crossorigin="anonymous"></script>
 <script type = "text/javascript">
     document.addEventListener('pjax:complete', function() {
         if (typeof Prism !== 'undefined') {

@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-count">88</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,243 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/02/%E8%8E%AB%E6%AF%94%E4%B9%8C%E6%96%AF%E5%8F%8D%E6%BC%94/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/09/02/%E8%8E%AB%E6%AF%94%E4%B9%8C%E6%96%AF%E5%8F%8D%E6%BC%94/" class="post-title-link" itemprop="url">莫比乌斯反演</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-09-02 16:59:23" itemprop="dateCreated datePublished" datetime="2018-09-02T16:59:23+08:00">2018-09-02</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-07-30 16:26:46" itemprop="dateModified" datetime="2020-07-30T16:26:46+08:00">2020-07-30</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>莫比乌斯反演是OI中应对数论问题的一大杀器，可以把很多以前需要脑子想的问题无脑化，把很多脑子想不通的问题机械化，非常方便。</p>
+<h1 id="狄利克雷卷积">狄利克雷卷积</h1>
+<p>对于函数<span class="math inline">\(f, g\)</span>，定义它们的狄利克雷卷积<span class="math inline">\(f \times g\)</span>为： <span class="math display">\[
+(f \times g)(n) = \sum_{d \mid n} f(d)g\left(\frac{n}{d}\right)
+\]</span></p>
+<h2 id="性质">性质</h2>
+<h3 id="积性">积性</h3>
+<p>若<span class="math inline">\(f, g\)</span>为积性函数，那么<span class="math inline">\(f \times g\)</span>继承它们的积性。</p>
+<p><strong>证明：</strong>令<span class="math inline">\(n, m\)</span>为互素正整数，则易证<span class="math inline">\(nm\)</span>的全体约数可以<em>不重不漏地</em>表示为<span class="math inline">\(\{d_nd_m \mid d_n \mid n, d_m \mid m\}\)</span>。</p>
+<p>因此： <span class="math display">\[
+\begin{aligned}
+(f \times g)(nm) &amp;= \sum_{d | n} f(d)g\left(\frac{nm}{d}\right) \\
+&amp;= \sum_{d_n\mid n} \sum_{d_m \mid m} f(d_nd_m)g\left(\frac{nm}{d_nd_m}\right)
+\end{aligned}
+\]</span> 由<span class="math inline">\(n, m\)</span>互素可知<span class="math inline">\(d_n, d_m\)</span>互素以及<span class="math inline">\(\frac{n}{d_n}, \frac{m}{d_m}\)</span>互素，结合<span class="math inline">\(f, g\)</span>的积性： <span class="math display">\[
+\begin{aligned}
+\begin{aligned}
+(f \times g)(nm) &amp;= \sum_{d_n\mid n} \sum_{d_m \mid m} f(d_n)f(d_m)g\left(\frac{n}{d_n}\right)g\left(\frac{m}{d_m}\right) \\
+&amp;= \sum_{d_n\mid n} f(d_n)g\left(\frac{n}{d_n}\right) \sum_{d_m \mid m} f(d_m)g\left(\frac{m}{d_m}\right) \\
+&amp;= (f \times g)(n) \cdot (f \times g)(m)
+\end{aligned}
+\end{aligned}
+\]</span> 证毕。</p>
+<h3 id="交换律">交换律</h3>
+<p><span class="math display">\[
+f \times g = g \times f
+\]</span></p>
+<p><strong>证明：</strong>由于约数是成对出现的，显然。</p>
+<h3 id="结合律">结合律</h3>
+<p><span class="math display">\[
+(f \times g) \times h = f \times (g \times h)
+\]</span></p>
+<p><strong>证明：</strong>我们需要稍微改变一下下标的写法，然后就非常清楚了： <span class="math display">\[
+\begin{aligned}
+\left[(f \times g) \times h \right](n) &amp;= \sum_{ab = n} (f \times g)(a) h(b) \\
+&amp;= \sum_{ab = n} \sum_{cd = a}f(c)g(d) h(b) \\
+&amp;= \sum_{bcd = n} f(c)g(d)h(b) \\
+&amp;= \sum_{ce = n} f(c) \sum_{bd = e} g(d)h(b) \\
+&amp;= \sum_{ce = n} f(c) (g \times h)(b) \\
+&amp;= \left[f \times (g \times h)\right](n)
+\end{aligned}
+\]</span></p>
+<p>得证。</p>
+<h3 id="单位元">单位元</h3>
+<p>定义 <span class="math display">\[
+\varepsilon(n) = [n = 1]
+\]</span> 易证<span class="math inline">\(\varepsilon\)</span>为狄利克雷卷积的单位元，<em>也是一个积性函数</em>，在之后的反演当中，我们也经常会把<span class="math inline">\(\varepsilon\)</span>作为艾弗森括号<span class="math inline">\([]\)</span>的替代品，因为它具有更优良的性质，简单来说： <span class="math display">\[
+[f(x) = y] = \varepsilon\left(\frac{f(x)}{y}\right)
+\]</span></p>
+<h2 id="推论">推论</h2>
+<p>关于狄利克雷卷积我们有两条非常重要的推论： <span class="math display">\[
+\begin{aligned}
+\mu \times 1 &amp;= \varepsilon \\
+\varphi \times 1 &amp;= I
+\end{aligned}
+\]</span> 当中<span class="math inline">\(1\)</span>为值恒为<span class="math inline">\(1\)</span>的常值函数，<span class="math inline">\(I(x) = x\)</span>为恒等函数，易证这两个都是完全积性函数。</p>
+<p><strong>证明：</strong>我们先证明第一条，假设<span class="math inline">\(n &gt; 1\)</span>有<span class="math inline">\(r\)</span>个素因子，从当中挑去若干个相乘组成<span class="math inline">\(n\)</span>的<strong>不含平方素因子</strong>的约数（如果约数含平方素因子则约数的<span class="math inline">\(\mu\)</span>为<span class="math inline">\(0\)</span>，可以直接忽略）则我们有： <span class="math display">\[
+\begin{aligned}
+(\mu \times 1)(n) &amp;= \sum_{i = 0}^r \binom{r}{i} (-1)^i \\
+&amp;= \sum_{i = 0}^r \binom{r}{i} (-1)^i\cdot 1^{r - i}
+\end{aligned}
+\]</span> 结合二项式定理，得到<span class="math inline">\((\mu \times 1)(n) = (1-1)^r=0\)</span>，而如果<span class="math inline">\(n = 1\)</span>，手动展开得到<span class="math inline">\((\mu \times 1)(1) = \mu(1) = 1\)</span>。两种情况结合起来得到<span class="math inline">\(\mu \times 1 = \varepsilon\)</span>，第一条推论得证。</p>
+<p>对于第二条推论，我们将其展开： <span class="math display">\[
+\sum_{d \mid n} \varphi(i) = n
+\]</span> 我们先考察<span class="math inline">\(n\)</span>为素数（或其幂次）的情况，设<span class="math inline">\(n = p^k\)</span>，则原式左边变为： <span class="math display">\[
+\begin{aligned}
+\sum_{i = 0}^k \varphi(p^i) &amp;= 1 +\sum_{i = 1} ^ k p^i\left(1 - {1 \over p}\right) \\
+&amp;= 1 + \left(1 - {1 \over p}\right)\sum_{i = 1} ^ k p^i \\
+&amp;= 1 + \frac{p - 1}{p} \cdot \frac{p^{k + 1} - p}{p - 1} \\
+&amp;= 1 + p^k - 1 \\
+&amp;= p^k
+\end{aligned}
+\]</span> 因此在<span class="math inline">\(n\)</span>为素数或其幂次时推论得证，而我们知道<span class="math inline">\(\varphi \times 1\)</span><strong>继承了积性</strong>，因此我们可以<strong>利用积性把推论推广到<span class="math inline">\(n\)</span>不为素数的情况</strong>（通过分解素因数即可），证毕。</p>
+<h1 id="莫比乌斯反演">莫比乌斯反演</h1>
+<p><strong>定理：</strong><span class="math inline">\(f \times 1 = g\)</span>当且仅当<span class="math inline">\(f = g \times \mu\)</span>。</p>
+<p><strong>证明：</strong>本质上是狄利克雷卷积的推论的推论，先正着来一轮，两边同时乘以<span class="math inline">\(\mu\)</span>： <span class="math display">\[
+\begin{aligned}
+f \times 1 &amp;= g \\
+\Rightarrow f \times 1 \times \mu &amp;= g \times \mu \\
+\Rightarrow f \times \varepsilon &amp;= g \times \mu \\
+\Rightarrow f &amp;= g \times \mu \\
+\end{aligned}
+\]</span> 我们再反着来一轮，两边同时乘上<span class="math inline">\(1\)</span>： <span class="math display">\[
+\begin{aligned}
+f &amp;= g \times \mu \\
+\Rightarrow f \times 1 &amp;= g \times \mu \times 1 \\
+\Rightarrow f \times 1 &amp;= g \times \varepsilon \\
+\Rightarrow f \times 1 &amp;= g
+\end{aligned}
+\]</span> （所以说不要迷行网上那种大力出奇迹几个<span class="math inline">\(\sum\)</span>展开来回套的证明，看这个多简单）</p>
+<p><strong>虽然存在这个莫比乌斯反演定理，但是我们更多的时候还是习惯逆用狄利克雷卷积的那两个推论。</strong></p>
+<h2 id="示例varphin">示例：<span class="math inline">\(\varphi(n)\)</span></h2>
+<p><span class="math display">\[
+\begin{aligned}
+\varphi(n) &amp;= \sum_{i = 1}^n [\gcd(i, n) = 1] \\
+&amp;= \sum_{i = 1}^n \varepsilon(\gcd(i, n)) \\
+\end{aligned}
+\]</span></p>
+<p>此时我们使用推论<span class="math inline">\(\varepsilon = \mu \times 1\)</span>： <span class="math display">\[
+\begin{aligned}
+\varphi(n) &amp;= \sum_{i = 1}^n \varepsilon(\gcd(i, n)) \\
+&amp;= \sum_{i = 1}^n \sum_{d \mid \gcd(i, n)} \mu(d) \\
+&amp;= \sum_{i = 1}^n \sum_{d \mid i, d \mid n} \mu(d) \\
+\end{aligned}
+\]</span> 接下来我们把<span class="math inline">\(d\)</span>的求和拖到前面去，本质上是从<strong>对约数求和变为对倍数算贡献</strong>： <span class="math display">\[
+\begin{aligned}
+\varphi(n) &amp;= \sum_{i = 1}^n \sum_{d \mid i, d \mid n} \mu(d) \\
+&amp;= \sum_{d \mid n} \mu(d) \sum_{i = 1, d \mid i}^n 1 \\
+&amp;= \sum_{d \mid n} \mu(d) \sum_{i = 1}^{n \over d} 1 \\
+&amp;= \sum_{d \mid n} \mu(d) \frac{n}{d} \\
+&amp;= \sum_{d \mid n} \mu(d) I\left(\frac{n}{d}\right) \\
+&amp;= (\mu \times id)(n)
+\end{aligned}
+\]</span> 因此我们证明了<span class="math inline">\(\varphi = \mu \times id\)</span>，虽然这个结论是可以直接从莫比乌斯反演定理推得的，但是呢，这个例子确实展示了莫比乌斯反演的很多常用套路：</p>
+<ol type="1">
+<li>把式子写下来</li>
+<li>用<span class="math inline">\(id\)</span>或者<span class="math inline">\(\varepsilon\)</span>修饰</li>
+<li>逆用狄利克雷卷积的推论，把求和式后面反演成卷积形式</li>
+<li>通过算贡献的方式设法把<span class="math inline">\(d\)</span>的求和项连带着只和<span class="math inline">\(d\)</span>有关的函数值一起拖到最前面</li>
+<li>化简后半部分</li>
+</ol>
+<p>这一路下来其实是非常套路的，但往往效果拔群。</p>
+<h2 id="示例sum_i-1n-varphii">示例：<span class="math inline">\(\sum_{i = 1}^n \varphi(i)\)</span></h2>
+<p><strong>以下为了方便起见，如果出现<span class="math inline">\(n, m\)</span>，皆假设<span class="math inline">\(n \le m\)</span>！</strong></p>
+<p>我们试试看刚刚学到的套路，来反演欧拉函数的前缀和： <span class="math display">\[
+\begin{aligned}
+\sum_{i = 1}^n \varphi(i) &amp;= \sum_{i = 1}^n \sum_{j = 1}^i [\gcd(i, j) = 1] \\
+&amp;= \sum_{i = 1}^n \sum_{j = 1}^i \varepsilon(\gcd(i, j) = 1) \\
+&amp;= \sum_{i = 1}^n \sum_{j = 1}^i \sum_{d \mid \gcd(i, j)} \mu(d) \\
+&amp;= \sum_{i = 1}^n \sum_{j = 1}^i \sum_{d \mid i, d \mid j} \mu(d) \\
+&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1, d \mid i}^n \sum_{j = 1, d \mid j}^i 1\\
+&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} \sum_{j = 1}^i 1\\
+&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} i\\
+&amp;= \sum_{d = 1}^n \mu(d) \frac{\left\lfloor \frac{n}{d} \right\rfloor \left(\left\lfloor \frac{n}{d} \right\rfloor + 1\right)}{2}\\
+&amp;= \frac{1}{2} \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \left(\left\lfloor \frac{n}{d} \right\rfloor + 1\right)
+\end{aligned}
+\]</span> 嗯，很好，很强大，但是这个有什么用呢？</p>
+<h2 id="示例sum_i-1n-sum_j-1n-gcdi-j-1">示例：<span class="math inline">\(\sum_{i = 1}^n \sum_{j = 1}^n [\gcd(i, j) = 1]\)</span></h2>
+<p>这个式子对应POJ3090，即有一个<span class="math inline">\(n \times n\)</span>个格点，问从最左下角能够看到几个格点，我们发现如果格点<span class="math inline">\((i, j)\)</span>不互素的话，它一定不会被看到，因此题目就被转化成了我们要求的式子，常规做法是通过把格点劈成三角形，进行转化得到答案为<span class="math inline">\(2\sum_{i = 1}^n \varphi(n) - 1\)</span>，但是这毕竟还需要一点智商，而如果你莫比乌斯反演熟练的话，这个东西推起来是非常机械化的： <span class="math display">\[
+\begin{aligned}
+\sum_{i = 1}^n \sum_{j = 1}^n [\gcd(i, j) = 1] &amp;= \sum_{i = 1}^n \sum_{j = 1}^n \varepsilon(\gcd(i, j) = 1)\\
+&amp;= \sum_{i = 1}^n \sum_{j = 1}^n \sum_{d \mid i, d \mid j} \mu(d)\\
+&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1, d \mid i}^n \sum_{j = 1, d \mid j}^n 1 \\
+&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} \sum_{j = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} 1 \\
+&amp;= \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor^2 \\
+&amp;= 2 \left( \frac{1}{2} \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \left(\left\lfloor \frac{n}{d} \right\rfloor + 1\right) \right) - \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \\
+&amp;= 2\sum_{i = 1}^n \varphi(i) - \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor
+\end{aligned}
+\]</span> 那么<span class="math inline">\(\sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor\)</span>又是什么呢？我们借着套路反着反演： <span class="math display">\[
+\begin{aligned}
+\sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor &amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1, d \mid i}^n 1 \\
+&amp;= \sum_{i = 1}^n \sum_{d \mid i} \mu(d) \\
+&amp;= \sum_{i = 1}^n (\mu \times 1)(d) \\
+&amp;= \sum_{i = 1}^n \varepsilon(i) \\
+&amp;= 1
+\end{aligned}
+\]</span> 原来这个是<span class="math inline">\(1\)</span>啊，那么带回去我们就得到了： <span class="math display">\[
+\sum_{i = 1}^n \sum_{j = 1}^n [\gcd(i, j) = 1] = 2\sum_{i = 1}^n \varphi(i) - 1
+\]</span> 以上推导中我们完全没有用到<span class="math inline">\(\varphi, \mu\)</span>的数学意义，而是顺着我们推导出的狄利克雷卷积的规则和推论进行着机械化的推导，最后也殊途同归，也许有些人会觉得这样没有卵用，那么试解： <span class="math display">\[
+\sum_{i = 1}^n \sum_{j = 1}^m [\gcd(i, j) = 1]
+\]</span> 借助图形和数学意义的人看到这个式子大概就去世了，但是如果我们利用反演的话，类似以上的过程可以推得： <span class="math display">\[
+\sum_{i = 1}^n \sum_{j = 1}^m [\gcd(i, j) = 1] = \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \left\lfloor \frac{m}{d} \right\rfloor
+\]</span> 结合整除分块和<span class="math inline">\(O(n)\)</span>预处理莫比乌斯函数的前缀和我们就可以在<span class="math inline">\(O(\sqrt n)\)</span>的时间里回答每一个询问，这就是莫比乌斯反演的强大之处。</p>
+<h2 id="示例sum_i-1n-sum_j-1m-gcdi-j">示例：<span class="math inline">\(\sum_{i = 1}^n \sum_{j = 1}^m \gcd(i, j)\)</span></h2>
+<p>观察这个式子，我们发现和上面实例中式子的唯一不同就是我们把<span class="math inline">\(\varepsilon\)</span>换成了<span class="math inline">\(id\)</span>，对应下来就是<span class="math inline">\(\mu\)</span>换成了<span class="math inline">\(\varphi\)</span>，因此我们可以得到： <span class="math display">\[
+\sum_{i = 1}^n \sum_{j = 1}^m \gcd(i, j) = \sum_{d = 1}^n \varphi(d) \left\lfloor \frac{n}{d} \right\rfloor \left\lfloor \frac{m}{d} \right\rfloor
+\]</span> 依然是<span class="math inline">\(O(n)\)</span>预处理<span class="math inline">\(O(\sqrt n)\)</span>查询！</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1598,163 +1835,6 @@ int main() &#123;
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/08/29/Polya/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/08/29/Polya/" class="post-title-link" itemprop="url">Polya计数</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-08-29 14:31:49" itemprop="dateCreated datePublished" datetime="2018-08-29T14:31:49+08:00">2018-08-29</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-03-15 17:28:19" itemprop="dateModified" datetime="2021-03-15T17:28:19+08:00">2021-03-15</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="引入">引入</h1>
-<p>给定一串<span class="math inline">\(n\)</span>个珠子组成的环链，每个珠子可以被染成黑白两色，求<strong>本质不同</strong>的染色方案的个数？</p>
-<h1 id="群置换和置换群">群，置换和置换群</h1>
-<h2 id="群的不严谨定义">群的不严谨定义</h2>
-<p>如果我们对于一个集合<span class="math inline">\(G\)</span>定义一种运算<span class="math inline">\(\cdot\)</span> ，该运算满足以下性质：</p>
-<ol type="1">
-<li>封闭性：<span class="math inline">\(\forall a, b \in G, a \cdot b \in G\)</span></li>
-<li>结合律：<span class="math inline">\(\forall a, b, c \in G, (a \cdot b) \cdot c = a \cdot (b \cdot c)\)</span></li>
-<li>单位元：<span class="math inline">\(\exists e \in G, \forall a \in G, e \cdot a = a\)</span></li>
-<li>逆元：<span class="math inline">\(\forall a \in G, \exists a^{-1} \in G, a \cdot a^{-1} = e\)</span></li>
-</ol>
-<p>则称<span class="math inline">\((G, \cdot)\)</span>一起构成了一个<strong>群</strong>。</p>
-<h2 id="置换的概念">置换的概念</h2>
-<p>我们抽象并拓展“变换”这个概念，定义集合<span class="math inline">\(G \to G\)</span>的一个双射为一个<strong>置换</strong>，举个例子： <span class="math display">\[
-\left(\begin{matrix}
-1 &amp;2 &amp;3 &amp;4 \\
-2 &amp;3 &amp;4 &amp;1
-\end{matrix}\right)
-\]</span> 这个置换表示将将集合中的<span class="math inline">\(1\)</span>变成<span class="math inline">\(2\)</span>，<span class="math inline">\(2\)</span>变成<span class="math inline">\(3\)</span>，<span class="math inline">\(3\)</span>变成<span class="math inline">\(4\)</span>，<span class="math inline">\(4\)</span>变成<span class="math inline">\(1\)</span>。</p>
-<h2 id="置换群">置换群</h2>
-<p>稍微想一想可知，置换是可以成群的，称为置换群，对于这个置换群我们定义的运算就是<strong>置换的复合</strong>，对于这个运算我们考察其是否满足群的性质：</p>
-<ol type="1">
-<li>封闭性：大部分情况下应该是成立的</li>
-<li>结合律：显然</li>
-<li>单位元：<span class="math inline">\(\left(\begin{matrix} 1 &amp;2 &amp;3 &amp;\cdots \\ 1 &amp;2 &amp;3 &amp; \cdots \end{matrix}\right)\)</span></li>
-<li>逆元：置换是集合到集合的<strong>双射</strong>，显然</li>
-</ol>
-<p>置换群的引入允许我们使用群论来处理一开始的问题，说抽象了我们刚才的问题就是：<strong>求一个序列的集合<span class="math inline">\(X\)</span>，在一个置换群<span class="math inline">\(G\)</span>作用下本质不同的元素个数</strong>。</p>
-<h1 id="burnside引理">Burnside引理</h1>
-<p>序列集合<span class="math inline">\(X\)</span>在置换群<span class="math inline">\(G\)</span>的作用下不同的序列数等于<strong>不动点的平均数</strong>： <span class="math display">\[
-|X \setminus G| = \frac{1}{|G|} \sum_{g \in G} |X^g|
-\]</span> 其中<span class="math inline">\(X^g = \{ x \in X | g(x) = x\}\)</span>表示在置换<span class="math inline">\(g\)</span>作用下不动点的集合，何为不动点呢？</p>
-<p>例如对于置换<span class="math inline">\(\left(\begin{matrix} 1 &amp;2 &amp;3 &amp;4 \\ 3 &amp;4 &amp;1 &amp; 2 \end{matrix}\right)\)</span>而言，序列<span class="math inline">\((1, 2, 1, 2)\)</span>就是它的一个不动点，因为它在置换后还是原来的样子。</p>
-<p>我们接下来考察对于给定置换如何数出不动点的数目，从例子入手，比如说我们要求的是置换,<span class="math inline">\(\left(\begin{matrix} 1 &amp;2 &amp;3 &amp;4 \\ 4 &amp;3 &amp;2 &amp; 1 \end{matrix}\right)\)</span>的不动点数目，我们挨个考虑这样的序列拥有什么样的性质：</p>
-<ol type="1">
-<li>第一位与第四位相同</li>
-<li>第二位与第三位相同</li>
-<li>第三位与第二位相同</li>
-<li>第四位与第一位相同</li>
-</ol>
-<p>显然我们最后得到了一个集合<span class="math inline">\(\{ \{1, 4\}, \{2, 3\} \}\)</span>，其中的每一个集合中的元素必须相等，考虑染色问题，对于每一组“相等”，我们可以把它整个染成两种颜色，因此这个置换共有<span class="math inline">\(2^2 = 4\)</span>个不动点。</p>
-<p>由于等号的传递性，如果我们逐位查看一个置换，把上下的两位并入同一个“相等集合”，那么最后我们一定会得到若干个这样的相等集合，每个“相等集合”都可以被独立地染成不同的颜色，由乘法定理，我们就得到了——</p>
-<h1 id="polya定理">Polya定理</h1>
-<p><span class="math display">\[
-|X \backslash G| = \frac{1}{|G|} \sum_{g \in G} m^{c(g)}
-\]</span></p>
-<p>其中<span class="math inline">\(m\)</span>是颜色个数，<span class="math inline">\(c(g)\)</span>是置换<span class="math inline">\(g\)</span>形成的“循环数”，一个“循环”是指某一位经过不断地置换之后最后回到自身。可以看到Polya定理其实就是我们上面的推论，不需要更多解释。</p>
-<h1 id="循环同构序列计数">循环同构序列计数</h1>
-<p>终于进入了我们的正题，循环同构序列计数，到这一步我们终于可以解答一开始的问题了：</p>
-<p>Polya定理的精髓就在于求出一个置换的循环数，而朴素的枚举显然是不够的，我们考察所谓“循环同构”背后依赖的哪些置换，比如说对于一个长度为<span class="math inline">\(4\)</span>的序列，以下置换后它与自身是循环同构的： <span class="math display">\[
-\left(\begin{matrix} 
-    1 &amp;2 &amp;3 &amp;4 \\ 
-    2 &amp;3 &amp;4 &amp;1 
-\end{matrix}\right),
-\left(\begin{matrix} 
-    1 &amp;2 &amp;3 &amp;4 \\ 
-    3 &amp;4 &amp;1 &amp;2 
-\end{matrix}\right),
-\left(\begin{matrix} 
-    1 &amp;2 &amp;3 &amp;4 \\ 
-    4 &amp;1 &amp;2 &amp;3 
-\end{matrix}\right),
-\left(\begin{matrix} 
-    1 &amp;2 &amp;3 &amp;4 \\ 
-    1 &amp;2 &amp;3 &amp;4 
-\end{matrix}\right)
-\]</span> 我们发现一个循环同构的置换就是把它的<em>后面全部移到前面来，前面几位补到后面去</em>。</p>
-<p>为了接下来的推导方便我们让位数起始于<span class="math inline">\(0\)</span>。</p>
-<p>那么，对于一个偏移了<span class="math inline">\(k\)</span>的置换，第<span class="math inline">\(a\)</span>位被置换之后就到了<span class="math inline">\((a + k) \bmod n\)</span>的位置，其中<span class="math inline">\(n\)</span>为序列长度，而对于一个长度为<span class="math inline">\(l\)</span>的完整循环来说，它必须满足：</p>
-<p><span class="math display">\[
-\begin{aligned}
-a + kl &amp;\equiv a &amp;\pmod{n} \\
-kl &amp;\equiv 0 &amp;\pmod{n}
-\end{aligned}
-\]</span> 显然当<span class="math inline">\(kl = \operatorname{lcm}(k, n)\)</span>的时候<span class="math inline">\(l\)</span>有最小值<span class="math inline">\(\frac{\operatorname{lcm}(k, n)}{k}\)</span>。由于每一位都偏移了<span class="math inline">\(k\)</span>位，因此置换中每个循环的长度都是相等的，而因为每个循环都cover了<span class="math inline">\(l\)</span>个元素，因此循环的个数为： <span class="math display">\[
-\begin{aligned}
-\frac{n}{l} &amp;= \frac{n}{\frac{\operatorname{lcm}(k, n)}{k}} \\
-&amp;= \frac{kn}{\operatorname{lcm}(k, n)} \\
-&amp;= \gcd(k, n)
-\end{aligned}
-\]</span> 这个发现让我们免于枚举每个循环置换，相反，我们枚举<span class="math inline">\(\gcd(k, n)\)</span>的每一个取值<span class="math inline">\(d\)</span>，即<span class="math inline">\(n\)</span>的因数，统计出<span class="math inline">\(\gcd(k, n) = d\)</span>的所有<span class="math inline">\(k\)</span>的个数，依Polya定理统一累加到答案上。</p>
-<p>那怎么统计呢？枚举？</p>
-<p>我们发现<span class="math inline">\(\gcd(k, n) = d\)</span>等价于<span class="math inline">\(\gcd({k \over d}, {n \over d}) = 1\)</span>，即小于<span class="math inline">\(n \over d\)</span>的与<span class="math inline">\(n \over d\)</span>互质的数个数，这显然等于<span class="math inline">\(\varphi({n \over d})\)</span>。</p>
-<p>因此最后的答案就是：</p>
-<p><span class="math display">\[
-\sum_{d|n} \varphi\left(\frac{n}{d}\right)m^d
-\]</span></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" href="/page/7/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/9/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
@@ -1829,6 +1909,7 @@ kl &amp;\equiv 0 &amp;\pmod{n}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-nginx.min.js" integrity="sha512-/MNzg8GlnVrAau/TZClh1jxgHNX0HDgidbGnHS5x1OtbKiNoK3e0XNd1oV16xmmeDHjisa3GKLArUau+43GZ4A==" crossorigin="anonymous"></script>
 <script type = "text/javascript">
     document.addEventListener('pjax:complete', function() {
         if (typeof Prism !== 'undefined') {
