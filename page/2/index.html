@@ -626,7 +626,7 @@ done</code></pre>
 <p>由于我们的引理和弱对偶原理，我们的总服务成本<span class="math inline">\(\le \sum_{j\in D}\alpha_j^* \le \mathrm{OPT}\)</span>。如果我们开放设施的成本也有个上界就好了。</p>
 <p>然而并不行。</p>
 <p>考虑如下反例：</p>
-<p><img src="P1.svg" /></p>
+<p><img src="/2020/07/14/PACT0709/P1.svg" class=""></p>
 <p>如果按照我们的算法，我们会为<span class="math inline">\(j\)</span>和<span class="math inline">\(j&#39;\)</span>分别开放一个代价<span class="math inline">\(24\)</span>的设施。而事实上开那个代价<span class="math inline">\(25\)</span>的设施就够了。我们差不多浪费了两倍的钱，而这个倍数可以任意高（只要让代价稍高一点的设施处在所有顾客的邻域当中，而使每个顾客的邻域中都有比其代价略低的设施即可）。</p>
 <p>但是我们知道，<strong>对于任何一组邻域不交的顾客，开放设施的代价确实是不大于<span class="math inline">\(\mathrm{OPT}\)</span>的</strong>（为什么？因为那些设施只服务一个顾客，而那个顾客有可能“部分”光顾其他设施。比如说一个顾客光顾了<span class="math inline">\(0.5\)</span>的设施<span class="math inline">\(1\)</span>（代价为<span class="math inline">\(10\)</span>）和<span class="math inline">\(0.5\)</span>的设施<span class="math inline">\(2\)</span>（代价为<span class="math inline">\(20\)</span>），那么这个顾客就给目标函数贡献了<span class="math inline">\(0.5\times10+0.5\times 20\)</span>，显然这个时候如果我去开代价<span class="math inline">\(10\)</span>的那个设施，开店费是<span class="math inline">\(10\)</span>，是小于最优目标函数的）</p>
 <p>那我不妨先任选一组邻域不交的顾客（不妨称之为“幸运顾客”）按照就近原则开放他们的设施，然后再让那些邻域和幸运顾客有交集的顾客（不妨称之为“倒霉顾客”）去这些设施。</p>
@@ -815,7 +815,7 @@ C^{\text N}_i \le \max_{1 \le k \le i} \{r_k\}+ \sum_{k=1}^i p_k \le C_i^{\text 
 \end{aligned}
 \]</span></p>
 <p>若嫌代数证明太不直观，则下图在几何上说明了这一点：</p>
-<p><img src="C1.svg" /></p>
+<p><img src="/2020/07/12/PACT0708/C1.svg" class=""></p>
 <p>在实际的调度当中，几个任务未必无缝衔接，因此<span class="math inline">\(C_i \ge \sum_{j=1}^i p_j\)</span>，而我们的证明依然成立。因此对于可行的非竞争性调度，以上约束总是成立。虽反之不然，却也比一开始那个过于简陋的线性规划更多地刻画了“非竞争性”的特点。对于我们的算法来说，这个线性规划已经足够。我们的算法为：</p>
 <ol type="1">
 <li>求解以上线性规划。</li>
@@ -1017,15 +1017,15 @@ B &lt; 2\sum_{i=1}^na_i + 1 \Rightarrow B\le 2\sum_{i=1}^na_i
 <p>由定义，每件大物品大小<span class="math inline">\(&gt;\varepsilon\)</span>，因此每个箱子能够放的大物品数目<span class="math inline">\(m&lt;\frac{1}{\varepsilon}\)</span>，如果我们想要用暴力，只要再把<span class="math inline">\(k\)</span>限制住就行了。</p>
 <p>为此，我们将所有物品按大小升序（或者说不降）排序，然后将排完的物品分成<span class="math inline">\(k\)</span>组，除了最后一组，每一组都有<span class="math inline">\(\lceil n/k \rceil\)</span>个物品。</p>
 <p>假设我们现在的要处理的问题实例为<span class="math inline">\(I\)</span>，我们创建一个新实例<span class="math inline">\(J\)</span>，其中每一个物品的大小被高估为它所在组最大物品的大小：</p>
-<p><img src="IJ.svg" /></p>
+<p><img src="/2020/07/09/PACT0707/IJ.svg" class=""></p>
 <p>很显然，因为做<span class="math inline">\(J\)</span>的时候我们高估了物品的大小，也就是让问题更难了，每个<span class="math inline">\(J\)</span>的解都是<span class="math inline">\(I\)</span>的可行解。而<span class="math inline">\(J\)</span>当中物品的大小只有<span class="math inline">\(k\)</span>种，加上<span class="math inline">\(m\)</span>的限制，是可以暴力解决的。我们可以暴力把<span class="math inline">\(J\)</span>解出来，然后套到<span class="math inline">\(I\)</span>上面作为我们算法的解。但是如何分析呢？或者说，如何用<span class="math inline">\(I\)</span>的最优解来给我们<span class="math inline">\(J\)</span>的最优解一个上界呢？</p>
 <p>出于分析的目的，我们再考虑另一个问题实例<span class="math inline">\(J&#39;\)</span>，其中每一个物品的大小被低估为它所在组最小物品的大小：</p>
-<p><img src="IJ_.svg" /></p>
+<p><img src="/2020/07/09/PACT0707/IJ_.svg" class=""></p>
 <p>类似地，我们可以得出：每一个<span class="math inline">\(I\)</span>的可行解一定是<span class="math inline">\(J&#39;\)</span>的一个可行解，反之未必然，即 <span class="math display">\[
 \mathrm{OPT}_{J&#39;} \le \mathrm{OPT}_{I}
 \]</span> 现在思考一个问题：如果我们有一组<span class="math inline">\(J&#39;\)</span>的最优解，如何把它尽可能地转换成一组<span class="math inline">\(J\)</span>的可行解呢？</p>
 <p>一个方案是让<span class="math inline">\(J\)</span>的每个物品对应<span class="math inline">\(J&#39;\)</span>当中更大一组中的物品，然后就按照<span class="math inline">\(J’\)</span>最优解的方式装箱，这样除了最大的一组以外<span class="math inline">\(J\)</span>中的所有物品都有办法装箱了。令最大的那一组不知道怎么装箱的物品集合为<span class="math inline">\(Q\)</span>。</p>
-<p><img src="JJ.svg" /></p>
+<p><img src="/2020/07/09/PACT0707/JJ.svg" class=""></p>
 <p>因为对于<span class="math inline">\(Q\)</span>里面的物品我们大不了一个箱子装一个，因此我们得到 <span class="math display">\[
 \mathrm{OPT}_{J} \le \mathrm{OPT}_{J&#39;}+|Q| \le \mathrm{OPT}_{I} + \left\lceil\frac{n}{k}\right\rceil
 \]</span> 注意因为我们是暴力解<span class="math inline">\(J\)</span>的，现在不等式的左边<span class="math inline">\(\mathrm{OPT}_J\)</span>就是我们算法的代价。为了证明近似比，我们希望上面不等式的右边变成一个<span class="math inline">\((1+\varepsilon)\mathrm{OPT}_I\)</span>。</p>
@@ -1553,13 +1553,13 @@ v(S_k) - v(S_{k-1}) \ge \frac{v(\mathrm{OPT}) - v(S_{k-1})}{k} \Rightarrow v(S_k
     
     <div class="post-body" itemprop="articleBody">
           <p>数学出分了，我最后一题分数被扣光。</p>
-<p><img src="prob.jpg" /></p>
+<p><img src="/2020/07/04/%E8%AE%A8%E5%88%86/prob.jpg" class=""></p>
 <p>我的答案是</p>
-<p><img src="mine.jpg" /></p>
+<p><img src="/2020/07/04/%E8%AE%A8%E5%88%86/mine.jpg" class=""></p>
 <p>而很显然参考答案是</p>
-<p><img src="chen.jpg" /></p>
+<p><img src="/2020/07/04/%E8%AE%A8%E5%88%86/chen.jpg" class=""></p>
 <p>嘛确实是不一样的。但是我的答案和参考答案是等价的啊！</p>
-<p><img src="proof.png" /></p>
+<p><img src="/2020/07/04/%E8%AE%A8%E5%88%86/proof.png" class=""></p>
 <p>最多形式不优美，怎落得如此下场？</p>
 <p>大概是老师批high了没注意到吧，我想，然后加了老师微信，自信满满地去讨回我失去的6分。</p>
 <p>事实证明我还是太天真了。</p>

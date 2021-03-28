@@ -30,15 +30,15 @@
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
 <meta property="og:description" content="电路图  绿色箭头为PWM开段电流方向，红色为闭段电流方向。 模型 符号定义    符号 含义     \(f_{\text{pwm}} \approx 1250\text{Hz}\) PWM频率   \(t_{\text{pwm}} \approx 1 &#x2F; f_{\text{pwm}}\) PWM周期   \(t_{\text{on}}\) PWM高">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://alan20210202.github.io/2018/09/18/%E9%A9%AC%E8%BE%BE%E5%BB%BA%E6%A8%A1/85128984.jpg">
-<meta property="og:image" content="https://alan20210202.github.io/2018/09/18/%E9%A9%AC%E8%BE%BE%E5%BB%BA%E6%A8%A1/12974510.jpg">
-<meta property="og:image" content="https://alan20210202.github.io/2018/09/18/%E9%A9%AC%E8%BE%BE%E5%BB%BA%E6%A8%A1/17697936.jpg">
+<meta property="og:image" content="http://ovzrr9kke.bkt.clouddn.com/18-9-19/85128984.jpg">
+<meta property="og:image" content="http://ovzrr9kke.bkt.clouddn.com/18-9-28/12974510.jpg">
+<meta property="og:image" content="http://ovzrr9kke.bkt.clouddn.com/18-9-28/17697936.jpg">
 <meta property="article:published_time" content="2018-09-18T11:24:59.176Z">
 <meta property="article:modified_time" content="2018-12-15T08:02:15.320Z">
 <meta property="article:author" content="Chengyuan Ma">
 <meta property="article:tag" content="VEX">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://alan20210202.github.io/2018/09/18/%E9%A9%AC%E8%BE%BE%E5%BB%BA%E6%A8%A1/85128984.jpg">
+<meta name="twitter:image" content="http://ovzrr9kke.bkt.clouddn.com/18-9-19/85128984.jpg">
 
 
 <link rel="canonical" href="https://alan20210202.github.io/2018/09/18/%E9%A9%AC%E8%BE%BE%E5%BB%BA%E6%A8%A1/">
@@ -296,7 +296,7 @@
     
     <div class="post-body" itemprop="articleBody">
         <h1 id="电路图">电路图</h1>
-<p><img src="85128984.jpg" /></p>
+<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-19/85128984.jpg" /></p>
 <p>绿色箭头为PWM开段电流方向，红色为闭段电流方向。</p>
 <h1 id="模型">模型</h1>
 <h2 id="符号定义">符号定义</h2>
@@ -446,9 +446,9 @@ t_\text{off} = -\frac{L}{R}\ln\left(-\frac{I_\text{off}}{I_\text{max} - I_\text{
 <p><strong>注意：模型的计算在Cortex上还是较为耗时间的，实际当中根据当前电压计算一次完整的马达曲线需要4秒左右，优化常数，提高模型计算的效率一直是一个大问题，这也是为什么在实际应用中也许tanh线性化等计算更快的线性化的方法会更好的原因。</strong></p>
 <h2 id="结果">结果</h2>
 <p>这是真实的速度-指令曲线（空载）：</p>
-<p><img src="12974510.jpg" /></p>
+<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/12974510.jpg" /></p>
 <p>这是使用模型计算的速度-指令曲线：</p>
-<p><img src="17697936.jpg" /></p>
+<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/17697936.jpg" /></p>
 <p>两者几乎一致，说明建模正确。</p>
 <h1 id="参数测定">参数测定</h1>
 <h2 id="马达内阻">马达内阻</h2>

@@ -333,15 +333,15 @@ B &lt; 2\sum_{i=1}^na_i + 1 \Rightarrow B\le 2\sum_{i=1}^na_i
 <p>由定义，每件大物品大小<span class="math inline">\(&gt;\varepsilon\)</span>，因此每个箱子能够放的大物品数目<span class="math inline">\(m&lt;\frac{1}{\varepsilon}\)</span>，如果我们想要用暴力，只要再把<span class="math inline">\(k\)</span>限制住就行了。</p>
 <p>为此，我们将所有物品按大小升序（或者说不降）排序，然后将排完的物品分成<span class="math inline">\(k\)</span>组，除了最后一组，每一组都有<span class="math inline">\(\lceil n/k \rceil\)</span>个物品。</p>
 <p>假设我们现在的要处理的问题实例为<span class="math inline">\(I\)</span>，我们创建一个新实例<span class="math inline">\(J\)</span>，其中每一个物品的大小被高估为它所在组最大物品的大小：</p>
-<p><img src="IJ.svg" /></p>
+<p><img src="/2020/07/09/PACT0707/IJ.svg" class=""></p>
 <p>很显然，因为做<span class="math inline">\(J\)</span>的时候我们高估了物品的大小，也就是让问题更难了，每个<span class="math inline">\(J\)</span>的解都是<span class="math inline">\(I\)</span>的可行解。而<span class="math inline">\(J\)</span>当中物品的大小只有<span class="math inline">\(k\)</span>种，加上<span class="math inline">\(m\)</span>的限制，是可以暴力解决的。我们可以暴力把<span class="math inline">\(J\)</span>解出来，然后套到<span class="math inline">\(I\)</span>上面作为我们算法的解。但是如何分析呢？或者说，如何用<span class="math inline">\(I\)</span>的最优解来给我们<span class="math inline">\(J\)</span>的最优解一个上界呢？</p>
 <p>出于分析的目的，我们再考虑另一个问题实例<span class="math inline">\(J&#39;\)</span>，其中每一个物品的大小被低估为它所在组最小物品的大小：</p>
-<p><img src="IJ_.svg" /></p>
+<p><img src="/2020/07/09/PACT0707/IJ_.svg" class=""></p>
 <p>类似地，我们可以得出：每一个<span class="math inline">\(I\)</span>的可行解一定是<span class="math inline">\(J&#39;\)</span>的一个可行解，反之未必然，即 <span class="math display">\[
 \mathrm{OPT}_{J&#39;} \le \mathrm{OPT}_{I}
 \]</span> 现在思考一个问题：如果我们有一组<span class="math inline">\(J&#39;\)</span>的最优解，如何把它尽可能地转换成一组<span class="math inline">\(J\)</span>的可行解呢？</p>
 <p>一个方案是让<span class="math inline">\(J\)</span>的每个物品对应<span class="math inline">\(J&#39;\)</span>当中更大一组中的物品，然后就按照<span class="math inline">\(J’\)</span>最优解的方式装箱，这样除了最大的一组以外<span class="math inline">\(J\)</span>中的所有物品都有办法装箱了。令最大的那一组不知道怎么装箱的物品集合为<span class="math inline">\(Q\)</span>。</p>
-<p><img src="JJ.svg" /></p>
+<p><img src="/2020/07/09/PACT0707/JJ.svg" class=""></p>
 <p>因为对于<span class="math inline">\(Q\)</span>里面的物品我们大不了一个箱子装一个，因此我们得到 <span class="math display">\[
 \mathrm{OPT}_{J} \le \mathrm{OPT}_{J&#39;}+|Q| \le \mathrm{OPT}_{I} + \left\lceil\frac{n}{k}\right\rceil
 \]</span> 注意因为我们是暴力解<span class="math inline">\(J\)</span>的，现在不等式的左边<span class="math inline">\(\mathrm{OPT}_J\)</span>就是我们算法的代价。为了证明近似比，我们希望上面不等式的右边变成一个<span class="math inline">\((1+\varepsilon)\mathrm{OPT}_I\)</span>。</p>

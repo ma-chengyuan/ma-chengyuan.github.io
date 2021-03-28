@@ -293,7 +293,7 @@
 <h2 id="定义">定义</h2>
 <p><strong>输入：</strong>全集<span class="math inline">\(\mathcal{U}\)</span>，以及一些集合的集合<span class="math inline">\(S=\{S_1,S_2,S_3,\cdots,S_n\}\)</span>，满足<span class="math inline">\(\forall i, S_i\subseteq \mathcal{U}\)</span>。</p>
 <p><strong>目标：</strong>从<span class="math inline">\(S\)</span>中选择一个最小数目的集合，使得它们能够覆盖<span class="math inline">\(\mathcal{U}\)</span>中所有的元素（即并集为<span class="math inline">\(\mathcal U\)</span>）</p>
-<p><img src="SC1.svg" /></p>
+<p><img src="/2020/07/04/PACT0703/SC1.svg" class=""></p>
 <p>如图，<span class="math inline">\(S_1,S_2,S_4\)</span>就构成一个集合覆盖。</p>
 <h2 id="贪心算法及其分析">贪心算法及其分析</h2>
 <p>我们的想法很简单：<strong>每次都取含有最多未覆盖元素的集合加入我们的覆盖集</strong>，不断循环直至所有集合都被覆盖。</p>
@@ -336,7 +336,7 @@
 \]</span> 证毕。</p>
 <h2 id="跑满上界的输入样例">跑满上界的输入样例</h2>
 <p>对于这个算法而言我们的分析能不能更好一点呢？这里有一个可以让满足这个上界的例子：</p>
-<p><img src="SC2.svg" /></p>
+<p><img src="/2020/07/04/PACT0703/SC2.svg" class=""></p>
 <p>最优解显然是<span class="math inline">\(2\)</span>个集合，但是我们的贪心算法每一次都可能选到红色的集合，而这样就需要<span class="math inline">\(\mathcal{O}\left(\log n\right)\)</span>个集合完成覆盖了。</p>
 <h1 id="带权集合覆盖问题">带权集合覆盖问题</h1>
 <p>如果把给每个集合赋予一个权重，而我们需要寻找一个权重和最小的覆盖集呢？这个问题被称作带权集合覆盖。</p>

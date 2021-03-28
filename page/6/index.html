@@ -648,7 +648,7 @@ c_k = \sum_{i \cup j = k} a_ib_j
 x_{n + 1} = 2x_n + \text{该二进制位}
 \]</span> 这是非常显然的。</p>
 <p>在Double Dabble的图示当中，左边一列存储的是BCD的结果：</p>
-<p><img src="EQvTh.png" alt="Image result for double dabble algorithm" /></p>
+<p><img src="https://i.stack.imgur.com/EQvTh.png" alt="Image result for double dabble algorithm" /></p>
 <p>Double Dabble算法本身其实就是在这BCD的结果列进行如上的迭代操作（乘<span class="math inline">\(2\)</span>加位）。</p>
 <p>为了这样做，直觉上来讲，我们可以按照二进制的方法将BCD列中的结果乘<span class="math inline">\(2\)</span>（左移），然后进行一定的矫正（之前的左移可能破坏了BCD的性质），然后在加上原数的一个二进制位（最右边移进）。</p>
 <p>左移是平凡的，加上一位也是平凡的（因为左移之后最右边一位永远是<span class="math inline">\(2\)</span>，不会产生进位），问题在乘<span class="math inline">\(2\)</span>后为了维护BCD性质所进行的矫正上。</p>
@@ -741,7 +741,7 @@ x_{n + 1} = \frac{x_n + \text{该二进制位}}{2}
 <h1 id="为什么会有这篇文章">为什么会有这篇文章？</h1>
 <p>最近网上也都在吹爆《流浪地球》这部科幻片啊……</p>
 <p>然后我自己前几天也慕名去电影院看了一下，感觉特效之类的着实过瘾。但是作为一部定位为<strong>硬科幻</strong>的科幻片，除去画面以外，科学的严谨性还是很重要的。但是这部片子里面的一些科学设定在一个KSP玩家看来似乎……</p>
-<p><img src="9150e4e5ly1fkkifa7choj203v04ca9y.jpg" alt="这不科学" /></p>
+<p><img src="http://ws3.sinaimg.cn/large/9150e4e5ly1fkkifa7choj203v04ca9y.jpg" alt="这不科学" /></p>
 <p>还是有些槽点呢……当然瑕不掩瑜。这篇文章就稍微指出一点我发现的《流浪地球》当中的一些Bug，这些Bug主要是轨道力学上的，也就当给同学们做一个科普吧。</p>
 <p>自己也是半瓶水，所以，欢迎指正。</p>
 <h1 id="定性吐槽">定性吐槽</h1>
@@ -754,9 +754,9 @@ x_{n + 1} = \frac{x_n + \text{该二进制位}}{2}
 <p>似乎没啥问题咯？</p>
 <p>Uhmmmmmm……</p>
 <p>这么说的话以下二位的棺材板就要压不住了：</p>
-<p><img src="220px-GodfreyKneller-IsaacNewton-1689.jpg" alt="Newton" /></p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/GodfreyKneller-IsaacNewton-1689.jpg/220px-GodfreyKneller-IsaacNewton-1689.jpg" alt="Newton" /></p>
 <p>（牛顿）</p>
-<p><img src="220px-Johannes_Kepler_1610.jpg" alt="Kepler" /></p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Johannes_Kepler_1610.jpg/220px-Johannes_Kepler_1610.jpg" alt="Kepler" /></p>
 <p>（开普勒）</p>
 <p>为啥嘞？</p>
 <h2 id="开普勒第一定律">开普勒第一定律</h2>
@@ -776,15 +776,15 @@ x_{n + 1} = \frac{x_n + \text{该二进制位}}{2}
 <p>首先，如果地球的行星发动机的推力够足，理论上是用不着像电影里面一直点火的，我们只需要<strong>在地球轨道附近把地球加速到足够高速然后熄火，那么根据开普勒定律，地球自己会沿一条圆锥曲线被甩离太阳，并在木星附近被木星捕获，沿以木星为焦点的抛物线或双曲线掠过木星进行引力弹弓加速，然后离开木星被甩出太阳系！</strong>这段过程中理想情况下地球只受星体引力影响，<strong>不需要发动机一直点火</strong>，除了进行一定的轨道修正！‘</p>
 <p>这个操作有没有实例呢？</p>
 <p>且看旅行者二号：</p>
-<p><img src="260px-Voyager_spacecraft_model.png" alt="Voyager 2" /></p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Voyager_spacecraft_model.png/260px-Voyager_spacecraft_model.png" alt="Voyager 2" /></p>
 <p>它在被火箭加速到足够高的速度之后就放飞自我了，之后走的轨道是什么样的呢？</p>
-<p><img src="k03DaR.gif" alt="k03DaR.gif" /></p>
+<p><img src="https://s2.ax1x.com/2019/02/13/k03DaR.gif" alt="k03DaR.gif" /></p>
 <p>（绿色为木星轨道）</p>
 <p>在离开地球的十多年里，旅行者2号几乎没有启用过自己的轨道发动机，包括在飞掠火星木星等星体进行引力加速的时候也是如此。如果它是靠电影中的一直加速才飞到那么远的话，试问这么小的机体燃料放哪里呢？</p>
 <p>所以看到地球上的行星发动机一直燃烧了十七年，Emmm...编剧开心就好。（当然不排除是加速度过低导致需要持续加速的情况，这种情况下轨道确实比较难算，出偏差也是正常的，因此这其实不算一个特别大的Bug）</p>
 <h2 id="熄火点火之后的轨道不科学">熄火/点火之后的轨道不科学！</h2>
 <p>看过电影的同学应该记得，在行星发动机一半熄火的时候，地球马上就拐了一个弯，从飞掠木星变成栽进木星了，就好像有什么东西让它大幅度减速了一样。编剧在这里似乎混淆了速度和加速度的概念，就算地球发动机全部停机，地球几乎只受木星引力作用，地球也会沿着熄火前最后一刻所处的抛物线轨道继续运行：</p>
-<p><img src="k03BZ9.jpg" alt="k03BZ9.jpg" /></p>
+<p><img src="https://s2.ax1x.com/2019/02/13/k03BZ9.jpg" alt="k03BZ9.jpg" /></p>
 <p>（图找的不是熄火的那个场景，只做演示用）</p>
 <p>也就是说，地球会继续按照“原轨道”的红线运行，而不是像影片中的那样当场轨道一拐拐到蓝色轨道上去了。</p>
 <p>也就是说，其实发生影片中所谓“危机”的概率会小非常多。</p>
@@ -793,7 +793,7 @@ x_{n + 1} = \frac{x_n + \text{该二进制位}}{2}
 <p>因为这样，空间站要开到地木之间引爆，也绝非一个“前进三！”的直线冲刺能够与解决的，复杂着呢！</p>
 <h1 id="定量吐槽">定量吐槽</h1>
 <p>小马在看完电影的当晚估算了一下：</p>
-<p><img src="k03wqJ.png" alt="k03wqJ.png" /></p>
+<p><img src="https://s2.ax1x.com/2019/02/13/k03wqJ.png" alt="k03wqJ.png" /></p>
 <p>然后第二天就有同学告诉我我仿佛漏算了什么……确实是这样的，那这个定量的估算到底是怎么来的呢？</p>
 <h2 id="tsiolkovsky公式">Tsiolkovsky公式</h2>
 <p>在1903年，俄罗斯科学家齐奥尔科夫斯基推导出了著名的火箭公式： <span class="math display">\[
@@ -875,9 +875,9 @@ m_fc^2 = \frac{1}{2}m_e(v_o + \Delta v)^2 - \frac{1}{2}m_ev_o^2
 <h2 id="安利">安利</h2>
 <p>什么？你问我自己怎么会想到这些？</p>
 <p>因为本人是Kerbal Space Program玩家啊#(滑稽)</p>
-<p><img src="k03aMF.jpg" alt="k03aMF.jpg" /></p>
+<p><img src="https://s2.ax1x.com/2019/02/13/k03aMF.jpg" alt="k03aMF.jpg" /></p>
 <p>在这里给大家安利一下这款“游戏”，游戏本身非常硬核，需要玩家自己设计并且发射航天器进入轨道，自己规划轨道计算燃料，自己操控交会对接，模拟了近乎真实的物理系统，内有一个类似太阳系的星系。上述<span class="math inline">\(\Delta v\)</span>的计算，霍曼转移，燃料量的计算都是游戏当中的必修课<del>是的现在玩游戏都要用计算器</del>。个人认为比一些纯粹娱乐向的手游之类的更能从中学到知识，但同时因为这款游戏玩起来消耗大量脑细胞与时间，一般每周末玩两个小时就够了。</p>
-<p><img src="k03rI1.jpg" alt="k03rI1.jpg" /></p>
+<p><img src="https://s2.ax1x.com/2019/02/13/k03rI1.jpg" alt="k03rI1.jpg" /></p>
 <p>（我自己搭的Jool飞掠器的截图，Jool对应太阳系的木星）</p>
 <p><del>从动手设计到发射成功现实当中花了一个半小时，游戏当中是两年半，失败五次。本质新手劝退向游戏</del></p>
 <p>当然，虽然这款游戏Steam上要七十多块，但是破解版烂大街。欢迎有兴趣的同学来玩。</p>

@@ -878,11 +878,11 @@ m_0T_0=(m_0-vt_f)\left[T_a+\left(\frac{m_0-vt_f}{m_0}\right)^{\frac{k}{cv}}(T_0-
 <p>但是合上盖子系统似乎就自动休眠了，改设置也没有什么很好的效果，即使可以使用<code>caffeinate</code>，重启之后还是会有问题。何况就算避免了休眠，在检测不到Display的时候据说显卡也是不工作的（虽然不知道核显是否也是如此）。网传常见的解决方法是“显卡欺骗器”，也就是Dummy Display，通过在显示端口模拟协议让系统检测到一个并不存在的Display，就行了。</p>
 <p>但是Dummy Display一个现成的就要10块左右，而且对于MBA这种DP的接口还不是很好找。</p>
 <p>于是自己从家里搜刮出了一些边角料糊了一个，效果还不错，成品如下：</p>
-<p><img src="device.jpg" /></p>
+<p><img src="/2019/12/10/DummyDisplay/device.jpg" class=""></p>
 <p>使用的元件是一个DP转接头以及若干买Arduino送的电阻。</p>
 <p>怎么做到的呢？</p>
 <p>根据<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/VGA_connector">Wikipedia</a>上的表述，下图VGA端口的1, 2, 3线分别表示RGB的模拟信号，6, 7, 8对应返线。</p>
-<p><img src="VGA_Port.svg" /></p>
+<p><img src="/2019/12/10/DummyDisplay/VGA_Port.svg" class=""></p>
 <p>再根据Wiki上的资料，RGB线路的阻抗为<span class="math inline">\(75\mathrm{\Omega}\)</span>。对于VGA这种老式模拟接口，通常通过线路负载确定是否连接，因此为了欺骗端口，我们只需要在1-6，2-7，3-8分别接上三个<span class="math inline">\(75\mathrm{\Omega}\)</span>的电阻即可。</p>
 <p>但是家里面只搜出5个<span class="math inline">\(220\mathrm{\Omega}\)</span>的和<span class="math inline">\(5\)</span>个<span class="math inline">\(110\mathrm{\Omega}\)</span>的电阻，于是乎就有了上图的蜜汁接线。具体来说：</p>
 <ol type="1">

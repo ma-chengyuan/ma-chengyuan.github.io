@@ -317,7 +317,7 @@
 \mathrm{Cost} = s_l+p_l
 \]</span> 接下来我们进行放缩。</p>
 <p>考虑<span class="math inline">\(s_l\)</span>的上界是什么？</p>
-<p><img src="SIPM1.svg" /></p>
+<p><img src="/2020/07/02/PACT0701/SIPM1.svg" class=""></p>
 <p>很显然，<strong>在<span class="math inline">\(s_l\)</span>时刻，除了<span class="math inline">\(l\)</span>即将运行的那台机器，其他机器上必须有任务在运行或者刚刚空下来</strong>（如果有机器已经空了一阵子了，那当时<span class="math inline">\(l\)</span>就会被安排到那台机器上去跑），因此不难得出<span class="math inline">\(ms_l \le \sum_{i\neq l} p_i\)</span>，即 <span class="math display">\[
 s_l \le \frac{\sum_{i \neq l}p_i}{m}
 \]</span> 因此 <span class="math display">\[
@@ -345,13 +345,13 @@ s_l \le \frac{\sum_{i \neq l}p_i}{m}
 <p><strong>证明：</strong>我们故技重施：</p>
 <p><strong>情形1. </strong><span class="math inline">\(p_l \le \frac{1}{3}\mathrm{OPT}\)</span>，这个时候我们直接就可以得到<span class="math inline">\(\mathrm{Cost} \le \frac{4}{3}\mathrm{OPT}\)</span>。</p>
 <p><strong>情形2. </strong><span class="math inline">\(p_l &gt; \frac{1}{3}\mathrm{OPT}\)</span>，此时所有<span class="math inline">\(l\)</span>之前的任务也肯定具有大于<span class="math inline">\(\frac{1}{3} \mathrm{OPT}\)</span>的运行时间。我们同样不考虑<span class="math inline">\(l\)</span>之后的任务。可以通过反证证明：<strong>在最优调度里，每一台机器至多只能处理两件任务！</strong>因此，我们确定有足够的机器让我们的算法得以这样调度任务：</p>
-<p><img src="SIPM2.svg" /></p>
+<p><img src="/2020/07/02/PACT0701/SIPM2.svg" class=""></p>
 <p>（看着是不是很像双指针？）</p>
 <p>具体来说，如果我们把机器按照第一个任务的耗时降序排序，那么它们第二个任务的耗时一定成升序排列。（这并不难证明：第一个任务耗时最短的机器一定能够先领到列表中最长的任务作为第二个任务，之后的机器领到的任务时间递减）</p>
 <p>（在这里我们假定<span class="math inline">\(l\)</span>一定是第二个任务，如果<span class="math inline">\(l\)</span>从头开始运行而且时间特别长的话，参考上一节的证明）</p>
 <p>而接下来我们证明这样的分配方式是最优的。</p>
 <p>我们采取反证的方法：不妨假设在最优方案中存在两个机器，两个机器上都有两个任务，耗时分别为<span class="math inline">\((a,b)\)</span>和<span class="math inline">\((c,d)\)</span>，且<span class="math inline">\(a&gt;c,b&gt;d\)</span>。那么我们把两个机器上的第二个任务互换，变成<span class="math inline">\((a,d)\)</span>和<span class="math inline">\((c,b)\)</span>，不难发现此时完成任务的最短时间会减少，和“最优”矛盾。因此，对于最优方案的任意两台机器<span class="math inline">\((a,b)\)</span>和<span class="math inline">\((c,d)\)</span>，如果<span class="math inline">\(a&gt;c\)</span>那么<span class="math inline">\(b&lt;d\)</span>：</p>
-<p><img src="SIPM3.svg" /></p>
+<p><img src="/2020/07/02/PACT0701/SIPM3.svg" class=""></p>
 <p>这正是我们算法所给出的调度方案。因此<span class="math inline">\(\mathrm{OPT}\)</span>不会比我们算法的结果更好了。</p>
 <p>综上所述，近似比为<span class="math inline">\(\frac{4}{3}\)</span>。</p>
 
