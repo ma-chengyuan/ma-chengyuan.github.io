@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">88</span>
+          <span class="site-state-item-count">89</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,309 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/09/12/%E6%9F%90%E7%89%B9%E6%AE%8A%E7%9A%84%E6%B1%82%E5%92%8C%E6%96%B9%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/09/12/%E6%9F%90%E7%89%B9%E6%AE%8A%E7%9A%84%E6%B1%82%E5%92%8C%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">某特殊的求和方法</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-12 00:00:00" itemprop="dateCreated datePublished" datetime="2019-09-12T00:00:00+08:00">2019-09-12</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2019-12-08 21:37:16" itemprop="dateModified" datetime="2019-12-08T21:37:16+08:00">2019-12-08</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>本地稿整理，原稿供班级公众号，写于2019-09-12，2019-12-08上传</p>
+<h1 id="序">序</h1>
+<p>最近数学课上在讲数列。众所周知，我们主要探寻数列的两个属性：</p>
+<ol type="1">
+<li>通项公式</li>
+<li>前<span class="math inline">\(n\)</span>项和</li>
+</ol>
+<p>关于第二点，我们已经在课上学习了等差数列和等比数列前<span class="math inline">\(n\)</span>项和的计算方法，但是更为复杂的数列呢？例如数列<span class="math inline">\(\{a_n\},a_n=n^2,n\in\mathbb{N}^{\ast}\)</span>的前<span class="math inline">\(n\)</span>项和： <span class="math display">\[
+S_n = \sum_{x=1}^n x^2
+\]</span> 或是更复杂一点，<span class="math inline">\(a_n=2^nn^2,n\in\mathbb{N}^{\ast}\)</span>： <span class="math display">\[
+S_n = \sum_{x=1}^{n}2^xx^2
+\]</span> 或者更复杂呢？</p>
+<p>诚然，你可能知道平方和的公式，对于第二个式子也许也有巧办法解决。但是很多方法仍存在不少局限性。有没有更通用的办法呢？</p>
+<p>如果你自学过一点基础的微积分，你会不会想到，既然 <span class="math display">\[
+\int_{1}^n2^xx^2\mathrm{d}x
+\]</span> 可以通过分部积分比较套路地演算，变成数列之后有没有类似的方法呢？</p>
+<p>这篇文章想分享的，就是在通过类比微积分构造出的这样一种系统化的求和方法。</p>
+<p><em>下面的文章如果自学过微积分的话可能会比较好读，没学过也没关系，反正本身不用到任何微积分概念。</em></p>
+<p><em>这个方法是我在《具体数学》里面看到的，也似乎只有这一本书里讲到这个方法，网上都没有。但是真的很有效，也很成系统，很震撼。这里对记号和名词做了一点小修改并避免了一些概念。</em></p>
+<p><em>以下统一把数列看做函数，然后因为下面有非常多的函数，一定会牵涉到定义域的问题。但是好在这些函数的定义域都是平凡且显然的，所以就不写了。</em></p>
+<h1 id="基础记号与理念">基础记号与理念</h1>
+<p>定义<span class="math inline">\(f(x)\)</span>对于<span class="math inline">\(x\)</span>的<strong>差分</strong>为且记作： <span class="math display">\[
+\frac{\mathrm{\delta} f(x)}{\mathrm{\delta} x} = f(x+1)-f(x)
+\]</span> 易证差分对加减法有分配率： <span class="math display">\[
+\frac{\mathrm{\delta} \left[f(x) \pm g(x)\right]}{\mathrm{\delta} x} = \frac{\mathrm{\delta} f(x)}{\mathrm{\delta} x} \pm \frac{\mathrm{\delta} g(x)}{\mathrm{\delta} x}
+\]</span> 且易证其线性： <span class="math display">\[
+\frac{\mathrm{\delta} kf(x)}{\mathrm{\delta} x} = k\frac{\mathrm{\delta} f(x)}{\mathrm{\delta} x}
+\]</span> 又易证常数的差分为<span class="math inline">\(0\)</span>（显然地）。</p>
+<p>若<span class="math inline">\(F(x)\)</span>的差分为<span class="math inline">\(f(x)\)</span>，我们观察到对于<span class="math inline">\(a,b\in\mathbb{Z}, b &gt; a\)</span>，有： <span class="math display">\[
+F(b)-F(a) = \sum_{x=a}^{b-1} f(x)
+\]</span> 那么，一个求和问题就可以被规约为求同一函数两个函数值差的问题。</p>
+<p>因此，在这个框架下，如果要计算<span class="math inline">\(\sum_{x=a}^b f(x)\)</span>，我们就要：</p>
+<ol type="1">
+<li>找到合适的<span class="math inline">\(F(x)\)</span>，其差分为<span class="math inline">\(f(x)\)</span></li>
+<li>计算<span class="math inline">\(F(b+1)-F(a)\)</span></li>
+</ol>
+<p>（前几天课上讲的“累减法”是以上步骤的反向简化版）</p>
+<p>当中最核心，也是最有意思的一个步骤，自然就是寻找<span class="math inline">\(F(x)\)</span>。寻找<span class="math inline">\(F(x)\)</span>的过程本质上是<strong>差分的逆运算</strong>。不妨把这个逆运算称作”<strong>逆差分</strong>“。因为使用<span class="math inline">\(F(x)\)</span>易产生指代不清的问题，我们为<span class="math inline">\(f(x)\)</span>的逆差分定义如下记号： <span class="math display">\[
+F(x) = \sum f(x)\mathrm{\delta} x
+\]</span> 则由定义，可得： <span class="math display">\[
+\frac{\mathrm{\delta} \left(\sum f(x) \mathrm{\delta} x\right)}{\mathrm{\delta} x} = f(x), \sum \frac{\mathrm{\delta} f(x)}{\mathrm{\delta} x} \mathrm{\delta} x = f(x)
+\]</span> 举些例子： <span class="math display">\[
+\begin{aligned}
+\frac{\mathrm{\delta} x}{\mathrm{\delta} x} = 1 &amp;\Leftrightarrow \sum1\mathrm{\delta} x = x + C\\
+\frac{\mathrm{\delta} x^2}{\mathrm{\delta} x} = 2x+1 &amp;\Leftrightarrow \sum (2x+1)\mathrm{\delta} x = x^2 + C
+\end{aligned}
+\]</span> 为什么要<span class="math inline">\(+C\)</span>呢？因为<span class="math inline">\(f(x)\)</span>的逆差分<strong>不唯一</strong>：对于任意已知的<span class="math inline">\(f(x)\)</span>逆差分加上任意的常数依然是<span class="math inline">\(f(x)\)</span>的逆差分（差分的时候常数就抵消掉了）。这里的<span class="math inline">\(C\)</span>便是这个意思。</p>
+<p>逆差分由于是差分的逆运算，其对于加法的分配率以及线性亦显然。</p>
+<p>接下来的这篇文章的中心便是：如何计算<span class="math inline">\(\sum f(x) \mathrm{\delta} x\)</span>？</p>
+<p><strong>以下默认<span class="math inline">\(x,n \in \mathbb Z\)</span>。</strong></p>
+<h1 id="幂法则">“幂”法则</h1>
+<p>对微积分有些许了解的同学一定知道积分当中的幂法则： <span class="math display">\[
+\int x^m \mathrm{d}x=\frac{x^{m+1}}{m+1}+C
+\]</span> 它来源于微分的幂法则： <span class="math display">\[
+\frac{\mathrm{d}x^m}{\mathrm{d}x} = mx^{m-1}
+\]</span> 类似的幂法则在我们刚刚建立的框架当中的类比是什么呢？</p>
+<p>直接把微分换成差分？ <span class="math display">\[
+\frac{\mathrm{\delta} x^m}{\mathrm{\delta} x} = (x+1)^m-x^m = ?
+\]</span> 我们发现好像没有什么优雅的结果诶！</p>
+<p>会不会是"幂"出了问题呢？</p>
+<p>定义<strong>下降阶乘幂</strong><span class="math inline">\(x^{\underline{m}}\)</span>： <span class="math display">\[
+x^{\underline m} = x(x-1)(x-2)\cdots(x-m+1) = \frac{x!}{(x - m)!} , \quad x&gt;0,m\in \mathbb{Z}
+\]</span> （当然，最右边那个有阶乘的式子要有意义，应该<span class="math inline">\(x\ge m\)</span>，如果<span class="math inline">\(x&lt;m\)</span>，那么不妨令整个阶乘幂为<span class="math inline">\(0\)</span>）</p>
+<p>为什么要定义那么奇怪的幂呢？考查下降阶乘幂的差分： <span class="math display">\[
+\begin{aligned}
+\frac{\mathrm{\delta} x^{\underline m}}{\mathrm{\delta} x} &amp;= (x + 1)^{\underline m} - x^{\underline m} \\
+&amp;= \frac{(x + 1)!}{(x + 1 - m)!} - \frac{x!}{(x - m)!} \\
+&amp;= \frac{(x + 1)! - (x + 1 - m)x!}{(x + 1 - m)!} \\
+&amp;= \frac{x![(x + 1) - (x + 1 - m)]}{(x + 1 - m)!} \\
+&amp;= \frac{mx!}{[x - (m - 1)]!} \\
+&amp;= mx^{\underline{m - 1}}
+\end{aligned}
+\]</span> 我们发现在使用下降阶乘幂的情况下，我们就可以把微分当中的幂法则类比到差分当中了。</p>
+<p>同时，我们不妨探索一下常规幂的性质在下降阶乘幂中的类比： <span class="math display">\[
+x^{\underline{m + n}} = x^{\underline m}(x - m)^{\underline n}, \quad m,n\in \mathbb{Z}
+\]</span> 以及当<span class="math inline">\(m&lt;0\)</span>时： <span class="math display">\[
+x^{\underline{-m}} = \frac{1}{(x + 1)(x + 2)\cdots(x + m)}
+\]</span> 这些类比得来的性质有助于我们加深对于下降阶乘幂的认识。</p>
+<p>既然我们得到了差分的幂法则，逆差分中的幂法则也就呼之欲出了： <span class="math display">\[
+\sum x^{\underline m} \mathrm{\delta} x = \frac{x^{\underline{m+1}}}{m+1}+C,\quad m\in\mathbb{Z}, m\neq -1
+\]</span> 这些法则有什么用呢？我们先试试看用我们的方法推导等差数列求和公式吧！</p>
+<p>欲求式为 <span class="math display">\[
+S_n = \sum_{x=1}^n [a_1+(x-1)d]
+\]</span> 那么我们计算： <span class="math display">\[
+\begin{aligned}
+    \sum [a_1+(x-1)d]\mathrm{\delta} x &amp;= \sum[a_1-d+dx]\mathrm{\delta} x \\
+    &amp;= \sum(a_1 - d)\mathrm{\delta} x+\sum dx\mathrm{\delta} x \\
+    &amp;= (a_1-d)x + d\sum x^{\underline 1} \delta x \\
+    &amp;= (a_1-d)x + d\cdot\frac{x^{\underline 2}}{2} + C
+\end{aligned}
+\]</span> 然后根据之前提到的步骤分别代入<span class="math inline">\(x=1\)</span>和<span class="math inline">\(x=n+1\)</span>作差相减，就是答案： <span class="math display">\[
+\begin{aligned}
+\sum_{x=1}^n [a_1+(x-1)d] &amp;= \left[(a_1-d)(n+1)+d\cdot\frac{(n+1)^{\underline 2}}{2}\right] - \left[(a_1 - d)\cdot 1 + d\cdot\frac{1^{\underline 2}}{2} \right] \\
+&amp;= (a_1-d)n + \frac{n(n+1)}{2}d \\
+&amp;= na_1+\frac{n(n-1)}{2}d
+\end{aligned}
+\]</span> 是不是很简单？再比如说我们要求平方和 <span class="math display">\[
+\sum_{x=1}^n x^2
+\]</span> 然后我们发现 <span class="math display">\[
+x^2 = x^{\underline 2} + x^{\underline 1}
+\]</span> 那我们可以借此求取<span class="math inline">\(x^2\)</span>的逆差分： <span class="math display">\[
+\begin{aligned}
+\sum x^2 \mathrm{\delta} x &amp;= \sum x^{\underline 2}\mathrm{\delta} x + \sum x^{\underline 1}\mathrm{\delta} x \\
+&amp;= \frac{x^{\underline 3}}{3} + \frac{x^{\underline 2}}{2} + C \\
+&amp;= \frac{2x(x - 1)(x - 2) + 3x(x - 1)}{6} + C \\
+&amp;= \frac{x(x - 1)(2x - 1)}{6} + C
+\end{aligned}
+\]</span></p>
+<p>代入上下界： <span class="math display">\[
+\begin{aligned}
+\sum_{x=1}^n x^2 &amp;= \frac{(n+1)[(n+1) - 1][2(n+1) - 1]}{6} - \frac{1(1- 1)(2\cdot1 - 1)}{6} \\
+&amp;= \frac{n(n+1)(2n+1)}{6}
+\end{aligned}
+\]</span> 我们一不小心就推出了平方和公式？</p>
+<p>再来一个： <span class="math display">\[
+\sum_{x=1}^n \frac{1}{x(x+1)}
+\]</span> 我们先把它转变成： <span class="math display">\[
+\sum_{x=0}^{n-1}\frac{1}{(x+1)(x+2)}
+\]</span> 因为这样凑到了形式： <span class="math display">\[
+\frac{1}{(x+1)(x+2)} = x^{\underline{-2}}
+\]</span> 然后用幂法则逆差分： <span class="math display">\[
+\sum x^{\underline{-2}} \mathrm{\delta} x = \frac{x^{\underline{-1}}}{-1} + C= -\frac{1}{x+1} + C
+\]</span> 然后代入<span class="math inline">\(x=0\)</span>和<span class="math inline">\(x=n\)</span>相减： <span class="math display">\[
+\begin{aligned}
+\sum_{x=0}^{n-1}\frac{1}{(x+1)(x+2)} &amp;= \left(-\frac{1}{n+1}\right) - \left(-\frac{1}{0+1}\right) \\
+&amp;= 1-\frac{1}{n+1}
+\end{aligned}
+\]</span> 这不就是裂项吗？</p>
+<p>其实，通过归纳可以证明，任何整式多项式都可以被表示为若干个下降阶乘幂的线性组合（且方法是显然的）。且裂项公式的另类证明也说明幂法则在指数为负数的时候也可以使用。（对于复杂的分式，我们也可以待定系数拆着做）。</p>
+<h1 id="指数法则">指数法则</h1>
+<p>自然而然地，我们接下来探究指数函数（包括底数为负数）的差分与逆差分： <span class="math display">\[
+\frac{\mathrm{\delta} a^{x}}{\mathrm{\delta} x} = a^{x+1}-a^x=(a-1)a^x
+\]</span> 因此 <span class="math display">\[
+\sum a^x\mathrm{\delta} x=\frac{a^x}{a-1} + C ,\quad a\neq 1
+\]</span> （要验证？再差分一下）</p>
+<p>因此 <span class="math display">\[
+\sum_{x=0}^{n-1}a^x = \frac{a^n}{a-1} - \frac{a^0}{a-1} = \frac{a^n-1}{a-1} ,\quad a\neq 1
+\]</span> 啊，是非平凡等比数列的求和公式呢。</p>
+<p>刚刚的结论也可以稍作拓展： <span class="math display">\[
+\begin{aligned}
+\frac{\mathrm{\delta} a^{x+k}}{\mathrm{\delta} x} &amp;= (a-1)a^{x+k}\\ \sum a^{x+k}\mathrm{\delta} x&amp;=\frac{a^{x+k}}{a-1} + C
+\end{aligned}
+\]</span> 同时可以注意下： <span class="math display">\[
+\frac{\mathrm{\delta} 2^x}{\mathrm{\delta} x} = 2^x, \sum2^x\mathrm{\delta} x=2^x+C
+\]</span> 这是一个有意思的现象：<span class="math inline">\(2^x\)</span>（或更为广义来讲，<span class="math inline">\(2^{x+k}\)</span>）的差分与逆差分等于其自身。这与微积分中<span class="math inline">\(e^x\)</span>的地位是相似的。</p>
+<h1 id="分部求和">分部求和</h1>
+<p>如果仅有指数法则和幂法则，那么这套方法其实并没有那么优秀（计算的式子我们常规方法也能算啊！）</p>
+<p>真正让这套方法威力大幅提升的，是分部求和。</p>
+<p>你也许知道分部积分是从微分的积法则变化而来的： <span class="math display">\[
+\begin {aligned}
+&amp;\frac{\mathrm{d}f(x)g(x)}{\mathrm{d}x} = f(x)\frac{\mathrm{d}g(x)}{\mathrm{d}x} + g(x)\frac{\mathrm{d}f(x)}{\mathrm{d}x} \\
+\Longleftrightarrow&amp; f(x)\frac{\mathrm{d}g(x)}{\mathrm{d}x} = \frac{\mathrm{d}f(x)g(x)}{\mathrm{d}x}- g(x)\frac{\mathrm{d}f(x)}{\mathrm{d}x}\\
+\Longleftrightarrow  &amp;\int f(x)\mathrm{d}g(x) = f(x)g(x) - \int g(x)\mathrm{d}f(x) \\
+\end{aligned}
+\]</span> （出于统一风格的需要没有用<span class="math inline">\(u,v\)</span>，写得繁复了一点）</p>
+<p>我们类比着探寻差分下的积法则： <span class="math display">\[
+\begin{aligned}
+    \frac{\mathrm{\delta} f(x)g(x)}{\mathrm{\delta} x} &amp;= f(x+1)g(x+1) - f(x)g(x) \\
+    &amp;= f(x+1)g(x+1)-f(x)g(x+1)+f(x)g(x+1)-f(x)g(x) \\
+    &amp;= f(x)[g(x+1) - g(x)] + g(x+1)[f(x+1)-f(x)] \\
+    &amp;= f(x)\frac{\mathrm{\delta} g(x)}{\mathrm{\delta} x} + g(x+1)\frac{\mathrm{\delta} f(x)}{\mathrm{\delta} x}
+\end{aligned}
+\]</span> 因此 <span class="math display">\[
+\sum f(x) \mathrm{\delta} g(x) = f(x)g(x)-\sum g(x+1)\mathrm{\delta} f(x)
+\]</span> (<span class="math inline">\(\sum f(x) \mathrm{\delta} g(x) = \sum f(x)\frac{\mathrm{\delta} g(x)}{\cancel{\mathrm{\delta} x}} \cancel{\mathrm{\delta} x}\)</span>，虽然不是直接“约分”，但是是一种简便的记号)</p>
+<p>这便是逆差分当中的<strong>分部求和</strong>方法。</p>
+<p>怎么用？</p>
+<p>比如说我们要计算： <span class="math display">\[
+\sum x^22^x \mathrm{\delta} x
+\]</span> 那么令<span class="math inline">\(f(x)=x^2,\frac{\mathrm{\delta} g(x)}{\mathrm{\delta} x} = 2^x \Rightarrow g(x)=2^x\)</span>: <span class="math display">\[
+\begin{aligned}
+\sum x^22^x \mathrm{\delta} x = \sum x^2 \mathrm{\delta}2^x&amp;=x^22^x- \sum 2^{x+1}\mathrm{\delta} x^2 \\
+&amp;= x^22^x- \sum 2^{x+1}(2x+1)\mathrm{\delta} x \\
+&amp;= x^22^x - \sum 2^{x+1}\mathrm{\delta} x - 2\sum x2^{x+1}\mathrm{\delta} x \\
+&amp;= x^22^x - 2^{x+1} - 4\sum x2^x\mathrm{\delta} x
+\end{aligned}
+\]</span> 再来，令<span class="math inline">\(f(x) = x,\frac{\mathrm{\delta} g(x)}{\mathrm{\delta} x} = 2^x \Rightarrow g(x)=2^x\)</span>： <span class="math display">\[
+\begin{aligned}
+\sum x2^x\mathrm{\delta} x &amp;= x2^x- \sum 2^{x+1} \mathrm{\delta} x \\
+&amp;= x2^x - 2^{x+1} + C \\
+\end{aligned}
+\]</span> 代回去： <span class="math display">\[
+\begin{aligned}
+\sum x^22^x \mathrm{\delta} x &amp;= x^22^x - 2^{x+1} - 4\left(x2^x - 2^{x+1}\right) + C \\
+&amp;=(x^2-4x+6)2^x+C
+\end{aligned}
+\]</span> 然后上下界就按需求随意加好了~</p>
+<p>（<span class="math inline">\(g(x)=2^x+C\)</span>的时候推导还成立吗？要不要考虑呢？）</p>
+<h1 id="换元求和"><del>换元求和</del></h1>
+<p>你也许会想</p>
+<blockquote>
+<p>既然我们都把分部积分类比到了分部求和，那么再把换元积分类比到换元求和岂不美哉？</p>
+</blockquote>
+<p>很遗憾，这在通常意义上是不可以的。</p>
+<p>为什么？</p>
+<p>因为换元积分逆用的是微分的链式法则。</p>
+<p>差分有链式法则吗？ <span class="math display">\[
+\begin{aligned}
+    \frac{\mathrm{\delta} f[g(x)]}{\mathrm{\delta} x} &amp;= f[g(x+1)] - f[g(x)] \\
+    &amp;\stackrel{?}{=} \left\{f[g(x)+1]-f[g(x)]\right\}[g(x+1)-g(x)] \\
+    &amp;= \frac{\mathrm{\delta} f[g(x)]}{\mathrm{\delta} g(x)} \cdot \frac{\mathrm{\delta} g(x)}{\mathrm{\delta} x}
+\end{aligned}
+\]</span> 打问号的那一步是推不过来的，除非<span class="math inline">\(g(x+1)=g(x)+1 \Longleftrightarrow \frac{\mathrm{\delta} g(x)}{\mathrm{\delta} x} = 1\)</span>。在这种特例条件下，<span class="math inline">\(g(x)=x+C\)</span>，也就是说我们只能在这样形式的<span class="math inline">\(g(x)\)</span>上应用链式法则/换元求和——这个形式不就是平移吗？</p>
+<p>而在其他形式的<span class="math inline">\(g(x)\)</span>当中，正如我们所看到的一样，推不过去。</p>
+<p>其实，我们没有必要将所有微积分里面的要素全部类比到我们的体系里面。比如说，微分的链式法则与商法则之所以必要是因为微分按照定义计算十分繁琐，而差分的定义本身就可以用来进行计算，因而不需要链式法则与商法则。类似地，微积分里面一些关于三角的技巧也不用，也不能类比到我们的框架当中，因为在离散的情况很难对待三角。</p>
+<h1 id="小结">小结</h1>
+<p>这篇文章给大家分享了一整套可以用来机械化一部分求和计算的方法,并在此方法框架内推导了我们所学过的许多求和公式。这个方法精彩且难能可贵的是，这个方法完全是借助于<strong>类比</strong>的思想借鉴微积分体系建立起来的。因而如果同学们有关于微积分的了解，那么会发现知识的迁移可以很快完成。这种类比的方法是我们数学学习过程中应该提倡的。</p>
+<blockquote>
+<p>这套方法有名字吗？</p>
+</blockquote>
+<p>《具体数学》当中称该方法为“有限微积分”，我个人认为“离散微积分”更为恰当，但是既然是离散的，那么“微”和“积”自然无从说起，我个人一直想回避给这个方法命名（<del>就是一个微积分的类比又不是什么开拓性创新有啥好命名的</del>）。</p>
+<blockquote>
+<p>考试/作业可以用吗？</p>
+</blockquote>
+<p>我觉得肯定是不行的。首先我确信考试或者作业大概率不会出这种求和。其次我确定很多人并没有听说过这个方法。再其次这套方法和其他技巧还不大一样，是成体系的，所以如果你要用也要像这篇文章一样从头开始定义差分写一大堆。然而如果真的碰到了这样的题目，你当然……可以……在草稿纸上……假装是灵光一闪得到答案……然后归纳证明对吧……我觉得老师大概也不会拿你怎么样？</p>
+<h1 id="调和级数与自然对数"><em>调和级数与自然对数</em></h1>
+<p>这里只是对于幂法则的一个简要补充，可以跳过。</p>
+<p>你也许注意到，正如积分的幂法则一样，我们逆差分的幂法则规定指数不能为<span class="math inline">\(-1\)</span>。原因显然。</p>
+<p>那指数<span class="math inline">\(-1\)</span>怎么办呢？</p>
+<p>你也许知道 <span class="math display">\[
+\int_1^n x^{-1}\mathrm{d}x=\ln n
+\]</span> 那类比着不妨看看 <span class="math display">\[
+\sum_{x=0}^{n-1} x^{\underline{-1}} = \frac{1}{1}+\frac{1}{2}+\cdots+\frac{1}{n}=?
+\]</span> 这不是调和级数吗？这和<span class="math inline">\(\ln n\)</span> 看起来一点都不像啊！然而，可以证明， <span class="math display">\[
+\lim_{n\to\infty} \left(- \ln n + \sum_{x=1}^n \frac{1}{x}\right) = \gamma \approx 0.57722
+\]</span> <span class="math inline">\(\gamma\)</span>被称作欧拉-马歇罗尼常数。当然这和这篇文章的主题已经一点关系都没有了，权当是对于指数为<span class="math inline">\(-1\)</span>情况的探究与补全吧。</p>
+<h1 id="bonus"><em>Bonus</em></h1>
+<p>暑假里刷计算机竞赛的时候小马碰到一道神奇的数列题。当时所有人都是打表找规律做的（计算机竞赛日常，你写出程序就行），但是我一直很好奇有没有严谨的推导。数列是这个样子的： <span class="math display">\[
+\begin{aligned}
+    a_1 &amp;= 1 \\
+    a_n &amp;= \left(\sum_{i=1}^{n-1} i\cdot a_i\right) \bmod n ,\quad n\ge2, n\in \mathbb{N^{\ast}}
+\end{aligned}
+\]</span> 求<span class="math inline">\(a_n\)</span>的通项公式。我趁这篇文章的机会问问各位大佬有没有想法，有的话可以和我分享一下。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1565,187 +1868,6 @@ int main() &#123;
     for (int i = 1; i &lt;= n; i++) scanf(&quot;%lld%lld&quot;, &amp;a[i], &amp;b[i]);
     printf(&quot;%lld\n&quot;, excrt());
     return 0;
-&#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/02/02/FFT/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/02/02/FFT/" class="post-title-link" itemprop="url">FFT笔记</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-02-02 17:50:35" itemprop="dateCreated datePublished" datetime="2019-02-02T17:50:35+08:00">2019-02-02</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-02-03 16:09:32" itemprop="dateModified" datetime="2019-02-03T16:09:32+08:00">2019-02-03</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><del>上次更新是在十月份？我到底摸了多久</del></p>
-<h1 id="卷积">卷积</h1>
-<p>对于两个序列<span class="math inline">\(\{x\}, \{y\}​\)</span>，定义它们的卷积<span class="math inline">\(\{x \ast y\}​\)</span>为： <span class="math display">\[
-(x \ast y)_k = \sum_{j = 0}^k x_jy_{k- j}
-\]</span></p>
-<h1 id="单位根">单位根</h1>
-<p>定义复平面单位圆上的<span class="math inline">\(n​\)</span>次单位根 <span class="math display">\[
-\omega_{n} = e^{\frac{2\pi i}{n}} = \cos\left(\frac{2\pi}{n}\right) + i\sin\left(\frac{2\pi}{n}\right)
-\]</span> 易证其有如下的性质：</p>
-<ol type="1">
-<li><span class="math inline">\(\omega_{2n}^{2k} = \omega_n^k\)</span></li>
-<li><span class="math inline">\(\omega_n^k = \omega_n^{k +n}\)</span></li>
-<li><span class="math inline">\(\omega_n^k = - \omega_{n}^{k + n / 2}\)</span></li>
-</ol>
-<h1 id="dft">DFT</h1>
-<p>对于一长度为<span class="math inline">\(n\)</span>的序列<span class="math inline">\(\{x\}\)</span>，定义其离散傅里叶变换（DFT）<span class="math inline">\(\mathcal{F}\{x\} = \{X\}\)</span>为： <span class="math display">\[
-\mathcal{F}\{x\}_k = X_k = \sum_{j = 0}^{n - 1} x_i\omega_n^{jk}
-\]</span> 则有其离散傅里叶逆变换（IDFT）为： <span class="math display">\[
-x_k = \frac{1}{n}\sum_{j = 0}^{n - 1} X_i\omega_n^{-jk}
-\]</span> （标准定义里面<span class="math inline">\(\omega_n^{jk}​\)</span>和<span class="math inline">\(\omega_n^{-jk}​\)</span>应该互换，但是不影响）</p>
-<p><strong>暴力证明：</strong>考虑<span class="math inline">\(\mathcal{F}\{x_n\}\)</span>的计算式： <span class="math display">\[
-\begin{pmatrix}
-1 &amp;1 &amp;1 &amp;\cdots &amp;1 \\
-1 &amp;\omega_n &amp;\omega_n^2 &amp;\cdots &amp;\omega_n^{n - 1} \\
-1 &amp;\omega_n^2 &amp;\omega_n^4 &amp;\cdots &amp;\omega_n^{2(n-1)} \\
-\vdots &amp;\vdots &amp;\vdots &amp;\ddots &amp;\vdots \\
-1 &amp;\omega_n^{n - 1} &amp;\omega_{n}^{2(n-1)} &amp;\cdots &amp;\omega_n^{(n-1)^2}
-\end{pmatrix}
-\begin{pmatrix}
-x_1 \\x_2 \\x_3 \\ \vdots \\x_{n - 1}
-\end{pmatrix}
-=
-\begin{pmatrix}
-X_1 \\X_2 \\X_3 \\ \vdots \\X_{n - 1}
-\end{pmatrix}
-\]</span> 设左边矩阵为<span class="math inline">\(V​\)</span>，接下来从充分性上证明<span class="math inline">\(V^{-1}_{jk} = \frac{\omega_n^{-jk}}{n}​\)</span>： <span class="math display">\[
-\left(VV^{-1}\right)_{jk} = \sum_{l = 0}^{n - 1}\omega_n^{jl}\cdot\frac{\omega_n^{-lk}}{n}
-= \frac{1}{n}\sum_{l = 0}^{n - 1}\omega_n^{l(j - k)}
-\]</span> 显然当<span class="math inline">\(j = k​\)</span>时有<span class="math inline">\(\left(VV^{-1}\right)_{jk} = 1​\)</span>，而<span class="math inline">\(j \neq k​\)</span>时，由等比数列求和公式： <span class="math display">\[
-\begin{aligned}
-\frac{1}{n}\sum_{l = 0}^{n - 1}\omega_n^{l(j - k)} &amp;= \frac{1}{n} \cdot \frac{1 - \omega_n^{n(j - k)}}{1 - \omega_n^{j - k}} = 0
-\end{aligned}
-\]</span> 因此<span class="math inline">\(VV^{-1} = I​\)</span>，得证。</p>
-<p>上面的DFT有如下意义：</p>
-<ol type="1">
-<li>将<span class="math inline">\(\{x_n\}​\)</span>作为一组正交基<span class="math inline">\(\{\omega_n^0, \omega_n^1, \cdots\}, \{\omega_n^0, \omega_n^{2}, \cdots\}​\)</span>的系数，计算和向量。（在此意义下逆变换就是将向量进行分解，因此逆变换的意义显然，无需上述证明）</li>
-<li>将<span class="math inline">\(\{x_n\}\)</span>作为以个多项式的系数，计算该多项式在<span class="math inline">\(\omega_n^0, \omega_n^1,\cdots\)</span>点上的取值。</li>
-</ol>
-<p>DFT是线性的，即<strong>和的DFT等于DFT的和</strong>，且<strong>常数倍的DFT是DFT的常数倍。</strong></p>
-<p>同时DFT的另一个重要性质被称为卷积性，即 <span class="math display">\[
-\mathcal{F}\{x\}_k\mathcal{F}\{y\}_k = \mathcal{F}\{x \ast y\}_k
-\]</span> <strong>证明：</strong>把式子写出来： <span class="math display">\[
-\left(\sum_{j = 0}^{n - 1} x_j \omega_n^{jk}\right)\left(\sum_{j = 0}^{n - 1} y_j \omega_n^{jk}\right) \overset{?}{=} \sum_{j = 1}^{n - 1}\left(\sum_{l = 0}^jx_ly_{j - l}\right)\omega_n^{jk}
-\]</span> 显然左边式子展开对应的任意一项<span class="math inline">\(x_ay_b\omega_n^{(a + b)k}\)</span>都唯一地出现在右式<span class="math inline">\(j = a+b\)</span>内层求和的展开式中，因此两个式子总是等价的。</p>
-<p><strong>DFT将卷积<span class="math inline">\(O(n^2)\)</span>的操作转化为<span class="math inline">\(O(n)\)</span>的操作，因此可以用于加速卷积。</strong></p>
-<h1 id="fft">FFT</h1>
-<p>因为DFT对应点相乘这一操作本身是<span class="math inline">\(O(n)​\)</span>的，因此我们只要找到快速的DFT/IDFT算法，就可以避免<span class="math inline">\(O(n^2)​\)</span>地计算卷积。FFT就是这样一种基于分治的快速DFT算法，时间复杂度为<span class="math inline">\(O(n\log n)​\)</span>。</p>
-<p>首先假设我们需要计算一个序列<span class="math inline">\(\{x\}\)</span>的DFT（假设<span class="math inline">\(n\)</span>是<span class="math inline">\(2\)</span>的整数次幂），我们按照下标的奇偶性将这个序列分为<span class="math inline">\(\{a\}, \{b\}\)</span>两部分，其中<span class="math inline">\(a_j = x_{2j}\)</span>且<span class="math inline">\(b_j = x_{2j + 1}\)</span>。那我们有： <span class="math display">\[
-\begin{aligned}
-\mathcal{F}\{x\}_k &amp;= \sum_{j = 0}^{n - 1} x_j\omega_n^{jk} \\
-&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} \left[(x_{2j}\omega_n^{2jk} + x_{2j + 1}\omega_n^{(2j + 1)k}\right] \\
-&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} x_{2j}\omega_n^{2jk} + \omega_n^k \sum_{j = 0}^{\frac{n}{2} - 1} x_{2j + 1}\omega_n^{2jk} \\
-&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} a_j\omega_{n / 2}^{jk} + \omega_n^k \sum_{j = 0}^{\frac{n}{2} - 1} b_j\omega_{n / 2}^{jk} \\
-&amp;= \mathcal{F}\{a\}_k + \omega_{n}^k\mathcal{F}\{b\}_k
-\end{aligned}
-\]</span> <del>看起来好像没有问题？</del>我们最后一步推导其实是有一点小问题的，因为当<span class="math inline">\(\mathcal{F}\{a\}\)</span>依据我们的定义只有<span class="math inline">\(\frac{n}{2}\)</span>项，因此上面的推导只能让我们计算<span class="math inline">\(0 \le k &lt; \frac{n}{2}\)</span>的值。对于<span class="math inline">\(k \ge \frac{n}{2}\)</span>的情况要如何处理呢？</p>
-<p>首先，注意到： <span class="math display">\[
-\omega_n^{2jk} = \omega_n^{2jk - jn} = \omega{_n^{2j(k - n / 2)}}
-\]</span> 因此我们稍微变一下： <span class="math display">\[
-\begin{aligned}
-\mathcal{F}\{x\}_k &amp;= \sum_{j = 0}^{n - 1} x_j\omega_n^{jk} \\
-&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} \left[x_{2j}\omega_n^{2j(k - n /2)} + x_{2j + 1}\omega_n^{2j(k - n /2) + k}\right] \\
-&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} x_{2j}\omega_n^{2j(k - n /2)} + \omega_n^k \sum_{j = 0}^{\frac{n}{2} - 1} x_{2j + 1}\omega_n^{2j(k - n /2)} \\
-&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} a_j\omega_{n / 2}^{j(k - n /2)} + \omega_n^k \sum_{j = 0}^{\frac{n}{2} - 1} b_j\omega_{n / 2}^{j(k - n /2)} \\
-&amp;= \mathcal{F}\{a\}_{k - n / 2} - \omega_{n}^{k - n / 2}\mathcal{F}\{b\}_{k - n / 2}
-\end{aligned}
-\]</span> （其实本质上就是DFT的序列其实是可以周期拓展的）</p>
-<p>这使得我们得以计算<span class="math inline">\(\frac{n}{2} \le k &lt; n\)</span>时DFT的值。因此，最为朴素的FFT实现就是基于递归不断将<span class="math inline">\(\{x_n\}\)</span>进行分治，并通过上式对于分治结果进行合并。时间复杂度自然就是<span class="math inline">\(O(n\log n)\)</span>。</p>
-<p>然而事实一定没有那么简单。递归写法的FFT常数很大，很大程度上是因为合并本身不是in-place的，需要额外申请空间。更快的in-place FFT实现，Cooley–Tukey算法，是基于这样一个思路的：</p>
-<p>假设每次分出来的<span class="math inline">\(\{a\}\)</span>向左走，<span class="math inline">\(\{b\}\)</span>向右走，那递归版的FFT就会画出一棵很漂亮的二叉树，其中叶子节点对应的下标和序列本身的下标顺序是有很大差别的。我们可以预先快速计算出叶子节点的顺序，然后直接从叶子开始就地一层一层地合并上去。</p>
-<p>那叶子节点的顺序遵循怎样的规律呢？其实我们依据奇偶分组本质上是在依据二进制的末位分组，在这样的思想下，我们<del>脑补一下</del>发现这就是叶子节点的下标把原来序列的下标的二进制翻转一下（低位变高位，高位变低位）（即<span class="math inline">\(\{00, 01,10, 11\}\)</span>到叶子节点变成<span class="math inline">\(\{00, 10, 01, 11\}\)</span>）（可以结合画图理解）。这样的话我们维护一个从高位到低位的二进制加法器就行了。</p>
-<p>代码如下：</p>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-#include &lt;complex&gt;
-#include &lt;cmath&gt;
-
-using namespace std;
-typedef complex&lt;double&gt; cplx;
-const double PI = 3.1415926535897932384626;
-
-void fft(int len, cplx *x, cplx *X, int dir = 1) &#123;
-    for (int i = 0, k = 0; i &lt; len; i++) &#123;
-        X[i] = x[k];
-        int y = len &gt;&gt; 1;
-        while (y &amp; k) k ^= y, y &gt;&gt;= 1; // 维护倒序加法器
-        k |= y; 
-    &#125;
-    for (int s = 2; s &lt;= len; s &lt;&lt;= 1) &#123;
-        cplx w_(cos(2 * PI / s), dir * sin(2 * PI / s));
-        for (int l = 0; l &lt; len; l += s) &#123;
-            int mid = l + (s &gt;&gt; 1);
-            cplx w = 1;
-            for (int i = 0; i &lt; s &gt;&gt; 1; i++) &#123; // 逐层向上合并（一次蝴蝶操作）
-                cplx t = w * X[mid + i];
-                X[mid + i] = X[l + i] - t;
-                X[l + i] = X[l + i] + t;
-                w *= w_; 
-            &#125;
-        &#125;
-    &#125;
 &#125;</code></pre>
 
       

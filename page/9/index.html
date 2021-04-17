@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">88</span>
+          <span class="site-state-item-count">89</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,121 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/08/30/%E7%BA%BF%E6%80%A7%E7%AD%9B%E5%8D%A1%E5%B8%B8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/08/30/%E7%BA%BF%E6%80%A7%E7%AD%9B%E5%8D%A1%E5%B8%B8/" class="post-title-link" itemprop="url">线性筛卡常技巧</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-08-30 13:04:41" itemprop="dateCreated datePublished" datetime="2018-08-30T13:04:41+08:00">2018-08-30</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2018-09-01 16:25:53" itemprop="dateModified" datetime="2018-09-01T16:25:53+08:00">2018-09-01</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <blockquote>
+<p>啊？卡常，没有啊？标程只是加了个小优化啊？</p>
+</blockquote>
+<p>于是某人的欧拉筛就在<span class="math inline">\(n = 10^8\)</span>的情况下被卡常死于非命。</p>
+<h1 id="素数的6k-pm-1判定方法">素数的<span class="math inline">\(6k \pm 1\)</span>判定方法</h1>
+<p>任何正整数<span class="math inline">\(n\)</span>都可以表示为<span class="math inline">\(6k + r\)</span>的形式，其中<span class="math inline">\(k,r\)</span>为自然数且<span class="math inline">\(r \in [0, 6)\)</span>，我们讨论每一种<span class="math inline">\(r\)</span>：</p>
+<ol type="1">
+<li><span class="math inline">\(r = 0\)</span>：显然有<span class="math inline">\(6 | n\)</span>，<span class="math inline">\(n\)</span>为合数。</li>
+<li><span class="math inline">\(r = 1\)</span>：<span class="math inline">\(n = 6k + 1\)</span>可能是素数。</li>
+<li><span class="math inline">\(r = 2\)</span>：<span class="math inline">\(6k + 2 = 2(3k + 1)\)</span>，在<span class="math inline">\(k \ge 1\)</span>时<span class="math inline">\(n\)</span>为合数。</li>
+<li><span class="math inline">\(r = 3\)</span>：<span class="math inline">\(6k + 3 = 3(2k + 1)\)</span>，在<span class="math inline">\(k \ge 1\)</span>时<span class="math inline">\(n\)</span>为合数。</li>
+<li><span class="math inline">\(r = 4\)</span>：<span class="math inline">\(6k + 4 = 2(3k + 2)\)</span>，<span class="math inline">\(n\)</span>为合数。</li>
+<li><span class="math inline">\(r = 5\)</span>：<span class="math inline">\(n = 6k + 5\)</span>可能是素数。</li>
+</ol>
+<p>从上述分类讨论可知：除了<span class="math inline">\(2, 3\)</span>以外，所有素数都可以表示为<span class="math inline">\(6k \pm 1\)</span>的形式，反之，如果<span class="math inline">\(n \bmod 6 \neq \pm 1\)</span>，我们就知道<span class="math inline">\(n\)</span><strong>一定不是素数</strong>。</p>
+<h1 id="常数优化">常数优化</h1>
+<p>在刚刚发现的<span class="math inline">\(6k\pm1\)</span>判定的指导下我们就可以对欧拉筛进行常数优化了：</p>
+<pre class="line-numbers"><code class="language-cpp">void sieve() &#123;
+    tot = 0;
+    for (int i = 1; i &lt;= n; i++) v[i] = false;
+    for (int i = 2; i &lt;= 5; i++) &#123;
+        if (!v[i]) prime[++tot] = i;
+        for (int j = 1; i * prime[j] &lt;= n; j++) &#123;
+            v[i * prime[j]] = true;
+            if (i % prime[j] == 0) break;
+        &#125;
+    &#125;
+    for (int k = 6; k &lt;= n; k += 6) &#123;
+        int i = k + 1;
+        if (!v[i]) prime[++tot] = i;
+        for (int j = 1; i * prime[j] &lt;= n; j++) &#123;
+            v[i * prime[j]] = true;
+            if (i % prime[j] == 0) break;
+        &#125;
+        i += 4;
+        if (!v[i]) prime[++tot] = i;
+        for (int j = 1; i * prime[j] &lt;= n; j++) &#123;
+            v[i * prime[j]] = true;
+            if (i % prime[j] == 0) break;
+        &#125;
+    &#125;
+&#125;</code></pre>
+<p>可以看到我们手动处理了<span class="math inline">\([2,5]\)</span>的素数，然后使用了<span class="math inline">\(6k \pm 1\)</span>的结论，直接六个六个筛，但是<strong>这么筛会在一定程度上漏筛很多<span class="math inline">\(2^n3^m\)</span>形式的合数，但因为这些形式的合数都是<span class="math inline">\(6\)</span>的倍数，在后面筛的循环中不受影响。</strong></p>
+<p><strong>这个优化仅限于我们求取<span class="math inline">\([1, n]\)</span>所有素数的情况，如果我们依赖于筛的其他副产物，如最小素因子，欧拉函数等，则该算法不正确。</strong></p>
+<p>实测中加了这个优化代码能快上2倍！</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 

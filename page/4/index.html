@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">88</span>
+          <span class="site-state-item-count">89</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,143 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/04/03/Gradle%E5%88%9D%E6%8E%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/04/03/Gradle%E5%88%9D%E6%8E%A2/" class="post-title-link" itemprop="url">Gradle初探</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-04-03 20:02:19 / 修改时间：22:26:34" itemprop="dateCreated datePublished" datetime="2020-04-03T20:02:19+08:00">2020-04-03</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>自己最近又在用JVM系的语言开新坑。这次终于说服自己从Jetbrains的温床里脱离出来改用了大家都在用的Gradle！感觉良好，在这里简单写一下大概咋用，给之后的自己留一个参考吧。</p>
+<p>为什么自己要用Gradle呢？</p>
+<ol type="1">
+<li>Gradle作为一个开源的构建系统不与任何IDE绑定（比如说IDEA），这相当于增加了代码的兼容性。</li>
+<li>Gradle里面可以直接从Maven Central上下库下来，省了我手动下库导入的过程，库更新了也好维护。这对我来说非常地有诱惑力。实测也非常舒服。</li>
+<li>Gradle从设计上来说非常灵活，Gradle默认的构建脚本是用Groovy写的（当然也可以用Kotlin但是这似乎不是主流的样子），而不是只有标记功能的XML，这使Gradle一下子非常强大。</li>
+<li>大家都在用的样子。</li>
+<li>IDEA对于Gradle的支持非常棒！（所以到头来自己还是没有逃脱JB的舒适圈……）</li>
+</ol>
+<p>虽然说Gradle的功能很强大我目前的用法还是最初级的。我目前用的Gradle代码大致如下：</p>
+<pre class="line-numbers"><code class="language-groovy">plugins &#123;
+    id &#39;java&#39;
+    id &#39;org.jetbrains.kotlin.jvm&#39; version &#39;1.3.61&#39;
+&#125;
+
+group &#39;chengyuan&#39;
+version &#39;1.0-SNAPSHOT&#39;
+
+sourceCompatibility = 1.8
+project.ext.lwjglVersion = &quot;3.2.3&quot;
+project.ext.lwjglNatives = &quot;natives-windows&quot;
+
+repositories &#123;
+    maven &#123; url &#39;http://maven.aliyun.com/nexus/content/groups/public/&#39; &#125;
+    maven &#123; url &quot;https://oss.sonatype.org/content/repositories/snapshots/&quot; &#125;
+    mavenCentral()
+&#125;
+
+dependencies &#123;
+    implementation platform(&quot;org.lwjgl:lwjgl-bom:$lwjglVersion&quot;)
+    
+    implementation &quot;org.lwjgl:lwjgl&quot;
+    implementation &quot;org.lwjgl:lwjgl-assimp&quot;
+    implementation &quot;org.lwjgl:lwjgl-bgfx&quot;
+    implementation &quot;org.lwjgl:lwjgl-glfw&quot;
+    implementation &quot;org.lwjgl:lwjgl-nanovg&quot;
+    implementation &quot;org.lwjgl:lwjgl-nuklear&quot;
+    implementation &quot;org.lwjgl:lwjgl-openal&quot;
+    implementation &quot;org.lwjgl:lwjgl-opengl&quot;
+    implementation &quot;org.lwjgl:lwjgl-par&quot;
+    implementation &quot;org.lwjgl:lwjgl-stb&quot;
+    implementation &quot;org.lwjgl:lwjgl-vulkan&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-assimp::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-bgfx::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-glfw::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-nanovg::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-nuklear::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-openal::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-opengl::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-par::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-stb::$lwjglNatives&quot;
+    
+    testCompile group: &quot;junit&quot;, name: &quot;junit&quot;, version: &quot;4.12&quot;
+&#125;
+
+compileKotlin &#123;
+    kotlinOptions.jvmTarget = &quot;1.8&quot;
+&#125;
+
+compileTestKotlin &#123;
+    kotlinOptions.jvmTarget = &quot;1.8&quot;
+&#125;</code></pre>
+<p>首先是<code>plugins</code>这段，这一段虽然重要但一般用不着特别操心，按照我的理解大概是语言支持的插件。</p>
+<p>接下来是版本、JVM版本之类的，看着也很明白。</p>
+<p>然后可以申明一些接下来会用到的常量。</p>
+<p><code>repository</code>告诉Gradle从哪里找库。常见的源有内置的函数，例如<code>mavenCentral()</code>，<code>jcenter()</code>。如果是其他的Maven源也可以指定URL。比如说我这里用了阿里云的Maven镜像，在国内速度就会快上很多。</p>
+<p>接下来是<code>dependencies</code>，这个是重头戏。</p>
+<p>最常见的是<code>implementation</code>，这个后面一般跟库的Maven id。如果想直接引用本地文件可以用<code>files(...)</code>，如果是一个平台一个版本的可以用<code>platform(...)</code>。基本上这就覆盖了99%的用途。</p>
+<p>此外还有<code>runtimeOnly</code>，这个和<code>implementation</code>的区别就是<code>runtimeOnly</code>的库是不参与编译的，只在运行期有效。这一般都是用JNI的一众native库和一些二级库。</p>
+<p>还有<code>testCompile</code>，用这个修饰的库是只在跑单元测试的时候依赖的，因此基本上都是一些测试有关的库。我人懒，平时懒得写单元测试，因此这个我基本上不用。</p>
+<p>这些就是我目前摸索出来的Gradle的基本用法，目前的感觉就是把IDEA里面的很多GUI的操作文字化，非常舒适，省了很多麻烦。更复杂的用法例如自定义build task等都可以在官网上找到（文档很丰富也是Gradle比较吸引人的点）。</p>
+<p>最后有一点点想吐槽，就是Groovy似乎单引号和双引号都可以表示字符串。双引号的字符串支持插值，这似乎是唯一的予以区别。IDE默认生成的是单引号，LWJGL的打包器生成的是双引号，似乎最通用的是双引号，自己到底是用双引号还是单引号呢？这种东西真的是万恶之源。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1886,220 +2023,6 @@ let sln = lusolve(A, b);</code></pre>
 <p>虽然加了注释但是代码只能用悲剧来形容了（悲）。</p>
 <p>全怪mathjs的API，我个人认为如果用Julia来写的的话一定没有那么多事情（确信）。</p>
 <p>最后的效果倒确实是极好的。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/12/24/Dewarp1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/12/24/Dewarp1/" class="post-title-link" itemprop="url">卷曲页面复原 1 ——平面重建</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-12-24 20:48:37" itemprop="dateCreated datePublished" datetime="2019-12-24T20:48:37+08:00">2019-12-24</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-12-26 20:51:30" itemprop="dateModified" datetime="2019-12-26T20:51:30+08:00">2019-12-26</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="问题">问题</h1>
-<p>自从Office Lens，扫描全能王等App问世以来，人们越来越习惯使用手机代替扫描仪的功能来拍摄文档，而这些App对于一般的<em>平面</em>文档也确实起到了很好的效果。但是对于比较厚重的书本，由于页面向书籍弯折，拍摄到的页面往往是弯曲的，不仅影响美观也影响阅读体验。这些App也均没有针对这一情形进行特殊的优化。</p>
-<p>例如：</p>
-<p><img src="/2019/12/24/Dewarp1/Original.jpg" class=""></p>
-<p>如何在算法层面解决这个问题呢？</p>
-<h1 id="先前研究">先前研究</h1>
-<p>这个问题的英文似乎是Page Dewarping。以这个为关键词Google了一番，确实有一些相关的研究，但是几乎都是通过判断字的走向以及表格中直线的走向判断来判断纸的弯曲方向的。</p>
-<p>除此以外，据我所知是有专门扫书的扫描仪的。原理是通过打一束激光，通过平直激光束在页面上的投影判断纸的弯曲方向。</p>
-<p>但是我的手机没有激光发射器。我也不想识别文字方向，因为这大概率在实现上是一项艰苦的体力劳动。</p>
-<p>能不能通过判断<strong>纸的边缘</strong>来计算纸的弯曲情况呢？</p>
-<p>事情要一步一步来。</p>
-<p>这一篇文章，我们就先探究如何<strong>从一副二维的图像重建纸面几个关键定点的三维坐标</strong>。</p>
-<h1 id="数学基础透视投影">数学基础：透视投影</h1>
-<p><strong>真的无论什么时候都是近大远小的吗？</strong></p>
-<p>众所周知，将三维空间当中的物体转变为二维空间中的像的过程被称作<strong>投影</strong>。</p>
-<p>拍照显然就是一个投影的过程，因此在开始解决问题之前，我们先要确定投影的方式。</p>
-<p>我们的眼睛，包括摄像头，获取到的画面之所以有着近大远小的特征，是因为无论是我们的眼睛，还是相机，采用的投影都是<strong>透视投影</strong>的缘故。透视投影的示意图如下：</p>
-<p><img src="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/24-21-45-11-Projection.png" alt="Projection.png" /></p>
-<p>如图所示，透视投影需要定义一个<strong>视点</strong>，即我们的眼睛或者相机感光元件所在的位置。然后所有远处物体反射到达视点的光线与一特定平面的交点，就是这一点所对应的投影点。</p>
-<p>透视投影虽然是最符合直觉，也是最自然的投影方式，但是这并不意味着这就是唯一的投影方式。另一个较为常见的投影被称作<strong>正交投影</strong>。可以想象为透视投影中视点在无限远处的情形。（在正交投影当中，远近等大。也正是因为这个原因，正交投影广泛地被CAD软件所采用）因此，在对问题下手之前确定投影的类型是十分重要的。</p>
-<p>OK，回到透视投影。之前的文字只给出了透视投影的定性叙述，这对于算法来说显然是不够的。透视投影可以在数学上可以如下定义：</p>
-<p>假设投影平面是平面<span class="math inline">\(z=0\)</span>，投影点是<span class="math inline">\((0,0,-d)\)</span>。</p>
-<p>那么，对于三维空间中的点<span class="math inline">\((x,y,z)\)</span>，透视投影将其唯一投影到二维平面中的<span class="math inline">\((x^{\ast},y^{\ast})\)</span>。其中</p>
-<p><span class="math display">\[
-\begin{aligned}
-    x^{\ast}&amp;=\frac{x}{1+z/d} \\
-    y^{\ast}&amp;=\frac{y}{1+z/d}    
-\end{aligned}
-\]</span></p>
-<p>在现实当中，投影平面的大小是有限的，如果投影平面的大小是<span class="math inline">\(w\times h\)</span>（且以<span class="math inline">\(z\)</span>轴为中心），那么<span class="math inline">\(\theta_w=2\arctan\frac{w}{2d}\)</span>被称作水平方向上的<strong>视场</strong>（FoV），垂直方向上的视场定义类似。对于一个相同的摄像头，其视场一般可以看做一个常数（不同的焦距可能会导致些许变化）。以像素为单位，我的手机画幅是<span class="math inline">\(3024\times 4032\)</span>，<span class="math inline">\(d\approx 3800\)</span>。那么水平视场大概就在<span class="math inline">\(45^{\circ}\)</span>左右。</p>
-<p>在清楚透视投影的定义之后，这一篇文章的任务就变成了：</p>
-<p><strong>寻找满足一定约束条件的若干顶点的三维坐标，使其作为书页的边缘，其透视投影点恰对应图片上的点。</strong></p>
-<h1 id="假设">假设</h1>
-<p>为了适当简化问题，在此做出以下的假设：</p>
-<ol type="1">
-<li><p>纸页竖直的两边<strong>等长</strong>。</p></li>
-<li><p>纸页竖直的两边<strong>平行</strong>。（<strong>注：</strong> 实际情况并不总是如此，但是让纸满足这个条件比把书压平总是容易得多了）</p></li>
-<li><p>用户已经人工以某种形式标记出了图上一些关键点的坐标。即暂时不考虑自动检测书页（这也是一个大坑）。</p></li>
-</ol>
-<h1 id="明确问题">明确问题</h1>
-<p>如下图所示：</p>
-<p><img src="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/26-18-45-20-Points1.png" /></p>
-<p>我们已经手动标记出页面四角<span class="math inline">\(A,B,C,D\)</span>的投影点<span class="math inline">\(A^{\ast}(x_1,y_1),B^{\ast}(x_2,y_2),C^{\ast}(x_3,y_3),D^{\ast}(x_4,y_4)\)</span>。在这篇文章当中我们的目标是反推出<span class="math inline">\(A,B,C,D\)</span>以及平面。</p>
-<p>假设<span class="math inline">\(O\)</span>是坐标原点，以后会一直用<span class="math inline">\(\vec{OP}\)</span>表示点<span class="math inline">\(P\)</span>的坐标向量。</p>
-<h1 id="解决问题">解决问题</h1>
-<h2 id="算法直觉乱搞流">算法直觉乱搞流</h2>
-<p>第一想法：啊？四个三维点？那就是12个参数咯？上启发式算法乱搞一波模拟退火遗传粒子群似乎就可以解决？<del>当场否决</del></p>
-<p>然后我们注意到<strong>投影点为定点的三维点的轨迹一定是一条过视点<span class="math inline">\(P\)</span>的直线。</strong> 所以其实只有4个参数——启发式算法成功可能性微存？</p>
-<p>启发式优化算法毕竟不靠谱，我们还是一步一步来，比如说我们假设已经确定了<span class="math inline">\(A\)</span>的<span class="math inline">\(z\)</span>坐标<span class="math inline">\(z_1\)</span>（显然<span class="math inline">\(A\)</span>的其他坐标也因此确定）。怎么确定我们暂且不管，反正最后大不了枚举。</p>
-<p>然后呢？似乎还是没有头绪？</p>
-<p>那我们继续假设已经确定了<span class="math inline">\(B\)</span>的<span class="math inline">\(z\)</span>坐标<span class="math inline">\(z_2\)</span>。怎么确定我们一样暂且不管。</p>
-<p>现在我们已经可以算出<span class="math inline">\(\vec{BA}\)</span>。显然<span class="math inline">\(\vec{CD}=\vec{BA}\)</span>，因此接下来只要我们知道<span class="math inline">\(C\)</span>的坐标，<span class="math inline">\(D\)</span>的坐标随之确定。我们可以通过计算<span class="math inline">\(D\)</span>投影点<span class="math inline">\({D^{\ast}}&#39;\)</span>和实际<span class="math inline">\(D^{\ast}\)</span>的距离，得到我们解的误差<span class="math inline">\(E\)</span>，即</p>
-<p><span class="math display">\[
-E={D^{\ast}}&#39;D^{\ast}
-\]</span></p>
-<p>那么怎么算出<span class="math inline">\(C\)</span>的坐标呢？</p>
-<p>这个时候直觉是一个好东西。我断定：<strong>误差<span class="math inline">\(E\)</span>关于<span class="math inline">\(C\)</span>的<span class="math inline">\(z\)</span>坐标<span class="math inline">\(z_3\)</span>单峰。</strong></p>
-<p>为什么？因为<span class="math inline">\(C\)</span>的轨迹不是过<span class="math inline">\(P\)</span>的直线吗，因此<span class="math inline">\(D\)</span>经过<span class="math inline">\(C\)</span>平移<span class="math inline">\(\vec{CD}=\vec{AB}\)</span>的轨迹也是一条直线。<strong>直线的投影还是直线。</strong> 因此，当<span class="math inline">\(z_3\)</span>增加，<span class="math inline">\(C\)</span>在直线上向后移动，<span class="math inline">\(D\)</span>也在直线上向后移动，其投影点<span class="math inline">\({D^{\ast}}&#39;\)</span>也在投影平面的直线上也一定沿某一特定方向移动。而二维平面内以个沿直线固定方向移动的点和直线外一定点<span class="math inline">\(D^{\ast}\)</span>的距离显然是单峰的。证毕。</p>
-<p>既然是单峰的，那么<span class="math inline">\(C\)</span>的坐标就可以直接三分查找了呢，不用枚举nice。</p>
-<p>那么<span class="math inline">\(B\)</span>的坐标呢？</p>
-<p>直觉还是一个好东西。我再次断定：<strong>在<span class="math inline">\(C\)</span>最优的情况下，误差<span class="math inline">\(E\)</span>关于<span class="math inline">\(B\)</span>的<span class="math inline">\(z\)</span>坐标<span class="math inline">\(z_2\)</span>单峰。</strong></p>
-<p>为什么？之前不是得到<span class="math inline">\(D\)</span>的轨迹也是直线吗？当<span class="math inline">\(B\)</span>前后移动时，<span class="math inline">\(\vec{BA}\)</span>也在变化。随着<span class="math inline">\(\vec{BA}\)</span>的变化，经过<span class="math inline">\(C\)</span>平移<span class="math inline">\(\vec{BA}\)</span>得到的<span class="math inline">\(D\)</span>的轨迹直线也在沿着某一方向平移（这个方向就是直线<span class="math inline">\(BP\)</span>的方向）。那么<span class="math inline">\({D^{\ast}}&#39;\)</span>在投影平面上的轨迹直线也在沿着某一方向平移。而二维平面内沿着一个特定方向移动的直线到一定点的<span class="math inline">\(D^{\ast}\)</span>的距离显然是单峰的。证毕。</p>
-<p>哦豁，那么<span class="math inline">\(B\)</span>的坐标也好三分了咯，又一次避免了枚举，nice。</p>
-<p>为了三分的快一点，可以把三分的定比分点设成<span class="math inline">\(\frac{3-\sqrt 5}{2}\)</span>，这样可以减少一半的计算次数（当然这就属于比较细节的优化了）。</p>
-<p>接下来只剩下<span class="math inline">\(A\)</span>了，<span class="math inline">\(A\)</span>需要枚举吗？</p>
-<p>需要，也不需要。</p>
-<p>直觉上来说<span class="math inline">\(A,B,C,D\)</span>的坐标应当存在某种线性的关系，如下所示：</p>
-<p><img src="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/24-21-45-38-Linear.png" alt="Linear.png" /></p>
-<p>即无论<span class="math inline">\(z_1\)</span>是多少，平面<span class="math inline">\(ABCD\)</span>的总是不会发生变化的，因此我们只要随便选取一个<span class="math inline">\(A\)</span>的坐标，通过二重三分把<span class="math inline">\(B,C,D\)</span>算出来就行了。</p>
-<p>看着不错，计算量也不高。但是……似乎依赖直觉的地方还是太多了。</p>
-<p>之前论证单调性的过程的insight似乎暗示这问题的解析解应该不难？于是……</p>
-<h2 id="数学">数学</h2>
-<p>设</p>
-<p><span class="math display">\[
-\vec{OA}=\begin{pmatrix}
-\lambda_1x_1\\
-\lambda_1y_1\\
-(\lambda_1-1)d
-\end{pmatrix},
-\vec{OB}=\begin{pmatrix}
-\lambda_2x_2\\
-\lambda_2y_2\\
-(\lambda_2-1)d
-\end{pmatrix},
-\vec{OC}=\begin{pmatrix}
-\lambda_3x_3\\
-\lambda_3y_3\\
-(\lambda_3-1)d
-\end{pmatrix}
-\]</span></p>
-<p>则有：</p>
-<p><span class="math display">\[
-\vec{BA}=\begin{pmatrix}
-\lambda_1x_1-\lambda_2x_2\\
-\lambda_1y_1-\lambda_2y_2\\
-(\lambda_1-\lambda_2)d
-\end{pmatrix}\Rightarrow\vec{OD}=\vec{OC}+\vec{BA}=\begin{pmatrix}
-\lambda_3x_3-\lambda_2x_2+\lambda_1x_1\\
-\lambda_3y_3-\lambda_2y_2+\lambda_1y_1\\
-(\lambda_3-\lambda_2+\lambda_1-1)d
-\end{pmatrix}
-\]</span></p>
-<p>那么其二维投影：</p>
-<p><span class="math display">\[
-\vec{OD^*}=\begin{pmatrix}
-\frac{\lambda_3x_3-\lambda_2x_2+\lambda_1x_1}{\lambda_3-\lambda_2+\lambda_1}\\
-\frac{\lambda_3y_3-\lambda_2y_2+\lambda_1y_1}{\lambda_3-\lambda_2+\lambda_1}
-\end{pmatrix}=\begin{pmatrix}
-x_4\\
-y_4
-\end{pmatrix}
-\]</span></p>
-<p>然后，就可以列方程：</p>
-<p><span class="math display">\[
-\begin{cases}
-\lambda_3x_3-\lambda_2x_2+\lambda_1x_1=(\lambda_3-\lambda_2+\lambda_1)x_4\\
-\lambda_3y_3-\lambda_2y_2+\lambda_1y_1=(\lambda_3-\lambda_2+\lambda_1)y_4
-\end{cases}
-\]</span></p>
-<p>整理一下：</p>
-<p><span class="math display">\[
-\begin{cases}
-(x_2-x_4)\lambda_2-(x_3-x_4)\lambda_3=(x_1-x_4)\lambda_1\\
-(y_2-y_4)\lambda_2-(y_3-y_4)\lambda_3=(y_1-y_4)\lambda_1
-\end{cases}
-\]</span></p>
-<p>也就是：</p>
-<p><span class="math display">\[
-\begin{pmatrix}
-\vec{OB}-\vec{OD} &amp;\vec{OD}-\vec{OC}
-\end{pmatrix}
-\begin{pmatrix}
-\lambda_2\\
-\lambda_3
-\end{pmatrix}=
-(\vec{OA}-\vec{OD})\lambda_1
-\]</span></p>
-<p>最后只要解一下这个二元线性方程就可以了。</p>
-<p>看来这个问题其实没有我想象的那样复杂啊。一开始直觉告诉我这东西解析解算起来很麻烦甚至不存在解析解，所以先从算法角度分析了一波。第二天开始想几个直觉结论的证明的时候才意识到似乎解析解不难算，后来发现正是如此。</p>
-<h1 id="结果">结果</h1>
-<p>最后的结果如下所示，加了法向量组成长方体证明确实这个建模没有问题。</p>
-<p><img src="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/26-20-20-02-Marked.jpg" alt="Marked.jpg" /></p>
-<p>下一篇文章大概会写如何基于这些信息计算纸面弯曲的参数方程吧……</p>
-<p>但是手动标点这种东西四个点一个一个画图上查然后输入还可以忍受，标定横向边缘好几个点实在是懒啊……或许会先写一个标点的工具吧……</p>
 
       
     </div>
