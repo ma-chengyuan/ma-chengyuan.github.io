@@ -266,7 +266,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-19 11:03:50" itemprop="dateModified" datetime="2021-04-19T11:03:50+08:00">2021-04-19</time>
+        <time title="修改时间：2021-04-19 11:10:46" itemprop="dateModified" datetime="2021-04-19T11:10:46+08:00">2021-04-19</time>
       </span>
 
   
@@ -360,9 +360,9 @@ A^{\mathrm T} A\vec x = \vec 0 \Rightarrow \vec x^{\mathrm T} A^{\mathrm T} A\ve
     y_n 
 \end{bmatrix}
 \]</span> 那么我们发现线性拟合的本质其实就是解一个形如<span class="math inline">\(A\vec x = \vec b\)</span>的方程组（这里的<span class="math inline">\(\vec x\)</span>表示模型中各项的系数，和上面表示自变量的<span class="math inline">\(\vec x\)</span>没有关系），这个我们老熟悉了。</p>
-<p>但是事情不大妙的就是<span class="math inline">\(A\)</span>又高又瘦，方程组比未知数多，所以几乎肯定不存在准确解。</p>
+<p>但是事情不太妙的就是<span class="math inline">\(A\)</span>又高又瘦，方程组比未知数多，所以几乎肯定不存在准确解。</p>
 <p>什么时候存在准确解？<span class="math inline">\(\vec b\)</span>要在<span class="math inline">\(A\)</span>的列空间<span class="math inline">\(C(A)\)</span>里。</p>
-<p>所以如果只能求近似解，我们可以考虑把给定的<span class="math inline">\(\vec b\)</span>“近似到”<span class="math inline">\(C(A)\)</span>中的一个最近的向量，然后就能求解了。</p>
+<p>所以如果只能求近似解，我们可以考虑把<span class="math inline">\(\vec b\)</span>“近似到”<span class="math inline">\(C(A)\)</span>中的一个最近的向量，然后就能求解了。</p>
 <p>这个“近似”的过程其实就是投影。在<span class="math inline">\(C(A)\)</span>中<span class="math inline">\(\vec b\)</span>的投影肯定最接近<span class="math inline">\(\vec b\)</span>，因为只有二者的差是和<span class="math inline">\(C(A)\)</span>垂直的，这很符合我们的代数直觉。</p>
 <p>所以联系之前的投影的推导，假设这个投影向量是<span class="math inline">\(A\vec{\hat{x}}\)</span>，我们直接写出方程和解： <span class="math display">\[
 A^{\mathrm T} \left(\vec b  - A\vec{\hat{x}} \right) = \vec 0 \Rightarrow \vec{\hat{x}} = \left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\vec b
