@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">89</span>
+          <span class="site-state-item-count">90</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,272 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/04/17/IceBoat/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/04/17/IceBoat/" class="post-title-link" itemprop="url">从技术角度看Minecraft的高级冰船技术</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-04-17 09:09:53 / 修改时间：22:43:43" itemprop="dateCreated datePublished" datetime="2020-04-17T09:09:53+08:00">2020-04-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="背景">背景</h1>
+<p>最近比较无聊，偶尔会和同学们一起在Minecraft的私服上玩一会，现在地狱交通已经初见雏形了，nether hub已经搭好了，然而地狱交通网络应该基于哪一种运输方式还没有确定。常见的快速运输方式有两种：piston bolt和冰船。</p>
+<p>很显然按照每天半个小时的游戏时间是不可能有精力做双向的piston bolt的，况且论最高速度冰船比piston bolt还是快上许多的，因此几乎毫无疑议地大家都选择了冰船。</p>
+<p>这篇文章是在代码角度对于高级冰船技术的分析。</p>
+<p>全文的代码均为使用官方mapping以及CFR编译器进行反编译所得（但愿这并不违反EULA）。</p>
+<h1 id="带方向校准的高端冰船">带方向校准的高端冰船</h1>
+<p>冰船系统一直为人所诟病，也是其不如piston bolt的一点是：它在运动中是需要玩家控制的。不仅要一直按着W，还要使用AD确保船头一直向前。这在直道冰船上还好，但在斜线冰船道上就非常非常麻烦。</p>
+<p>幸好，Rays Works在几个月前分享了<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=hiQTnwqrfEU">解决方案</a>。其方案的思想是：</p>
+<p>如果一开始船就放正，那么就只需要W而不需要左右调整了！</p>
+<p>那怎么把船放正呢？</p>
+<p>观察一下代码（<code>net/minecraft/world/item/BoatItem</code>）：</p>
+<pre class="line-numbers"><code class="language-java">@Override
+public InteractionResultHolder&lt;ItemStack&gt;use(Level level, Player player, InteractionHand interactionHand) &#123;
+    Object object;
+    ItemStack itemStack = player.getItemInHand(interactionHand);
+    HitResult hitResult = BoatItem.getPlayerPOVHitResult(level, player, ClipContext.Fluid.ANY);
+    ...
+    if (hitResult.getType() == HitResult.Type.BLOCK) &#123;
+        object = new Boat(level, hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z);
+        ((Boat) object).setType(this.type);
+        ((Boat) object).yRot = player.yRot; // !
+        ...
+        return InteractionResultHolder.success(itemStack);
+    &#125;
+    return InteractionResultHolder.pass(itemStack);
+&#125;</code></pre>
+<p><code>yRot</code>自然是Y-axis Rotation的意思，也就是说放下船的方向直接等于当时玩家的视角方向。</p>
+<p>因此如果一开始视角方向， 那么问题就解决了！</p>
+<p>如何确保每一次放船的时候视角方向都是一个固定值呢？</p>
+<p>Rays Works的解决方案是：用另外一艘船！</p>
+<p>在<code>net/minecraft/client/player/LocalPlayer</code>当中：</p>
+<pre class="line-numbers"><code class="language-java">@Override
+public boolean startRiding(Entity entity, boolean bl) &#123;
+    if (!super.startRiding(entity, bl)) &#123;
+        return false;
+    &#125;
+    ...
+    if (entity instanceof Boat) &#123; // !!!
+        this.yRotO = entity.yRot;
+        this.yRot = entity.yRot;
+        this.setYHeadRot(entity.yRot);
+    &#125;
+    return true;
+&#125;</code></pre>
+<p>可以看到，当玩家乘上船的一瞬间，玩家的视角方向会强制调整到船的方向。</p>
+<p>因此我们只需要准备一艘校准船，确保这艘船的角度正确，之后要使用的时候直接先做上这艘船再立刻放船再坐上新放的船就可以了（简单来说就是三连右键）。</p>
+<p>这就是Rays Works视频的主旨，我这里只是找到了对应的源代码而已。</p>
+<h1 id="放置角度与minecraft的角度系统">放置角度与Minecraft的角度系统</h1>
+<p>Rays Works在视频当中宣称通过它的方法可以把冰道修到任何角度与朝向。</p>
+<p>似乎没有什么不对？只要把校准船放到任意角度就行了。</p>
+<p>然而在Ray的视频当中可以看到，有的时候明明船放下去是45°，不一会就转到了46.4°，Ray坦言这是这套冰船系统唯一比较麻烦的地方。Ray提出的解决方案是：</p>
+<blockquote>
+<p>If that happens, just remove this boat and place in a new one. ……and do it a couple times it actually fixes itself.</p>
+</blockquote>
+<p>并认为这是一个随机行为，具有一定意义上的周期性，等一会就好了。</p>
+<p>事实并非如此。有一些角度是无论如何都放不到的，刚放下去一会就会微微一转，然后角度就变了。属实糟心，我在自己服务器里面放了20次都没有放成功。那个时候我终于意识到Ray的claim可能是在扯淡，于是去看了下代码。</p>
+<p>代码里面似乎没有任何一处体现了“微微一转”这种行为。最上面<code>BoatItem</code>的代码就是直接把<code>yRot</code>设成了玩家的<code>yRot</code>。我用全文搜索对于<code>yRot</code>产生修改的片段，没有一处是这样的。<code>yRot</code>是用<code>float</code>存储的，应该不会产生舍入误差这种事情。</p>
+<p>整个事情让我对于Minecraft的屎山代码不由生出一份敬畏，我开始觉得这是玄学问题，直到看见<code>net/minecraft/network/protocol/game/ClientboundAddEntityPacket</code>的构造函数……</p>
+<pre class="line-numbers"><code class="language-java">public class ClientboundAddEntityPacket implements Packet&lt;ClientGamePacketListener&gt; &#123;
+    ...
+    private int xRot;
+    private int yRot;
+
+    public ClientboundAddEntityPacket(int n, UUID uUID, double d, double d2, double d3, float f, float f2, EntityType&lt;?&gt; entityType, int n2, Vec3 vec3) &#123;
+        ...
+        this.xRot = Mth.floor(f * 256.0f / 360.0f);
+        this.yRot = Mth.floor(f2 * 256.0f / 360.0f);
+        ...
+    &#125;
+&#125;</code></pre>
+<p>以及<code>net/minecraft/client/multiplayer/PacketListener</code>如何处理这个packet的:</p>
+<pre class="line-numbers"><code class="language-java"> @Override
+ public void handleAddEntity(ClientboundAddEntityPacket clientboundAddEntityPacket) &#123;
+     Entity entity;
+     ...
+     if (entity != null) &#123;
+         entity.xRot = (float)(clientboundAddEntityPacket.getxRot() * 360) / 256.0 f;
+         entity.yRot = (float)(clientboundAddEntityPacket.getyRot() * 360) / 256.0 f;
+         ...
+     &#125;
+ &#125;</code></pre>
+<p>哦……原来还真有舍入误差这回事……Mojang大概想省空间，虽然rotation在客户端和服务端内部都是<code>float</code>存储的，但是在网络传输的时候硬是塞到了<code>byte</code>里面。于是在这一层转换的帮助下，Minecraft理论上就只有256种可能的角度了。</p>
+<p>我猜测的整个放船的流程大致如下：</p>
+<ol type="1">
+<li>客户端玩家手持船右键</li>
+<li>客户端发出一个<code>ServerboundUseItemPacket</code></li>
+<li>服务端接收到<code>ServerboundUseItemPacket</code>，然后执行<code>BoatItem</code>有关的代码</li>
+<li>服务端新增船的实体，想客户端发送<code>ClientboundAddEntityPacket</code>，这个时候角度被舍入了</li>
+<li>客户端收到<code>ClientboundAddEntityPacket</code>，将本地的船同步为舍入的角度，在10gt的插值作用下体现为“微微一转”</li>
+<li>玩家坐上去，这个时候一系列网络同步把服务端的船的角度也舍入了</li>
+</ol>
+<pre class="line-numbers mermaid"><code class="language-none">sequenceDiagram
+    participant Client
+    participant Server
+    Note left of Client: Player right clicks
+    Client-&gt;&gt;Server: ServerboundUseItemPacket
+    Note right of Server: Execute code in &lt;br/&gt; BoatItem.use
+    Server-&gt;&gt;Client: ClientboundAddEntityPacket</code></pre>
+<p>因此，微微一转的问题其实根本就不是Ray说的随机事件，而是在网络传输当中舍入误差加上客户端线性插值带来的现象。看似的随机只是因为F3的精度不够，44.99和45.01都显示为45.0，虽然从代码当中我们可以清晰地看到两个数的舍入结果是不一样的。</p>
+<p>这么做的好处是对于90°，45°等特殊角这一层舍入可以保证绝对的精确，避免了放成45.01°然后在船上开1000格偏离航道的惨剧。缺点是很多角度就不能精确达到了。两个相邻的可达角度差1.40625°，大概勉强可以接受。</p>
+<p>话又说回来了，<code>ServerboundMovePlayerPacket</code>这种同步玩家信息倒是还是用<code>float</code>作为载体的。所以玩家的角度还是很精确的？难道是因为玩家相对于实体少很多所以有更多流量可以挥霍？</p>
+<p>我再次对于Minecraft的代码肃然起敬。</p>
+<h1 id="辅助高级冰船的scarpet脚本">辅助高级冰船的Scarpet脚本</h1>
+<p>在知道这些之后我们就可以有针对性地设计冰道了，因为人比较懒所以我写了一个scarpet的脚本：</p>
+<pre class="line-numbers"><code class="language-none">__command() -&gt; null;
+
+_ice_mark(x, y, z) -&gt; create_marker(&#39;ICE&#39;, l(x + 0.5, y + 0.5, z + 0.5));
+
+_mark_x(y, x1, z1, x2, z2, w) -&gt; (
+    if(x1 &gt; x2, l(x1, x2, z1, z2) = l(x2, x1, z2, z1));
+    k = (z2 - z1) / (x2 - x1);
+    for(range(x1, x2 + 1),
+        x = _; z = round((x - x1) * k + z1);
+        for(range(-w + 1, w), _ice_mark(x, y, z + _))
+    )
+);
+
+_mark_z(y, x1, z1, x2, z2, w) -&gt; (
+    if(z1 &gt; z2, l(x1, x2, z1, z2) = l(x2, x1, z2, z1));
+    k = (x2 - x1) / (z2 - z1);
+    for(range(z1, z2 + 1),
+        z = _; x = round((z - z1) * k + x1);
+        for(range(-w + 1, w), _ice_mark(x + _, y, z))
+    )
+);
+
+mark(y, x1, z1, x2, z2, w) -&gt; (
+    dx = abs(x1 - x2); dz = abs(z1 - z2);
+    if(dx == 0 || dx &lt; dz, _mark_z(y, x1, z1, x2, z2, w),
+        _mark_x(y, x1, z1, x2, z2, w))
+);
+
+clear() -&gt; remove_all_markers();
+
+_wrap_deg(x) -&gt; (
+    tmp = x % 360.0;
+    if(tmp &lt; -180, tmp + 360, tmp &gt; 180, tmp - 360, tmp)
+);
+
+_wrap_internal(x) -&gt; (
+    tmp = x % 360.0;
+    if (tmp &lt; 0, tmp + 360, tmp)
+);
+
+_angle(x1, z1, x2, z2) -&gt; -atan2(x2 - x1, z2 - z1);
+
+_floor_angle(x) -&gt; _wrap_deg(floor(x * 256 / 360.0) * 360 / 256);
+
+angle(x1, z1, x2, z2) -&gt; (
+    theta = _angle(x1, z1, x2, z2);
+    print(str(&#39;exact yaw: %f&#39;, theta));
+    lb = floor_angle(_wrap_internal(theta));
+    ub = floor_angle(_wrap_internal(theta + 360.0 / 256));
+    print(str(&#39;floored yaw (lb): %f&#39;, lb));
+    print(str(&#39;floored yaw (ub): %f&#39;, ub));
+    ret = if(abs(lb - theta) &lt; abs(ub - theta), lb, ub);
+    print(str(&#39;suggested yaw: %f&#39;, ret));
+);
+
+_best_angle(x1, z1, x2, z2) -&gt; (
+    theta = _angle(x1, z1, x2, z2);
+    lb = floor_angle(_wrap_internal(theta));
+    ub = floor_angle(_wrap_internal(theta + 360.0 / 256));
+    if(abs(lb - theta) &lt; abs(ub - theta), lb, ub)
+);
+
+adjust(x1, z1, x2, z2, dir) -&gt; (
+    x = _best_angle(x1, z1, x2, z2);
+    ov = 360; opt = 0;
+    print(str(&#39;yaw: %f&#39;, x));
+    if(
+        dir == &#39;x&#39;,
+        for(range(x2 - 1000, x2 + 1000), 
+            tmp = abs(_angle(x1, z1, _, z2) - x);
+            if (tmp &lt; ov, ov = tmp; opt = _)
+        );
+        print(str(&#39;%f %f %f %f&#39;, x1, z1, opt, z2)),
+        dir == &#39;z&#39;,
+        for(range(z2 - 1000, z2 + 1000), 
+            tmp = abs(_angle(x1, z1, x2, _) - x);
+            if (tmp &lt; ov, ov = tmp; opt = _)
+        );
+        print(str(&#39;%f %f %f %f&#39;, x1, z1, x2, opt)),
+        print(&#39;direction must either be x or z&#39;)
+    )
+)</code></pre>
+<p>用法如下：</p>
+<ol type="1">
+<li><p><code>/iceboat y x1 z1 x2 z2 w</code>标记一条从<span class="math inline">\((x_1,y,z_1)\)</span>到<span class="math inline">\((x_2,y,z_2)\)</span>的，宽度为<span class="math inline">\(2w-1\)</span>的冰道。</p></li>
+<li><p><code>/iceboat clear</code>清除标记。</p></li>
+<li><p><code>/iceboat angle x1 z1 x2 z2</code>计算站在<span class="math inline">\((x_1,z_1)\)</span>望向<span class="math inline">\((x_2,z_2)\)</span>的视角方向，最近的两个可达角度，以及推荐的可达角度。</p></li>
+<li><p><code>/iceboat adjust x1 z1 x2 z2 x/z</code>固定<span class="math inline">\((x_1,z_1)\)</span>，沿<span class="math inline">\(x/z\)</span>轴在<span class="math inline">\((x_2,z_2)\)</span>附近寻找最贴近可达角度的方块坐标。考虑到在几千格之后哪怕0.7°的角度差都会有导致最终百格的偏差，这个命令非常重要。在算法实现角度，用三分写是最快的，但是考虑到从-180°到180°有一个不连续间断点，导致写三分会涉及到一些繁琐的细节。我比较懒，所以就用了比较慢的写法（这个写法其实也有明显bug，但是我不准备修）。</p></li>
+</ol>
+<p>常见的使用流程：</p>
+<ol type="1">
+<li>确定冰道的两点。</li>
+<li>固定一点（通常是nether hub或者已经固定留好空间的端点），使用<code>/iceboat adjust</code>微调另一端点的位置。同时计算得出角度。</li>
+<li>使用<code>/iceboat mark</code>标记放冰的位置。</li>
+<li>放冰。</li>
+<li>使用<code>/iceboat clear</code>清除标记。</li>
+</ol>
+<p>目前比较不人性化的一点是carpet的<code>create_marker</code>用的是隐形盔甲架实现的，hitbox的制约导致有的时候放不了方块，用area effect cloud可能可以解决这个问题。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1867,162 +2133,6 @@ x_{n+1} &amp;= \frac{x_n^8+28 k x_n^6+70 k^2 x_n^4+28 k^3 x_n^2+k^4}{8 x_n
 <p>每迭代一次正确位数翻八倍！</p>
 <p><del>啊！我刚刚注意到最后的八次方收敛算法就是把三步牛顿迭代缩成一步化简了而已，自己实在被自己蠢到了</del></p>
 <p><del>但是不管怎么样三次方，五次方的收敛算法还是比较non-trivial的？</del></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/12/28/Dewarp2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/12/28/Dewarp2/" class="post-title-link" itemprop="url">卷曲页面复原 2 ——曲线拟合</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-12-28 21:06:33" itemprop="dateCreated datePublished" datetime="2019-12-28T21:06:33+08:00">2019-12-28</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-01-09 11:10:00" itemprop="dateModified" datetime="2020-01-09T11:10:00+08:00">2020-01-09</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>在前几天用扫描全能王的时候发现它似乎有自动拍书功能的（悲），似乎还可以自动识别，连标定都不要了。官方看到这个小博客的可能性微存？</p>
-<p>但是那个是付费的会员功能！而且不管怎么样自己写一遍总归是有收获的。</p>
-<h1 id="进展">进展！</h1>
-<p>过去的一周一直在和各种工程问题作斗争。目前的进展如下：</p>
-<p><img src="https://raw.githubusercontent.com/alan20210202/images/master/2020/01/01-12-00-22-Snipaste_2020-01-01_12-00-03.jpg" alt="Snipaste_2020-01-01_12-00-03.jpg" /></p>
-<p>让这些探究只停留在Jupyter Notebook上我觉得太可惜了，加上我觉得自己经常会用，所以我准备撸一个App传到博客上去。</p>
-<p>然后某人悲催地发现自己Web开发的技艺约等于0。</p>
-<p>花了一个小时速成Vue和Vuetify，花了一个小时复习了一遍Node和JS，花了一个小时重装了Webstorm，Vue CLI开一个SPA直接开搞。</p>
-<p>在Stack Overflow和Google和MDN里面转悠了五天之后自己终于写出了还算像样的雏形。现在标定功能已经写完了！</p>
-<p>上图当中的黄框表示页面平面，绿框悬浮在黄框上面营造出一种透视立体的感觉（其实是调试完不想删掉了），上下两条蓝色的曲线表示书页的弯曲曲线。所有红色的点都是可以拖动的，拖动时还会在边角显示两倍放大后的特写便于精准定位，就像这样</p>
-<p><img src="https://raw.githubusercontent.com/alan20210202/images/master/2020/01/01-12-13-24-2020-01-01-12-12-46-image.png" alt="2020-01-01-12-12-46-image.png" /></p>
-<p>功能上其实比上一篇文章没有多出多少（虽然在工程方面取得了巨大的突破）除了——曲线，这一条曲线其实没有那么简单。</p>
-<h1 id="反向投影">反向投影</h1>
-<p>从上图可以看到，图中的曲线形状是由中间五个节点决定的，但是基于的是节点的三维坐标而不是所看到的二维坐标。这当中就牵涉到一个反向投影的问题——知道一个点在二维平面上投影点的坐标，如何在一定的约束条件下求取其三维坐标呢？</p>
-<p><img src="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/26-18-45-20-Points1.png" /></p>
-<p>这个时候前一篇文章所做的页面平面重建的结果就变得重要了起来。这五个关键点都在书页的下边缘上，在数学上，五个小红点都在<em>平面<span class="math inline">\(ABCD\)</span>底边<span class="math inline">\(AD\)</span>所在的，且垂直于平面<span class="math inline">\(ABCD\)</span>的平面</em>上。首先我们要确定这个平面，不妨称之为平面<span class="math inline">\(P\)</span>。</p>
-<p>平面的方程式<span class="math inline">\(Ax+By+Cz=D\)</span>，<span class="math inline">\((A,B,C)\)</span>就是这个平面的法向量，我们已经知道了两个<span class="math inline">\(P\)</span>上的点（点<span class="math inline">\(A\)</span>和点<span class="math inline">\(D\)</span>），如果我们知道了平面的法向量，那么把<span class="math inline">\(A\)</span>点代入，方程当中的<span class="math inline">\(D\)</span>就出来了，平面就确定了。</p>
-<p>在理想情况下，法向量就是<span class="math inline">\(\vec{AB}\)</span>，因为理想情况下<span class="math inline">\(\vec{AD}\perp\vec{AB}\)</span>。</p>
-<p>但是现实比较残酷，由于计算的一点点小误差，算出来的<span class="math inline">\(\vec{AD}\)</span>并不总是垂直于<span class="math inline">\(\vec{AD}\)</span>，比如说夹角是<span class="math inline">\(89.94^{\circ}\)</span>。这个<span class="math inline">\(\vec{AB}\)</span>就不是法向量了，这是很坑的。我一开始偷懒把<span class="math inline">\(\vec{AB}\)</span>当法向量写到程序里面去，结果调试的时候一直有小误差，心态都快崩了。</p>
-<p>然后我才意识到果然不能偷懒，正确的法向量就是<span class="math inline">\(\vec{AD}\times(\vec{AD}\times\vec{AB})\)</span>。</p>
-<p>然后对于在平面<span class="math inline">\(P\)</span>上的任意一个点<span class="math inline">\(Q(x, y,z)\)</span>，已知其投影是<span class="math inline">\(Q^{\ast}(x^{\ast},y^{\ast})\)</span>。根据方程</p>
-<p><span class="math display">\[
-\begin{cases}
-    Ax+By+Cz=D\\
-    x=x^{\ast}(1+z/d)\\
-    y=y^{\ast}(1+z/d)
-\end{cases}
-\]</span></p>
-<p>就能把这个点的坐标算出来了。</p>
-<p>之后还需要再做一步，把<span class="math inline">\(\vec{AQ}\)</span>分解：</p>
-<p><span class="math display">\[
-\vec{AQ}=a\vec{AD}+b\frac{\vec{AD}\times\vec{AB}}{\left|\vec{AD}\times\vec{AB}\right|}\quad a\in[0,1] 
-\]</span></p>
-<p>之后得到的<span class="math inline">\((a,b)\)</span>才是一个相对归一化了的坐标。使用这个坐标进行插值的话，<span class="math inline">\(A,B,C,D\)</span>四个点小范围内的运动都不会改变曲线的形状，这相当于增加了我们算法的鲁棒性。</p>
-<h1 id="插值">插值</h1>
-<p>使用什么曲线插值比较好呢？</p>
-<p>如果在计算机的背景下最先想到的肯定是贝塞尔曲线，但是贝塞尔曲线不经过它控制点，这似乎在界面上就不是那么直观。</p>
-<p>如果采用高阶多项式的插值呢？那么Runge现象又会非常严重，可以预见效果会很差。</p>
-<p>于是乎我采用的是三次样条插值。对于三次样条插值：</p>
-<ol type="1">
-<li><p>假设有<span class="math inline">\(n\)</span>个节点，那么就有<span class="math inline">\(n-1\)</span>个区间，对应<span class="math inline">\(n-1\)</span>条曲线，<span class="math inline">\(4(n-1)\)</span>个参数。</p></li>
-<li><p>对于一条三次曲线，其两个端点的值是确定的，那么就有<span class="math inline">\(2(n-1)\)</span>个约束条件。</p></li>
-<li><p>中间的<span class="math inline">\(n-2\)</span>个节点上相邻的三次曲线必须一阶导连续且二阶导连续，那么就是<span class="math inline">\(2(n-2)\)</span>个约束条件。</p></li>
-<li><p>为了能够在大多数情况下求出所有参数的准确值，还需要<span class="math inline">\(2\)</span>个约束条件。</p></li>
-</ol>
-<p>似乎最常见的边界条件被称为<strong>自然边界条件</strong>。也就是样条曲线两端的二阶导为<span class="math inline">\(0\)</span>。<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Spline_%28mathematics%29#Algorithm_for_computing_natural_cubic_splines">Wiki</a>上介绍的算法也是针对这种边界条件设计的，但是在我们这个情境下自然边界似乎不适用，因为书页的一侧总是向下凹向书脊，书脊起了固定作用。我一开始照抄Wiki上的算法结果曲线对不上翻车了。</p>
-<p>这个情景应该用的似乎是<strong>夹持边界条件</strong>。也就是人为地给出曲线两端的一阶导。也就是我的界面右侧出现"Left Slope"和"Right Slope"两个slider的原因。这个边界条件试下来似乎和实际吻合得还是相当不错的。问题主要出现在算法这里，我虽然从矩阵的形式推断一定存在像Wiki上处理自然边界条件一样显式线性的算法，但是自己还是懒得去推了直接用mathjs的<code>lusolve</code>函数（Well 我相信mathjs这种大库的消元一定有优化……），速度还是非常令人满意的，但是代码可读性就是一个比较大的问题了：</p>
-<pre class="line-numbers"><code class="language-javascript">let n = nodes.length - 1; // nodes.length knots, so nodes.length - 1 ranges and piecewise curves
-
-let A = zeros(4 * n, 4 * n); // 4 parameters for each curve
-let b = zeros(4 * n);
-for (let i = 0; i &lt; n; i++) &#123;
-    // Equation 4i and 4i + 1 ensures continuity of the spline
-    b.set([4 * i], nodes[i][1]);
-    for (let j = 0; j &lt; 4; j++)
-        A.set([4 * i, 4 * i + j], pow(nodes[i][0], j));
-    b.set([4 * i + 1], nodes[i + 1][1]);
-    for (let j = 0; j &lt; 4; j++)
-        A.set([4 * i + 1, 4 * i + j], pow(nodes[i + 1][0], j));
-    if (i &lt; n - 1) &#123;
-        // Equation 4i + 2 and 4i + 3 ensures continuity of both the 1st and 2nd derivative
-        A.set([4 * i + 2, 4 * i + 1], 1);
-        A.set([4 * i + 2, 4 * i + 2], 2 * nodes[i + 1][0]);
-        A.set([4 * i + 2, 4 * i + 3], 3 * pow(nodes[i + 1][0], 2));
-        A.set([4 * i + 2, 4 * i + 5], -1);
-        A.set([4 * i + 2, 4 * i + 6], -2 * nodes[i + 1][0]);
-        A.set([4 * i + 2, 4 * i + 7], -3 * pow(nodes[i + 1][0], 2));
-        A.set([4 * i + 3, 4 * i + 2], 2);
-        A.set([4 * i + 3, 4 * i + 3], 6 * nodes[i + 1][0]);
-        A.set([4 * i + 3, 4 * i + 6], -2);
-        A.set([4 * i + 3, 4 * i + 7], -6 * nodes[i + 1][0]);
-    &#125;
-&#125;
-// Equation 4n - 2 and 4n - 1 set constraint on slope on both ends
-A.set([4 * n - 2, 1], 1);
-A.set([4 * n - 2, 2], 2 * nodes[0][0]);
-A.set([4 * n - 2, 3], 3 * pow(nodes[0][0], 2));
-b.set([4 * n - 2], this.leftSlope);
-A.set([4 * n - 1, 4 * n - 3], 1);
-A.set([4 * n - 1, 4 * n - 2], 2 * nodes[n][0]);
-A.set([4 * n - 1, 4 * n - 1], 3 * pow(nodes[n][0], 2));
-b.set([4 * n - 1], this.rightSlope);
-let sln = lusolve(A, b);</code></pre>
-<p>虽然加了注释但是代码只能用悲剧来形容了（悲）。</p>
-<p>全怪mathjs的API，我个人认为如果用Julia来写的的话一定没有那么多事情（确信）。</p>
-<p>最后的效果倒确实是极好的。</p>
 
       
     </div>

@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">89</span>
+          <span class="site-state-item-count">90</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,225 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/04/18/Projection%20and%20Least%20Square/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/04/18/Projection%20and%20Least%20Square/" class="post-title-link" itemprop="url">投影、最小二乘拟合、与QR分解笔记</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-04-18 14:37:09" itemprop="dateCreated datePublished" datetime="2021-04-18T14:37:09+08:00">2021-04-18</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-04-19 11:03:50" itemprop="dateModified" datetime="2021-04-19T11:03:50+08:00">2021-04-19</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="投影">投影</h1>
+<p>高中的时候就学过，向量<span class="math inline">\(\vec b\)</span>在<span class="math inline">\(\vec a\)</span>上的投影为 <span class="math display">\[
+\vec p = \frac{\vec a^{\mathrm T}\vec b}{\vec a^{\mathrm T}\vec a} \cdot \vec a
+\]</span> 当时推导主要利用了点积的几何意义$a b = |a||b|$。在代数意义上上式是怎么推导的呢？</p>
+<p>其实也不难：注意到<span class="math inline">\(\vec b\)</span>和其投影<span class="math inline">\(\vec p\)</span>的差一定是垂直于基向量<span class="math inline">\(\vec a\)</span>的。因为<span class="math inline">\(\vec p\)</span>与<span class="math inline">\(\vec a\)</span>平行，设<span class="math inline">\(\vec p = x\vec a\)</span> <span class="math display">\[
+\begin{aligned}
+    \vec a^{\mathrm T}\left(\vec b - x\vec a\right) &amp;= 0 \\
+    \Rightarrow \vec a^{\mathrm T}x\vec a &amp;= \vec a^{\mathrm T}\vec b \\
+    \Rightarrow x\vec a^{\mathrm T}\vec a &amp;= \vec a^{\mathrm T}\vec b \\
+    \Rightarrow x &amp;= \frac{\vec a^{\mathrm T}\vec b}{\vec a^{\mathrm T}\vec a}
+\end{aligned}
+\]</span> 我们就得到了一开始的结论。如果把<span class="math inline">\(\vec a\)</span>写到左边（因为是向量的实数积所以可以交换） <span class="math display">\[
+p = \vec a\cdot \frac{\vec a^{\mathrm T}\vec b}{\vec a^{\mathrm T}\vec a} = \frac{\vec a\vec a^{\mathrm T}}{\vec a^{\mathrm T}\vec a}\vec b
+\]</span> 我们这下看清楚了：将<span class="math inline">\(\vec b\)</span>转变为其在<span class="math inline">\(\vec a\)</span>上的投影的是一个矩阵！这个矩阵<span class="math inline">\(P = \frac{\vec a\vec a^{\mathrm T}}{\vec a^{\mathrm T}\vec a}\)</span>被称为<strong>投影矩阵</strong>。</p>
+<p>代数推导和投影矩阵有啥用？它们可以让我们把投影从投影到一个向量推广到投影到向量空间。</p>
+<p>考虑如何把一个向量<span class="math inline">\(\vec b\)</span>投影到矩阵<span class="math inline">\(A = \begin{bmatrix} \vec {a_1} &amp;\vec {a_2} &amp;\cdots &amp;\vec {a_n}\end{bmatrix}\)</span>的列空间上（假设<span class="math inline">\(A\)</span>的列向量线性无关）。我们一样考虑<span class="math inline">\(\vec b\)</span>与<span class="math inline">\(\vec p\)</span>的差，其一定垂直于<span class="math inline">\(C(A)\)</span>，自然也垂直于<span class="math inline">\(\vec {a_1} \cdots \vec {a_n}\)</span>，于是就有： <span class="math display">\[
+\vec {a_k} ^{\mathrm T}\left(\vec b - \vec p\right) = 0, \quad k = 1,2,\cdots,n
+\]</span> 或者写在一起： <span class="math display">\[
+\begin{bmatrix}
+    \vec {a_1}^{\mathrm T} \\
+    \vec {a_2}^{\mathrm T} \\
+    \vdots \\
+    \vec {a_n}^{\mathrm T} \\
+\end{bmatrix}
+\left(\vec b  - \vec p\right) = \vec 0 \Rightarrow 
+A^{\mathrm T} \left(\vec b  - \vec p\right) = \vec 0
+\]</span> 因为<span class="math inline">\(\vec p \in C(A)\)</span>，所以<span class="math inline">\(\vec p\)</span>是<span class="math inline">\(A\)</span>列向量的线性组合，可以写作<span class="math inline">\(\vec p = A\vec x\)</span>。于是我们就得到了方程 <span class="math display">\[
+A^{\mathrm T} \left(\vec b  - A\vec x\right) = \vec 0 \Rightarrow A^{\mathrm T}A\vec x = A^{\mathrm T}\vec b
+\]</span> 因为<span class="math inline">\(A\)</span>的列是线性无关的，所以<span class="math inline">\(A^{\mathrm T}A\)</span>是可逆的（这个我们待会证明），于是我们可以解得 <span class="math display">\[
+\vec x = \left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\vec b
+\]</span> 即 <span class="math display">\[
+\vec p = A\left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\vec b
+\]</span> 此时我们很清楚地看到，投影矩阵是<span class="math inline">\(P = A\left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\)</span>。</p>
+<hr />
+<p>我们接下来证明之前我们用到的一个结论：<strong><span class="math inline">\(A^{\mathrm T}A\)</span>可逆的充分必要条件是<span class="math inline">\(A\)</span>的列向量线性无关</strong>。</p>
+<p>我们发现这个结论等价于：<span class="math inline">\(A^{\mathrm T}A\)</span>和<span class="math inline">\(A\)</span>有相同的零空间。</p>
+<p>怎么证明？一个方向是简单的： <span class="math display">\[
+A\vec x = \vec 0 \Rightarrow A^{\mathrm T}\left(A\vec x\right) = \vec 0 \Rightarrow A^{\mathrm T} A\vec x = \vec 0
+\]</span> 反方向的证明需要一些技巧： <span class="math display">\[
+A^{\mathrm T} A\vec x = \vec 0 \Rightarrow \vec x^{\mathrm T} A^{\mathrm T} A\vec x = 0 \Rightarrow \left(A\vec x\right)^{\mathrm T}A\vec x = 0 \Rightarrow A\vec x = \vec 0
+\]</span> 倒数第二步写得有点花里胡哨其实就是向量自己和自己的点积，如果是零的话显然原向量就是零。</p>
+<p>证毕。</p>
+<h1 id="最小二乘拟合">最小二乘拟合</h1>
+<p>投影和最小二乘拟合是怎么联系起来的呢？</p>
+<p>线性拟合的本质是用给定的若干列向量的线性组合表示另一个向量。</p>
+<p>比如我有一组数据<span class="math inline">\(\vec x,\vec y\)</span>，我的模型是<span class="math inline">\(y = a + bx\)</span>，拟合的过程就是用向量<span class="math inline">\(\vec 1\)</span>和<span class="math inline">\(\vec x\)</span>的线性组合表示<span class="math inline">\(\vec y\)</span>的过程： <span class="math display">\[
+\begin{bmatrix}
+    1 &amp;x_1 \\
+    1 &amp;x_2  \\
+    \vdots &amp;\vdots\\
+    1 &amp;x_n 
+\end{bmatrix}
+\begin{bmatrix}
+    a \\
+    b
+\end{bmatrix} \stackrel{?}{=} 
+\begin{bmatrix}
+    y_1 \\
+    y_2 \\
+    \vdots \\
+    y_n 
+\end{bmatrix}
+\]</span> “线性拟合”的线性指的是这种组合的线性，和模型本身的线性是没有关系的。模型里面有二次项不要紧，只要二次项和其他项是线性组合的，那也不过是在左边的矩阵里多了一个列向量而已： <span class="math display">\[
+\begin{bmatrix}
+    1 &amp;x_1 &amp;x_1^2 \\
+    1 &amp;x_2 &amp;x_2^2 \\
+    \vdots &amp;\vdots &amp;\vdots \\
+    1 &amp;x_n &amp;x_n^2
+\end{bmatrix}
+\begin{bmatrix}
+    a \\
+    b \\
+    c
+\end{bmatrix} \stackrel{?}{=} 
+\begin{bmatrix}
+    y_1 \\
+    y_2 \\
+    \vdots \\
+    y_n 
+\end{bmatrix}
+\]</span> 那么我们发现线性拟合的本质其实就是解一个形如<span class="math inline">\(A\vec x = \vec b\)</span>的方程组（这里的<span class="math inline">\(\vec x\)</span>表示模型中各项的系数，和上面表示自变量的<span class="math inline">\(\vec x\)</span>没有关系），这个我们老熟悉了。</p>
+<p>但是事情不大妙的就是<span class="math inline">\(A\)</span>又高又瘦，方程组比未知数多，所以几乎肯定不存在准确解。</p>
+<p>什么时候存在准确解？<span class="math inline">\(\vec b\)</span>要在<span class="math inline">\(A\)</span>的列空间<span class="math inline">\(C(A)\)</span>里。</p>
+<p>所以如果只能求近似解，我们可以考虑把给定的<span class="math inline">\(\vec b\)</span>“近似到”<span class="math inline">\(C(A)\)</span>中的一个最近的向量，然后就能求解了。</p>
+<p>这个“近似”的过程其实就是投影。在<span class="math inline">\(C(A)\)</span>中<span class="math inline">\(\vec b\)</span>的投影肯定最接近<span class="math inline">\(\vec b\)</span>，因为只有二者的差是和<span class="math inline">\(C(A)\)</span>垂直的，这很符合我们的代数直觉。</p>
+<p>所以联系之前的投影的推导，假设这个投影向量是<span class="math inline">\(A\vec{\hat{x}}\)</span>，我们直接写出方程和解： <span class="math display">\[
+A^{\mathrm T} \left(\vec b  - A\vec{\hat{x}} \right) = \vec 0 \Rightarrow \vec{\hat{x}} = \left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\vec b
+\]</span> 这就叫“最小二乘拟合”。</p>
+<hr />
+<p>如果非要较真，从微积分的角度理解一波也是可以的：定义拟合的误差函数为 <span class="math display">\[
+L= \left|\vec b - A\vec{\hat x}\right| = \sum_{i = 1}^n \left(\vec b_i - \left(A\vec{\hat x}\right)_i\right)^2
+\]</span> 如果要最小化<span class="math inline">\(L\)</span>，那么<span class="math inline">\(L\)</span>关于<span class="math inline">\(\vec{\hat x}\)</span>的所有分量的导数都为<span class="math inline">\(0\)</span>： <span class="math display">\[
+\frac{\mathrm d L}{\mathrm d\vec{\hat x}_k} = 2\sum_{i = 1}^n A_{i, k} \left(\left(A\vec{\hat x}\right)_i - \vec b_i\right) =  0, \quad \forall k = 1, 2, \cdots, n
+\]</span> 令<span class="math inline">\(A\)</span>第<span class="math inline">\(i\)</span>列的列向量为<span class="math inline">\(\vec a_i\)</span>，那么上面也可以写成 <span class="math display">\[
+\frac{\mathrm d L}{\mathrm d\vec{\hat x}_k} = 2\vec a_k^{\mathrm T} \left(A\vec{\hat x} - \vec b\right) =  0, \quad \forall k = 1, 2, \cdots, n
+\]</span> 并在一起得 <span class="math display">\[
+2A^{\mathrm T}\left(A\vec{\hat x} - \vec b\right) =  0
+\]</span> 这就是上面我们通过投影推出的方程。</p>
+<p><span class="math inline">\(L\)</span>中的平方项也是最小二乘中“二”的由来。</p>
+<h1 id="矩阵的gram-schmidt正交化">矩阵的Gram-Schmidt正交化</h1>
+<p>我们发现无论是投影还是最小二乘拟合，计算<span class="math inline">\(A^{\mathrm T}A\)</span>和它的逆都是绕不过去的一步。<span class="math inline">\(A^{\mathrm T}A\)</span>本身就有一些特殊的性质，比如说其一定是正方阵，一定是对称的（通过转置等于自身易证）。但是这些性质在计算的时候帮助不大。如果我们能够优化<span class="math inline">\(A\)</span>的形态从而简化<span class="math inline">\(A^{\mathrm T}A\)</span>和它的逆的计算，那么各种算法的效率都会高上不少。</p>
+<p>注意到<span class="math inline">\(A^{\mathrm T}A\)</span>中的每一个位置都是<span class="math inline">\(A\)</span>两个列向量的点积。<strong>如果<span class="math inline">\(A\)</span>当中的列向量是两两正交的，那么<span class="math inline">\(A^{\mathrm T}A\)</span>就变成了一个对角阵。对角阵的逆不要太好算！更进一步，如果<span class="math inline">\(A\)</span>的每一个列向量都是单位向量，那么<span class="math inline">\(A^{\mathrm T}A\)</span>就是单位阵，连逆都不用求了</strong>！</p>
+<p>所以说啊，正交是个好东西。那对于一个矩阵<span class="math inline">\(A\)</span>，通过什么样的方式将其列向量完成正交化呢？</p>
+<p>比较简单的一个算法称为Gram-Schmidt正交化。设<span class="math inline">\(A\)</span>的列向量为<span class="math inline">\(\vec {a_1},\cdots, \vec{a_n}\)</span>，则向量正交化之后的结果<span class="math inline">\(\vec{q_i}\)</span>可以这么计算： <span class="math display">\[
+\vec{q_i} = \vec{a_i} - \sum_{j = 1}^{i - 1} \frac{\vec{q_j}^{\mathrm T}\vec{a_i}}{\vec{q_j}^{\mathrm T}\vec{q_j}} \vec{q_j}
+\]</span> 即对于第<span class="math inline">\(i\)</span>个列向量通过减去其在所有之前的（完成正交化的）向量上的投影来确保其和前面的向量都正交。</p>
+<p>最后，把所有的<span class="math inline">\(\vec{q_i}\)</span>除以其模完成归一化，我们就可以得到一个标准正交列向量组成的矩阵<span class="math inline">\(Q\)</span>，满足<span class="math inline">\(Q^{\mathrm T}Q = I\)</span>。（线性代数中常使用<span class="math inline">\(Q\)</span>表示列向量标准正交的矩阵）</p>
+<p>从<span class="math inline">\(A\)</span>变到<span class="math inline">\(Q\)</span>的过程没有改变列空间，所以不会改变投影矩阵，但计算投影矩阵的开销大大降低了： <span class="math display">\[
+P = Q\left(Q^{\mathrm T}Q\right)^{-1}Q^{\mathrm T} = QQ^{\mathrm T}
+\]</span></p>
+<h1 id="qr分解">QR分解</h1>
+<p>Gram-Schmidt正交化的过程可以看作是在原矩阵上进行列变换，而列变换是可以用矩阵表示的。类比从高斯消元导出LU分解的思路，我们可以从Gram-Schimidt正交化导出一个矩阵的QR分解： <span class="math display">\[
+A = QR
+\]</span> 我们有<span class="math inline">\(A\)</span>，可以通过Gram-Schmidt正交化算出<span class="math inline">\(Q\)</span>，但<span class="math inline">\(R\)</span>怎么计算呢？因为<span class="math inline">\(Q^{\mathrm T}Q=I\)</span>，所以只要在等式两边同时乘以<span class="math inline">\(Q^{\mathrm T}\)</span>，就得到<span class="math inline">\(R=Q^{\mathrm T}A\)</span>。或者用<span class="math inline">\(Q\)</span>和<span class="math inline">\(A\)</span>的列向量表示： <span class="math display">\[
+R = \begin{bmatrix}
+    \vec{q_1}^{\mathrm T} \\
+    \vec{q_2}^{\mathrm T} \\
+    \vdots \\
+    \vec{q_n}^{\mathrm T}
+\end{bmatrix}
+\begin{bmatrix}
+    \vec{a_1} &amp;\vec{a_2} &amp;\cdots &amp;\vec{a_n}
+\end{bmatrix}
+= \begin{bmatrix}
+    \vec{q_1}^{\mathrm T}\vec{a_1} &amp;\vec{q_1}^{\mathrm T}\vec{a_2} &amp;\cdots &amp;\vec{q_1}^{\mathrm T}\vec{a_n} \\
+    \vec{q_2}^{\mathrm T}\vec{a_1} &amp;\vec{q_2}^{\mathrm T}\vec{a_2} &amp;\cdots &amp;\vec{q_2}^{\mathrm T}\vec{a_n} \\
+    \vdots &amp;\vdots &amp;\ddots &amp;\vdots \\
+    \vec{q_n}^{\mathrm T}\vec{a_1} &amp;\vec{q_n}^{\mathrm T}\vec{a_2} &amp;\cdots &amp;\vec{q_n}^{\mathrm T}\vec{a_n}
+\end{bmatrix}
+\]</span> 注意到，因为<span class="math inline">\(\vec{q_i}\)</span>正交于所有<span class="math inline">\(\vec {q_j}(i &lt; j)\)</span>，而<span class="math inline">\(\vec{a_j}\)</span>又是由<span class="math inline">\(\vec{q_1},\cdots,\vec{q_j}\)</span>表示的，所以<span class="math inline">\(i &gt; j\)</span>时，<span class="math inline">\(\vec{q_i}^{\mathrm T}\vec{a_j} = 0\)</span>。所以<span class="math inline">\(R\)</span><strong>其实是一个上三角阵</strong>： <span class="math display">\[
+R = \begin{bmatrix}
+    \vec{q_1}^{\mathrm T}\vec{a_1} &amp;\vec{q_1}^{\mathrm T}\vec{a_2} &amp;\cdots &amp;\vec{q_1}^{\mathrm T}\vec{a_n} \\
+    0 &amp;\vec{q_2}^{\mathrm T}\vec{a_2} &amp;\cdots &amp;\vec{q_2}^{\mathrm T}\vec{a_n} \\
+    \vdots &amp;\vdots &amp;\ddots &amp;\vdots \\
+    0 &amp;0 &amp;\cdots &amp;\vec{q_n}^{\mathrm T}\vec{a_n}
+\end{bmatrix}
+\]</span> 再观察<span class="math inline">\(R\)</span>的各个非零位置的值以及Gram-Schimidt的公式，其实<span class="math inline">\(R\)</span>是可以在计算Gram-Schmidt正交化的时候顺便算出来的。</p>
+<p>QR分解有什么用呢？之前我们说正交化不改变投影矩阵，原因是“正交化不改变列空间”，QR分解能让我们在代数上证明这一点： <span class="math display">\[
+\begin{aligned}
+    P &amp;= A\left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T} \\
+    &amp;= QR\left(R^{\mathrm T}Q^{\mathrm T}QR\right)^{-1}R^{\mathrm T}Q^{\mathrm T} \\
+    &amp;= QR\left(R^{\mathrm T}R\right)^{-1}R^{\mathrm T}Q^{\mathrm T} \\
+    &amp;= QRR^{-1}\left(R^{\mathrm T}\right)^{-1}R^{\mathrm T}Q^{\mathrm T} \\
+    &amp;= QQ^{\mathrm T}
+\end{aligned}
+\]</span> 注：因为<span class="math inline">\(R\)</span>是一个方阵，所以我们这里能够把<span class="math inline">\(\left(R^{\mathrm T}R\right)^{-1}\)</span>改写成<span class="math inline">\(R^{-1}(R^{\mathrm T})^{-1}\)</span>。<span class="math inline">\(\left(A^{\mathrm T}A\right)^{-1}\)</span>是不能这么转换的，因为长方阵不存在常规意义上的逆。</p>
+<p>类似地，QR分解还简化了最小二乘拟合的计算： <span class="math display">\[
+\vec{\hat{x}} = \left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\vec b = R^{-1}Q^{\mathrm T}\vec b
+\]</span></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2157,103 +2376,6 @@ private:
     &#125;
 &#125;;</code></pre>
 <p>(The code above hasn't been thoroughly tested yet and could still contain bugs).</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/08/12/AlipayParanoia/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/08/12/AlipayParanoia/" class="post-title-link" itemprop="url">论支付宝对Xposed框架的被害妄想症</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2020-08-12 13:29:54 / 修改时间：22:30:26" itemprop="dateCreated datePublished" datetime="2020-08-12T13:29:54+08:00">2020-08-12</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>最近真的是被支付宝的操作恶心到了。</p>
-<p>跑到医院门口，要出示健康码了。打开支付宝选择随申码，登录授权时要刷脸，然后告诉我手机不支持刷脸？场面一度非常尴尬。</p>
-<p>“您的手机不支持刷脸”。为什么不支持？缺少硬件？缺少驱动？含糊其辞，搞得我一开始真以为XDA上下下来的ROM不贴合我国国情少预装了一套刷脸的库。</p>
-<p>查了好久才意识到原来是支付宝检测到Magisk和Xposed的缘故。</p>
-<p>好啊，这可以理解嘛，人脸验证和支付都是安全性极高的，关键步骤被hook是会出大事的。</p>
-<p>于是停用了Riru和EdXposed的模块。但是还是不支持。</p>
-<p>三清之后重装，又支持了。</p>
-<p>然后我遵循网友的经验，安装Magisk，然后开启随机包名重装和Magisk Hide。没有出问题。</p>
-<p>然后再安装EdXposed，即时模块打开，黑名单打开把支付宝加进去，然后开启强制SafetyNet检验。</p>
-<p>然后支付宝安全检查之后就又告诉我不支持了。</p>
-<p>唉，我啥模块都没装呢，拉黑之后就算装了也hook不到你支付宝紧张啥？</p>
-<p>网上逛了一圈，有不少遇到这个问题的，大家都没有好的解决办法，有的说双开，有的说双手机，有的说回退到play上的19年9月份的75版本。最后一条亲测确实有效，但是一直停留在老版本也不是个事啊。</p>
-<p>也看了CSDN上一些关于阿里系应用反hook机制的研究，大概是18年左右写的。当时的机制是通过反射检测有没有<code>XposedHelper</code>这个类，有这个类之后检测缓存里面有没有alipay等关键词。这个机制非常巧妙，而且我觉得强度也足够了。</p>
-<p>但是现在似乎已经不是这个机制了。通过有些解决方案当中关闭读取应用列表权限这一项我隐约可以猜出这支付宝大概是直接读取手机安装的所有应用，然后发现带Xposed就是不安全？</p>
-<p>这也太过了吧，我个人甚至觉得有些流氓之嫌。</p>
-<blockquote>
-<p>看到Xposed，立刻想到自己被hook，立刻想到这hook一定会让用户亏钱，立刻想到自己要赔钱，然后就紧张的要命。支付宝的想像惟在这一层能够如此跃进。<del>——鲁迅</del></p>
-</blockquote>
-<p>这个逻辑链有两处是有待商榷的。</p>
-<p>为什么所有Xposed插件一定要来hook你？我手机一般就装两模块，一个修改界面的locale让不够本地化的地方本地化，一个修改图标让系统更美观。这两个模块都不用hook进支付宝，而且还都是我自己一行一行写出来的。我脑子坏掉了去搞支付宝自己坑自己？</p>
-<p>为什么觉得因为用户因为hook造成的损失一定要支付宝负责？还真就社会责任心爆棚呗。服务条款里面加一行“由于用户使用第三方软件自行修改系统框架进而影响本应用的正常运行，导致财产损失的，责任自负，支付宝概不负责”有那么困难吗？Xposed必须是用户自己装的，模块一定是用户自己下载并且启用的，考虑到使用Xposed基本上都是安卓的发烧友，翻车了自己负责这条道理大家都认，也没有人来说是支付宝的不对。</p>
-<p>退一步，如果我真的要搞尽一切代价搞支付宝，支付宝检测有没有被hook的代码可不可能被hook呢？我能不能不用Xposed而用一些更底层的框架例如Riru来搞呢？支付宝作为一个正常权限的应用软件，面对因用户主动选择破坏承载其运行的，本来安全的安卓系统框架，而导致的可能来自底层的，高权限的修改与破坏一定是无能为力的。支付宝完全没有必要对一个受害者主动引发，且本质上自身无能为力的损失负责。</p>
-<p>进一步，今天支付宝可以读取应用看到Xposed就不让刷脸，明天如果腾讯和阿里干架，支付宝也可以读取应用列表看到有微信就不让用（3Q大战既视感）。现在看来“读取应用列表”不是安卓原生自带的权限实在是一个设计漏洞。支付宝这个行为也显然开了一个不好的先例。</p>
-<p>最后，我其实一直不理解的一点是，是什么让支付宝觉得原来合理的Xposed框架检测逻辑有问题，进而换上了这套长臂管辖似的一刀切呢？</p>
-<p>在不知道更多信息以前，我只能认为是支付宝自身在有些情境下不必要的责任感以及过度的被害妄想症在作祟。</p>
-<p>在此，向设计这个安全检查模块的所有阿里员工以及十八代亲属致以最诚挚的问候。</p>
-<p>最后的最后，讲一讲在保留Magisk和Xposed功能的情况下，可能的解决办法吧。</p>
-<ol type="1">
-<li>停留在老版本的支付宝。</li>
-<li>让EdXposed也有和Magisk类似的随机包名重装功能。</li>
-<li>让支付宝找一个更合理的办法检验自己有没有被hook。</li>
-<li>让支付宝目前这套方案失效，比如说禁止支付宝调用<code>getInstalledPackages</code>来获取已经安装的应用。这个我知道在一些国产的系统里面是有类似功能的。但是目前类原生的系统还没有。虽可以通过Xposed模块来实现，但是在这个背景下毫无意义。唯一的一个方案是把系统的源码clone一份下来，然后直接改代码。</li>
-</ol>
 
       
     </div>

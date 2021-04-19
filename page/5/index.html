@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">89</span>
+          <span class="site-state-item-count">90</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,162 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/12/28/Dewarp2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/12/28/Dewarp2/" class="post-title-link" itemprop="url">卷曲页面复原 2 ——曲线拟合</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-12-28 21:06:33" itemprop="dateCreated datePublished" datetime="2019-12-28T21:06:33+08:00">2019-12-28</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-01-09 11:10:00" itemprop="dateModified" datetime="2020-01-09T11:10:00+08:00">2020-01-09</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>在前几天用扫描全能王的时候发现它似乎有自动拍书功能的（悲），似乎还可以自动识别，连标定都不要了。官方看到这个小博客的可能性微存？</p>
+<p>但是那个是付费的会员功能！而且不管怎么样自己写一遍总归是有收获的。</p>
+<h1 id="进展">进展！</h1>
+<p>过去的一周一直在和各种工程问题作斗争。目前的进展如下：</p>
+<p><img src="https://raw.githubusercontent.com/alan20210202/images/master/2020/01/01-12-00-22-Snipaste_2020-01-01_12-00-03.jpg" alt="Snipaste_2020-01-01_12-00-03.jpg" /></p>
+<p>让这些探究只停留在Jupyter Notebook上我觉得太可惜了，加上我觉得自己经常会用，所以我准备撸一个App传到博客上去。</p>
+<p>然后某人悲催地发现自己Web开发的技艺约等于0。</p>
+<p>花了一个小时速成Vue和Vuetify，花了一个小时复习了一遍Node和JS，花了一个小时重装了Webstorm，Vue CLI开一个SPA直接开搞。</p>
+<p>在Stack Overflow和Google和MDN里面转悠了五天之后自己终于写出了还算像样的雏形。现在标定功能已经写完了！</p>
+<p>上图当中的黄框表示页面平面，绿框悬浮在黄框上面营造出一种透视立体的感觉（其实是调试完不想删掉了），上下两条蓝色的曲线表示书页的弯曲曲线。所有红色的点都是可以拖动的，拖动时还会在边角显示两倍放大后的特写便于精准定位，就像这样</p>
+<p><img src="https://raw.githubusercontent.com/alan20210202/images/master/2020/01/01-12-13-24-2020-01-01-12-12-46-image.png" alt="2020-01-01-12-12-46-image.png" /></p>
+<p>功能上其实比上一篇文章没有多出多少（虽然在工程方面取得了巨大的突破）除了——曲线，这一条曲线其实没有那么简单。</p>
+<h1 id="反向投影">反向投影</h1>
+<p>从上图可以看到，图中的曲线形状是由中间五个节点决定的，但是基于的是节点的三维坐标而不是所看到的二维坐标。这当中就牵涉到一个反向投影的问题——知道一个点在二维平面上投影点的坐标，如何在一定的约束条件下求取其三维坐标呢？</p>
+<p><img src="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/26-18-45-20-Points1.png" /></p>
+<p>这个时候前一篇文章所做的页面平面重建的结果就变得重要了起来。这五个关键点都在书页的下边缘上，在数学上，五个小红点都在<em>平面<span class="math inline">\(ABCD\)</span>底边<span class="math inline">\(AD\)</span>所在的，且垂直于平面<span class="math inline">\(ABCD\)</span>的平面</em>上。首先我们要确定这个平面，不妨称之为平面<span class="math inline">\(P\)</span>。</p>
+<p>平面的方程式<span class="math inline">\(Ax+By+Cz=D\)</span>，<span class="math inline">\((A,B,C)\)</span>就是这个平面的法向量，我们已经知道了两个<span class="math inline">\(P\)</span>上的点（点<span class="math inline">\(A\)</span>和点<span class="math inline">\(D\)</span>），如果我们知道了平面的法向量，那么把<span class="math inline">\(A\)</span>点代入，方程当中的<span class="math inline">\(D\)</span>就出来了，平面就确定了。</p>
+<p>在理想情况下，法向量就是<span class="math inline">\(\vec{AB}\)</span>，因为理想情况下<span class="math inline">\(\vec{AD}\perp\vec{AB}\)</span>。</p>
+<p>但是现实比较残酷，由于计算的一点点小误差，算出来的<span class="math inline">\(\vec{AD}\)</span>并不总是垂直于<span class="math inline">\(\vec{AD}\)</span>，比如说夹角是<span class="math inline">\(89.94^{\circ}\)</span>。这个<span class="math inline">\(\vec{AB}\)</span>就不是法向量了，这是很坑的。我一开始偷懒把<span class="math inline">\(\vec{AB}\)</span>当法向量写到程序里面去，结果调试的时候一直有小误差，心态都快崩了。</p>
+<p>然后我才意识到果然不能偷懒，正确的法向量就是<span class="math inline">\(\vec{AD}\times(\vec{AD}\times\vec{AB})\)</span>。</p>
+<p>然后对于在平面<span class="math inline">\(P\)</span>上的任意一个点<span class="math inline">\(Q(x, y,z)\)</span>，已知其投影是<span class="math inline">\(Q^{\ast}(x^{\ast},y^{\ast})\)</span>。根据方程</p>
+<p><span class="math display">\[
+\begin{cases}
+    Ax+By+Cz=D\\
+    x=x^{\ast}(1+z/d)\\
+    y=y^{\ast}(1+z/d)
+\end{cases}
+\]</span></p>
+<p>就能把这个点的坐标算出来了。</p>
+<p>之后还需要再做一步，把<span class="math inline">\(\vec{AQ}\)</span>分解：</p>
+<p><span class="math display">\[
+\vec{AQ}=a\vec{AD}+b\frac{\vec{AD}\times\vec{AB}}{\left|\vec{AD}\times\vec{AB}\right|}\quad a\in[0,1] 
+\]</span></p>
+<p>之后得到的<span class="math inline">\((a,b)\)</span>才是一个相对归一化了的坐标。使用这个坐标进行插值的话，<span class="math inline">\(A,B,C,D\)</span>四个点小范围内的运动都不会改变曲线的形状，这相当于增加了我们算法的鲁棒性。</p>
+<h1 id="插值">插值</h1>
+<p>使用什么曲线插值比较好呢？</p>
+<p>如果在计算机的背景下最先想到的肯定是贝塞尔曲线，但是贝塞尔曲线不经过它控制点，这似乎在界面上就不是那么直观。</p>
+<p>如果采用高阶多项式的插值呢？那么Runge现象又会非常严重，可以预见效果会很差。</p>
+<p>于是乎我采用的是三次样条插值。对于三次样条插值：</p>
+<ol type="1">
+<li><p>假设有<span class="math inline">\(n\)</span>个节点，那么就有<span class="math inline">\(n-1\)</span>个区间，对应<span class="math inline">\(n-1\)</span>条曲线，<span class="math inline">\(4(n-1)\)</span>个参数。</p></li>
+<li><p>对于一条三次曲线，其两个端点的值是确定的，那么就有<span class="math inline">\(2(n-1)\)</span>个约束条件。</p></li>
+<li><p>中间的<span class="math inline">\(n-2\)</span>个节点上相邻的三次曲线必须一阶导连续且二阶导连续，那么就是<span class="math inline">\(2(n-2)\)</span>个约束条件。</p></li>
+<li><p>为了能够在大多数情况下求出所有参数的准确值，还需要<span class="math inline">\(2\)</span>个约束条件。</p></li>
+</ol>
+<p>似乎最常见的边界条件被称为<strong>自然边界条件</strong>。也就是样条曲线两端的二阶导为<span class="math inline">\(0\)</span>。<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Spline_%28mathematics%29#Algorithm_for_computing_natural_cubic_splines">Wiki</a>上介绍的算法也是针对这种边界条件设计的，但是在我们这个情境下自然边界似乎不适用，因为书页的一侧总是向下凹向书脊，书脊起了固定作用。我一开始照抄Wiki上的算法结果曲线对不上翻车了。</p>
+<p>这个情景应该用的似乎是<strong>夹持边界条件</strong>。也就是人为地给出曲线两端的一阶导。也就是我的界面右侧出现"Left Slope"和"Right Slope"两个slider的原因。这个边界条件试下来似乎和实际吻合得还是相当不错的。问题主要出现在算法这里，我虽然从矩阵的形式推断一定存在像Wiki上处理自然边界条件一样显式线性的算法，但是自己还是懒得去推了直接用mathjs的<code>lusolve</code>函数（Well 我相信mathjs这种大库的消元一定有优化……），速度还是非常令人满意的，但是代码可读性就是一个比较大的问题了：</p>
+<pre class="line-numbers"><code class="language-javascript">let n = nodes.length - 1; // nodes.length knots, so nodes.length - 1 ranges and piecewise curves
+
+let A = zeros(4 * n, 4 * n); // 4 parameters for each curve
+let b = zeros(4 * n);
+for (let i = 0; i &lt; n; i++) &#123;
+    // Equation 4i and 4i + 1 ensures continuity of the spline
+    b.set([4 * i], nodes[i][1]);
+    for (let j = 0; j &lt; 4; j++)
+        A.set([4 * i, 4 * i + j], pow(nodes[i][0], j));
+    b.set([4 * i + 1], nodes[i + 1][1]);
+    for (let j = 0; j &lt; 4; j++)
+        A.set([4 * i + 1, 4 * i + j], pow(nodes[i + 1][0], j));
+    if (i &lt; n - 1) &#123;
+        // Equation 4i + 2 and 4i + 3 ensures continuity of both the 1st and 2nd derivative
+        A.set([4 * i + 2, 4 * i + 1], 1);
+        A.set([4 * i + 2, 4 * i + 2], 2 * nodes[i + 1][0]);
+        A.set([4 * i + 2, 4 * i + 3], 3 * pow(nodes[i + 1][0], 2));
+        A.set([4 * i + 2, 4 * i + 5], -1);
+        A.set([4 * i + 2, 4 * i + 6], -2 * nodes[i + 1][0]);
+        A.set([4 * i + 2, 4 * i + 7], -3 * pow(nodes[i + 1][0], 2));
+        A.set([4 * i + 3, 4 * i + 2], 2);
+        A.set([4 * i + 3, 4 * i + 3], 6 * nodes[i + 1][0]);
+        A.set([4 * i + 3, 4 * i + 6], -2);
+        A.set([4 * i + 3, 4 * i + 7], -6 * nodes[i + 1][0]);
+    &#125;
+&#125;
+// Equation 4n - 2 and 4n - 1 set constraint on slope on both ends
+A.set([4 * n - 2, 1], 1);
+A.set([4 * n - 2, 2], 2 * nodes[0][0]);
+A.set([4 * n - 2, 3], 3 * pow(nodes[0][0], 2));
+b.set([4 * n - 2], this.leftSlope);
+A.set([4 * n - 1, 4 * n - 3], 1);
+A.set([4 * n - 1, 4 * n - 2], 2 * nodes[n][0]);
+A.set([4 * n - 1, 4 * n - 1], 3 * pow(nodes[n][0], 2));
+b.set([4 * n - 1], this.rightSlope);
+let sln = lusolve(A, b);</code></pre>
+<p>虽然加了注释但是代码只能用悲剧来形容了（悲）。</p>
+<p>全怪mathjs的API，我个人认为如果用Julia来写的的话一定没有那么多事情（确信）。</p>
+<p>最后的效果倒确实是极好的。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1523,265 +1679,6 @@ int main() &#123;
             link(i, (i + a[j]) % mn, a[j]);
     dijkstra();
     printf(&quot;%lld\n&quot;, calc(Br) - calc(Bl - 1));  
-    return 0;
-&#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/10/25/Luogu4719/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/10/25/Luogu4719/" class="post-title-link" itemprop="url">Luogu 4719 / 动态DP</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-10-25 00:00:00" itemprop="dateCreated datePublished" datetime="2019-10-25T00:00:00+08:00">2019-10-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-07-30 14:10:42" itemprop="dateModified" datetime="2020-07-30T14:10:42+08:00">2020-07-30</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>本地笔记整理第一发，比较散，2019/12/8上传 <span class="math display">\[
-\newcommand{\dp}{\mathrm{dp}}
-\newcommand{\BigO}[1]{\mathcal{O}\left(#1\right)}
-\newcommand{\ldp}{\mathrm{ldp}}
-\newcommand{\lch}[1]{\mathrm{lch}(#1)}
-\newcommand{\hch}[1]{\mathrm{hch}(#1)}
-\]</span></p>
-<h1 id="分析">分析</h1>
-<p>题目要求求取带修改的树上最大独立集，朴素<span class="math inline">\(\BigO{n^2}\)</span>DP如下： <span class="math display">\[
-\begin{aligned}
-    \dp[u][0] &amp;= \sum_{v \in \mathrm{ch}(u)} \max\left\{\dp[v][1], \dp[v][0]\right\} \\
-    \dp[u][1] &amp;= \mathrm{val}[u] + \sum_{v \in \mathrm{ch}(u)} \dp[v][0]
-\end{aligned}
-\]</span></p>
-<p>但是这么一次转移是<span class="math inline">\(\BigO{n}\)</span>的，考虑优化，定义<span class="math inline">\(\mathrm{lch}(u)\)</span>为<span class="math inline">\(u\)</span>的轻儿子集合。<span class="math inline">\(\mathrm{hch}(u)\)</span>为<span class="math inline">\(u\)</span>的重儿子，稍微修改一下，定义</p>
-<p><span class="math display">\[
-\begin{aligned}
-\ldp[u][0] &amp;= \sum_{v \in \lch{u}} \max\left\{\dp[v][1], \dp[v][0]\right\} \\
-\ldp[u][1] &amp;= \mathrm{val}[u] + \sum_{v \in \lch{u}} \dp[v][0] \\
-\end{aligned}
-\]</span></p>
-<p>则有</p>
-<p><span class="math display">\[
-\begin{aligned}
-    \dp[u][0] &amp;= \max\left\{\dp[\hch{u}][0],\dp[\hch{u}][1]\right\} + \ldp[u][0]\\
-    \dp[u][1] &amp;= \dp[\hch{u}][0] + \ldp[u][1]
-\end{aligned}
-\]</span></p>
-<p>使用Max-Plus Algebra的方式重写：</p>
-<p><span class="math display">\[
-\begin{pmatrix}
-    \dp[u][0] \\
-    \dp[u][1]
-\end{pmatrix} = 
-\begin{pmatrix}
-    \ldp[u][0] &amp; \ldp[u][0] \\
-    \ldp[u][1] &amp; -\infty
-\end{pmatrix}
-\begin{pmatrix}
-    \dp[\hch{u}][0] \\
-    \dp[\hch{u}][1]
-\end{pmatrix}
-\]</span> 接下来只需要树链剖分维护矩阵转移就行了，单次修改的时间复杂度为<span class="math inline">\(\BigO{\log^2n}\)</span>。</p>
-<h1 id="代码">代码</h1>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-#include &lt;algorithm&gt;
-#include &lt;cstring&gt;
-
-using namespace std;
-const int N = 100010;
-const int T = 4 * N;
-const int INF = 0x3f3f3f3f;
-int n;
-int fst[N], nxt[2 * N], to[2 * N], tot = 1;
-struct vec &#123;
-    int a[2];
-    vec() &#123; memset(a, 0, sizeof a); &#125;
-    int &amp;operator [](int x) &#123; return a[x]; &#125;
-    const int &amp;operator [](int x) const &#123; return a[x]; &#125;
-&#125; eye;
-struct mat &#123;
-    int a[2][2];
-    mat() &#123; memset(a, 0, sizeof a); &#125;   
-    int *operator [](int x) &#123; return a[x]; &#125;
-    const int *operator [](int x) const &#123; return a[x]; &#125;
-    mat operator *(const mat &amp;b) const &#123;
-        mat c;
-        for (int i = 0; i &lt; 2; i++) &#123;
-            for (int j = 0; j &lt; 2; j++) &#123;
-                c[i][j] = -INF;
-                for (int k = 0; k &lt; 2; k++)
-                    c[i][j] = max(c[i][j], a[i][k] + b[k][j]);
-            &#125;
-        &#125;
-        return c;
-    &#125;
-    vec operator *(const vec &amp;b) const &#123;
-        vec c;
-        for (int i = 0; i &lt; 2; i++) &#123;
-            c[i] = -INF;
-            for (int j = 0; j &lt; 2; j++)
-                c[i] = max(c[i], a[i][j] + b[j]);
-        &#125;
-        return c;
-    &#125;
-&#125;;
-void link(int u, int v) &#123;
-    nxt[++tot] = fst[u];
-    fst[u] = tot; to[tot] = v;
-&#125;
-int cnt = 0, id[N], top[N], dep[N], bot[N], sz[N], son[N], fa[N];
-int a[N], ldp[N][2], dp[N][2];
-mat val[T], init[N];
-void dfs1(int u, int p) &#123;
-    dep[u] = dep[p] + 1; fa[u] = p;
-    sz[u] = 1; int mx = -1;
-    for (int e = fst[u]; e; e = nxt[e]) &#123;
-        int v = to[e];
-        if (v == p) continue;
-        dfs1(v, u); sz[u] += sz[v];
-        if (sz[v] &gt; mx) mx = sz[v], son[u] = v;
-    &#125;
-&#125;
-void dfs2(int u, int tp) &#123;
-    id[u] = ++cnt, top[u] = tp;
-    bot[top[u]] = u;
-    if (son[u]) dfs2(son[u], tp);
-    for (int e = fst[u]; e; e = nxt[e]) &#123;
-        int v = to[e];
-        if (v == fa[u] || v == son[u]) continue;
-        dfs2(v, v); 
-    &#125;
-&#125;
-#define lch (rt &lt;&lt; 1)
-#define rch (lch | 1)
-#define larg lch, l, mid
-#define rarg rch, mid + 1, r
-void pushup(int rt) &#123;
-    val[rt] = val[lch] * val[rch];
-&#125;
-void build(int rt, int l, int r) &#123;
-    if (l == r) return;
-    int mid = (l + r) &gt;&gt; 1;
-    build(larg); build(rarg);
-    pushup(rt);
-&#125;
-mat query(int rt, int l, int r, int ql, int qr) &#123;
-    if (ql &lt;= l &amp;&amp; r &lt;= qr) return val[rt];
-    int mid = (l + r) &gt;&gt; 1;
-    if (qr &lt;= mid) return query(larg, ql, qr);
-    if (ql &gt; mid) return query(rarg, ql, qr);
-    return query(larg, ql, qr) * query(rarg, ql, qr);
-&#125;
-void update(int rt, int l, int r, int p, const mat &amp;v) &#123;
-    if (l == r) &#123; val[rt] = v; return; &#125;
-    int mid = (l + r) &gt;&gt; 1;
-    if (p &lt;= mid) update(larg, p, v);
-    else update(rarg, p, v);
-    pushup(rt);
-&#125;
-void updateu(int u) &#123;
-    mat m; m[0][0] = m[0][1] = ldp[u][0];
-    m[1][0] = ldp[u][1]; m[1][1] = -INF;
-    update(1, 1, n, id[u], m);
-&#125;
-void dfs3(int u) &#123;
-    ldp[u][0] = 0, ldp[u][1] = a[u];
-    for (int e = fst[u]; e; e = nxt[e]) &#123;
-        int v = to[e];
-        if (v == fa[u]) continue;
-        dfs3(v);
-        if (v == son[u]) continue;
-        ldp[u][0] += max(dp[v][0], dp[v][1]);
-        ldp[u][1] += dp[v][0];
-    &#125;
-    updateu(u);
-    vec res = query(1, 1, n, id[u], id[bot[top[u]]]) * eye;
-    dp[u][0] = res[0]; dp[u][1] = res[1];
-&#125;
-void modify(int u, int p) &#123;
-    ldp[u][1] += p - a[u]; a[u] = p;
-    updateu(u);
-    while (true) &#123;
-        u = top[u];
-        vec res = query(1, 1, n, id[u], id[bot[u]]) * eye;
-        if (u != 1) &#123;
-            ldp[fa[u]][0] += max(res[0], res[1]) - max(dp[u][0], dp[u][1]);
-            ldp[fa[u]][1] += res[0] - dp[u][0];
-        &#125;
-        dp[u][0] = res[0]; dp[u][1] = res[1];
-        if (u == 1) break;
-        updateu(u = fa[u]);
-    &#125;
-&#125;
-int main() &#123;
-    int q; scanf(&quot;%d%d&quot;, &amp;n, &amp;q);
-    for (int i = 1; i &lt;= n; i++) scanf(&quot;%d&quot;, &amp;a[i]);
-    for (int i = 1; i &lt; n; i++) &#123;
-        int x, y; scanf(&quot;%d%d&quot;, &amp;x, &amp;y);
-        link(x, y); link(y, x);
-    &#125;
-    dfs1(1, 0); dfs2(1, 1); build(1, 1, n); dfs3(1);
-    while (q--) &#123;
-        int x, y; scanf(&quot;%d%d&quot;, &amp;x, &amp;y);
-        modify(x, y);
-        printf(&quot;%d\n&quot;, max(dp[1][0], dp[1][1]));
-    &#125;
     return 0;
 &#125;</code></pre>
 

@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">89</span>
+          <span class="site-state-item-count">90</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,103 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/08/12/AlipayParanoia/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/08/12/AlipayParanoia/" class="post-title-link" itemprop="url">论支付宝对Xposed框架的被害妄想症</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-08-12 13:29:54 / 修改时间：22:30:26" itemprop="dateCreated datePublished" datetime="2020-08-12T13:29:54+08:00">2020-08-12</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>最近真的是被支付宝的操作恶心到了。</p>
+<p>跑到医院门口，要出示健康码了。打开支付宝选择随申码，登录授权时要刷脸，然后告诉我手机不支持刷脸？场面一度非常尴尬。</p>
+<p>“您的手机不支持刷脸”。为什么不支持？缺少硬件？缺少驱动？含糊其辞，搞得我一开始真以为XDA上下下来的ROM不贴合我国国情少预装了一套刷脸的库。</p>
+<p>查了好久才意识到原来是支付宝检测到Magisk和Xposed的缘故。</p>
+<p>好啊，这可以理解嘛，人脸验证和支付都是安全性极高的，关键步骤被hook是会出大事的。</p>
+<p>于是停用了Riru和EdXposed的模块。但是还是不支持。</p>
+<p>三清之后重装，又支持了。</p>
+<p>然后我遵循网友的经验，安装Magisk，然后开启随机包名重装和Magisk Hide。没有出问题。</p>
+<p>然后再安装EdXposed，即时模块打开，黑名单打开把支付宝加进去，然后开启强制SafetyNet检验。</p>
+<p>然后支付宝安全检查之后就又告诉我不支持了。</p>
+<p>唉，我啥模块都没装呢，拉黑之后就算装了也hook不到你支付宝紧张啥？</p>
+<p>网上逛了一圈，有不少遇到这个问题的，大家都没有好的解决办法，有的说双开，有的说双手机，有的说回退到play上的19年9月份的75版本。最后一条亲测确实有效，但是一直停留在老版本也不是个事啊。</p>
+<p>也看了CSDN上一些关于阿里系应用反hook机制的研究，大概是18年左右写的。当时的机制是通过反射检测有没有<code>XposedHelper</code>这个类，有这个类之后检测缓存里面有没有alipay等关键词。这个机制非常巧妙，而且我觉得强度也足够了。</p>
+<p>但是现在似乎已经不是这个机制了。通过有些解决方案当中关闭读取应用列表权限这一项我隐约可以猜出这支付宝大概是直接读取手机安装的所有应用，然后发现带Xposed就是不安全？</p>
+<p>这也太过了吧，我个人甚至觉得有些流氓之嫌。</p>
+<blockquote>
+<p>看到Xposed，立刻想到自己被hook，立刻想到这hook一定会让用户亏钱，立刻想到自己要赔钱，然后就紧张的要命。支付宝的想像惟在这一层能够如此跃进。<del>——鲁迅</del></p>
+</blockquote>
+<p>这个逻辑链有两处是有待商榷的。</p>
+<p>为什么所有Xposed插件一定要来hook你？我手机一般就装两模块，一个修改界面的locale让不够本地化的地方本地化，一个修改图标让系统更美观。这两个模块都不用hook进支付宝，而且还都是我自己一行一行写出来的。我脑子坏掉了去搞支付宝自己坑自己？</p>
+<p>为什么觉得因为用户因为hook造成的损失一定要支付宝负责？还真就社会责任心爆棚呗。服务条款里面加一行“由于用户使用第三方软件自行修改系统框架进而影响本应用的正常运行，导致财产损失的，责任自负，支付宝概不负责”有那么困难吗？Xposed必须是用户自己装的，模块一定是用户自己下载并且启用的，考虑到使用Xposed基本上都是安卓的发烧友，翻车了自己负责这条道理大家都认，也没有人来说是支付宝的不对。</p>
+<p>退一步，如果我真的要搞尽一切代价搞支付宝，支付宝检测有没有被hook的代码可不可能被hook呢？我能不能不用Xposed而用一些更底层的框架例如Riru来搞呢？支付宝作为一个正常权限的应用软件，面对因用户主动选择破坏承载其运行的，本来安全的安卓系统框架，而导致的可能来自底层的，高权限的修改与破坏一定是无能为力的。支付宝完全没有必要对一个受害者主动引发，且本质上自身无能为力的损失负责。</p>
+<p>进一步，今天支付宝可以读取应用看到Xposed就不让刷脸，明天如果腾讯和阿里干架，支付宝也可以读取应用列表看到有微信就不让用（3Q大战既视感）。现在看来“读取应用列表”不是安卓原生自带的权限实在是一个设计漏洞。支付宝这个行为也显然开了一个不好的先例。</p>
+<p>最后，我其实一直不理解的一点是，是什么让支付宝觉得原来合理的Xposed框架检测逻辑有问题，进而换上了这套长臂管辖似的一刀切呢？</p>
+<p>在不知道更多信息以前，我只能认为是支付宝自身在有些情境下不必要的责任感以及过度的被害妄想症在作祟。</p>
+<p>在此，向设计这个安全检查模块的所有阿里员工以及十八代亲属致以最诚挚的问候。</p>
+<p>最后的最后，讲一讲在保留Magisk和Xposed功能的情况下，可能的解决办法吧。</p>
+<ol type="1">
+<li>停留在老版本的支付宝。</li>
+<li>让EdXposed也有和Magisk类似的随机包名重装功能。</li>
+<li>让支付宝找一个更合理的办法检验自己有没有被hook。</li>
+<li>让支付宝目前这套方案失效，比如说禁止支付宝调用<code>getInstalledPackages</code>来获取已经安装的应用。这个我知道在一些国产的系统里面是有类似功能的。但是目前类原生的系统还没有。虽可以通过Xposed模块来实现，但是在这个背景下毫无意义。唯一的一个方案是把系统的源码clone一份下来，然后直接改代码。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1670,144 +1767,6 @@ A(i, p) = \begin{cases}
 \]</span> 回过头看我们弱对偶原理的证明过程，两个不等号必须同时取等，于是便得到两个条件，成为所谓的互补松弛条件（Complementary Slackness Condition）：</p>
 <p><strong>主互补松弛条件：</strong><span class="math inline">\(x_j^*=0\)</span>或者<span class="math inline">\(\sum_{i=1}^ma_{ij}y_i = c_j\)</span>，即要么变量为<span class="math inline">\(0\)</span>，要么对偶规划里面的对应约束取等。</p>
 <p><strong>对偶互补松弛条件：</strong><span class="math inline">\(y_i^*=0\)</span>或者<span class="math inline">\(\sum_{j=1}^na_{ij}x_j = b_i\)</span>，即要么变量为<span class="math inline">\(0\)</span>，要么主规划里面的对应约束取等。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/06/PACT0704/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/07/06/PACT0704/" class="post-title-link" itemprop="url">PACT 07/04 浮账最大化（次模优化）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2020-07-06 20:25:07 / 修改时间：22:52:18" itemprop="dateCreated datePublished" datetime="2020-07-06T20:25:07+08:00">2020-07-06</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="定义">定义</h1>
-<p>在电子转账还未普及的年代，从付款人开出支票到钱从付款人账户里扣走之间是有一段等待的时间的，这段时间被称为浮账期（float time，网上似乎没有找到特别靠谱的翻译）。因为在浮账期这些付出去的钱还是能够产生利息的，人们自然希望这个浮账期越长越好。于是人们就抽象出了这么一个浮账最大化的问题。</p>
-<p><strong>输入：</strong>带权二分图<span class="math inline">\(G=(V,E)\)</span>，其中<span class="math inline">\(V=B\cup P\)</span>，一侧是所有银行的集合<span class="math inline">\(B\)</span>，另一侧是所有交易的集合<span class="math inline">\(P\)</span>，第<span class="math inline">\(i\)</span>个银行到第<span class="math inline">\(j\)</span>个交易的边权为<span class="math inline">\(v_{ij}\)</span>，表示第<span class="math inline">\(i\)</span>个银行处理这笔交易所需的浮账时间。整数<span class="math inline">\(k\)</span>。</p>
-<p><strong>目标：</strong>选择<span class="math inline">\(k\)</span>家银行的集合<span class="math inline">\(S\subseteq B\)</span>，使得 <span class="math display">\[
-v(S) = \sum_{j\in P} \max_{i\in S}\{v_{ij}\}
-\]</span> 最大。</p>
-<h1 id="贪心算法">贪心算法</h1>
-<p>我们很容易想到如下的贪心算法：</p>
-<ol type="1">
-<li>一开始<span class="math inline">\(S=\emptyset\)</span>。</li>
-<li>然后进行<span class="math inline">\(k\)</span>次循环，每次循环寻找能使目标函数增幅最大的银行<span class="math inline">\(i\)</span>加入<span class="math inline">\(S\)</span>。</li>
-</ol>
-<p>简单，粗暴，好理解。</p>
-<h1 id="分析">分析</h1>
-<p><strong>引理1：</strong>令<span class="math inline">\(S\)</span>是第<span class="math inline">\(h\)</span>次循环开始时我们的银行集合，第<span class="math inline">\(h\)</span>次循环我们所选的新银行是<span class="math inline">\(i_h\)</span>，那么有 <span class="math display">\[
-v(S\cup \{i_h\}) - v(S)\ge \frac{v(\mathrm{OPT})-v(S)}{k}
-\]</span> 即反映了一种“优于平均”的思想。（感觉类似的引理在贪心算法的分析当中经常会碰到）</p>
-<p>要证明这个引理，我们需要引入第二个引理，或者说发掘<span class="math inline">\(v(\cdot)\)</span>的一个重要性质：</p>
-<p><strong>引理2（次模性）：</strong>对于任何<span class="math inline">\(X\subseteq Y\subset B\)</span>以及<span class="math inline">\(l\in B\setminus Y\)</span>，都有： <span class="math display">\[
-v(X\cup \{l\}) - v(X) \ge v(Y\cup \{l\}) - v(Y)
-\]</span> 直观理解：随着集合变大，加入新元素的边际效应递减。</p>
-<p><strong>证明：</strong></p>
-<p>考虑对于固定的交易<span class="math inline">\(j\)</span>，<span class="math inline">\(j\)</span>在<span class="math inline">\(v(X)\)</span>当中的贡献是<span class="math inline">\(\max_{i\in X}\{v_{ij}\}\)</span>，在<span class="math inline">\(v(Y)\)</span>当中的贡献是<span class="math inline">\(\max_{i\in Y}\{v_{ij}\}\)</span>，而因为<span class="math inline">\(X\subseteq Y\)</span>，显然有 <span class="math display">\[
-\max_{i\in X}\{v_{ij}\} \le \max_{i\in Y}\{v_{ij}\}
-\]</span> 将<span class="math inline">\(l\)</span>加入集合之后，<span class="math inline">\(v_{lj}\)</span>加入了比较，有三种情况：</p>
-<ol type="1">
-<li><span class="math inline">\(v_{lj} \le \max_{i\in X}\{v_{ij}\}\)</span>，那么<span class="math inline">\(X\)</span>还是<span class="math inline">\(Y\)</span>都不会增加。</li>
-<li><span class="math inline">\(\max_{i\in X}\{v_{ij}\} &lt; v_{lj} \le \max_{i\in Y}\{v_{ij}\}\)</span>，那么<span class="math inline">\(X\)</span>这边增加了，而<span class="math inline">\(Y\)</span>这边不增加。</li>
-<li><span class="math inline">\(v_{lj} &gt; \max_{i\in Y}\{v_{ij}\}\)</span>，两边的最大值都增加了，但是增加幅度<span class="math inline">\(X\)</span>这边要大于<span class="math inline">\(Y\)</span>。</li>
-</ol>
-<p>由此可见，对于一个固定的交易<span class="math inline">\(j\)</span>，新银行<span class="math inline">\(l\)</span>加入后，<span class="math inline">\(X\)</span>这一侧的增加量一定不少于<span class="math inline">\(Y\)</span>这一侧的增加量。因此对于所有交易求和之后，必有 <span class="math display">\[
-v(X\cup \{l\}) - v(X) \ge v(Y\cup \{l\}) - v(Y)
-\]</span> 得证。</p>
-<p>这个“边际效应递减”的性质有一个高端的名字：<strong>次模性</strong>（Submodularity）。</p>
-<p><strong>引理1的证明：</strong>令<span class="math inline">\(\mathrm{OPT}\setminus S = \{i_1,i_2,\cdots,i_p\}\)</span>。注意到显然有<span class="math inline">\(p\le |\mathrm{OPT}|=k\)</span>。 <span class="math display">\[
-\begin{aligned}
-    v(\mathrm{OPT}) &amp;\le v(\mathrm{OPT} \cup S) \\
-    &amp;= v(S) + v(\mathrm{OPT} \cup S) - v(S) \\
-    &amp;= v(S) + \sum_{j=1}^p \left(v\left(S\cup \{i_1,i_2,\cdots,i_j\}\right) - v\left(S\cup \{i_1,i_2,\cdots,i_{j-1}\}\right)\right)
-\end{aligned}
-\]</span> 那个求和式是一个非常精巧的叠缩。接下来我们运用引理2，令<span class="math inline">\(X=S,Y=S\cup \{i_1,i_2,\cdots,i_{j-1}\}\)</span>： <span class="math display">\[
-\begin{aligned}
-    v(\mathrm{OPT}) &amp;\le  v(S) + \sum_{j=1}^p \left(v\left(S\cup \{i_1,i_2,\cdots,i_j\}\right) - v\left(S\cup \{i_1,i_2,\cdots,i_{j-1}\}\right)\right) \\
-    &amp;\le v(S) + \sum_{j=1}^p (v(S\cup\{i_j\}) - v(S)) \\
-    &amp;\le v(S) + \sum_{j=1}^p (v(S\cup\{i_h\}) - v(S)) \\
-    &amp;= v(S) + p(v(S\cup\{i_h\}) - v(S)) \\
-    &amp;\le v(S) + k(v(S\cup\{i_h\}) - v(S))
-\end{aligned}
-\]</span> 倒数第三步运用到了我们算法的贪心性质，即<span class="math inline">\(v(S\cup\{i_h\}) - v(S) \ge v(S\cup\{i_j\}) - v(S), \forall j\)</span>。接下来我们马上就可以得到引理： <span class="math display">\[
-\begin{aligned}
-    v(\mathrm{OPT}) &amp;\le v(S) + k(v(S\cup\{i_h\}) - v(S)) \\
-    v(\mathrm{OPT}) - v(S) &amp;\le k(v(S\cup\{i_h\}) - v(S)) \\
-    v(S\cup\{i_h\}) - v(S) &amp;\ge \frac{v(\mathrm{OPT}) - v(S)}{k}
-\end{aligned}
-\]</span> 证毕。</p>
-<p>接下来我们可以开始证明我们算法的近似比了：</p>
-<p><strong>定理：</strong>我们的算法是一个<span class="math inline">\(\left(1 - \frac{1}{e}\right)\)</span>倍近似算法。</p>
-<p><strong>证明：</strong>令<span class="math inline">\(S_t\)</span>表示第<span class="math inline">\(t\)</span>次循环后我们所选的银行集合。</p>
-<p>由引理可得 <span class="math display">\[
-v(S_k) - v(S_{k-1}) \ge \frac{v(\mathrm{OPT}) - v(S_{k-1})}{k} \Rightarrow v(S_k) \ge \frac{v(\mathrm{OPT})}{k} + \left(1-\frac{1}{k}\right)v(S_{k-1})
-\]</span> 因此 <span class="math display">\[
-\begin{aligned}
-    v(S_k) &amp;\ge \frac{v(\mathrm{OPT})}{k} + \left(1-\frac{1}{k}\right)v(S_{k-1}) \\
-        &amp;\ge  \frac{v(\mathrm{OPT})}{k} + \left(1-\frac{1}{k}\right) \left(\frac{v(\mathrm{OPT})}{k} + \left(1-\frac{1}{k}\right)v(S_{k-2})\right)\\
-        &amp;\cdots \\
-        &amp;\ge \frac{v(\mathrm{OPT})}{k}\left(1+\left(1-\frac{1}{k}\right)+\cdots+\left(1-\frac{1}{k}\right)^{k-1}\right) + \left(1-\frac{1}{k}\right)^kv(S_0) \\
-        &amp;= \frac{v(\mathrm{OPT})}{k}\left(1+\left(1-\frac{1}{k}\right)+\cdots+\left(1-\frac{1}{k}\right)^{k-1}\right) \\
-        &amp;= \frac{v(\mathrm{OPT})}{k}\frac{1-\left(1-\frac{1}{k}\right)^k}{1\over k} \\
-        &amp;= v(\mathrm{OPT})\left(1-\left(1-\frac{1}{k}\right)^k \right) \\
-        &amp;\le \left(1-\left(e^{-\frac{1}{k}}\right)^k \right) v(\mathrm{OPT}) \\
-        &amp;= \left(1 - \frac{1}{e}\right)v(\mathrm{OPT})
-\end{aligned}
-\]</span> 证毕。</p>
-<p>其实分析我们的贪心算法，我们发现我们其实只利用了<span class="math inline">\(v(\cdot)\)</span>的次模性，而没有利用<span class="math inline">\(v(\cdot)\)</span>的具体形式或者题目的具体要求。而次模性足以证明引理1，引理1足以证明近似比。也就是说，我们这个贪心算法及其分析是可以被推广到其他的次模优化问题上的。因此，这个看起来很简单粗暴的贪心算法，其实真的是非常有意思！</p>
 
       
     </div>

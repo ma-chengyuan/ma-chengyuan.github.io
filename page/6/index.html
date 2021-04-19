@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">89</span>
+          <span class="site-state-item-count">90</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,265 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/10/25/Luogu4719/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/10/25/Luogu4719/" class="post-title-link" itemprop="url">Luogu 4719 / 动态DP</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-25 00:00:00" itemprop="dateCreated datePublished" datetime="2019-10-25T00:00:00+08:00">2019-10-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-07-30 14:10:42" itemprop="dateModified" datetime="2020-07-30T14:10:42+08:00">2020-07-30</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>本地笔记整理第一发，比较散，2019/12/8上传 <span class="math display">\[
+\newcommand{\dp}{\mathrm{dp}}
+\newcommand{\BigO}[1]{\mathcal{O}\left(#1\right)}
+\newcommand{\ldp}{\mathrm{ldp}}
+\newcommand{\lch}[1]{\mathrm{lch}(#1)}
+\newcommand{\hch}[1]{\mathrm{hch}(#1)}
+\]</span></p>
+<h1 id="分析">分析</h1>
+<p>题目要求求取带修改的树上最大独立集，朴素<span class="math inline">\(\BigO{n^2}\)</span>DP如下： <span class="math display">\[
+\begin{aligned}
+    \dp[u][0] &amp;= \sum_{v \in \mathrm{ch}(u)} \max\left\{\dp[v][1], \dp[v][0]\right\} \\
+    \dp[u][1] &amp;= \mathrm{val}[u] + \sum_{v \in \mathrm{ch}(u)} \dp[v][0]
+\end{aligned}
+\]</span></p>
+<p>但是这么一次转移是<span class="math inline">\(\BigO{n}\)</span>的，考虑优化，定义<span class="math inline">\(\mathrm{lch}(u)\)</span>为<span class="math inline">\(u\)</span>的轻儿子集合。<span class="math inline">\(\mathrm{hch}(u)\)</span>为<span class="math inline">\(u\)</span>的重儿子，稍微修改一下，定义</p>
+<p><span class="math display">\[
+\begin{aligned}
+\ldp[u][0] &amp;= \sum_{v \in \lch{u}} \max\left\{\dp[v][1], \dp[v][0]\right\} \\
+\ldp[u][1] &amp;= \mathrm{val}[u] + \sum_{v \in \lch{u}} \dp[v][0] \\
+\end{aligned}
+\]</span></p>
+<p>则有</p>
+<p><span class="math display">\[
+\begin{aligned}
+    \dp[u][0] &amp;= \max\left\{\dp[\hch{u}][0],\dp[\hch{u}][1]\right\} + \ldp[u][0]\\
+    \dp[u][1] &amp;= \dp[\hch{u}][0] + \ldp[u][1]
+\end{aligned}
+\]</span></p>
+<p>使用Max-Plus Algebra的方式重写：</p>
+<p><span class="math display">\[
+\begin{pmatrix}
+    \dp[u][0] \\
+    \dp[u][1]
+\end{pmatrix} = 
+\begin{pmatrix}
+    \ldp[u][0] &amp; \ldp[u][0] \\
+    \ldp[u][1] &amp; -\infty
+\end{pmatrix}
+\begin{pmatrix}
+    \dp[\hch{u}][0] \\
+    \dp[\hch{u}][1]
+\end{pmatrix}
+\]</span> 接下来只需要树链剖分维护矩阵转移就行了，单次修改的时间复杂度为<span class="math inline">\(\BigO{\log^2n}\)</span>。</p>
+<h1 id="代码">代码</h1>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+
+using namespace std;
+const int N = 100010;
+const int T = 4 * N;
+const int INF = 0x3f3f3f3f;
+int n;
+int fst[N], nxt[2 * N], to[2 * N], tot = 1;
+struct vec &#123;
+    int a[2];
+    vec() &#123; memset(a, 0, sizeof a); &#125;
+    int &amp;operator [](int x) &#123; return a[x]; &#125;
+    const int &amp;operator [](int x) const &#123; return a[x]; &#125;
+&#125; eye;
+struct mat &#123;
+    int a[2][2];
+    mat() &#123; memset(a, 0, sizeof a); &#125;   
+    int *operator [](int x) &#123; return a[x]; &#125;
+    const int *operator [](int x) const &#123; return a[x]; &#125;
+    mat operator *(const mat &amp;b) const &#123;
+        mat c;
+        for (int i = 0; i &lt; 2; i++) &#123;
+            for (int j = 0; j &lt; 2; j++) &#123;
+                c[i][j] = -INF;
+                for (int k = 0; k &lt; 2; k++)
+                    c[i][j] = max(c[i][j], a[i][k] + b[k][j]);
+            &#125;
+        &#125;
+        return c;
+    &#125;
+    vec operator *(const vec &amp;b) const &#123;
+        vec c;
+        for (int i = 0; i &lt; 2; i++) &#123;
+            c[i] = -INF;
+            for (int j = 0; j &lt; 2; j++)
+                c[i] = max(c[i], a[i][j] + b[j]);
+        &#125;
+        return c;
+    &#125;
+&#125;;
+void link(int u, int v) &#123;
+    nxt[++tot] = fst[u];
+    fst[u] = tot; to[tot] = v;
+&#125;
+int cnt = 0, id[N], top[N], dep[N], bot[N], sz[N], son[N], fa[N];
+int a[N], ldp[N][2], dp[N][2];
+mat val[T], init[N];
+void dfs1(int u, int p) &#123;
+    dep[u] = dep[p] + 1; fa[u] = p;
+    sz[u] = 1; int mx = -1;
+    for (int e = fst[u]; e; e = nxt[e]) &#123;
+        int v = to[e];
+        if (v == p) continue;
+        dfs1(v, u); sz[u] += sz[v];
+        if (sz[v] &gt; mx) mx = sz[v], son[u] = v;
+    &#125;
+&#125;
+void dfs2(int u, int tp) &#123;
+    id[u] = ++cnt, top[u] = tp;
+    bot[top[u]] = u;
+    if (son[u]) dfs2(son[u], tp);
+    for (int e = fst[u]; e; e = nxt[e]) &#123;
+        int v = to[e];
+        if (v == fa[u] || v == son[u]) continue;
+        dfs2(v, v); 
+    &#125;
+&#125;
+#define lch (rt &lt;&lt; 1)
+#define rch (lch | 1)
+#define larg lch, l, mid
+#define rarg rch, mid + 1, r
+void pushup(int rt) &#123;
+    val[rt] = val[lch] * val[rch];
+&#125;
+void build(int rt, int l, int r) &#123;
+    if (l == r) return;
+    int mid = (l + r) &gt;&gt; 1;
+    build(larg); build(rarg);
+    pushup(rt);
+&#125;
+mat query(int rt, int l, int r, int ql, int qr) &#123;
+    if (ql &lt;= l &amp;&amp; r &lt;= qr) return val[rt];
+    int mid = (l + r) &gt;&gt; 1;
+    if (qr &lt;= mid) return query(larg, ql, qr);
+    if (ql &gt; mid) return query(rarg, ql, qr);
+    return query(larg, ql, qr) * query(rarg, ql, qr);
+&#125;
+void update(int rt, int l, int r, int p, const mat &amp;v) &#123;
+    if (l == r) &#123; val[rt] = v; return; &#125;
+    int mid = (l + r) &gt;&gt; 1;
+    if (p &lt;= mid) update(larg, p, v);
+    else update(rarg, p, v);
+    pushup(rt);
+&#125;
+void updateu(int u) &#123;
+    mat m; m[0][0] = m[0][1] = ldp[u][0];
+    m[1][0] = ldp[u][1]; m[1][1] = -INF;
+    update(1, 1, n, id[u], m);
+&#125;
+void dfs3(int u) &#123;
+    ldp[u][0] = 0, ldp[u][1] = a[u];
+    for (int e = fst[u]; e; e = nxt[e]) &#123;
+        int v = to[e];
+        if (v == fa[u]) continue;
+        dfs3(v);
+        if (v == son[u]) continue;
+        ldp[u][0] += max(dp[v][0], dp[v][1]);
+        ldp[u][1] += dp[v][0];
+    &#125;
+    updateu(u);
+    vec res = query(1, 1, n, id[u], id[bot[top[u]]]) * eye;
+    dp[u][0] = res[0]; dp[u][1] = res[1];
+&#125;
+void modify(int u, int p) &#123;
+    ldp[u][1] += p - a[u]; a[u] = p;
+    updateu(u);
+    while (true) &#123;
+        u = top[u];
+        vec res = query(1, 1, n, id[u], id[bot[u]]) * eye;
+        if (u != 1) &#123;
+            ldp[fa[u]][0] += max(res[0], res[1]) - max(dp[u][0], dp[u][1]);
+            ldp[fa[u]][1] += res[0] - dp[u][0];
+        &#125;
+        dp[u][0] = res[0]; dp[u][1] = res[1];
+        if (u == 1) break;
+        updateu(u = fa[u]);
+    &#125;
+&#125;
+int main() &#123;
+    int q; scanf(&quot;%d%d&quot;, &amp;n, &amp;q);
+    for (int i = 1; i &lt;= n; i++) scanf(&quot;%d&quot;, &amp;a[i]);
+    for (int i = 1; i &lt; n; i++) &#123;
+        int x, y; scanf(&quot;%d%d&quot;, &amp;x, &amp;y);
+        link(x, y); link(y, x);
+    &#125;
+    dfs1(1, 0); dfs2(1, 1); build(1, 1, n); dfs3(1);
+    while (q--) &#123;
+        int x, y; scanf(&quot;%d%d&quot;, &amp;x, &amp;y);
+        modify(x, y);
+        printf(&quot;%d\n&quot;, max(dp[1][0], dp[1][1]));
+    &#125;
+    return 0;
+&#125;</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1740,133 +1999,6 @@ int main() &#123;
     ntt(sz, a, -1);
     for (int i = 0; i &lt; n + m + 1; i++) printf(&quot;%d &quot;, a[i].get());
     puts(&quot;&quot;);
-    return 0;
-&#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/02/03/ExCRT/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/02/03/ExCRT/" class="post-title-link" itemprop="url">ExCRT笔记</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2019-02-03 19:11:44 / 修改时间：19:22:48" itemprop="dateCreated datePublished" datetime="2019-02-03T19:11:44+08:00">2019-02-03</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="问题">问题</h1>
-<p>求满足： <span class="math display">\[
-\begin{aligned}
-x &amp;\equiv b_1 &amp;\pmod{a_1} \\
-x &amp;\equiv b_2 &amp;\pmod{a_2} \\
-x &amp;\equiv b_3 &amp;\pmod{a_3} \\
-&amp;\ \ \vdots &amp;\\
-x &amp;\equiv b_n &amp;\pmod{a_n}
-\end{aligned}
-\]</span> 的<span class="math inline">\(x\)</span>的值。</p>
-<h1 id="excrt">ExCRT</h1>
-<p>当<span class="math inline">\(a_1, a_2, \cdots, a_n\)</span>互素的时候显然可以使用中国剩余定理（CRT）解决，时间复杂度为<span class="math inline">\(O(n\log n)\)</span>。</p>
-<p>考虑不互素的情况，假设已经解决了前<span class="math inline">\(i - 1\)</span>个方程，得到的解为<span class="math inline">\(x_{i - 1}\)</span>，<span class="math inline">\(\operatorname{lcm}(a_1, \cdots, a_{i - 1}) = m\)</span>。</p>
-<p>那么我们考虑解决 <span class="math display">\[
-x_{i - 1} + tm \equiv b_i \pmod{a_i}
-\]</span> 易证得到的解<span class="math inline">\(x_i = x_{i - 1} + tm\)</span>不会再和前<span class="math inline">\(i\)</span>个解产生冲突。</p>
-<p>稍微移项一下： <span class="math display">\[
-tm \equiv b_i - x_{i - 1} \pmod{a_i}
-\]</span> 用ExGCD解出<span class="math inline">\(t\)</span>即可。</p>
-<p>这套方法称为ExCRT（拓展中国剩余定理），复杂度依旧是<span class="math inline">\(O(n\log n)\)</span>。<del>全面优于CRT。</del></p>
-<p>代码：</p>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-
-using namespace std;
-typedef long long ll;
-const int N = 100010;
-int n;
-ll a[N], b[N];
-
-ll exgcd(ll a, ll b, ll &amp;x, ll &amp;y) &#123;
-    if (b == 0) return x = 1, y = 0, a;
-    ll d = exgcd(b, a % b, y, x);
-    return y -= a / b * x, d;
-&#125;
-
-ll smul(ll x, ll y, ll mod) &#123;
-    if (y &lt; 0) return -qmul(x, -y, mod);
-    ll ret = 0;
-    for (; y; y &gt;&gt;= 1) &#123;
-        if (y &amp; 1) ret = (ret + x) % mod;
-        x = (x + x) % mod;
-    &#125;
-    return ret;
-&#125;
-
-ll excrt() &#123;
-    ll lcm = a[1], t = b[1], x, y;
-    for (int i = 2; i &lt;= n; i++) &#123;
-        ll d = exgcd(lcm, a[i], x, y);
-        x = smul(x, (b[i] - t) / d, a[i]);
-        t += x * lcm;
-        lcm = lcm / d * a[i];
-        t = (t % lcm + lcm) % lcm;
-    &#125;
-    return t;
-&#125;
-
-int main() &#123;
-    scanf(&quot;%d&quot;, &amp;n);
-    for (int i = 1; i &lt;= n; i++) scanf(&quot;%lld%lld&quot;, &amp;a[i], &amp;b[i]);
-    printf(&quot;%lld\n&quot;, excrt());
     return 0;
 &#125;</code></pre>
 

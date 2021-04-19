@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">89</span>
+          <span class="site-state-item-count">90</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,163 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/03/HDU5015/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/09/03/HDU5015/" class="post-title-link" itemprop="url">HDU 5015 / 矩阵加速递推</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2018-09-03 19:32:18 / 修改时间：19:58:41" itemprop="dateCreated datePublished" datetime="2018-09-03T19:32:18+08:00">2018-09-03</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="题意">题意</h1>
+<p><a target="_blank" rel="noopener" href="http://acm.hdu.edu.cn/showproblem.php?pid=5015">题面</a>：假设有一个<span class="math inline">\(n+1\)</span>行<span class="math inline">\(m+1\)</span>列的矩阵<span class="math inline">\(A\)</span>，下标从<span class="math inline">\(0\)</span>开始，给定<span class="math inline">\(A_{1,0}, A_{2, 0}, \cdots A_{n, 0}\)</span>（即最左边一列的初始值），以及已知矩阵的第<span class="math inline">\(1\)</span>行第<span class="math inline">\(i\)</span>列为<span class="math inline">\(2\underbrace{333\cdots3}_{i + 1 个 3}\)</span>，如下所示： <span class="math display">\[
+\left(\begin{matrix}
+0 &amp;233 &amp;2333 &amp;23333 &amp;\cdots \\
+A_{1, 0} &amp;A_{1, 1} &amp;A_{1, 2} &amp;A_{1, 3} &amp;\cdots \\
+A_{2, 0} &amp;A_{2, 1} &amp;A_{2, 2} &amp;A_{2, 3} &amp;\cdots \\
+\vdots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots
+\end{matrix}\right)
+\]</span> 并且已知对于<span class="math inline">\(i, j \ge 1\)</span>，有<span class="math inline">\(A_{i, j} = A_{i - 1, j} + A_{i, j - 1}\)</span>。求<span class="math inline">\(A_{n, m}\)</span>。</p>
+<p><span class="math inline">\(n \le 10, m \le 10^9\)</span>。</p>
+<h1 id="解法">解法</h1>
+<p>从数据范围可以得知我们必须使用矩阵快速幂加速递推，我们定义第<span class="math inline">\(i\)</span>列的状态向量为一个<span class="math inline">\(n + 2\)</span>行的列向量，并<strong>手动展开递推式消除同一列的项</strong>（非常重要，因为不然的话没办法推）得到转移矩阵： <span class="math display">\[
+\left(\begin{matrix}
+1 \\
+A_{i, 0} \\
+A_{i, 1} \\
+A_{i, 2} \\
+A_{i, 3} \\
+\vdots
+\end{matrix}\right)
+=
+\left(\begin{matrix}
+1 &amp;0 &amp;0 &amp;0 &amp;0 &amp;\cdots\\
+3 &amp;10 &amp;0 &amp;0 &amp;0 &amp;\cdots\\
+3 &amp;10 &amp;1 &amp;0 &amp;0 &amp;\cdots\\
+3 &amp;10 &amp;1 &amp;1 &amp;0 &amp;\cdots\\
+3 &amp;10 &amp;1 &amp;1 &amp;1 &amp;\cdots\\
+\vdots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots
+\end{matrix}\right)
+\left(\begin{matrix}
+1 \\
+A_{i - 1, 0} \\
+A_{i - 1, 1} \\
+A_{i - 1, 2} \\
+A_{i - 1, 3} \\
+\vdots
+\end{matrix}\right)
+\]</span> 注意到我们怎么处理<span class="math inline">\(2\underbrace{333\cdots3}_{i + 1 个 3}\)</span>的，我们发现<span class="math inline">\(2\underbrace{3\cdots3}_{i + 1 个 3} = 2\underbrace{3\cdots3}_{i 个 3} \times 10 + 3\)</span>，为了凑出<span class="math inline">\(3\)</span>我们在矩阵当中引入<span class="math inline">\(1\)</span>这多余的一行（<strong>这是在矩阵加速递推时引入常数项的常用技巧</strong>）（其实在这里直接引入<span class="math inline">\(3\)</span>也可以啦，但是<span class="math inline">\(1\)</span>的话更通用），这就是系数<span class="math inline">\(3, 10\)</span>的由来。然后使用快速幂加速矩阵乘法即可，时间复杂度为<span class="math inline">\(O(n^3\log m)\)</span>：</p>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
+
+using namespace std;
+typedef long long ll;
+typedef int mat[13][13];
+typedef int vec[13];
+const int MOD = 10000007;
+int n, m;
+vec a;
+mat b;
+
+void mul(mat &amp;x, vec &amp;y) &#123;
+    vec z;
+    for (int i = 1; i &lt;= n + 2; i++) &#123;
+        z[i] = 0;
+        for (int j = 1; j &lt;= n + 2; j++)
+            z[i] = (z[i] + 1LL * x[i][j] * y[j]) % MOD;
+    &#125;
+    for (int i = 1; i &lt;= n + 2; i++)
+        y[i] = z[i];
+&#125;
+
+void sqr(mat &amp;x) &#123;
+    mat y;
+    for (int i = 1; i &lt;= n + 2; i++) &#123;
+        for (int j = 1; j &lt;= n + 2; j++) &#123;
+            y[i][j] = 0;
+            for (int k = 1; k &lt;= n + 2; k++)
+                y[i][j] = (y[i][j] + 1LL * x[i][k] * x[k][j]) % MOD;
+        &#125;
+    &#125;
+    for (int i = 1; i &lt;= n + 2; i++)
+        for (int j = 1; j &lt;= n + 2; j++)
+            x[i][j] = y[i][j];
+&#125;
+
+int main() &#123;
+    while (scanf(&quot;%d%d&quot;, &amp;n, &amp;m) != EOF) &#123;
+        a[1] = 1, a[2] = 23;
+        for (int i = 3; i &lt;= n + 2; i++)
+            scanf(&quot;%d&quot;, &amp;a[i]);
+        b[1][1] = 1;
+        for (int i = 2; i &lt;= n + 2; i++) &#123;
+            b[i][1] = 3, b[i][2] = 10;
+            for (int j = 3; j &lt;= i; j++)
+                b[i][j] = 1;  
+        &#125;
+        for (; m; m &gt;&gt;= 1) &#123;
+            if (m &amp; 1) mul(b, a);
+            sqr(b);
+        &#125;
+        printf(&quot;%d\n&quot;, a[n + 2]);
+    &#125;
+    return 0;
+&#125;</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1641,176 +1798,6 @@ int main() &#123;
     &#125;
     fclose(stdin);
     fclose(stdout);
-    return 0;
-&#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/08/30/%E6%9C%80%E5%A4%A7m%E6%AE%B5%E8%BF%9E%E7%BB%AD%E5%AD%90%E6%AE%B5%E5%92%8C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/08/30/%E6%9C%80%E5%A4%A7m%E6%AE%B5%E8%BF%9E%E7%BB%AD%E5%AD%90%E6%AE%B5%E5%92%8C/" class="post-title-link" itemprop="url">最大多段连续子段和</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-08-30 19:43:21" itemprop="dateCreated datePublished" datetime="2018-08-30T19:43:21+08:00">2018-08-30</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-09-01 16:33:41" itemprop="dateModified" datetime="2018-09-01T16:33:41+08:00">2018-09-01</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="问题概要">问题概要</h1>
-<p>给定一个<span class="math inline">\(n\)</span>个元素的环形序列（<span class="math inline">\(1\)</span>号与<span class="math inline">\(n\)</span>号元素相邻），元素有正有负，求<span class="math inline">\(m\)</span>段连续的子段，使子段和最大，保证至少有<span class="math inline">\(m\)</span>个正数。</p>
-<p><span class="math inline">\(n \le 3 \times 10^5, m \le 10^5\)</span>。</p>
-<h1 id="on2m暴力"><span class="math inline">\(O(n^2m)\)</span>暴力</h1>
-<p>破环成链，类似序列上的最大连续子段和，定义<span class="math inline">\(dp[i][j]\)</span>表示以<span class="math inline">\(i\)</span>为右端点选了<span class="math inline">\(j\)</span>段的最大子段和，<del>口胡</del>状态转移： <span class="math display">\[
-dp[i][j] = a[i] + \max \begin{cases}
-    dp[i - 1][j] \\
-    \max_{1 \le k &lt; i} dp[k][j - 1]
-\end{cases}
-\]</span> 后面的<span class="math inline">\(\max\)</span>随便搞搞搞成<span class="math inline">\(O(1)\)</span>的，然后整个状态转移就是<span class="math inline">\(O(nm)\)</span>的，加上破环成链的代价，总的时间复杂度为<span class="math inline">\(O(n^2m)\)</span>，实测拿50分。</p>
-<h1 id="onlog-n正解"><span class="math inline">\(O(n\log n)\)</span>正解</h1>
-<p>我们发现：<strong>既然我们要选一个正数，不如把这个正数所在的一整段正数全部选了；类似地，既然我们要不选一个负数，不如把这个负数所在的一整段负数排除掉。</strong></p>
-<p>于是乎我们就可以把整个环缩成若干段正负交替的“段”，假设我们缩出来是<span class="math inline">\(p\)</span>段正的夹着<span class="math inline">\(p\)</span>段负的，那么分情况讨论：</p>
-<ol type="1">
-<li><span class="math inline">\(p \le m\)</span>，直接选所有的正数就行了，注意我们可以把这里的一段正数断成两段或更多来选，因此无论如何都能选够<span class="math inline">\(m\)</span>段，此时明显最优。</li>
-<li><span class="math inline">\(p &gt; m\)</span>，我们不能每一段都选了，但是我们可以假设我们先选了<span class="math inline">\(p\)</span>段，然后通过或消除，或合并的方式进行“调整”。</li>
-</ol>
-<p>考虑调整的方式：</p>
-<ol type="1">
-<li>选一段负数，这等价于把两边的正数段合并了，总段数<span class="math inline">\(-1\)</span>，对答案有负贡献。</li>
-<li>不选一段正数，这等价于把两边的负数段合并了，总段数<span class="math inline">\(-1\)</span>，对答案也有负贡献。</li>
-</ol>
-<p><strong>注意：我们不能先选一段负数，然后再不选其相邻的正数（或反过来），因为这样不仅血亏，对总段数也没有影响。</strong></p>
-<p>因为调整一次总段数减少1，以上的“调整”操作要进行<span class="math inline">\(p - m\)</span>次。</p>
-<p>既然对答案的贡献都是负的，我们把每一段的“值”变成<strong>该段数和的绝对值</strong>，然后问题就被转化为了：<strong>选择<span class="math inline">\(p - m\)</span>个不相邻的数，使它们的和（对答案的负贡献）最小。</strong></p>
-<p>这又是另一个经典问题了，参见<a target="_blank" rel="noopener" href="https://www.luogu.org/problemnew/show/P3620">CTSC 2007 数据备份</a>，我们维护一个小根堆，每次取出堆顶元素，并在答案上减去其的贡献，然后执行“合并”，即<strong>如果这个数的前驱是<span class="math inline">\(a\)</span>，本身是<span class="math inline">\(b\)</span>，右边是<span class="math inline">\(c\)</span>，我们删除<span class="math inline">\(a, b, c\)</span>，然后插入一个新的权值为<span class="math inline">\(a + c - b\)</span>的等效节点。这样的话，如果我们下次再选到这个节点，对答案的影响等价于我们选了<span class="math inline">\(a,c\)</span>而不选<span class="math inline">\(b\)</span></strong>。这在思想上类似于网络流的退流。为了维护前驱/后继关系，我们同时需要引入一个环形链表，总的复杂度约为<span class="math inline">\(O(n\log n)\)</span>。</p>
-<p>我们发现这样做环形和非环形的差别就很小了，甚至是环形的更好写（不需要处理边界情况）。</p>
-<p>代码：（注意因为人懒所以用了<code>priority_queue</code><del>饮鸩止渴</del>，所以用的是懒惰删除法，还有就是代码中是大根堆维护负绝对值，本质上是一样的）</p>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-#include &lt;cstdlib&gt;
-#include &lt;cstring&gt;
-#include &lt;cctype&gt;
-#include &lt;algorithm&gt;
-#include &lt;queue&gt;
-#define register
-
-using namespace std;
-typedef long long ll;
-typedef unsigned int u32;
-const int INF = 0x3f3f3f3f;
-const int N = 600100;
-int n, m, ans, cnt;
-int a[N], s[N], tot = 0;
-int pre[N], nxt[N];
-bool inv[N];
-
-struct cmp &#123;
-    bool operator ()(int a, int b) &#123;
-        return s[a] &lt; s[b];
-    &#125;
-&#125;;
-priority_queue&lt;int, vector&lt;int&gt;, cmp&gt; q;
-
-#define max(a, b) ((a) &gt; (b) ? (a) : (b))
-#define abs(a) ((a) &gt; 0 ? (a) : -(a))
-#define sgn(a) ((a) &gt;= 0 ? 1 : -1)
-
-void merge(int x) &#123;
-    ans += s[x];
-    s[++cnt] = s[pre[x]] + s[nxt[x]] - s[x];
-    inv[pre[x]] = inv[nxt[x]] = true;
-    pre[cnt] = pre[pre[x]];
-    nxt[pre[cnt]] = cnt;
-    nxt[cnt] = nxt[nxt[x]];
-    pre[nxt[cnt]] = cnt;
-    q.push(cnt);
-&#125;
-
-void solve() &#123;
-    ans = 0;
-    for (int i = 1; i &lt;= n; ) &#123;
-        s[++tot] = 0;
-        if (a[i] &gt;= 0) while (i &lt;= n &amp;&amp; a[i] &gt;= 0) s[tot] += a[i++];
-        else while (i &lt;= n &amp;&amp; a[i] &lt; 0) s[tot] += a[i++];
-        if (s[i] &gt;= 0) ans += s[i]; 
-    &#125;
-    if (sgn(s[1]) == sgn(s[tot])) s[1] += s[tot--];
-    if (tot / 2 &lt;= m) return;
-    for (int i = 1; i &lt;= tot; i++) &#123;
-        pre[i] = i == 1 ? tot : i - 1;
-        nxt[i] = i == tot ? 1 : i + 1;
-        s[i] = -abs(s[i]);
-        q.push(i);
-    &#125;
-    cnt = tot;
-    int left = tot / 2 - m;
-    while (left--) &#123;
-        int now = q.top(); q.pop();
-        if (inv[now]) left++;
-        else merge(now);
-    &#125;
-&#125;
-
-int main() &#123;
-    scanf(&quot;%d%d&quot;, &amp;n, &amp;m);
-    for (int i = 1; i &lt;= n; ++i) scanf(&quot;%d&quot;, &amp;a[i]);
-    solve();
-    printf(&quot;%d\n&quot;, ans);
     return 0;
 &#125;</code></pre>
 
