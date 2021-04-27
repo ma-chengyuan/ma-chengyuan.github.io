@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-count">91</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,275 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/02/04/NTT/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/02/04/NTT/" class="post-title-link" itemprop="url">NTT笔记</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2019-02-04 11:05:29 / 修改时间：11:58:47" itemprop="dateCreated datePublished" datetime="2019-02-04T11:05:29+08:00">2019-02-04</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>NTT的思想与FFT类似，但是避免了浮点数运算带来的精度问题。</p>
+<h1 id="原根">原根</h1>
+<p><strong>定义：</strong>设<span class="math inline">\(m &gt; 1\)</span>且<span class="math inline">\(\gcd(a, m) = 1\)</span>，使得<span class="math inline">\(a^d \equiv 1 \pmod m\)</span>的最小<span class="math inline">\(d\)</span>称为<span class="math inline">\(a\)</span>模<span class="math inline">\(m\)</span>的<strong>阶</strong>，记作<span class="math inline">\(d = \delta_m(a)\)</span>。</p>
+<p><strong>定理：</strong>显然，对于所有<span class="math inline">\(a^d \equiv 1 \pmod m\)</span>，都有<span class="math inline">\(\delta_m(a) \mid d\)</span>。</p>
+<p>同时根据欧拉定理我们有 <span class="math display">\[
+a^{\varphi(m)} \equiv 1 \pmod m
+\]</span> 因此有<span class="math inline">\(\delta_m(a) \mid \varphi(m)\)</span>。</p>
+<p><strong>定义：</strong>若<span class="math inline">\(\delta_m(g) = \varphi(m)\)</span>则称<span class="math inline">\(g\)</span>为模<span class="math inline">\(m\)</span>意义下的<strong>原根</strong>。</p>
+<p><span class="math inline">\(m​\)</span>存在原根当且仅当<span class="math inline">\(m = 2,4,p^n, 2p^n​\)</span>，其中<span class="math inline">\(p​\)</span>为奇素数，<span class="math inline">\(n \in \mathbb{Z}​\)</span>。</p>
+<p><strong>原根的意义：</strong>如果<span class="math inline">\(m\)</span>存在原根<span class="math inline">\(g\)</span>，那<span class="math inline">\(g^0, g^1, g^2, \cdots, g^{\varphi(m) - 1}\)</span>恰能表示所有<span class="math inline">\(\varphi(m)\)</span>个与<span class="math inline">\(m\)</span>互素的数，且构成<span class="math inline">\(m\)</span>的简化剩余系。</p>
+<p><strong>原根的计算方法：</strong>原根只有<span class="math inline">\(\varphi(\varphi(m))\)</span>个，因此只要枚举即可。</p>
+<h1 id="ntt">NTT</h1>
+<p>NTT中使用单位原根代替单位复数根进行计算，单位原根定义为： <span class="math display">\[
+g_n = g^{\varphi(p) / n} = g^{(p - 1)/n}
+\]</span> 其中<span class="math inline">\(g\)</span>为模素数<span class="math inline">\(p\)</span>的原根。</p>
+<p>显然<span class="math inline">\(g_n\)</span>有与单位负数根类似的性质： <span class="math display">\[
+g_n^n = g^{p - 1} \equiv 1 \pmod p
+\]</span> 又因为<span class="math inline">\(\left(g_n^{n / 2}\right)^2 \equiv 1 \pmod p\)</span>以及一些二次剩余的知识，<span class="math inline">\(g_n^{n / 2} \bmod p\)</span>只可能是<span class="math inline">\(\pm 1\)</span>，又因为原根的性质 <span class="math display">\[
+g_n^{n / 2} \equiv -1 \pmod p
+\]</span> 同时，观察<span class="math inline">\(g_n\)</span>的定义，易证<span class="math inline">\(g_{2n}^{2k} = g_n^k\)</span>（折半引理），原根具备所有FFT中利用的单位复数根的性质，因此也可以使用单位原根进行FFT，得到的算法就是NTT（Number Theoretic Transform），NTT适用于整数序列的变换，且精度与数值稳定性较FFT更优。</p>
+<p>代码：</p>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;algorithm&gt;
+
+using namespace std;
+const int MOD = 998244353;
+const int N = 270000;
+const int G = 3, INVG = 332748118;
+typedef long long ll;
+int n, m; 
+ll a[N], b[N];
+
+ll qpow(ll x, ll y) &#123;
+    ll ret = 1;
+    for (; y; y &gt;&gt;= 1) &#123;
+        if (y &amp; 1) ret = ret * x % MOD;
+        x = x * x % MOD;
+    &#125;
+    return ret;
+&#125;
+
+void ntt(int len, ll *x, int dir = 1) &#123;
+    static ll X[N];
+    for (int i = 0, k = 0; i &lt; len; i++) &#123;
+        X[i] = x[k];
+        int y = len &gt;&gt; 1;
+        while (y &amp; k) k ^= y, y &gt;&gt;= 1;
+        k |= y;
+    &#125;
+    for (int s = 2; s &lt;= len; s &lt;&lt;= 1) &#123;
+        ll w_ = qpow(G, (MOD - 1) / s);
+        if (dir == -1) w_ = qpow(w_, MOD - 2);
+        for (int l = 0; l &lt; len; l += s) &#123;
+            int mid = l + (s &gt;&gt; 1);
+            ll w = 1;
+            for (int i = 0; i &lt; s &gt;&gt; 1; i++) &#123;
+                ll t = w * X[mid + i] % MOD;
+                X[mid + i] = (X[l + i] - t) % MOD;
+                X[l + i] = (X[l + i] + t) % MOD;
+                w = w * w_ % MOD;
+            &#125;
+        &#125;
+    &#125;
+    copy(X, X + len, x);
+&#125;
+
+int main() &#123;
+    scanf(&quot;%d%d&quot;, &amp;n, &amp;m);
+    for (int i = 0; i &lt;= n; i++) scanf(&quot;%lld&quot;, &amp;a[i]);
+    for (int i = 0; i &lt;= m; i++) scanf(&quot;%lld&quot;, &amp;b[i]);
+    int sz = 1; while (sz &lt; n + m + 1) sz &lt;&lt;= 1;
+    ntt(sz, a); ntt(sz, b);
+    for (int i = 0; i &lt; sz; i++) printf(&quot;%lld %lld\n&quot;, a[i], b[i]);
+    for (int i = 0; i &lt; sz; i++) a[i] = a[i] * b[i] % MOD;
+    ntt(sz, a, -1); ll inv = qpow(sz, MOD - 2);
+    for (int i = 0; i &lt; n + m + 1; i++)
+        printf(&quot;%lld &quot;, (a[i] * inv % MOD + MOD) % MOD);
+    puts(&quot;&quot;);
+    return 0;
+&#125; </code></pre>
+<h1 id="常用的ntt素数">常用的NTT素数</h1>
+<p>NTT所用的素数应该满足什么条件呢？观察<span class="math inline">\(g_n\)</span>的定义显然我们期望对于一定范围内的<span class="math inline">\(k\)</span>（比如说<span class="math inline">\(2^k \le 2\times 10^5\)</span>）都最好有<span class="math inline">\(2^k \mid p-1\)</span>。即<span class="math inline">\(p = a\times 2^k +1\)</span>的形式。</p>
+<p>常见的NTT素数为：</p>
+<ol type="1">
+<li><span class="math inline">\(998244353 = 7\times 17\times 2^{23} + 1​\)</span></li>
+<li><span class="math inline">\(1004535809 = 479 \times 2^{21} + 1\)</span></li>
+<li><span class="math inline">\(469762049 = 7 \times 2^{26} + 1\)</span></li>
+<li><span class="math inline">\(2281701377 = 17 \times 2^{27} + 1\)</span></li>
+<li><span class="math inline">\(167772161 = 5 \times 2^{25} + 1\)</span></li>
+</ol>
+<p>这些素数的原根都包含<span class="math inline">\(3\)</span>。</p>
+<h1 id="任意模数ntt">任意模数NTT</h1>
+<p>有些时候题目要求任意模数的NTT变换，这个时候我们可以选取三个上述列表中模数分别进行NTT，然后通过CRT进行合并。具体上来说，对于一个数<span class="math inline">\(x\)</span>，若有： <span class="math display">\[
+\begin{aligned}
+x &amp;\equiv b_1 &amp;\pmod{p_1} \\
+x &amp;\equiv b_2 &amp;\pmod{p_2} \\
+x &amp;\equiv b_3 &amp;\pmod{p_3} 
+\end{aligned}
+\]</span> 我们考虑两两合并，先求解<span class="math inline">\(b_1 + k_1p_1 \equiv b_2 \pmod {p_2}​\)</span>，不难得到<span class="math inline">\(k_1 = p_1^{-1}(b_2 - b_1)​\)</span>（逆元在模<span class="math inline">\(p_2​\)</span>意义下）。</p>
+<p>令<span class="math inline">\(x&#39; = b_1 + k_1p_1\)</span>，再求解<span class="math inline">\(x = x&#39; + k_2p_1p_2 \equiv b_3 \pmod {p_3}\)</span>，此时有<span class="math inline">\(k_2 = (p_1p_2)^{-1}(b_3 - x&#39;)\)</span>（逆元在模<span class="math inline">\(p_3\)</span>意义下）。</p>
+<p>在计算的最后再对于指定的模数取模即可。</p>
+<p>代码：</p>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;algorithm&gt;
+
+using namespace std;
+typedef long long ll;
+const ll G = 3;
+const ll MOD1 = 998244353, MOD2 = 1004535809, MOD3 = 469762049;
+const int N = 270000;
+int n, m, P;
+
+int qpow(int x, int y, int mod) &#123;
+    int ret = 1;
+    for (; y; y &gt;&gt;= 1) &#123;
+        if (y &amp; 1) ret = (ll)ret * x % mod;
+        x = (ll)x * x % mod;
+    &#125;
+    return ret;
+&#125;
+
+struct mint &#123;
+    int m1, m2, m3;
+    mint() &#123;&#125;
+    mint(int x) : m1(x % MOD1), m2(x % MOD2), m3(x % MOD3) &#123;&#125;
+    mint(int m1, int m2, int m3) : m1(m1), m2(m2), m3(m3) &#123;&#125;
+    mint reduce() &#123; 
+        return mint(m1 + (m1 &gt;&gt; 31 &amp; MOD1), // m1 &gt;&gt; 31 是符号位
+                    m2 + (m2 &gt;&gt; 31 &amp; MOD2), 
+                    m3 + (m3 &gt;&gt; 31 &amp; MOD3));
+    &#125;
+    mint operator +(const mint &amp;x) const &#123;
+        return mint(m1 + x.m1 - MOD1, 
+                    m2 + x.m2 - MOD2, 
+                    m3 + x.m3 - MOD3).reduce();
+    &#125;
+    mint operator -(const mint &amp;x) const &#123;
+        return mint(m1 - x.m1, m2 - x.m2, m3 - x.m3).reduce();
+    &#125;
+    mint operator *(const mint &amp;x) const &#123;
+        return mint((ll)m1 * x.m1 % MOD1, 
+                    (ll)m2 * x.m2 % MOD2, 
+                    (ll)m3 * x.m3 % MOD3);
+    &#125;
+    mint inv() &#123;
+        return mint(qpow(m1, MOD1 - 2, MOD1), 
+                    qpow(m2, MOD2 - 2, MOD2), 
+                    qpow(m3, MOD3 - 2, MOD3));
+    &#125;
+    int get() &#123;
+        const int INV_1 = qpow(MOD1, MOD2 - 2, MOD2);
+        const int INV_2 = qpow((ll)MOD1 * MOD2 % MOD3, MOD3 - 2, MOD3);
+        ll x = (ll)(m2 - m1 + MOD2) % MOD2 * INV_1 % MOD2 * MOD1 + m1;
+        return ((ll)(m3 - x % MOD3 + MOD3) % MOD3 * INV_2 % MOD3 
+                * ((ll)MOD1 * MOD2 % P) % P + x) % P;
+    &#125;
+    static mint unit(int s) &#123;
+        return mint(qpow(G, (MOD1 - 1) / s, MOD1), 
+                    qpow(G, (MOD2 - 1) / s, MOD2), 
+                    qpow(G, (MOD3 - 1) / s, MOD3));
+    &#125;
+&#125; a[N], b[N];
+
+void ntt(int len, mint *x, int dir = 1) &#123;
+    static mint X[N];
+    for (int i = 0, k = 0; i &lt; len; i++) &#123;
+        X[i] = x[k];
+        int y = len &gt;&gt; 1;
+        while (y &amp; k) k ^= y, y &gt;&gt;= 1;
+        k |= y;
+    &#125;
+
+    for (int s = 2; s &lt;= len; s &lt;&lt;= 1) &#123;
+        mint w_ = mint::unit(s);
+        if (dir == -1) w_ = w_.inv();
+        for (int l = 0; l &lt; len; l += s) &#123;
+            int mid = l + (s &gt;&gt; 1);
+            mint w = 1;
+            for (int i = 0; i &lt; s &gt;&gt; 1; i++) &#123;
+                mint t = w * X[mid + i];
+                X[mid + i] = X[l + i] - t;
+                X[l + i] = X[l + i] + t;
+                w = w * w_;
+            &#125;
+        &#125;
+    &#125;
+    if (dir == -1) &#123;
+        mint inv = mint(len, len, len).inv();
+        for (int i = 0; i &lt; len; i++) X[i] = X[i] * inv;
+    &#125;
+    copy(X, X + len, x);
+&#125;
+
+int main() &#123;
+    scanf(&quot;%d%d%d&quot;, &amp;n, &amp;m, &amp;P);
+    for (int i = 0; i &lt;= n; i++) &#123; int tmp; scanf(&quot;%d&quot;, &amp;tmp); a[i] = tmp; &#125;
+    for (int i = 0; i &lt;= m; i++) &#123; int tmp; scanf(&quot;%d&quot;, &amp;tmp); b[i] = tmp; &#125;
+    int sz = 1; while (sz &lt; n + m + 1) sz &lt;&lt;= 1;
+    ntt(sz, a); ntt(sz, b);
+    for (int i = 0; i &lt; sz; i++) a[i] = a[i] * b[i];
+    ntt(sz, a, -1);
+    for (int i = 0; i &lt; n + m + 1; i++) printf(&quot;%d &quot;, a[i].get());
+    puts(&quot;&quot;);
+    return 0;
+&#125;</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1758,115 +2027,8 @@ int main() &#123;
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/04/%E5%88%9D%E6%8E%A2%E6%8B%9F%E9%98%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/04/%E5%88%9D%E6%8E%A2%E6%8B%9F%E9%98%B5/" class="post-title-link" itemprop="url">拟阵笔记</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-09-04 19:47:02" itemprop="dateCreated datePublished" datetime="2018-09-04T19:47:02+08:00">2018-09-04</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-10-07 16:12:09" itemprop="dateModified" datetime="2018-10-07T16:12:09+08:00">2018-10-07</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>拟阵是很多贪心算法的基础，也可以帮助我们验证自己的贪心算法的正确性，接下来是我从<del>抄</del>《算法导论》中整理出来的一些关于拟阵的性质：</p>
-<h1 id="定义">定义</h1>
-<p><strong>吐槽：</strong>虽然说拟阵叫拟阵，但是这个“阵”和矩阵的阵几乎一点关系都没有（名字的由来纯粹是历史遗留问题），拟阵和矩阵的关系就像JavaScript和Java，雷锋和雷峰塔一样……</p>
-<p><strong>拟阵：</strong>拟阵是一个二元组<span class="math inline">\(M = (S, I)\)</span>，其中<span class="math inline">\(S\)</span>为一个有限集，<span class="math inline">\(I\)</span>为<span class="math inline">\(S\)</span>的一个族（即子集的集合）并满足如下性质：</p>
-<ol type="1">
-<li><strong>遗传性：</strong>若<span class="math inline">\(B \in I\)</span>且<span class="math inline">\(A \subseteq B\)</span>，则<span class="math inline">\(A \in I\)</span>。</li>
-<li><strong>交换性：</strong>若<span class="math inline">\(A \in I, B \in I\)</span>且<span class="math inline">\(|A| &lt; |B|\)</span>，那么存在元素<span class="math inline">\(x \in B \setminus A\)</span>，使得<span class="math inline">\(A \cup \{x\} \in I\)</span>。（又是一个误导性的名字……）</li>
-</ol>
-<p><span class="math inline">\(I\)</span>中的集合成为<span class="math inline">\(S\)</span>的<strong>独立子集</strong>。</p>
-<p><strong>图拟阵：</strong>对于一个图<span class="math inline">\(G = (V, E)\)</span>，我们定义它的图拟阵为<span class="math inline">\(M_G = (S_G, I_G)\)</span>，当中<span class="math inline">\(S_G\)</span>为边集，而<span class="math inline">\(E\)</span>的子集<span class="math inline">\(A \in I_G\)</span>的当且仅当<span class="math inline">\(A\)</span>中无环（森林）。图拟阵与最小生成树有关（这也解释了为什么最小生成树的算法都是贪心）。由于森林的子图还是森林，因此该拟阵的遗传性显然。而该拟阵的交换性也在算法导论中有详细的证明，简单讲起来就是对于森林<span class="math inline">\(A, B\)</span>，<span class="math inline">\(|A| &lt; |B|\)</span>，我们知道<span class="math inline">\(A\)</span>中有<span class="math inline">\(|V| - |A|\)</span>棵树，<span class="math inline">\(B\)</span>中有<span class="math inline">\(|V| - |B|\)</span>棵树比<span class="math inline">\(A\)</span>少，因此一定存在一条边<span class="math inline">\((u, v)\)</span>使得<span class="math inline">\(u, v\)</span>在<span class="math inline">\(A\)</span>中分别属于两棵树，而在<span class="math inline">\(B\)</span>中却在一棵树上，显然<span class="math inline">\(A \cup \{(u, v)\} \in I_G\)</span>，证毕。</p>
-<p><strong>拓展：</strong>对于集合<span class="math inline">\(A\)</span>，若存在元素<span class="math inline">\(x\)</span>使得<span class="math inline">\(A \cup \{x\} \in I\)</span>，则称<span class="math inline">\(x\)</span>是<span class="math inline">\(A\)</span>的一个拓展。</p>
-<p><strong>最大独立子集：</strong>不存在拓展的独立子集。</p>
-<p><strong>定理：</strong>所有的最大独立子集等大小。</p>
-<p><strong>证明：</strong>反证， 假设存在最大独立子集<span class="math inline">\(A, B\)</span>使得<span class="math inline">\(|A| &lt; |B|\)</span>，由交换性，必然存在<span class="math inline">\(x \in B \setminus A\)</span>是<span class="math inline">\(A\)</span>的一个拓展，证毕。</p>
-<p><strong>加权拟阵：</strong>若存在一个权函数<span class="math inline">\(w\)</span>为所有<span class="math inline">\(S\)</span>的元素定义了严格正的权值，则称<span class="math inline">\(M\)</span>为加权拟阵，定义独立子集<span class="math inline">\(A\)</span>的权值为： <span class="math display">\[
-w(a) = \sum_{x \in A} w(x)
-\]</span></p>
-<h1 id="和贪心的关系">和贪心的关系</h1>
-<p>很多贪心问题可以转化为<strong>在拟阵上求最大权独立子集</strong>，或者称为拟阵的<strong>最优子集</strong>。</p>
-<p><strong>例：</strong>最小生成树算法当中我们可以对于边<span class="math inline">\(e\)</span>定义权重<span class="math inline">\(w(e) = l_{max} - l(e)\)</span>，其中<span class="math inline">\(l(e)\)</span>为边的长度，<span class="math inline">\(l_{max}\)</span>为一个极大的数。<em>在图拟阵上最大化独立子集权重必然等价于在图上最小化生成树边权</em>（因为生成树的边数总是固定的）。</p>
-<p><strong>求解最优子集的算法：</strong>将<span class="math inline">\(S\)</span>的所有元素<span class="math inline">\(x\)</span>按照<span class="math inline">\(w(x)\)</span>从大到小排序，初始化<span class="math inline">\(A = \emptyset\)</span>，然后依次从大到小考虑每个元素<span class="math inline">\(x\)</span>，并<strong>尽可能地</strong>用<span class="math inline">\(x\)</span>去拓展<span class="math inline">\(A\)</span>，最后得到的集合必定是最优子集。</p>
-<p>这个算法的贪心本质暴露无遗，接下来我们证明这个算法的正确性：</p>
-<p><strong>引理1（贪心选择）：</strong>若将<span class="math inline">\(S\)</span>的元素从大到小排序，令<span class="math inline">\(x\)</span>为排序后第一个使得<span class="math inline">\(\{x\} \in I\)</span>的元素，那么必然存在一个包含<span class="math inline">\(x\)</span>的最优子集。</p>
-<p><strong>证明：</strong>如果不存在<span class="math inline">\(x\)</span>，则最优子集为空，显然。</p>
-<p>否则，假设我们有一个不含<span class="math inline">\(x\)</span>的最优子集<span class="math inline">\(B\)</span>，显然由遗传性，对于<span class="math inline">\(y \in B\)</span>都有<span class="math inline">\(\{y\} \in I\)</span>，又因为我们选择<span class="math inline">\(x\)</span>的方式显然由<span class="math inline">\(w(x) \ge w(y)\)</span>。我们初始化<span class="math inline">\(A = \{x\}\)</span>，利用和<span class="math inline">\(B\)</span>交换性不断拓展<span class="math inline">\(A\)</span>直至<span class="math inline">\(|A| = |B|\)</span>，此时必定存在另一元素<span class="math inline">\(y\)</span>，使得<span class="math inline">\(A \setminus \{x\} = B \setminus \{y\}\)</span>，又因为<span class="math inline">\(w(x) \ge w(y)\)</span>，那么<span class="math inline">\(A\)</span>一定不会比<span class="math inline">\(B\)</span>差，得证。</p>
-<p><strong>引理2：</strong>若元素<span class="math inline">\(x\)</span>是<span class="math inline">\(A\)</span>的一个拓展，那么<span class="math inline">\(\{x\} \in I\)</span>，换而言之，<span class="math inline">\(x\)</span>是<span class="math inline">\(\emptyset\)</span>的拓展。</p>
-<p><strong>证明：</strong>由定义，<span class="math inline">\(A \cup \{x\} \in I\)</span>，由遗传性显然。</p>
-<p><strong>推论（逆否命题）：</strong>若<span class="math inline">\(x\)</span>不是<span class="math inline">\(\emptyset\)</span>的拓展，那它也一定不是其他非空独立子集的拓展。</p>
-<p><strong>引理3（最优子结构）：</strong>在如上算法中选择完<span class="math inline">\(x\)</span>之后，在<span class="math inline">\(M = (S, I)\)</span>中寻找最优子集等价于在<span class="math inline">\(M&#39;= (S&#39;, I&#39;)\)</span>中寻找最优子集，其中： <span class="math display">\[
-\begin{aligned}
-S&#39; &amp;= \{y \mid \{x, y\} \in S\} \\
-I&#39; &amp;= \{B \mid B \subseteq S \setminus \{x\}, B \cup \{x\} \in I\}
-\end{aligned}
-\]</span> 即<strong>我们可以忽略<span class="math inline">\(x\)</span>继续我们的算法。</strong></p>
-<p><strong>证明：</strong>如果我们在<span class="math inline">\(M&#39;\)</span>当中选出了最优子集<span class="math inline">\(A&#39;\)</span>，则显然<span class="math inline">\(A&#39; \cup \{x\}\)</span>是<span class="math inline">\(M\)</span>的独立子集，并且由<span class="math inline">\(x\)</span>的选择方式可知也是最优子集，证毕。</p>
-<p><strong>贪心正确性的证明：</strong>由引理2的推论，我们知道贪心算法没能一开始用来拓展的<span class="math inline">\(x\)</span>一定在后面也没有用。由引理3，选择完<span class="math inline">\(x\)</span>之后我们把问题缩小，还可以进一步贪心，此时贪心实质上是在<span class="math inline">\(M&#39;\)</span>上寻找最优子集。证毕。</p>
-<p>从以上讨论我们可以看出，对于一类问题，如果我们可以以某种方式把它规约为在拟阵上求取最优子集，那你一定可以使用贪心解决，这给很多贪心算法（例如Kruskal）提供了理论支持。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
