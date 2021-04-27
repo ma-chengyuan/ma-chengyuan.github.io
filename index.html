@@ -793,7 +793,7 @@ R = \begin{bmatrix}
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-03-28 11:25:07" itemprop="dateModified" datetime="2021-03-28T11:25:07+08:00">2021-03-28</time>
+        <time title="修改时间：2021-04-27 11:43:57" itemprop="dateModified" datetime="2021-04-27T11:43:57+08:00">2021-04-27</time>
       </span>
 
   
@@ -893,7 +893,7 @@ R = \begin{bmatrix}
 <blockquote>
 <p>每个中文词之间没有空格读写起来会更为自然。</p>
 </blockquote>
-<p>这是很多中文编程语言所忽视的一点。然而也必须承认，空格的存在给词法分析提供了极大的便利。联系到当下对于大段中文的分词往往采用，也只能采用启发式的算法的现状，可以说<strong>在一门中文编程语言当中删去空格，虽然可以让读写更为顺畅，但对文法的设计与解析提出了更大的挑战</strong>。（同时，空格的去除让代码开起来更为紧凑，在汉字本省就结构相对复杂的情况下就更会对可读性产生一定的影响，因此在这种情况下，<strong>代码高亮是必要的</strong>）</p>
+<p>这是很多中文编程语言所忽视的一点。然而也必须承认，空格的存在给词法分析提供了极大的便利。联系到当下对于大段中文的分词往往采用，也只能采用启发式的算法的现状，可以说<strong>在一门中文编程语言当中删去空格，虽然可以让读写更为顺畅，但对文法的设计与解析提出了更大的挑战</strong>。（同时，空格的去除让代码开起来更为紧凑，在汉字本身就结构相对复杂的情况下就更会对可读性产生一定的影响，因此在这种情况下，<strong>代码高亮是必要的</strong>）</p>
 <p>我们还发现，当下的编程语言在英语的基础上对于关键词进行大量的<strong>简化</strong>。例如，define在Python中被简化为<code>def</code>；function在Go中被简化为<code>func</code>，在Kotlin中被简化为<code>fun</code>，在Rust中更是被简化到<code>fn</code>；integer在很多语言当中都被简化到<code>int</code>，structure被简化到<code>struct</code>……对于英语等拼音文字，这种简化往往是通过去除辅音，删去末音节等完成的，较为简单。但是对于中文象形文字，这种简化就很难了，因为一个词往往就双音节两个字，去了哪个都不行，而仿照去除辅音搞去除笔画之类的毫无意义：<code>结构</code>变成<code>吉勾</code>？还是两个汉字不说，词本身的辨识性已经被破坏殆尽。</p>
 <p>然而，我们关注的是目的而不是手段，抛开如此简单粗暴的类比，事情就豁然开朗了。编程语言简化关键词拼写的目的何在？一方面是<strong>让代码更加简洁，阅读效率更高</strong>。另一方面则是<strong>提升输入效率</strong>。中文或许在阅读效率方面已经无可挑剔，但是在输入效率上一直差强人意——我不是说中文本身的输入效率，而是写代码本身的效率。二者有何区别？</p>
 <p>如今不用代码补全写代码的人已经不多了。代码补全的本质，是在用户敲击键盘进行原始输入的同时，结合上下文，给出符合编程语言语法以及（理想情况下）代码语义的代码建议。仔细想想，这和中文的输入法何其相似！然而现在并没有专为写代码而生的输入法。要写中文代码，就必须先敲键盘，再输入法选词，等到中文字实实在在地落到了编辑器里，代码补全才会出现，然后用户就要再次选词，如图</p>
@@ -963,7 +963,7 @@ R = \begin{bmatrix}
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-03-16 17:21:52" itemprop="dateModified" datetime="2021-03-16T17:21:52+08:00">2021-03-16</time>
+        <time title="修改时间：2021-04-27 11:43:24" itemprop="dateModified" datetime="2021-04-27T11:43:24+08:00">2021-04-27</time>
       </span>
 
   
@@ -1046,7 +1046,7 @@ R = \begin{bmatrix}
 <p>最为通用，最为灵活的方法：</p>
 <pre class="line-numbers"><code class="language-latex">% 宋体五号粗体，#1#2#3分别是“图xxx”，“：”，以及图注文字本身
 \DeclareCaptionFormat&#123;mycaptionformat&#125;&#123;\songti\zihao&#123;-5&#125;\bfseries#1#2#3\par&#125;
-\captionsetup&#123;format = univchem&#125;</code></pre>
+\captionsetup&#123;format = mycaptionformat&#125;</code></pre>
 <h1 id="页眉页脚相关">页眉页脚相关</h1>
 <h2 id="首页特殊">首页特殊</h2>
 <pre class="line-numbers"><code class="language-latex">\usepackage&#123;fancyhdr&#125;
