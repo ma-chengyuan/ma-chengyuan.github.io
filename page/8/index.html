@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,120 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/05/%E7%BA%BF%E6%80%A7%E5%9F%BA%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/09/05/%E7%BA%BF%E6%80%A7%E5%9F%BA%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">异或 线性基</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2018-09-05 09:06:23 / 修改时间：09:43:00" itemprop="dateCreated datePublished" datetime="2018-09-05T09:06:23+08:00">2018-09-05</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="线性基">线性基</h1>
+<p><strong>定义：</strong>给定一组向量，构成一个线性空间，如果我们能够找到一组<strong>线性无关的向量</strong>，使得这些向量的线性组合能够构成整个线性空间，则这一组向量成为该向量空间的<strong>线性基</strong>。</p>
+<p><strong>算法：</strong>计算线性基我们可以把一组向量排成矩阵，然后在矩阵上跑高斯消元法，消出来的非零行向量即为线性基，非零行向量数目为矩阵的行秩。</p>
+<p>以下给出对于常规线性基的高斯消元代码：</p>
+<pre class="line-numbers"><code class="language-cpp">void gauss() &#123;
+    int dim = 0; // 行秩
+    for (int i = 1; i &lt;= n; i++) &#123;
+        int piv = dim + 1;
+        for (int j = dim + 1; j &lt;= m; j++)
+            if (abs(a[j][i]) &gt; abs(a[piv][i]))
+                piv = j;
+        if (abs(a[piv][i]) &lt; EPS) continue; // 自由元
+        dim++;
+        for (int j = 1; j &lt;= n; j++)
+            swap(a[dim][j], a[piv][j]);
+        for (int j = 1; j &lt;= m; j++) &#123;
+            if (j == dim) continue;
+            if (abs(a[j][i]) &lt; EPS) continue;
+            double r = a[j][i] / a[dim][i];
+            for (int k = 1; k &lt;= n; k++)
+                a[j][k] -= r * a[dim][k];
+        &#125;
+    &#125;
+&#125;</code></pre>
+<h1 id="异或">异或</h1>
+<p>简称XOR，数学记号为$$，C++中为<code>^</code>，<strong>异或本质上是在模<span class="math inline">\(2\)</span>意义下的加法运算。</strong>因此线性代数的很多算法也可以应用到异或这样的有限域上，异或的一个很重要的性质是<strong>相消性</strong>，即一个数异或两次等于没异或！（等同于乘<span class="math inline">\(2\)</span>，在模<span class="math inline">\(2\)</span>下就肯定没意义啦）。</p>
+<p>异或的相消性很重要的一个应用是在图上使用DFS计算环上边的异或，我们只需要计算从DFS树根节点出发各个点到根上路径的异或和（记作<span class="math inline">\(dis(u)\)</span>）。如果我们在DFS上找到返祖边<span class="math inline">\(e = (u, v)\)</span>，环的异或就是<span class="math inline">\(dis(u) \oplus dis(v) \oplus w(e)\)</span>。我们可以看到这个运算中<span class="math inline">\(u, v\)</span>LCA以上的部分都被抵消掉了，因此最后得到的就是整个环的异或和。<strong>如果求图上路径异或和的话我们可以用这样的方法搞出神奇的效果</strong>。</p>
+<h1 id="异或线性基">异或线性基</h1>
+<p>如何求出异或意义下的线性基呢？朴素的高斯消元肯定是可以的，但是对于异或我们首先可以压位减少常数，然后对于异或线性基我们还有一种求法，对于一个数<span class="math inline">\(x\)</span>，我们可以这样把<span class="math inline">\(x\)</span><strong>插入</strong>一组线性基：</p>
+<ol type="1">
+<li>找到<span class="math inline">\(x\)</span>的最高二进制位，记作<span class="math inline">\(i\)</span>。</li>
+<li>查看第<span class="math inline">\(i\)</span>位的线性基<span class="math inline">\(p[i]\)</span>是否被插入。</li>
+<li>如果没有被插入，插入第<span class="math inline">\(i\)</span>位的线性基，结束。</li>
+<li>如果已经被插入了，令<span class="math inline">\(x = x \oplus p[i]\)</span>。</li>
+</ol>
+<p><strong>正确性证明：</strong>如果当前位没被插入则插入操作显然正确，如果被插入，则<span class="math inline">\(x \oplus p[i]\)</span>不仅消除了第<span class="math inline">\(i\)</span>位，同时可以证明如果<span class="math inline">\(x \oplus p[i]\)</span>可以被线性基表出，则<span class="math inline">\(x\)</span>一定也可以被线性基表出。</p>
+<p>一个二进制数在被插入线性基的过程中如果失败了，那么它就会变成<span class="math inline">\(0\)</span>，暗示它可以由我们现有的线性基表出。</p>
+<p>代码：</p>
+<pre class="line-numbers"><code class="language-cpp">bool insert(int x) &#123;
+    for (int i = 30; i &gt;= 0; i--) &#123; // 最高位数
+        if ((x &gt;&gt; i) &amp; 1) &#123;
+            if (!p[i]) &#123;
+                p[i] = x;
+                return true;
+            &#125; else
+                x ^= p[i];
+        &#125;
+    &#125;
+    return false;
+&#125;</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1577,119 +1691,6 @@ int main() &#123;
         ans = max(ans, (r[a] + 1) * (r[b] + 1) + r[c] * r[d]);
     &#125;
     printf(&quot;%d\n&quot;, ans);
-    return 0;
-&#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/01/%E5%9F%8E%E5%B8%82%E8%A7%84%E5%88%92/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/01/%E5%9F%8E%E5%B8%82%E8%A7%84%E5%88%92/" class="post-title-link" itemprop="url">NOIP模拟赛 城市规划</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2018-09-01 13:27:20 / 修改时间：16:42:03" itemprop="dateCreated datePublished" datetime="2018-09-01T13:27:20+08:00">2018-09-01</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="题意">题意</h1>
-<p>有<span class="math inline">\(n\)</span>座高度为正整数的建筑物，定义不美观度为相邻建筑物高度差绝对值的最大值，你可以任意改动至多<span class="math inline">\(k\)</span>座建筑物的高度，求能够达到的最小不美观度。</p>
-<p><span class="math inline">\(k \le n \le 2000, h \le 2 \times 10^9\)</span></p>
-<h1 id="解法">解法</h1>
-<p>从数据范围看出这应该是一道DP题，所以很容易陷入的一条歪路就是，定义<span class="math inline">\(f[i, j]\)</span>为前<span class="math inline">\(i\)</span>座建筑物修改了<span class="math inline">\(j\)</span>次的最小不美观度，然后会发现没办法消除后效性<del>当场去世</del>。</p>
-<p>但是如果我们把题目paraphrase一下，变成：在修改至多<span class="math inline">\(k\)</span>座建筑物高度的情况下，<em>最大</em>的相邻高度差<em>最小</em>是多少？首先我们发现<strong>随着修改数增加，不美观度肯定是可以单调递减的</strong>，其次我们从这熟悉的句型就发现这其实是一道二分答案的题目，问题就变成了如何判定一个不美观度能不能达到了，我们还是需要使用DP来完成。</p>
-<p>定义<span class="math inline">\(f[i]\)</span>为修改前<span class="math inline">\(i - 1\)</span>座建筑物但是不修改<span class="math inline">\(i\)</span>的情况下为了达到我们二分的答案所需要的最小修改数，我们把它们全部初始化为<span class="math inline">\(i - 1\)</span>，即最坏情况下前面的我们都需要修改。</p>
-<p>接下来我们思考状态转移，设我们此时二分的答案为<span class="math inline">\(x\)</span>，我们发现如果对于<span class="math inline">\(j &lt; i\)</span>，如果<span class="math inline">\(|h_j - h_i| \le (i - j)x\)</span>，那么就说明我们总可以通过调整<span class="math inline">\(i\)</span>和<span class="math inline">\(j\)</span>之间（不包括<span class="math inline">\(i, j\)</span>）的<span class="math inline">\(i - j - 1\)</span>座建筑物达到我们需要二分的答案。因此状态转移方程为： <span class="math display">\[
-f[i] = \min_{1 \le j &lt; i, |h_j - h_i| \le (i - j)x} \{ f[j] + i - j - 1\}
-\]</span> 那么最后总体上为了达到二分的答案所需要的最小修改数是多少呢？是<span class="math inline">\(\min_{1 \le i \le n} \{f[i]\}\)</span>吗？其实并不是，因为对于<span class="math inline">\(f[i]\)</span>，最坏情况下我们还需要修改<span class="math inline">\(i\)</span>后面的<span class="math inline">\(n - i\)</span>座建筑物，因此总的最小修改数为： <span class="math display">\[
-\min_{1 \le i \le n} \{f[i] + n - i\}
-\]</span> 接下来就可以愉快的二分答案了，总的复杂度为<span class="math inline">\(O(n^2\log h_{max})\)</span>，还有要注意的是如果你采用<code>int mid = (l + r) / 2</code>的话是会爆<code>int</code>的，解决方法是使用<code>int mid = l + (r - l) / 2</code>：</p>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-
-using namespace std;
-const int INF = 0x7fffffff;
-const int N = 2010;
-int f[N], h[N];
-int n, k;
-
-#define abs(a) ((a) &gt; 0 ? (a) : -(a))
-#define min(a, b) ((a) &lt; (b) ? (a) : (b))
-
-int valid(int x) &#123;
-    for (int i = 1; i &lt;= n; i++)
-        f[i] = i - 1;
-    for (int i = 2; i &lt;= n; i++) &#123;
-        for (int j = 1; j &lt; i; j++)
-            if (abs(h[i] - h[j]) &lt;= 1ll * x * (i - j))
-                f[i] = min(f[i], f[j] + i - j - 1);
-    &#125;
-    int ans = INF;
-    for (int i = 1; i &lt;= n; i++)
-        ans = min(ans, f[i] + n - i);
-    return ans;
-&#125; 
-
-int main() &#123;
-    scanf(&quot;%d%d&quot;, &amp;n, &amp;k);
-    for (int i = 1; i &lt;= n; i++) scanf(&quot;%d&quot;, &amp;h[i]);
-    int l = 0, r = INF;
-    while (l &lt; r) &#123;
-        int mid = l + (r - l) / 2;
-        if (valid(mid) &lt;= k) r = mid;
-        else l = mid + 1;
-    &#125;
-    printf(&quot;%d\n&quot;, l);
     return 0;
 &#125;</code></pre>
 

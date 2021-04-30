@@ -23,17 +23,17 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="以下是读Gilbert Strang的Introduction to Linear Algebra的后回忆整理的笔记。内容大概包括第三节和第四节开头的一部分。 四大空间 对于矩阵\(A\in \mathbb{R}^{m\times n}\)，定义  \(A\)的列空间为其所有列向量的张成空间，\(A\)的列向量的线性组合记作\(A\vec{x}&#x3D;\vec b\)——因此所有这个形式的\(\">
+<meta name="description" content="以下是读Gilbert Strang的Introduction to Linear Algebra的后回忆整理的笔记。内容大概包括第三节和第四节开头的一部分。 四大空间 对于矩阵\(A\in \mathbb{R}^{m\times n}\)，定义  \(A\)的列空间为其所有列向量的张成空间，\(A\)的列向量的线性组合记作\(A\boldsymbol{x}&#x3D;\boldsymbol b\)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="线性代数四大空间笔记">
 <meta property="og:url" content="https://alan20210202.github.io/2021/04/16/Four%20Spaces/index.html">
 <meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
-<meta property="og:description" content="以下是读Gilbert Strang的Introduction to Linear Algebra的后回忆整理的笔记。内容大概包括第三节和第四节开头的一部分。 四大空间 对于矩阵\(A\in \mathbb{R}^{m\times n}\)，定义  \(A\)的列空间为其所有列向量的张成空间，\(A\)的列向量的线性组合记作\(A\vec{x}&#x3D;\vec b\)——因此所有这个形式的\(\">
+<meta property="og:description" content="以下是读Gilbert Strang的Introduction to Linear Algebra的后回忆整理的笔记。内容大概包括第三节和第四节开头的一部分。 四大空间 对于矩阵\(A\in \mathbb{R}^{m\times n}\)，定义  \(A\)的列空间为其所有列向量的张成空间，\(A\)的列向量的线性组合记作\(A\boldsymbol{x}&#x3D;\boldsymbol b\)">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://alan20210202.github.io/2021/04/16/Four%20Spaces/v2-d3a9348b3a938c79f5998c5bc40a1d82_hd.webp">
 <meta property="og:image" content="https://alan20210202.github.io/2021/04/16/Four%20Spaces/image-20210417155102490.png">
 <meta property="article:published_time" content="2021-04-16T09:02:06.838Z">
-<meta property="article:modified_time" content="2021-04-17T08:03:07.496Z">
+<meta property="article:modified_time" content="2021-04-30T01:05:04.749Z">
 <meta property="article:author" content="Chengyuan Ma">
 <meta property="article:tag" content="线性代数">
 <meta name="twitter:card" content="summary">
@@ -189,7 +189,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -274,7 +274,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-17 16:03:07" itemprop="dateModified" datetime="2021-04-17T16:03:07+08:00">2021-04-17</time>
+        <time title="修改时间：2021-04-30 09:05:04" itemprop="dateModified" datetime="2021-04-30T09:05:04+08:00">2021-04-30</time>
       </span>
 
   
@@ -298,38 +298,38 @@
 <h1 id="四大空间">四大空间</h1>
 <p>对于矩阵<span class="math inline">\(A\in \mathbb{R}^{m\times n}\)</span>，定义</p>
 <ol type="1">
-<li><span class="math inline">\(A\)</span>的列空间为其所有列向量的张成空间，<span class="math inline">\(A\)</span>的列向量的线性组合记作<span class="math inline">\(A\vec{x}=\vec b\)</span>——因此所有这个形式的<span class="math inline">\(\vec b\)</span>都属于<span class="math inline">\(A\)</span>的列空间。记作<span class="math inline">\(C(A)\)</span>。<span class="math inline">\(C(A)\subset\mathbb{R}^m\)</span>。</li>
-<li><span class="math inline">\(A\)</span>的零空间为令其列向量线性组合为零的组合构成的空间，即所有满足<span class="math inline">\(A\vec{x}=\vec 0\)</span>的向量<span class="math inline">\(\vec x\)</span>。记作<span class="math inline">\(N(A)\)</span>。<span class="math inline">\(N(A)\subset \mathbb{R}^n\)</span>。</li>
+<li><span class="math inline">\(A\)</span>的列空间为其所有列向量的张成空间，<span class="math inline">\(A\)</span>的列向量的线性组合记作<span class="math inline">\(A\boldsymbol{x}=\boldsymbol b\)</span>——因此所有这个形式的<span class="math inline">\(\boldsymbol b\)</span>都属于<span class="math inline">\(A\)</span>的列空间。记作<span class="math inline">\(C(A)\)</span>。<span class="math inline">\(C(A)\subset\mathbb{R}^m\)</span>。</li>
+<li><span class="math inline">\(A\)</span>的零空间为令其列向量线性组合为零的组合构成的空间，即所有满足<span class="math inline">\(A\boldsymbol{x}=\boldsymbol 0\)</span>的向量<span class="math inline">\(\boldsymbol x\)</span>。记作<span class="math inline">\(N(A)\)</span>。<span class="math inline">\(N(A)\subset \mathbb{R}^n\)</span>。</li>
 <li><span class="math inline">\(A\)</span>的行空间为其所有行向量的张成空间。因为<span class="math inline">\(A\)</span>的行向量都是<span class="math inline">\(A^{\mathrm{T}}\)</span>的列空间，所以行空间可以记作<span class="math inline">\(C\left(A^{\mathrm T}\right)\)</span>。<span class="math inline">\(C\left(A^{\mathrm T}\right) \subset \mathbb{R}^{n}\)</span>。</li>
-<li><span class="math inline">\(A\)</span>的左零空间为令其行向量线性组合为零的组合构成的空间，即所有满足<span class="math inline">\(\vec{x}^{\mathrm T}A = \vec 0^{\mathrm T}\)</span>的向量<span class="math inline">\(\vec{x}\)</span>，现在<span class="math inline">\(\vec x\)</span>在左边，所以和零空间相比就叫左零空间了。左零空间自然可以记作<span class="math inline">\(C\left(A^{\mathrm T}\right)\)</span>。<span class="math inline">\(C\left(A^{\mathrm T}\right) \subset \mathbb{R}^{m}\)</span>。</li>
+<li><span class="math inline">\(A\)</span>的左零空间为令其行向量线性组合为零的组合构成的空间，即所有满足<span class="math inline">\(\boldsymbol{x}^{\mathrm T}A = \boldsymbol 0^{\mathrm T}\)</span>的向量<span class="math inline">\(\boldsymbol{x}\)</span>，现在<span class="math inline">\(\boldsymbol x\)</span>在左边，所以和零空间相比就叫左零空间了。左零空间自然可以记作<span class="math inline">\(C\left(A^{\mathrm T}\right)\)</span>。<span class="math inline">\(C\left(A^{\mathrm T}\right) \subset \mathbb{R}^{m}\)</span>。</li>
 </ol>
 <p>以上就是线性代数当中比较重要的四个空间。虽然有四个，但本质只有“列空间”和“零空间”两种。基于矩阵的定义是颇有些枯燥的。矩阵只是线性变换比较常用且典型的形式，列空间和零空间的定义并不局限于此。归根结底，<strong>列空间是线性变换的“值域”，零空间是线性变换的“零点”</strong>。</p>
 <p><sub>注：列空间在一些地方也叫做像空间（image），零空间在一些地方也叫做核（kernel）。个人认为，对于一般的线性变换，像空间的称谓比列空间更为恰当，但kernel这个词就有些莫名奇妙——我没有了解过相关的背景，但我觉得零空间的叫法更为直观。</sub></p>
 <h1 id="向量空间的维度">向量空间的维度</h1>
 <p>向量空间的维度定义为这个空间任何一组基包含的向量个数。这个定义蕴含的一个事实是：对于同一个向量空间，无论其基如何选取，其大小都是相同的。这里摘录一个书上的证明：</p>
-<p><strong>证明：</strong> 假设向量空间<span class="math inline">\(\mathbf V\)</span>的两组基为<span class="math inline">\(\vec{v_1},\vec{v_2},\cdots,\vec{v_n}\)</span>和<span class="math inline">\(\vec{w_1}, \vec{w_2}, \cdots ,\vec{w_m}\)</span>。运用反证法，不失一般性，设<span class="math inline">\(n &lt; m\)</span>。因为<span class="math inline">\(\vec{v_1},\vec{v_2},\cdots,\vec{v_n}\)</span>是基，所以任意<span class="math inline">\(\vec{w_k}\)</span>都可以用他们的线性组合表示。即 <span class="math display">\[
-\vec{w_k} = \begin{bmatrix}
-    \vec{v_1} &amp;\vec{v_2} &amp;\cdots &amp;\vec{v_n}  
-\end{bmatrix}\cdot \vec{a}
+<p><strong>证明：</strong> 假设向量空间<span class="math inline">\(\mathbf V\)</span>的两组基为<span class="math inline">\(\boldsymbol{v_1},\boldsymbol{v_2},\cdots,\boldsymbol{v_n}\)</span>和<span class="math inline">\(\boldsymbol{w_1}, \boldsymbol{w_2}, \cdots ,\boldsymbol{w_m}\)</span>。运用反证法，不失一般性，设<span class="math inline">\(n &lt; m\)</span>。因为<span class="math inline">\(\boldsymbol{v_1},\boldsymbol{v_2},\cdots,\boldsymbol{v_n}\)</span>是基，所以任意<span class="math inline">\(\boldsymbol{w_k}\)</span>都可以用他们的线性组合表示。即 <span class="math display">\[
+\boldsymbol{w_k} = \begin{bmatrix}
+    \boldsymbol{v_1} &amp;\boldsymbol{v_2} &amp;\cdots &amp;\boldsymbol{v_n}  
+\end{bmatrix}\cdot \boldsymbol{a}
 \]</span> （回忆一下，矩阵左乘向量等于按照向量的系数对矩阵的列向量进行线性组合）</p>
 <p>进一步地， <span class="math display">\[
 \begin{bmatrix}
-    \vec{w_1} &amp;\vec{w_2} &amp;\cdots &amp;\vec{w_m}  
+    \boldsymbol{w_1} &amp;\boldsymbol{w_2} &amp;\cdots &amp;\boldsymbol{w_m}  
 \end{bmatrix}= 
 \begin{bmatrix}
-    \vec{v_1} &amp;\vec{v_2} &amp;\cdots &amp;\vec{v_n}  
+    \boldsymbol{v_1} &amp;\boldsymbol{v_2} &amp;\cdots &amp;\boldsymbol{v_n}  
 \end{bmatrix}\cdot A
-\]</span> 不难发现，<span class="math inline">\(A\)</span>是<span class="math inline">\(n\)</span>行<span class="math inline">\(m\)</span>列的矩阵，而<span class="math inline">\(n &lt; m\)</span>，所以<span class="math inline">\(A\)</span>是扁的。在代数上，齐次线性方程组的变量多于方程数，也就是说<span class="math inline">\(A\vec{x} = \vec{0}\)</span>有非平凡解。 <span class="math display">\[
+\]</span> 不难发现，<span class="math inline">\(A\)</span>是<span class="math inline">\(n\)</span>行<span class="math inline">\(m\)</span>列的矩阵，而<span class="math inline">\(n &lt; m\)</span>，所以<span class="math inline">\(A\)</span>是扁的。在代数上，齐次线性方程组的变量多于方程数，也就是说<span class="math inline">\(A\boldsymbol{x} = \boldsymbol{0}\)</span>有非平凡解。 <span class="math display">\[
 \begin{aligned}
-    A\vec{x} &amp;= \vec{0} \\
+    A\boldsymbol{x} &amp;= \boldsymbol{0} \\
     \Rightarrow \begin{bmatrix}
-    \vec{v_1} &amp;\vec{v_2} &amp;\cdots &amp;\vec{v_n}  
-\end{bmatrix} A\vec{x} &amp;= \vec{0} \\
+    \boldsymbol{v_1} &amp;\boldsymbol{v_2} &amp;\cdots &amp;\boldsymbol{v_n}  
+\end{bmatrix} A\boldsymbol{x} &amp;= \boldsymbol{0} \\
     \Rightarrow \begin{bmatrix}
-    \vec{w_1} &amp;\vec{w_2} &amp;\cdots &amp;\vec{w_m}  
-\end{bmatrix} \vec{x} &amp;= \vec{0}
+    \boldsymbol{w_1} &amp;\boldsymbol{w_2} &amp;\cdots &amp;\boldsymbol{w_m}  
+\end{bmatrix} \boldsymbol{x} &amp;= \boldsymbol{0}
 \end{aligned}
-\]</span> 也就是说，<span class="math inline">\(\vec{w_1}, \vec{w_2}, \cdots ,\vec{w_m}\)</span>线性相关，推出矛盾，证毕。</p>
+\]</span> 也就是说，<span class="math inline">\(\boldsymbol{w_1}, \boldsymbol{w_2}, \cdots ,\boldsymbol{w_m}\)</span>线性相关，推出矛盾，证毕。</p>
 <h1 id="四大空间的维度">四大空间的维度</h1>
 <p>一个矩阵四大空间的维度可以通过将其化简为行简化阶梯型（reduced row echelon form）来计算。行简化阶梯型的定义</p>
 <ol type="1">
@@ -356,7 +356,7 @@
 <ol type="1">
 <li><strong>它列空间的维度是它的秩</strong>：主元列显然是线性无关的，而非主元列显然可以用主元列的线性组合表示（系数就写在列里面呢，比如说在上面的例子中，第四列是第一列的<span class="math inline">\(3\)</span>倍和第二列的<span class="math inline">\(1\)</span>倍之和）。</li>
 <li><strong>它行空间的维度也是它的秩</strong>：行简化阶梯型的形态让我们不难发现每一个非零行都是线性无关的。原因在于每个非零行都包含一个主元，而只有那一行在主元的那一列是<span class="math inline">\(1\)</span>。</li>
-<li><strong>它零空间的维度是列数与秩之差</strong>，即非主元列的个数：从方程<span class="math inline">\(A\vec x = \vec 0\)</span>的角度看，非主元列代表自由变量。通过令一个自由变量为<span class="math inline">\(1\)</span>，令其余自由变量为<span class="math inline">\(0\)</span>，并依此计算主元，我们可以得到和自由变量同样数目的若干“解向量”。这些解向量线性无关，都处在零空间中，且张成整个零空间，因此是零空间的一个基。</li>
+<li><strong>它零空间的维度是列数与秩之差</strong>，即非主元列的个数：从方程<span class="math inline">\(A\boldsymbol x = \boldsymbol 0\)</span>的角度看，非主元列代表自由变量。通过令一个自由变量为<span class="math inline">\(1\)</span>，令其余自由变量为<span class="math inline">\(0\)</span>，并依此计算主元，我们可以得到和自由变量同样数目的若干“解向量”。这些解向量线性无关，都处在零空间中，且张成整个零空间，因此是零空间的一个基。</li>
 <li><strong>它左零空间的维度是行数与秩之差</strong>，即零行的个数：非零行线性无关，因此要使行的线性组合为零所有非零行的系数必须为零，零行的系数任意，因此左零空间的维度就是零行的个数。</li>
 </ol>
 <p>接下来，我们观察到<strong>从一般矩阵化简为行简化阶梯型的过程不会改变矩阵的四个空间的维度</strong>：</p>
@@ -397,7 +397,7 @@
 </blockquote>
 <p>朴素的做法设出两向量空间交的基，然后在此基础上分别拓展形成<span class="math inline">\(\mathbf V\)</span>，<span class="math inline">\(\mathbf W\)</span>，然后再证明这些分别拓展的基和两空间交的基一起是线性无关的。步骤倒也不是特别复杂。</p>
 <p>但是格局低了。</p>
-<p>Mike Artin提出的证明是这样的：考虑二元运算<span class="math inline">\(+\)</span>把二元组 <span class="math inline">\((\vec v\in \mathbf V, \vec w\in \mathbf W)\)</span>变换到<span class="math inline">\(\vec v + \vec w\)</span>。易证这个变换是线性的。其输入维度是<span class="math inline">\(\dim(\mathbf V) + \dim(\mathbf W)\)</span>。其值域的维度是<span class="math inline">\(\dim(\mathbf V + \mathbf W)\)</span>。其零空间是<span class="math inline">\((\vec v, \vec -v)\)</span>其中<span class="math inline">\(v\in \mathbf V \cap \mathbf W\)</span>，维度自然是<span class="math inline">\(\dim(\mathbf V \cap \mathbf W)\)</span>。因为线性变换输入的维度等于输出的维度与零空间维度之和，得证。</p>
+<p>Mike Artin提出的证明是这样的：考虑二元运算<span class="math inline">\(+\)</span>把二元组 <span class="math inline">\((\boldsymbol v\in \mathbf V, \boldsymbol w\in \mathbf W)\)</span>变换到<span class="math inline">\(\boldsymbol v + \boldsymbol w\)</span>。易证这个变换是线性的。其输入维度是<span class="math inline">\(\dim(\mathbf V) + \dim(\mathbf W)\)</span>。其值域的维度是<span class="math inline">\(\dim(\mathbf V + \mathbf W)\)</span>。其零空间是<span class="math inline">\((\boldsymbol v, \boldsymbol -v)\)</span>其中<span class="math inline">\(v\in \mathbf V \cap \mathbf W\)</span>，维度自然是<span class="math inline">\(\dim(\mathbf V \cap \mathbf W)\)</span>。因为线性变换输入的维度等于输出的维度与零空间维度之和，得证。</p>
 <p><img src="/2021/04/16/Four%20Spaces/v2-d3a9348b3a938c79f5998c5bc40a1d82_hd.webp" class=""></p>
 <p>太高了，我恐高症都犯了。</p>
 <h1 id="四大空间的正交性">四大空间的正交性</h1>
@@ -405,10 +405,10 @@
 <p>什么是正交？两个子向量空间正交当且仅当两个空间中的任意两个向量都互相垂直。（说“子向量空间”是因为两个向量谈论垂直不垂直的前提条件自然是两个向量维数一样，即同属于一个更大的向量空间）</p>
 <ol type="1">
 <li><p>在<span class="math inline">\(\mathbb R^n\)</span>内，零空间<span class="math inline">\(N(A)\)</span>和行空间<span class="math inline">\(C\left(A^{\mathrm T}\right)\)</span>互相正交 <span class="math display">\[
-\forall A^{\mathrm T}\vec x \in C\left(A^{\mathrm T}\right),\vec y \in N(A),\quad \left(A^{\mathrm T}\vec x\right)^{\mathrm T}\vec y = \vec{x}^{\mathrm T}A\vec y = \vec{x}^{\mathrm T}\cdot \vec 0 = 0
+\forall A^{\mathrm T}\boldsymbol x \in C\left(A^{\mathrm T}\right),\boldsymbol y \in N(A),\quad \left(A^{\mathrm T}\boldsymbol x\right)^{\mathrm T}\boldsymbol y = \boldsymbol{x}^{\mathrm T}A\boldsymbol y = \boldsymbol{x}^{\mathrm T}\cdot \boldsymbol 0 = 0
 \]</span> 又因为二者维度之和为<span class="math inline">\(n\)</span>，所以二者互补，即<span class="math inline">\(N(A) + C\left(A^{\mathrm T}\right) = \mathbb{R}^n\)</span>。</p></li>
 <li><p>在<span class="math inline">\(\mathbb R^m\)</span>内，列空间<span class="math inline">\(C(A)\)</span>和左零空间<span class="math inline">\(N\left(A^{\mathrm T}\right)\)</span>互相正交 <span class="math display">\[
-\forall A\vec x \in C(A),\vec y \in N\left(A^{\mathrm T}\right),\quad \left(A\vec x\right)^{\mathrm T}\vec y = \vec{x}^{\mathrm T}A^{\mathrm T}\vec y = \vec{x}^{\mathrm T}\cdot \vec 0 = 0
+\forall A\boldsymbol x \in C(A),\boldsymbol y \in N\left(A^{\mathrm T}\right),\quad \left(A\boldsymbol x\right)^{\mathrm T}\boldsymbol y = \boldsymbol{x}^{\mathrm T}A^{\mathrm T}\boldsymbol y = \boldsymbol{x}^{\mathrm T}\cdot \boldsymbol 0 = 0
 \]</span> 又因为二者维度之和为<span class="math inline">\(m\)</span>，所以二者互补，即<span class="math inline">\(C(A)+ N\left(A^{\mathrm T}\right) = \mathbb{R}^m\)</span>。</p></li>
 </ol>
 <p>于是就可以祭出Introduction to Linear Algebra 封面上的神图<del>手绘重制以表敬意</del></p>

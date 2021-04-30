@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -235,6 +235,244 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/04/29/Determinant/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/04/29/Determinant/" class="post-title-link" itemprop="url">行列式笔记</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-04-29 09:33:04" itemprop="dateCreated datePublished" datetime="2021-04-29T09:33:04+08:00">2021-04-29</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-04-30 11:41:49" itemprop="dateModified" datetime="2021-04-30T11:41:49+08:00">2021-04-30</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>在看了<em>Introduction to Linear Algebra</em>之后我对于行列式真的是豁然开朗。</p>
+<h1 id="行列式的性质">行列式的性质</h1>
+<p>行列式被定义为具有一下三个核心性质的，关于一个方阵的值：</p>
+<ol type="1">
+<li><p><strong>单位阵的行列式为1。</strong></p></li>
+<li><p><strong>两行交换，行列式变号。</strong></p></li>
+<li><p><strong>行列式关于单行是线性的，即</strong></p>
+<p><span class="math display">\[
+\begin{vmatrix} \vdots \\ (\boldsymbol  a + \boldsymbol b)^{\mathrm T} \\ \vdots \end{vmatrix} = \begin{vmatrix} \vdots \\ \boldsymbol a^{\mathrm T} \\ \vdots \end{vmatrix} + \begin{vmatrix} \vdots \\ \boldsymbol b^{\mathrm T} \\ \vdots \end{vmatrix},\quad\quad
+\begin{vmatrix} \vdots \\ (t\boldsymbol a)^{\mathrm T} \\ \vdots \end{vmatrix} = t\begin{vmatrix} \vdots \\ \boldsymbol a^{\mathrm T} \\ \vdots \end{vmatrix}
+\]</span></p></li>
+</ol>
+<p>从这三个性质，可以导出行列式所有重要的性质：</p>
+<ol start="4" type="1">
+<li><p><strong>两行相等，行列式为<span class="math inline">\(0\)</span>。</strong>证明：交换相等两行，行列式不变，但又由性质2，行列式要变号，因此行列式只能是<span class="math inline">\(0\)</span>。</p></li>
+<li><p><strong>初等行变换不改变行列式的值。</strong>证明：由性质3、4得：、</p>
+<p><span class="math display">\[
+\begin{vmatrix}
+ \vdots \\
+ \boldsymbol b^{\mathrm T} \\
+ \vdots \\
+ (\boldsymbol a -l \boldsymbol b)^{\mathrm T} \\
+ \vdots
+\end{vmatrix}
+ = \begin{vmatrix}
+ \vdots \\
+ \boldsymbol b^{\mathrm T} \\
+ \vdots \\
+ \boldsymbol a^{\mathrm T} \\
+ \vdots
+\end{vmatrix}
+-
+l\begin{vmatrix}
+ \vdots \\
+ \boldsymbol b^{\mathrm T} \\
+ \vdots \\
+ \boldsymbol b^{\mathrm T} \\
+ \vdots
+\end{vmatrix}
+= \begin{vmatrix}
+ \vdots \\
+ \boldsymbol b^{\mathrm T} \\
+ \vdots \\
+ \boldsymbol a^{\mathrm T} \\
+ \vdots
+\end{vmatrix}
+-
+l\cdot 0
+= \begin{vmatrix}
+ \vdots \\
+ \boldsymbol b^{\mathrm T} \\
+ \vdots \\
+ \boldsymbol a^{\mathrm T} \\
+ \vdots
+\end{vmatrix}
+\]</span></p></li>
+<li><p><strong>有一行为<span class="math inline">\(\boldsymbol 0\)</span>，则行列式为<span class="math inline">\(0\)</span>。</strong>证明：将另一行加到零行上，出现相等的两行，由性质4，行列式的值为<span class="math inline">\(0\)</span>。又因为初等行变换不改变行列式的值，所以原来的行列式值也是<span class="math inline">\(0\)</span>。</p></li>
+<li><p><strong>三角阵的行列式为其主对角线元素之积。</strong>证明：无论是上三角阵还是下三角阵，都可以简单地利用行变换消去非对角线上的元素，此时由性质1和性质3，行列式的值就是主对角线元素之积。</p></li>
+<li><p><strong>矩阵可逆，则行列式非零。</strong>证明：考虑高斯消元，如果矩阵奇异则必然三角阵中有零行，行列式为<span class="math inline">\(0\)</span>。反之，则左右行都是主元行，三角阵的行列式非零。（高斯消元过程中的行变换不改变行列式，行交换只改变正负。）</p></li>
+<li><p><strong>积的行列式等于行列式的积。</strong>证明：对于矩阵<span class="math inline">\(A,B\)</span>，考虑关于<span class="math inline">\(A\)</span>的函数<span class="math inline">\(D(A) = |AB|/|B|\)</span>。其有三个性质：</p>
+<ol type="1">
+<li><span class="math inline">\(D(I) = |B|/|B| = 1\)</span>。</li>
+<li><span class="math inline">\(A\)</span>的两行交换，则<span class="math inline">\(AB\)</span>的两行交换，则<span class="math inline">\(|AB|\)</span>变号，则<span class="math inline">\(D(A)\)</span>变号。</li>
+<li><span class="math inline">\(A\)</span>的单行线性变换即<span class="math inline">\(AB\)</span>单行的线性变换，因此<span class="math inline">\(|AB|\)</span>关于<span class="math inline">\(A\)</span>的单行是线性的，即<span class="math inline">\(D(A)\)</span>关于<span class="math inline">\(A\)</span>单行是线性的。</li>
+</ol>
+<p>因此，<span class="math inline">\(D(A)\)</span>满足行列式的核心性质，由行列式之定义，<span class="math inline">\(D(A) = |A|\)</span>。</p></li>
+<li><p><strong>转置不改变行列式的值。</strong>若矩阵奇异，则其转置奇异，则二者行列式皆为<span class="math inline">\(0\)</span>。若矩阵可逆，则考虑LU分解<span class="math inline">\(PA=LU\)</span>。两边转置得<span class="math inline">\(A^{\mathrm T}P^{\mathrm T} = U^{\mathrm T}L^{\mathrm T}\)</span>。由性质9，有 <span class="math display">\[
+|P||A|=|L||U|,\quad \left|A^{\mathrm T}\right|\left|P^{\mathrm T}\right| = \left|U^{\mathrm T}\right|\left|L^{\mathrm T}\right|
+\]</span> 比较二式，<span class="math inline">\(L,U\)</span>为三角阵，因为转置不改变对角线，因而转置不改变二者得行列式值。<span class="math inline">\(P\)</span>为行交换的排列，行列式为<span class="math inline">\(\pm 1\)</span>，而<span class="math inline">\(P^{\mathrm T}P=I\)</span>，因此<span class="math inline">\(|P|\)</span>和<span class="math inline">\(\left|P^{\mathrm T}\right|\)</span>同正负，即相等。综上，由两等式，<span class="math inline">\(|A| = \left|A^{\mathrm T}\right|\)</span>。</p>
+<p><strong>推论：</strong>性质2、3、4、5、6对于列也适用。</p></li>
+</ol>
+<h1 id="行列式的计算">行列式的计算</h1>
+<h2 id="排列公式">排列公式</h2>
+<p>由行列式的单行线性，可以逐行将行列式进行拆分，例如： <span class="math display">\[
+\begin{aligned}
+    \begin{vmatrix}
+        a &amp;b\\
+        c &amp;d
+    \end{vmatrix} &amp;= \begin{vmatrix}
+        a &amp;0\\
+        c &amp;d
+    \end{vmatrix} + \begin{vmatrix}
+        0 &amp;b\\
+        c &amp;d
+    \end{vmatrix} \\
+    &amp;= \begin{vmatrix}
+        a &amp;0\\
+        c &amp;0
+    \end{vmatrix} + \begin{vmatrix}
+        a &amp;0\\
+        0 &amp;c
+    \end{vmatrix} + \begin{vmatrix}
+        0 &amp;b\\
+        c &amp;0
+    \end{vmatrix} + \begin{vmatrix}
+        0 &amp;b\\
+        0 &amp;d
+    \end{vmatrix}
+\end{aligned}
+\]</span> 照此态势，<span class="math inline">\(n\)</span>行的行列式可以被分拆为<span class="math inline">\(n^n\)</span>个每行至多只有一个非零元素的行列式之和。而注意到，这些行列式有一些存在零列，他们的值一定为<span class="math inline">\(0\)</span>可以省略。因此，可能非零的只有那些每行至多只有一个非零元素，且非零元素所在列两两不同的行列式。对于这些行列式，存在排列矩阵可以将其对角化，进而我们得出这些行列式的值为每一行可能的非零元素之积乘以排列矩阵的行列式，后者只可能是<span class="math inline">\(\pm 1\)</span>——不妨将这正负定义为排列的“奇偶性”。则行列式的排列公式呼之欲出：</p>
+<blockquote>
+<p><span class="math display">\[
+A_{n\times n} = \sum_{\pi \in S_n} (-1)^{\sigma(\pi)}\prod_{i=1}^na_{i, \pi(i)}
+\]</span></p>
+<p>其中<span class="math inline">\(S_n\)</span>表示所有<span class="math inline">\(n\)</span>排列的集合，<span class="math inline">\(\pi\)</span>表示一个排列，<span class="math inline">\(\sigma(\pi)\)</span>表示<span class="math inline">\(\pi\)</span>的逆序对数，即 <span class="math display">\[
+\sigma(\pi)=\sum_{i&lt;j}[\pi(i) &gt; \pi(j)]
+\]</span></p>
+</blockquote>
+<h2 id="行列展开">行列展开</h2>
+<p>同样由行列式的单行线性，可以将行列式的某一行进行拆分成<span class="math inline">\(n\)</span>个该行只有至多一个非零元素的行列式之和。对于每一个这样的行列式考虑排列公式：显然有效的排列是正好在那一行选中了非零元素的那一列的（其他的排列都选到了<span class="math inline">\(0\)</span>，就没有贡献了），去掉选中这个元素的部分，这些排列恰好全部转化为<span class="math inline">\(n-1\)</span>长度的全排列，覆盖了矩阵划掉那个非零元素所在行所在列的剩余元素——那这些是不是可以看作是一个小一点的<span class="math inline">\(n-1\)</span>阶行列式呢？这就是行列式行列展开的原理。</p>
+<p>因为这个笔记主要是我复习自用，所以具体形式我就不多写了。</p>
+<p>我记得自己两年之前写过一篇<a href="/2019/12/13/%E8%A1%8C%E5%88%97%E5%BC%8F%E8%AE%A1%E7%AE%97/" title="行列式值的按行列展开定义与排列定义等价性证明">行列式值的按行列展开定义与排列定义等价性证明</a>，那个时候觉得自己写了一大堆很厉害，现在一看，虽然比较严谨，但是格局小了。</p>
+<h1 id="克拉默法则">克拉默法则</h1>
+<p>克拉默法则提供了一种再形式上求解线性方程的工具，其证明如下： <span class="math display">\[
+\left.
+\begin{aligned}
+A \boldsymbol x &amp;= \boldsymbol b \\
+A I &amp;= A
+\end{aligned}
+\right\}
+\Rightarrow 
+A \cdot \begin{bmatrix}
+1 &amp;0 &amp;\cdots &amp;0 &amp;x_1 &amp;0 &amp;\cdots &amp;0 \\
+0 &amp;1 &amp;\cdots &amp;0 &amp;x_2  &amp;0&amp;\cdots &amp;0 \\
+\vdots &amp;\vdots &amp;\ddots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots  &amp;\vdots \\
+0 &amp;0 &amp;\cdots &amp;1 &amp;x_{i-1} &amp;0 &amp;\cdots &amp;0 \\
+0 &amp;0 &amp;\cdots &amp;0 &amp;x_{i} &amp;0 &amp;\cdots &amp;0 \\
+0 &amp;0 &amp;\cdots &amp;0 &amp;x_{i+1} &amp;1 &amp;\cdots &amp;0 \\
+\vdots &amp;\vdots &amp;\ddots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots  &amp;\vdots \\
+0 &amp; 0 &amp;\cdots &amp;0 &amp;x_n &amp;0 &amp;\cdots &amp;1
+\end{bmatrix} = \begin{bmatrix}
+    \vert &amp;\vert &amp;\cdots &amp;\vert &amp;\vert &amp;\vert &amp;\cdots &amp;\vert\\
+    \boldsymbol{a_1} &amp;\boldsymbol{a_2} &amp;\cdots  &amp; \boldsymbol{a_{i - 1}} &amp;\boldsymbol b &amp; \boldsymbol{a_{i + 1}} &amp;\cdots &amp;\boldsymbol{a_n} \\
+    \vert &amp;\vert &amp;\cdots &amp;\vert &amp;\vert &amp;\vert &amp;\cdots &amp;\vert\\
+\end{bmatrix}
+\]</span> 因此，由积的行列式为行列式的积，就有 <span class="math display">\[
+|A| \cdot \begin{vmatrix}
+1 &amp;0 &amp;\cdots &amp;0 &amp;x_1 &amp;0 &amp;\cdots &amp;0 \\
+0 &amp;1 &amp;\cdots &amp;0 &amp;x_2  &amp;0&amp;\cdots &amp;0 \\
+\vdots &amp;\vdots &amp;\ddots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots  &amp;\vdots \\
+0 &amp;0 &amp;\cdots &amp;1 &amp;x_{i-1} &amp;0 &amp;\cdots &amp;0 \\
+0 &amp;0 &amp;\cdots &amp;0 &amp;x_{i} &amp;0 &amp;\cdots &amp;0 \\
+0 &amp;0 &amp;\cdots &amp;0 &amp;x_{i+1} &amp;1 &amp;\cdots &amp;0 \\
+\vdots &amp;\vdots &amp;\ddots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots  &amp;\vdots \\
+0 &amp; 0 &amp;\cdots &amp;0 &amp;x_n &amp;0 &amp;\cdots &amp;1
+\end{vmatrix} = \begin{vmatrix}
+    \vert &amp;\vert &amp;\cdots &amp;\vert &amp;\vert &amp;\vert &amp;\cdots &amp;\vert\\
+    \boldsymbol{a_1} &amp;\boldsymbol{a_2} &amp;\cdots  &amp; \boldsymbol{a_{i - 1}} &amp;\boldsymbol b &amp; \boldsymbol{a_{i + 1}} &amp;\cdots &amp;\boldsymbol{a_n} \\
+    \vert &amp;\vert &amp;\cdots &amp;\vert &amp;\vert &amp;\vert &amp;\cdots &amp;\vert\\
+\end{vmatrix}
+\]</span> 而注意到 <span class="math display">\[
+\begin{vmatrix}
+1 &amp;0 &amp;\cdots &amp;0 &amp;x_1 &amp;0 &amp;\cdots &amp;0 \\
+0 &amp;1 &amp;\cdots &amp;0 &amp;x_2  &amp;0&amp;\cdots &amp;0 \\
+\vdots &amp;\vdots &amp;\ddots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots  &amp;\vdots \\
+0 &amp;0 &amp;\cdots &amp;1 &amp;x_{i-1} &amp;0 &amp;\cdots &amp;0 \\
+0 &amp;0 &amp;\cdots &amp;0 &amp;x_{i} &amp;0 &amp;\cdots &amp;0 \\
+0 &amp;0 &amp;\cdots &amp;0 &amp;x_{i+1} &amp;1 &amp;\cdots &amp;0 \\
+\vdots &amp;\vdots &amp;\ddots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots  &amp;\vdots \\
+0 &amp; 0 &amp;\cdots &amp;0 &amp;x_n &amp;0 &amp;\cdots &amp;1
+\end{vmatrix} = x_i
+\]</span> 因此就有 <span class="math display">\[
+x_i = \frac{\begin{vmatrix}
+    \vert &amp;\vert &amp;\cdots &amp;\vert &amp;\vert &amp;\vert &amp;\cdots &amp;\vert\\
+    \boldsymbol{a_1} &amp;\boldsymbol{a_2} &amp;\cdots  &amp; \boldsymbol{a_{i - 1}} &amp;\boldsymbol b &amp; \boldsymbol{a_{i + 1}} &amp;\cdots &amp;\boldsymbol{a_n} \\
+    \vert &amp;\vert &amp;\cdots &amp;\vert &amp;\vert &amp;\vert &amp;\cdots &amp;\vert\\
+\end{vmatrix}}{|A|}
+\]</span> 即克拉默法则得证。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/04/18/Projection%20and%20Least%20Square/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -266,7 +504,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-19 13:15:17" itemprop="dateModified" datetime="2021-04-19T13:15:17+08:00">2021-04-19</time>
+        <time title="修改时间：2021-04-30 09:01:41" itemprop="dateModified" datetime="2021-04-30T09:01:41+08:00">2021-04-30</time>
       </span>
 
   
@@ -280,51 +518,51 @@
     
     <div class="post-body" itemprop="articleBody">
           <h1 id="投影">投影</h1>
-<p>高中的时候就学过，向量<span class="math inline">\(\vec b\)</span>在<span class="math inline">\(\vec a\)</span>上的投影为 <span class="math display">\[
-\vec p = \frac{\vec a^{\mathrm T}\vec b}{\vec a^{\mathrm T}\vec a} \cdot \vec a
+<p>高中的时候就学过，向量<span class="math inline">\(\boldsymbol b\)</span>在<span class="math inline">\(\boldsymbol a\)</span>上的投影为 <span class="math display">\[
+\boldsymbol p = \frac{\boldsymbol a^{\mathrm T}\boldsymbol b}{\boldsymbol a^{\mathrm T}\boldsymbol a} \cdot \boldsymbol a
 \]</span> 当时推导主要利用了点积的几何意义$a b = |a||b|$。在代数意义上上式是怎么推导的呢？</p>
-<p>其实也不难：注意到<span class="math inline">\(\vec b\)</span>和其投影<span class="math inline">\(\vec p\)</span>的差一定是垂直于基向量<span class="math inline">\(\vec a\)</span>的。因为<span class="math inline">\(\vec p\)</span>与<span class="math inline">\(\vec a\)</span>平行，设<span class="math inline">\(\vec p = x\vec a\)</span> <span class="math display">\[
+<p>其实也不难：注意到<span class="math inline">\(\boldsymbol b\)</span>和其投影<span class="math inline">\(\boldsymbol p\)</span>的差一定是垂直于基向量<span class="math inline">\(\boldsymbol a\)</span>的。因为<span class="math inline">\(\boldsymbol p\)</span>与<span class="math inline">\(\boldsymbol a\)</span>平行，设<span class="math inline">\(\boldsymbol p = x\boldsymbol a\)</span> <span class="math display">\[
 \begin{aligned}
-    \vec a^{\mathrm T}\left(\vec b - x\vec a\right) &amp;= 0 \\
-    \Rightarrow \vec a^{\mathrm T}x\vec a &amp;= \vec a^{\mathrm T}\vec b \\
-    \Rightarrow x\vec a^{\mathrm T}\vec a &amp;= \vec a^{\mathrm T}\vec b \\
-    \Rightarrow x &amp;= \frac{\vec a^{\mathrm T}\vec b}{\vec a^{\mathrm T}\vec a}
+    \boldsymbol a^{\mathrm T}\left(\boldsymbol b - x\boldsymbol a\right) &amp;= 0 \\
+    \Rightarrow \boldsymbol a^{\mathrm T}x\boldsymbol a &amp;= \boldsymbol a^{\mathrm T}\boldsymbol b \\
+    \Rightarrow x\boldsymbol a^{\mathrm T}\boldsymbol a &amp;= \boldsymbol a^{\mathrm T}\boldsymbol b \\
+    \Rightarrow x &amp;= \frac{\boldsymbol a^{\mathrm T}\boldsymbol b}{\boldsymbol a^{\mathrm T}\boldsymbol a}
 \end{aligned}
-\]</span> 我们就得到了一开始的结论。如果把<span class="math inline">\(\vec a\)</span>写到左边（因为是向量的实数积所以可以交换） <span class="math display">\[
-p = \vec a\cdot \frac{\vec a^{\mathrm T}\vec b}{\vec a^{\mathrm T}\vec a} = \frac{\vec a\vec a^{\mathrm T}}{\vec a^{\mathrm T}\vec a}\vec b
-\]</span> 我们这下看清楚了：将<span class="math inline">\(\vec b\)</span>转变为其在<span class="math inline">\(\vec a\)</span>上的投影的是一个矩阵！这个矩阵<span class="math inline">\(P = \frac{\vec a\vec a^{\mathrm T}}{\vec a^{\mathrm T}\vec a}\)</span>被称为<strong>投影矩阵</strong>。</p>
+\]</span> 我们就得到了一开始的结论。如果把<span class="math inline">\(\boldsymbol a\)</span>写到左边（因为是向量的实数积所以可以交换） <span class="math display">\[
+p = \boldsymbol a\cdot \frac{\boldsymbol a^{\mathrm T}\boldsymbol b}{\boldsymbol a^{\mathrm T}\boldsymbol a} = \frac{\boldsymbol a\boldsymbol a^{\mathrm T}}{\boldsymbol a^{\mathrm T}\boldsymbol a}\boldsymbol b
+\]</span> 我们这下看清楚了：将<span class="math inline">\(\boldsymbol b\)</span>转变为其在<span class="math inline">\(\boldsymbol a\)</span>上的投影的是一个矩阵！这个矩阵<span class="math inline">\(P = \frac{\boldsymbol a\boldsymbol a^{\mathrm T}}{\boldsymbol a^{\mathrm T}\boldsymbol a}\)</span>被称为<strong>投影矩阵</strong>。</p>
 <p>代数推导和投影矩阵有啥用？它们可以让我们把投影从投影到一个向量推广到投影到向量空间。</p>
-<p>考虑如何把一个向量<span class="math inline">\(\vec b\)</span>投影到矩阵<span class="math inline">\(A = \begin{bmatrix} \vec {a_1} &amp;\vec {a_2} &amp;\cdots &amp;\vec {a_n}\end{bmatrix}\)</span>的列空间上（假设<span class="math inline">\(A\)</span>的列向量线性无关）。我们一样考虑<span class="math inline">\(\vec b\)</span>与<span class="math inline">\(\vec p\)</span>的差，其一定垂直于<span class="math inline">\(C(A)\)</span>，自然也垂直于<span class="math inline">\(\vec {a_1} \cdots \vec {a_n}\)</span>，于是就有： <span class="math display">\[
-\vec {a_k} ^{\mathrm T}\left(\vec b - \vec p\right) = 0, \quad k = 1,2,\cdots,n
+<p>考虑如何把一个向量<span class="math inline">\(\boldsymbol b\)</span>投影到矩阵<span class="math inline">\(A = \begin{bmatrix} \boldsymbol {a_1} &amp;\boldsymbol {a_2} &amp;\cdots &amp;\boldsymbol {a_n}\end{bmatrix}\)</span>的列空间上（假设<span class="math inline">\(A\)</span>的列向量线性无关）。我们一样考虑<span class="math inline">\(\boldsymbol b\)</span>与<span class="math inline">\(\boldsymbol p\)</span>的差，其一定垂直于<span class="math inline">\(C(A)\)</span>，自然也垂直于<span class="math inline">\(\boldsymbol {a_1} \cdots \boldsymbol {a_n}\)</span>，于是就有： <span class="math display">\[
+\boldsymbol {a_k} ^{\mathrm T}\left(\boldsymbol b - \boldsymbol p\right) = 0, \quad k = 1,2,\cdots,n
 \]</span> 或者写在一起： <span class="math display">\[
 \begin{bmatrix}
-    \vec {a_1}^{\mathrm T} \\
-    \vec {a_2}^{\mathrm T} \\
+    \boldsymbol {a_1}^{\mathrm T} \\
+    \boldsymbol {a_2}^{\mathrm T} \\
     \vdots \\
-    \vec {a_n}^{\mathrm T} \\
+    \boldsymbol {a_n}^{\mathrm T} \\
 \end{bmatrix}
-\left(\vec b  - \vec p\right) = \vec 0 \Rightarrow 
-A^{\mathrm T} \left(\vec b  - \vec p\right) = \vec 0
-\]</span> 因为<span class="math inline">\(\vec p \in C(A)\)</span>，所以<span class="math inline">\(\vec p\)</span>是<span class="math inline">\(A\)</span>列向量的线性组合，可以写作<span class="math inline">\(\vec p = A\vec x\)</span>。于是我们就得到了方程 <span class="math display">\[
-A^{\mathrm T} \left(\vec b  - A\vec x\right) = \vec 0 \Rightarrow A^{\mathrm T}A\vec x = A^{\mathrm T}\vec b
+\left(\boldsymbol b  - \boldsymbol p\right) = \boldsymbol 0 \Rightarrow 
+A^{\mathrm T} \left(\boldsymbol b  - \boldsymbol p\right) = \boldsymbol 0
+\]</span> 因为<span class="math inline">\(\boldsymbol p \in C(A)\)</span>，所以<span class="math inline">\(\boldsymbol p\)</span>是<span class="math inline">\(A\)</span>列向量的线性组合，可以写作<span class="math inline">\(\boldsymbol p = A\boldsymbol x\)</span>。于是我们就得到了方程 <span class="math display">\[
+A^{\mathrm T} \left(\boldsymbol b  - A\boldsymbol x\right) = \boldsymbol 0 \Rightarrow A^{\mathrm T}A\boldsymbol x = A^{\mathrm T}\boldsymbol b
 \]</span> 因为<span class="math inline">\(A\)</span>的列是线性无关的，所以<span class="math inline">\(A^{\mathrm T}A\)</span>是可逆的（这个我们待会证明），于是我们可以解得 <span class="math display">\[
-\vec x = \left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\vec b
+\boldsymbol x = \left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\boldsymbol b
 \]</span> 即 <span class="math display">\[
-\vec p = A\left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\vec b
+\boldsymbol p = A\left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\boldsymbol b
 \]</span> 此时我们很清楚地看到，投影矩阵是<span class="math inline">\(P = A\left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\)</span>。</p>
 <hr />
 <p>我们接下来证明之前我们用到的一个结论：<strong><span class="math inline">\(A^{\mathrm T}A\)</span>可逆的充分必要条件是<span class="math inline">\(A\)</span>的列向量线性无关</strong>。</p>
 <p>我们发现这个结论等价于：<span class="math inline">\(A^{\mathrm T}A\)</span>和<span class="math inline">\(A\)</span>有相同的零空间。</p>
 <p>怎么证明？一个方向是简单的： <span class="math display">\[
-A\vec x = \vec 0 \Rightarrow A^{\mathrm T}\left(A\vec x\right) = \vec 0 \Rightarrow A^{\mathrm T} A\vec x = \vec 0
+A\boldsymbol x = \boldsymbol 0 \Rightarrow A^{\mathrm T}\left(A\boldsymbol x\right) = \boldsymbol 0 \Rightarrow A^{\mathrm T} A\boldsymbol x = \boldsymbol 0
 \]</span> 反方向的证明需要一些技巧： <span class="math display">\[
-A^{\mathrm T} A\vec x = \vec 0 \Rightarrow \vec x^{\mathrm T} A^{\mathrm T} A\vec x = 0 \Rightarrow \left(A\vec x\right)^{\mathrm T}A\vec x = 0 \Rightarrow A\vec x = \vec 0
+A^{\mathrm T} A\boldsymbol x = \boldsymbol 0 \Rightarrow \boldsymbol x^{\mathrm T} A^{\mathrm T} A\boldsymbol x = 0 \Rightarrow \left(A\boldsymbol x\right)^{\mathrm T}A\boldsymbol x = 0 \Rightarrow A\boldsymbol x = \boldsymbol 0
 \]</span> 倒数第二步写得有点花里胡哨其实就是向量自己和自己的点积，如果是零的话显然原向量就是零。</p>
 <p>证毕。</p>
 <h1 id="最小二乘拟合">最小二乘拟合</h1>
 <p>投影和最小二乘拟合是怎么联系起来的呢？</p>
 <p>线性拟合的本质是用给定的若干列向量的线性组合表示另一个向量。</p>
-<p>比如我有一组数据<span class="math inline">\(\vec x,\vec y\)</span>，我的模型是<span class="math inline">\(y = a + bx\)</span>，拟合的过程就是用向量<span class="math inline">\(\vec 1\)</span>和<span class="math inline">\(\vec x\)</span>的线性组合表示<span class="math inline">\(\vec y\)</span>的过程： <span class="math display">\[
+<p>比如我有一组数据<span class="math inline">\(\boldsymbol x,\boldsymbol y\)</span>，我的模型是<span class="math inline">\(y = a + bx\)</span>，拟合的过程就是用向量<span class="math inline">\(\boldsymbol 1\)</span>和<span class="math inline">\(\boldsymbol x\)</span>的线性组合表示<span class="math inline">\(\boldsymbol y\)</span>的过程： <span class="math display">\[
 \begin{bmatrix}
     1 &amp;x_1 \\
     1 &amp;x_2  \\
@@ -359,33 +597,33 @@ A^{\mathrm T} A\vec x = \vec 0 \Rightarrow \vec x^{\mathrm T} A^{\mathrm T} A\ve
     \vdots \\
     y_n 
 \end{bmatrix}
-\]</span> 那么我们发现线性拟合的本质其实就是解一个形如<span class="math inline">\(A\vec x = \vec b\)</span>的方程组（这里的<span class="math inline">\(\vec x\)</span>表示模型中各项的系数，和上面表示自变量的<span class="math inline">\(\vec x\)</span>没有关系），这个我们老熟悉了。</p>
+\]</span> 那么我们发现线性拟合的本质其实就是解一个形如<span class="math inline">\(A\boldsymbol x = \boldsymbol b\)</span>的方程组（这里的<span class="math inline">\(\boldsymbol x\)</span>表示模型中各项的系数，和上面表示自变量的<span class="math inline">\(\boldsymbol x\)</span>没有关系），这个我们老熟悉了。</p>
 <p>但是事情不太妙的就是<span class="math inline">\(A\)</span>又高又瘦，方程组比未知数多，所以几乎肯定不存在准确解。</p>
-<p>什么时候存在准确解？<span class="math inline">\(\vec b\)</span>要在<span class="math inline">\(A\)</span>的列空间<span class="math inline">\(C(A)\)</span>里。</p>
-<p>所以如果只能求近似解，我们可以考虑把<span class="math inline">\(\vec b\)</span>“近似到”<span class="math inline">\(C(A)\)</span>中的一个最近的向量，然后就能求解了。</p>
-<p>这个“近似”的过程其实就是投影。在<span class="math inline">\(C(A)\)</span>中<span class="math inline">\(\vec b\)</span>的投影肯定最接近<span class="math inline">\(\vec b\)</span>，因为只有二者的差是和<span class="math inline">\(C(A)\)</span>垂直的，这很符合我们的代数直觉。</p>
-<p>所以联系之前的投影的推导，假设这个投影向量是<span class="math inline">\(A\vec{\hat{x}}\)</span>，我们直接写出方程和解： <span class="math display">\[
-A^{\mathrm T} \left(\vec b  - A\vec{\hat{x}} \right) = \vec 0 \Rightarrow \vec{\hat{x}} = \left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\vec b
+<p>什么时候存在准确解？<span class="math inline">\(\boldsymbol b\)</span>要在<span class="math inline">\(A\)</span>的列空间<span class="math inline">\(C(A)\)</span>里。</p>
+<p>所以如果只能求近似解，我们可以考虑把<span class="math inline">\(\boldsymbol b\)</span>“近似到”<span class="math inline">\(C(A)\)</span>中的一个最近的向量，然后就能求解了。</p>
+<p>这个“近似”的过程其实就是投影。在<span class="math inline">\(C(A)\)</span>中<span class="math inline">\(\boldsymbol b\)</span>的投影肯定最接近<span class="math inline">\(\boldsymbol b\)</span>，因为只有二者的差是和<span class="math inline">\(C(A)\)</span>垂直的，这很符合我们的代数直觉。</p>
+<p>所以联系之前的投影的推导，假设这个投影向量是<span class="math inline">\(A\boldsymbol{\hat{x}}\)</span>，我们直接写出方程和解： <span class="math display">\[
+A^{\mathrm T} \left(\boldsymbol b  - A\boldsymbol{\hat{x}} \right) = \boldsymbol 0 \Rightarrow \boldsymbol{\hat{x}} = \left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\boldsymbol b
 \]</span> 这就叫“最小二乘拟合”。</p>
 <hr />
 <p>如果非要较真，从微积分的角度理解一波也是可以的：定义拟合的误差函数为 <span class="math display">\[
-L= \left|\vec b - A\vec{\hat x}\right| = \sum_{i = 1}^n \left(\vec b_i - \left(A\vec{\hat x}\right)_i\right)^2
-\]</span> 如果要最小化<span class="math inline">\(L\)</span>，那么<span class="math inline">\(L\)</span>关于<span class="math inline">\(\vec{\hat x}\)</span>的所有分量的导数都为<span class="math inline">\(0\)</span>： <span class="math display">\[
-\frac{\mathrm d L}{\mathrm d\vec{\hat x}_k} = 2\sum_{i = 1}^n A_{i, k} \left(\left(A\vec{\hat x}\right)_i - \vec b_i\right) =  0, \quad \forall k = 1, 2, \cdots, n
-\]</span> 令<span class="math inline">\(A\)</span>第<span class="math inline">\(i\)</span>列的列向量为<span class="math inline">\(\vec a_i\)</span>，那么上面也可以写成 <span class="math display">\[
-\frac{\mathrm d L}{\mathrm d\vec{\hat x}_k} = 2\vec a_k^{\mathrm T} \left(A\vec{\hat x} - \vec b\right) =  0, \quad \forall k = 1, 2, \cdots, n
+L= \left|\boldsymbol b - A\boldsymbol{\hat x}\right| = \sum_{i = 1}^n \left(\boldsymbol b_i - \left(A\boldsymbol{\hat x}\right)_i\right)^2
+\]</span> 如果要最小化<span class="math inline">\(L\)</span>，那么<span class="math inline">\(L\)</span>关于<span class="math inline">\(\boldsymbol{\hat x}\)</span>的所有分量的导数都为<span class="math inline">\(0\)</span>： <span class="math display">\[
+\frac{\mathrm d L}{\mathrm d\boldsymbol{\hat x}_k} = 2\sum_{i = 1}^n A_{i, k} \left(\left(A\boldsymbol{\hat x}\right)_i - \boldsymbol b_i\right) =  0, \quad \forall k = 1, 2, \cdots, n
+\]</span> 令<span class="math inline">\(A\)</span>第<span class="math inline">\(i\)</span>列的列向量为<span class="math inline">\(\boldsymbol a_i\)</span>，那么上面也可以写成 <span class="math display">\[
+\frac{\mathrm d L}{\mathrm d\boldsymbol{\hat x}_k} = 2\boldsymbol a_k^{\mathrm T} \left(A\boldsymbol{\hat x} - \boldsymbol b\right) =  0, \quad \forall k = 1, 2, \cdots, n
 \]</span> 并在一起得 <span class="math display">\[
-2A^{\mathrm T}\left(A\vec{\hat x} - \vec b\right) =  0
+2A^{\mathrm T}\left(A\boldsymbol{\hat x} - \boldsymbol b\right) =  0
 \]</span> 这就是上面我们通过投影推出的方程。</p>
 <p><span class="math inline">\(L\)</span>中的平方项也是最小二乘中“二”的由来。</p>
 <h1 id="矩阵的gram-schmidt正交化">矩阵的Gram-Schmidt正交化</h1>
 <p>我们发现无论是投影还是最小二乘拟合，计算<span class="math inline">\(A^{\mathrm T}A\)</span>和它的逆都是绕不过去的一步。<span class="math inline">\(A^{\mathrm T}A\)</span>本身就有一些特殊的性质，比如说其一定是正方阵，一定是对称的（通过转置等于自身易证）。但是这些性质在计算的时候帮助不大。如果我们能够优化<span class="math inline">\(A\)</span>的形态从而简化<span class="math inline">\(A^{\mathrm T}A\)</span>和它的逆的计算，那么各种算法的效率都会高上不少。</p>
 <p>注意到<span class="math inline">\(A^{\mathrm T}A\)</span>中的每一个位置都是<span class="math inline">\(A\)</span>两个列向量的点积。<strong>如果<span class="math inline">\(A\)</span>当中的列向量是两两正交的，那么<span class="math inline">\(A^{\mathrm T}A\)</span>就变成了一个对角阵。对角阵的逆不要太好算！更进一步，如果<span class="math inline">\(A\)</span>的每一个列向量都是单位向量，那么<span class="math inline">\(A^{\mathrm T}A\)</span>就是单位阵，连逆都不用求了</strong>！</p>
 <p>所以说啊，正交是个好东西。那对于一个矩阵<span class="math inline">\(A\)</span>，通过什么样的方式将其列向量完成正交化呢？</p>
-<p>比较简单的一个算法称为Gram-Schmidt正交化。设<span class="math inline">\(A\)</span>的列向量为<span class="math inline">\(\vec {a_1},\cdots, \vec{a_n}\)</span>，则向量正交化之后的结果<span class="math inline">\(\vec{q_i}\)</span>可以这么计算： <span class="math display">\[
-\vec{q_i} = \vec{a_i} - \sum_{j = 1}^{i - 1} \frac{\vec{q_j}^{\mathrm T}\vec{a_i}}{\vec{q_j}^{\mathrm T}\vec{q_j}} \vec{q_j}
+<p>比较简单的一个算法称为Gram-Schmidt正交化。设<span class="math inline">\(A\)</span>的列向量为<span class="math inline">\(\boldsymbol {a_1},\cdots, \boldsymbol{a_n}\)</span>，则向量正交化之后的结果<span class="math inline">\(\boldsymbol{q_i}\)</span>可以这么计算： <span class="math display">\[
+\boldsymbol{q_i} = \boldsymbol{a_i} - \sum_{j = 1}^{i - 1} \frac{\boldsymbol{q_j}^{\mathrm T}\boldsymbol{a_i}}{\boldsymbol{q_j}^{\mathrm T}\boldsymbol{q_j}} \boldsymbol{q_j}
 \]</span> 即对于第<span class="math inline">\(i\)</span>个列向量通过减去其在所有之前的（完成正交化的）向量上的投影来确保其和前面的向量都正交。</p>
-<p>最后，把所有的<span class="math inline">\(\vec{q_i}\)</span>除以其模完成归一化，我们就可以得到一个标准正交列向量组成的矩阵<span class="math inline">\(Q\)</span>，满足<span class="math inline">\(Q^{\mathrm T}Q = I\)</span>。（线性代数中常使用<span class="math inline">\(Q\)</span>表示列向量标准正交的矩阵）</p>
+<p>最后，把所有的<span class="math inline">\(\boldsymbol{q_i}\)</span>除以其模完成归一化，我们就可以得到一个标准正交列向量组成的矩阵<span class="math inline">\(Q\)</span>，满足<span class="math inline">\(Q^{\mathrm T}Q = I\)</span>。（线性代数中常使用<span class="math inline">\(Q\)</span>表示列向量标准正交的矩阵）</p>
 <p>从<span class="math inline">\(A\)</span>变到<span class="math inline">\(Q\)</span>的过程没有改变列空间，所以不会改变投影矩阵，但计算投影矩阵的开销大大降低了： <span class="math display">\[
 P = Q\left(Q^{\mathrm T}Q\right)^{-1}Q^{\mathrm T} = QQ^{\mathrm T}
 \]</span></p>
@@ -394,26 +632,26 @@ P = Q\left(Q^{\mathrm T}Q\right)^{-1}Q^{\mathrm T} = QQ^{\mathrm T}
 A = QR
 \]</span> 我们有<span class="math inline">\(A\)</span>，可以通过Gram-Schmidt正交化算出<span class="math inline">\(Q\)</span>，但<span class="math inline">\(R\)</span>怎么计算呢？因为<span class="math inline">\(Q^{\mathrm T}Q=I\)</span>，所以只要在等式两边同时乘以<span class="math inline">\(Q^{\mathrm T}\)</span>，就得到<span class="math inline">\(R=Q^{\mathrm T}A\)</span>。或者用<span class="math inline">\(Q\)</span>和<span class="math inline">\(A\)</span>的列向量表示： <span class="math display">\[
 R = \begin{bmatrix}
-    \vec{q_1}^{\mathrm T} \\
-    \vec{q_2}^{\mathrm T} \\
+    \boldsymbol{q_1}^{\mathrm T} \\
+    \boldsymbol{q_2}^{\mathrm T} \\
     \vdots \\
-    \vec{q_n}^{\mathrm T}
+    \boldsymbol{q_n}^{\mathrm T}
 \end{bmatrix}
 \begin{bmatrix}
-    \vec{a_1} &amp;\vec{a_2} &amp;\cdots &amp;\vec{a_n}
+    \boldsymbol{a_1} &amp;\boldsymbol{a_2} &amp;\cdots &amp;\boldsymbol{a_n}
 \end{bmatrix}
 = \begin{bmatrix}
-    \vec{q_1}^{\mathrm T}\vec{a_1} &amp;\vec{q_1}^{\mathrm T}\vec{a_2} &amp;\cdots &amp;\vec{q_1}^{\mathrm T}\vec{a_n} \\
-    \vec{q_2}^{\mathrm T}\vec{a_1} &amp;\vec{q_2}^{\mathrm T}\vec{a_2} &amp;\cdots &amp;\vec{q_2}^{\mathrm T}\vec{a_n} \\
+    \boldsymbol{q_1}^{\mathrm T}\boldsymbol{a_1} &amp;\boldsymbol{q_1}^{\mathrm T}\boldsymbol{a_2} &amp;\cdots &amp;\boldsymbol{q_1}^{\mathrm T}\boldsymbol{a_n} \\
+    \boldsymbol{q_2}^{\mathrm T}\boldsymbol{a_1} &amp;\boldsymbol{q_2}^{\mathrm T}\boldsymbol{a_2} &amp;\cdots &amp;\boldsymbol{q_2}^{\mathrm T}\boldsymbol{a_n} \\
     \vdots &amp;\vdots &amp;\ddots &amp;\vdots \\
-    \vec{q_n}^{\mathrm T}\vec{a_1} &amp;\vec{q_n}^{\mathrm T}\vec{a_2} &amp;\cdots &amp;\vec{q_n}^{\mathrm T}\vec{a_n}
+    \boldsymbol{q_n}^{\mathrm T}\boldsymbol{a_1} &amp;\boldsymbol{q_n}^{\mathrm T}\boldsymbol{a_2} &amp;\cdots &amp;\boldsymbol{q_n}^{\mathrm T}\boldsymbol{a_n}
 \end{bmatrix}
-\]</span> 注意到，因为<span class="math inline">\(\vec{q_i}\)</span>正交于所有<span class="math inline">\(\vec {q_j}(i &lt; j)\)</span>，而<span class="math inline">\(\vec{a_j}\)</span>又是由<span class="math inline">\(\vec{q_1},\cdots,\vec{q_j}\)</span>表示的，所以<span class="math inline">\(i &gt; j\)</span>时，<span class="math inline">\(\vec{q_i}^{\mathrm T}\vec{a_j} = 0\)</span>。所以<span class="math inline">\(R\)</span><strong>其实是一个上三角阵</strong>： <span class="math display">\[
+\]</span> 注意到，因为<span class="math inline">\(\boldsymbol{q_i}\)</span>正交于所有<span class="math inline">\(\boldsymbol {q_j}(i &lt; j)\)</span>，而<span class="math inline">\(\boldsymbol{a_j}\)</span>又是由<span class="math inline">\(\boldsymbol{q_1},\cdots,\boldsymbol{q_j}\)</span>表示的，所以<span class="math inline">\(i &gt; j\)</span>时，<span class="math inline">\(\boldsymbol{q_i}^{\mathrm T}\boldsymbol{a_j} = 0\)</span>。所以<span class="math inline">\(R\)</span><strong>其实是一个上三角阵</strong>： <span class="math display">\[
 R = \begin{bmatrix}
-    \vec{q_1}^{\mathrm T}\vec{a_1} &amp;\vec{q_1}^{\mathrm T}\vec{a_2} &amp;\cdots &amp;\vec{q_1}^{\mathrm T}\vec{a_n} \\
-    0 &amp;\vec{q_2}^{\mathrm T}\vec{a_2} &amp;\cdots &amp;\vec{q_2}^{\mathrm T}\vec{a_n} \\
+    \boldsymbol{q_1}^{\mathrm T}\boldsymbol{a_1} &amp;\boldsymbol{q_1}^{\mathrm T}\boldsymbol{a_2} &amp;\cdots &amp;\boldsymbol{q_1}^{\mathrm T}\boldsymbol{a_n} \\
+    0 &amp;\boldsymbol{q_2}^{\mathrm T}\boldsymbol{a_2} &amp;\cdots &amp;\boldsymbol{q_2}^{\mathrm T}\boldsymbol{a_n} \\
     \vdots &amp;\vdots &amp;\ddots &amp;\vdots \\
-    0 &amp;0 &amp;\cdots &amp;\vec{q_n}^{\mathrm T}\vec{a_n}
+    0 &amp;0 &amp;\cdots &amp;\boldsymbol{q_n}^{\mathrm T}\boldsymbol{a_n}
 \end{bmatrix}
 \]</span> 再观察<span class="math inline">\(R\)</span>的各个非零位置的值以及Gram-Schimidt的公式，其实<span class="math inline">\(R\)</span>是可以在计算Gram-Schmidt正交化的时候顺便算出来的。</p>
 <p>QR分解有什么用呢？之前我们说正交化不改变投影矩阵，原因是“正交化不改变列空间”，QR分解能让我们在代数上证明这一点： <span class="math display">\[
@@ -426,7 +664,7 @@ R = \begin{bmatrix}
 \end{aligned}
 \]</span> 注：因为<span class="math inline">\(R\)</span>是一个方阵，所以我们这里能够把<span class="math inline">\(\left(R^{\mathrm T}R\right)^{-1}\)</span>改写成<span class="math inline">\(R^{-1}(R^{\mathrm T})^{-1}\)</span>。<span class="math inline">\(\left(A^{\mathrm T}A\right)^{-1}\)</span>是不能这么转换的，因为长方阵不存在常规意义上的逆。</p>
 <p>类似地，QR分解还简化了最小二乘拟合的计算： <span class="math display">\[
-\vec{\hat{x}} = \left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\vec b = R^{-1}Q^{\mathrm T}\vec b
+\boldsymbol{\hat{x}} = \left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\boldsymbol b = R^{-1}Q^{\mathrm T}\boldsymbol b
 \]</span></p>
 
       
@@ -485,7 +723,7 @@ R = \begin{bmatrix}
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-17 16:03:07" itemprop="dateModified" datetime="2021-04-17T16:03:07+08:00">2021-04-17</time>
+        <time title="修改时间：2021-04-30 09:05:04" itemprop="dateModified" datetime="2021-04-30T09:05:04+08:00">2021-04-30</time>
       </span>
 
   
@@ -502,38 +740,38 @@ R = \begin{bmatrix}
 <h1 id="四大空间">四大空间</h1>
 <p>对于矩阵<span class="math inline">\(A\in \mathbb{R}^{m\times n}\)</span>，定义</p>
 <ol type="1">
-<li><span class="math inline">\(A\)</span>的列空间为其所有列向量的张成空间，<span class="math inline">\(A\)</span>的列向量的线性组合记作<span class="math inline">\(A\vec{x}=\vec b\)</span>——因此所有这个形式的<span class="math inline">\(\vec b\)</span>都属于<span class="math inline">\(A\)</span>的列空间。记作<span class="math inline">\(C(A)\)</span>。<span class="math inline">\(C(A)\subset\mathbb{R}^m\)</span>。</li>
-<li><span class="math inline">\(A\)</span>的零空间为令其列向量线性组合为零的组合构成的空间，即所有满足<span class="math inline">\(A\vec{x}=\vec 0\)</span>的向量<span class="math inline">\(\vec x\)</span>。记作<span class="math inline">\(N(A)\)</span>。<span class="math inline">\(N(A)\subset \mathbb{R}^n\)</span>。</li>
+<li><span class="math inline">\(A\)</span>的列空间为其所有列向量的张成空间，<span class="math inline">\(A\)</span>的列向量的线性组合记作<span class="math inline">\(A\boldsymbol{x}=\boldsymbol b\)</span>——因此所有这个形式的<span class="math inline">\(\boldsymbol b\)</span>都属于<span class="math inline">\(A\)</span>的列空间。记作<span class="math inline">\(C(A)\)</span>。<span class="math inline">\(C(A)\subset\mathbb{R}^m\)</span>。</li>
+<li><span class="math inline">\(A\)</span>的零空间为令其列向量线性组合为零的组合构成的空间，即所有满足<span class="math inline">\(A\boldsymbol{x}=\boldsymbol 0\)</span>的向量<span class="math inline">\(\boldsymbol x\)</span>。记作<span class="math inline">\(N(A)\)</span>。<span class="math inline">\(N(A)\subset \mathbb{R}^n\)</span>。</li>
 <li><span class="math inline">\(A\)</span>的行空间为其所有行向量的张成空间。因为<span class="math inline">\(A\)</span>的行向量都是<span class="math inline">\(A^{\mathrm{T}}\)</span>的列空间，所以行空间可以记作<span class="math inline">\(C\left(A^{\mathrm T}\right)\)</span>。<span class="math inline">\(C\left(A^{\mathrm T}\right) \subset \mathbb{R}^{n}\)</span>。</li>
-<li><span class="math inline">\(A\)</span>的左零空间为令其行向量线性组合为零的组合构成的空间，即所有满足<span class="math inline">\(\vec{x}^{\mathrm T}A = \vec 0^{\mathrm T}\)</span>的向量<span class="math inline">\(\vec{x}\)</span>，现在<span class="math inline">\(\vec x\)</span>在左边，所以和零空间相比就叫左零空间了。左零空间自然可以记作<span class="math inline">\(C\left(A^{\mathrm T}\right)\)</span>。<span class="math inline">\(C\left(A^{\mathrm T}\right) \subset \mathbb{R}^{m}\)</span>。</li>
+<li><span class="math inline">\(A\)</span>的左零空间为令其行向量线性组合为零的组合构成的空间，即所有满足<span class="math inline">\(\boldsymbol{x}^{\mathrm T}A = \boldsymbol 0^{\mathrm T}\)</span>的向量<span class="math inline">\(\boldsymbol{x}\)</span>，现在<span class="math inline">\(\boldsymbol x\)</span>在左边，所以和零空间相比就叫左零空间了。左零空间自然可以记作<span class="math inline">\(C\left(A^{\mathrm T}\right)\)</span>。<span class="math inline">\(C\left(A^{\mathrm T}\right) \subset \mathbb{R}^{m}\)</span>。</li>
 </ol>
 <p>以上就是线性代数当中比较重要的四个空间。虽然有四个，但本质只有“列空间”和“零空间”两种。基于矩阵的定义是颇有些枯燥的。矩阵只是线性变换比较常用且典型的形式，列空间和零空间的定义并不局限于此。归根结底，<strong>列空间是线性变换的“值域”，零空间是线性变换的“零点”</strong>。</p>
 <p><sub>注：列空间在一些地方也叫做像空间（image），零空间在一些地方也叫做核（kernel）。个人认为，对于一般的线性变换，像空间的称谓比列空间更为恰当，但kernel这个词就有些莫名奇妙——我没有了解过相关的背景，但我觉得零空间的叫法更为直观。</sub></p>
 <h1 id="向量空间的维度">向量空间的维度</h1>
 <p>向量空间的维度定义为这个空间任何一组基包含的向量个数。这个定义蕴含的一个事实是：对于同一个向量空间，无论其基如何选取，其大小都是相同的。这里摘录一个书上的证明：</p>
-<p><strong>证明：</strong> 假设向量空间<span class="math inline">\(\mathbf V\)</span>的两组基为<span class="math inline">\(\vec{v_1},\vec{v_2},\cdots,\vec{v_n}\)</span>和<span class="math inline">\(\vec{w_1}, \vec{w_2}, \cdots ,\vec{w_m}\)</span>。运用反证法，不失一般性，设<span class="math inline">\(n &lt; m\)</span>。因为<span class="math inline">\(\vec{v_1},\vec{v_2},\cdots,\vec{v_n}\)</span>是基，所以任意<span class="math inline">\(\vec{w_k}\)</span>都可以用他们的线性组合表示。即 <span class="math display">\[
-\vec{w_k} = \begin{bmatrix}
-    \vec{v_1} &amp;\vec{v_2} &amp;\cdots &amp;\vec{v_n}  
-\end{bmatrix}\cdot \vec{a}
+<p><strong>证明：</strong> 假设向量空间<span class="math inline">\(\mathbf V\)</span>的两组基为<span class="math inline">\(\boldsymbol{v_1},\boldsymbol{v_2},\cdots,\boldsymbol{v_n}\)</span>和<span class="math inline">\(\boldsymbol{w_1}, \boldsymbol{w_2}, \cdots ,\boldsymbol{w_m}\)</span>。运用反证法，不失一般性，设<span class="math inline">\(n &lt; m\)</span>。因为<span class="math inline">\(\boldsymbol{v_1},\boldsymbol{v_2},\cdots,\boldsymbol{v_n}\)</span>是基，所以任意<span class="math inline">\(\boldsymbol{w_k}\)</span>都可以用他们的线性组合表示。即 <span class="math display">\[
+\boldsymbol{w_k} = \begin{bmatrix}
+    \boldsymbol{v_1} &amp;\boldsymbol{v_2} &amp;\cdots &amp;\boldsymbol{v_n}  
+\end{bmatrix}\cdot \boldsymbol{a}
 \]</span> （回忆一下，矩阵左乘向量等于按照向量的系数对矩阵的列向量进行线性组合）</p>
 <p>进一步地， <span class="math display">\[
 \begin{bmatrix}
-    \vec{w_1} &amp;\vec{w_2} &amp;\cdots &amp;\vec{w_m}  
+    \boldsymbol{w_1} &amp;\boldsymbol{w_2} &amp;\cdots &amp;\boldsymbol{w_m}  
 \end{bmatrix}= 
 \begin{bmatrix}
-    \vec{v_1} &amp;\vec{v_2} &amp;\cdots &amp;\vec{v_n}  
+    \boldsymbol{v_1} &amp;\boldsymbol{v_2} &amp;\cdots &amp;\boldsymbol{v_n}  
 \end{bmatrix}\cdot A
-\]</span> 不难发现，<span class="math inline">\(A\)</span>是<span class="math inline">\(n\)</span>行<span class="math inline">\(m\)</span>列的矩阵，而<span class="math inline">\(n &lt; m\)</span>，所以<span class="math inline">\(A\)</span>是扁的。在代数上，齐次线性方程组的变量多于方程数，也就是说<span class="math inline">\(A\vec{x} = \vec{0}\)</span>有非平凡解。 <span class="math display">\[
+\]</span> 不难发现，<span class="math inline">\(A\)</span>是<span class="math inline">\(n\)</span>行<span class="math inline">\(m\)</span>列的矩阵，而<span class="math inline">\(n &lt; m\)</span>，所以<span class="math inline">\(A\)</span>是扁的。在代数上，齐次线性方程组的变量多于方程数，也就是说<span class="math inline">\(A\boldsymbol{x} = \boldsymbol{0}\)</span>有非平凡解。 <span class="math display">\[
 \begin{aligned}
-    A\vec{x} &amp;= \vec{0} \\
+    A\boldsymbol{x} &amp;= \boldsymbol{0} \\
     \Rightarrow \begin{bmatrix}
-    \vec{v_1} &amp;\vec{v_2} &amp;\cdots &amp;\vec{v_n}  
-\end{bmatrix} A\vec{x} &amp;= \vec{0} \\
+    \boldsymbol{v_1} &amp;\boldsymbol{v_2} &amp;\cdots &amp;\boldsymbol{v_n}  
+\end{bmatrix} A\boldsymbol{x} &amp;= \boldsymbol{0} \\
     \Rightarrow \begin{bmatrix}
-    \vec{w_1} &amp;\vec{w_2} &amp;\cdots &amp;\vec{w_m}  
-\end{bmatrix} \vec{x} &amp;= \vec{0}
+    \boldsymbol{w_1} &amp;\boldsymbol{w_2} &amp;\cdots &amp;\boldsymbol{w_m}  
+\end{bmatrix} \boldsymbol{x} &amp;= \boldsymbol{0}
 \end{aligned}
-\]</span> 也就是说，<span class="math inline">\(\vec{w_1}, \vec{w_2}, \cdots ,\vec{w_m}\)</span>线性相关，推出矛盾，证毕。</p>
+\]</span> 也就是说，<span class="math inline">\(\boldsymbol{w_1}, \boldsymbol{w_2}, \cdots ,\boldsymbol{w_m}\)</span>线性相关，推出矛盾，证毕。</p>
 <h1 id="四大空间的维度">四大空间的维度</h1>
 <p>一个矩阵四大空间的维度可以通过将其化简为行简化阶梯型（reduced row echelon form）来计算。行简化阶梯型的定义</p>
 <ol type="1">
@@ -560,7 +798,7 @@ R = \begin{bmatrix}
 <ol type="1">
 <li><strong>它列空间的维度是它的秩</strong>：主元列显然是线性无关的，而非主元列显然可以用主元列的线性组合表示（系数就写在列里面呢，比如说在上面的例子中，第四列是第一列的<span class="math inline">\(3\)</span>倍和第二列的<span class="math inline">\(1\)</span>倍之和）。</li>
 <li><strong>它行空间的维度也是它的秩</strong>：行简化阶梯型的形态让我们不难发现每一个非零行都是线性无关的。原因在于每个非零行都包含一个主元，而只有那一行在主元的那一列是<span class="math inline">\(1\)</span>。</li>
-<li><strong>它零空间的维度是列数与秩之差</strong>，即非主元列的个数：从方程<span class="math inline">\(A\vec x = \vec 0\)</span>的角度看，非主元列代表自由变量。通过令一个自由变量为<span class="math inline">\(1\)</span>，令其余自由变量为<span class="math inline">\(0\)</span>，并依此计算主元，我们可以得到和自由变量同样数目的若干“解向量”。这些解向量线性无关，都处在零空间中，且张成整个零空间，因此是零空间的一个基。</li>
+<li><strong>它零空间的维度是列数与秩之差</strong>，即非主元列的个数：从方程<span class="math inline">\(A\boldsymbol x = \boldsymbol 0\)</span>的角度看，非主元列代表自由变量。通过令一个自由变量为<span class="math inline">\(1\)</span>，令其余自由变量为<span class="math inline">\(0\)</span>，并依此计算主元，我们可以得到和自由变量同样数目的若干“解向量”。这些解向量线性无关，都处在零空间中，且张成整个零空间，因此是零空间的一个基。</li>
 <li><strong>它左零空间的维度是行数与秩之差</strong>，即零行的个数：非零行线性无关，因此要使行的线性组合为零所有非零行的系数必须为零，零行的系数任意，因此左零空间的维度就是零行的个数。</li>
 </ol>
 <p>接下来，我们观察到<strong>从一般矩阵化简为行简化阶梯型的过程不会改变矩阵的四个空间的维度</strong>：</p>
@@ -601,7 +839,7 @@ R = \begin{bmatrix}
 </blockquote>
 <p>朴素的做法设出两向量空间交的基，然后在此基础上分别拓展形成<span class="math inline">\(\mathbf V\)</span>，<span class="math inline">\(\mathbf W\)</span>，然后再证明这些分别拓展的基和两空间交的基一起是线性无关的。步骤倒也不是特别复杂。</p>
 <p>但是格局低了。</p>
-<p>Mike Artin提出的证明是这样的：考虑二元运算<span class="math inline">\(+\)</span>把二元组 <span class="math inline">\((\vec v\in \mathbf V, \vec w\in \mathbf W)\)</span>变换到<span class="math inline">\(\vec v + \vec w\)</span>。易证这个变换是线性的。其输入维度是<span class="math inline">\(\dim(\mathbf V) + \dim(\mathbf W)\)</span>。其值域的维度是<span class="math inline">\(\dim(\mathbf V + \mathbf W)\)</span>。其零空间是<span class="math inline">\((\vec v, \vec -v)\)</span>其中<span class="math inline">\(v\in \mathbf V \cap \mathbf W\)</span>，维度自然是<span class="math inline">\(\dim(\mathbf V \cap \mathbf W)\)</span>。因为线性变换输入的维度等于输出的维度与零空间维度之和，得证。</p>
+<p>Mike Artin提出的证明是这样的：考虑二元运算<span class="math inline">\(+\)</span>把二元组 <span class="math inline">\((\boldsymbol v\in \mathbf V, \boldsymbol w\in \mathbf W)\)</span>变换到<span class="math inline">\(\boldsymbol v + \boldsymbol w\)</span>。易证这个变换是线性的。其输入维度是<span class="math inline">\(\dim(\mathbf V) + \dim(\mathbf W)\)</span>。其值域的维度是<span class="math inline">\(\dim(\mathbf V + \mathbf W)\)</span>。其零空间是<span class="math inline">\((\boldsymbol v, \boldsymbol -v)\)</span>其中<span class="math inline">\(v\in \mathbf V \cap \mathbf W\)</span>，维度自然是<span class="math inline">\(\dim(\mathbf V \cap \mathbf W)\)</span>。因为线性变换输入的维度等于输出的维度与零空间维度之和，得证。</p>
 <p><img src="/2021/04/16/Four%20Spaces/v2-d3a9348b3a938c79f5998c5bc40a1d82_hd.webp" class=""></p>
 <p>太高了，我恐高症都犯了。</p>
 <h1 id="四大空间的正交性">四大空间的正交性</h1>
@@ -609,10 +847,10 @@ R = \begin{bmatrix}
 <p>什么是正交？两个子向量空间正交当且仅当两个空间中的任意两个向量都互相垂直。（说“子向量空间”是因为两个向量谈论垂直不垂直的前提条件自然是两个向量维数一样，即同属于一个更大的向量空间）</p>
 <ol type="1">
 <li><p>在<span class="math inline">\(\mathbb R^n\)</span>内，零空间<span class="math inline">\(N(A)\)</span>和行空间<span class="math inline">\(C\left(A^{\mathrm T}\right)\)</span>互相正交 <span class="math display">\[
-\forall A^{\mathrm T}\vec x \in C\left(A^{\mathrm T}\right),\vec y \in N(A),\quad \left(A^{\mathrm T}\vec x\right)^{\mathrm T}\vec y = \vec{x}^{\mathrm T}A\vec y = \vec{x}^{\mathrm T}\cdot \vec 0 = 0
+\forall A^{\mathrm T}\boldsymbol x \in C\left(A^{\mathrm T}\right),\boldsymbol y \in N(A),\quad \left(A^{\mathrm T}\boldsymbol x\right)^{\mathrm T}\boldsymbol y = \boldsymbol{x}^{\mathrm T}A\boldsymbol y = \boldsymbol{x}^{\mathrm T}\cdot \boldsymbol 0 = 0
 \]</span> 又因为二者维度之和为<span class="math inline">\(n\)</span>，所以二者互补，即<span class="math inline">\(N(A) + C\left(A^{\mathrm T}\right) = \mathbb{R}^n\)</span>。</p></li>
 <li><p>在<span class="math inline">\(\mathbb R^m\)</span>内，列空间<span class="math inline">\(C(A)\)</span>和左零空间<span class="math inline">\(N\left(A^{\mathrm T}\right)\)</span>互相正交 <span class="math display">\[
-\forall A\vec x \in C(A),\vec y \in N\left(A^{\mathrm T}\right),\quad \left(A\vec x\right)^{\mathrm T}\vec y = \vec{x}^{\mathrm T}A^{\mathrm T}\vec y = \vec{x}^{\mathrm T}\cdot \vec 0 = 0
+\forall A\boldsymbol x \in C(A),\boldsymbol y \in N\left(A^{\mathrm T}\right),\quad \left(A\boldsymbol x\right)^{\mathrm T}\boldsymbol y = \boldsymbol{x}^{\mathrm T}A^{\mathrm T}\boldsymbol y = \boldsymbol{x}^{\mathrm T}\cdot \boldsymbol 0 = 0
 \]</span> 又因为二者维度之和为<span class="math inline">\(m\)</span>，所以二者互补，即<span class="math inline">\(C(A)+ N\left(A^{\mathrm T}\right) = \mathbb{R}^m\)</span>。</p></li>
 </ol>
 <p>于是就可以祭出Introduction to Linear Algebra 封面上的神图<del>手绘重制以表敬意</del></p>
@@ -1829,553 +2067,6 @@ impl Timer &#123;
 <p>网上看过很多这样的游记，一般到最后作者不是Au就是进队了，这种好事终究不会发生在我身上。</p>
 <p>唉。这就退役了。</p>
 <p>写于Day 3从长沙回上海的火车上。自己的思路一如既往地混乱。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/08/14/TreapMultiset/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/08/14/TreapMultiset/" class="post-title-link" itemprop="url">Reinventing the Wheel: A Drop-in STL Multiset Alternative Using Treap</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-08-14 15:20:55" itemprop="dateCreated datePublished" datetime="2020-08-14T15:20:55+08:00">2020-08-14</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-03-16 11:30:48" itemprop="dateModified" datetime="2021-03-16T11:30:48+08:00">2021-03-16</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p>It turns out that writing a STL container from scratch is mostly a tedious physical labor.</p>
-</blockquote>
-<p>STL is created to save C++ programmers the time of reinventing wheels. Unfortunately, many STL data structures, most notably self-balancing BSTs (aka. <code>std::(multi)set</code>), are not extendable and are by itself too limited to be used in the context of competitive programming, forcing us to write our own BSTs again and again in competitions.</p>
-<p>There comes the fact I find really interesting: A quick and dirty self-balancing BST implementation written during a competition is only about 50-60 lines long, while the STL implementation of <code>std::set</code> and <code>std::multiset</code> is usually more than a thousand-lines long in total.</p>
-<p>It does make me wonder: what makes this huge difference? And, will the code of our BST bloat as well if we write it the STL way -- with generics, iterators, and all the necessary bits and pieces as specified in the reference?</p>
-<p>To answer my question, I have here tried creating my implementation of multiset using treap as the underlying data structure. The result, <code>treap_multiset</code>, is almost a drop-in replacement to <code>std::multiset</code>. The few places where it does not conform to the C++ standard are:</p>
-<ol type="1">
-<li>It is currently not allocator-aware, so all allocator-related features are not implemented.</li>
-<li><code>emplace</code> and <code>emplace_hint</code> are not implemented.</li>
-<li>All operations that have logarithmic time complexity in <code>std::multiset</code> still have logarithmic time complexity here, but only in the average sense (because treap is a randomized data structure), and could have linear worst-case time complexity (though very, very, very unlikely).</li>
-<li><code>void erase(iterator)</code> takes amortized logarithmic time instead of constant time.</li>
-<li>A few uncommonly-used member types are missing.</li>
-</ol>
-<p><code>treap_multiset</code> also supports two new operations that are not supported in the original <code>std::multiset</code>:</p>
-<ol type="1">
-<li><pre class="line-numbers"><code class="language-cpp">   size_type rank(iterator it) const;
-   size_type rank(const_iterator it) const;</code></pre>
-<p>Both take average logarithmic time and return the rank / position of the iterator.</p></li>
-<li><pre class="line-numbers"><code class="language-cpp">   iterator at(size_type index);
-   const iterator at(size_type index) const;</code></pre>
-<p>Both take average logarithmic time and return the iterator at the specified index/position.</p></li>
-</ol>
-<p>The code is shown below:</p>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;stdexcept&gt;
-#include &lt;random&gt;
-#include &lt;algorithm&gt;
-
-static std::random_device random_device;
-static std::mt19937_64 random_engine(random_device());
-
-template &lt;typename T&gt;
-struct treap_node &#123;
-    using rand_weight_type = decltype(random_engine)::result_type;
-    using size_type = std::size_t;
-
-    treap_node *left, *right, *parent;
-    rand_weight_type weight;
-    size_type size;
-    T value;
-
-    treap_node(const T &amp;value): left(nullptr), right(nullptr), parent(nullptr),
-        weight(random_engine()), size(1), value(value) &#123;&#125;
-
-    treap_node(treap_node *left, treap_node *right, treap_node *parent, 
-        rand_weight_type weight, size_type size, const T &amp;value): 
-        left(left), right(right), parent(parent), weight(weight),
-        size(size), value(value) &#123;&#125;
-
-    void update_size() &#123;
-        size = 1 + (left ? left-&gt;size : 0) + (right ? right-&gt;size : 0);
-    &#125;
-&#125;;
-
-#define IMPL_ITERATOR_MOVE_NEXT do &#123; \
-    if (!node) break; \
-    if (node-&gt;right) &#123; \
-        node = node-&gt;right; \
-        while (node &amp;&amp; node-&gt;left) node = node-&gt;left; \
-    &#125; else &#123; \
-        bool from_right = true; \
-        while (from_right) &#123; \
-            if (!node-&gt;parent) &#123; node = nullptr; break; &#125; \
-            from_right = node-&gt;parent-&gt;right == node; \
-            node = node-&gt;parent; \
-        &#125; \
-    &#125; \
-&#125; while (0)
-
-#define IMPL_ITERATOR_MOVE_PREV do &#123; \
-    if (!node) break; \
-    if (node-&gt;left) &#123; \
-        node = node-&gt;left; \
-        while (node &amp;&amp; node-&gt;right) node = node-&gt;right; \
-    &#125; else &#123; \
-        bool from_left = true; \
-        while (from_left) &#123; \
-            if (!node-&gt;parent) &#123; node = nullptr; break; &#125; \
-            from_left = node-&gt;parent-&gt;left == node; \
-            node = node-&gt;parent; \
-        &#125; \
-    &#125; \
-&#125; while (0)
-
-#define TREAP_ITERATOR_DECL(name, qualifier, inc, dec) \
-template &lt;typename T&gt; struct name &#123; \
-    qualifier treap_node&lt;T&gt; *node; bool past_the_end; \
-    name(): node(nullptr), past_the_end(true) &#123;&#125; \
-    name(qualifier treap_node&lt;T&gt; *node, bool past_the_end) \
-        : node(node), past_the_end(past_the_end) &#123;&#125; \
-    name(qualifier treap_node&lt;T&gt; *node): node(node), past_the_end(false) &#123;&#125; \
-    qualifier T &amp;operator *() qualifier &#123; \
-        if (!node || past_the_end) \
-            throw std::runtime_error(&quot;dereferencing null/past-end iterator&quot;); \
-        return node-&gt;value; \
-    &#125; \
-    bool operator ==(const name&lt;T&gt; &amp;b) const &#123; \
-        return node == b.node &amp;&amp; past_the_end == b.past_the_end; \
-    &#125; \
-    bool operator !=(const name&lt;T&gt; &amp;b) const &#123; \
-        return node != b.node || past_the_end != b.past_the_end; \
-    &#125; \
-    name&lt;T&gt; &amp;operator ++() &#123; \
-        qualifier treap_node&lt;T&gt; *backup = node; \
-        IMPL_ITERATOR_MOVE_##inc; \
-        if (!node) past_the_end = true, node = backup; \
-        return *this; \
-    &#125; \
-    name&lt;T&gt; operator ++(int) &#123; \
-        name&lt;T&gt; ret(*this); \
-        return ++(*this), ret; \
-    &#125; \
-    name&lt;T&gt; &amp;operator --() &#123; \
-        if (past_the_end) past_the_end = false; \
-        else IMPL_ITERATOR_MOVE_##dec; \
-        if (!node) \
-            throw std::runtime_error(&quot;can&#39;t decrement at the beginning&quot;); \
-        return *this; \
-    &#125; \
-    name&lt;T&gt; operator --(int) &#123; \
-        name&lt;T&gt; ret(*this); \
-        return --(*this), ret; \
-    &#125; \
-&#125;
-
-TREAP_ITERATOR_DECL(treap_iterator, /* NO QUALIFIER */, NEXT, PREV);
-TREAP_ITERATOR_DECL(reverse_treap_iterator, /* NO QUALIFIER */, PREV, NEXT);
-TREAP_ITERATOR_DECL(const_treap_iterator, const, NEXT, PREV);
-TREAP_ITERATOR_DECL(const_reverse_treap_iterator, const, PREV, NEXT);
-
-template &lt;typename T, typename Compare = std::less&lt;T&gt;&gt;
-class treap_multiset &#123;
-public:
-    using key_type = T;
-    using value_type = T;
-    using size_type = typename treap_node&lt;T&gt;::size_type;
-    using key_compare = Compare;
-    using value_compare = Compare;
-    using node_type = treap_node&lt;T&gt;*;
-    using iterator = treap_iterator&lt;T&gt;;
-    using reverse_iterator = reverse_treap_iterator&lt;T&gt;;
-    using const_iterator = const_treap_iterator&lt;T&gt;;
-    using const_reverse_iterator = const_reverse_treap_iterator&lt;T&gt;;
-
-    treap_multiset(): root(nullptr) &#123;&#125;
-
-    treap_multiset(const treap_multiset &amp;b): root(deep_copy(b.root)), comp(b.comp) &#123;&#125;
-
-    treap_multiset(treap_multiset &amp;&amp;b): root(b.root), comp(b.comp) &#123;&#125;
-
-    ~treap_multiset() &#123; if (root) recursive_free(root); &#125;
-
-    bool empty() const &#123; return root == nullptr; &#125;
-
-    size_type size() const &#123; return root ? root-&gt;size : 0; &#125;
-
-    size_type max_size() const &#123; return 0x7FFFFFFF; &#125;
-
-    key_compare key_comp() const &#123; return comp; &#125;
-
-    value_compare value_comp() const &#123; return comp; &#125;
-
-    iterator begin() 
-        &#123; return iterator(leftmost(root)); &#125;
-
-    const_iterator begin() const 
-        &#123; return const_iterator(leftmost(root)); &#125;
-
-    const_iterator cbegin() const 
-        &#123; return const_iterator(leftmost(root)); &#125;
-
-    iterator end() 
-        &#123; return iterator(rightmost(root), true); &#125;
-
-    const_iterator end() const 
-        &#123; return const_iterator(rightmost(root), true); &#125;
-
-    const_iterator cend() const 
-        &#123; return const_iterator(rightmost(root), true); &#125;
-
-    reverse_iterator rbegin() 
-        &#123; return reverse_iterator(rightmost(root)); &#125;
-
-    const_reverse_iterator rbegin() const 
-        &#123; return const_reverse_iterator(rightmost(root)); &#125;
-
-    const_reverse_iterator crbegin() const 
-        &#123; return const_reverse_iterator(rightmost(root)); &#125;
-
-    reverse_iterator rend() 
-        &#123; return reverse_iterator(leftmost(root), true); &#125;
-
-    const_reverse_iterator rend() const 
-        &#123; return const_reverse_iterator(leftmost(root), true); &#125;
-
-    const_reverse_iterator crend() const 
-        &#123; return const_reverse_iterator(leftmost(root), true); &#125;
-
-    iterator insert(const value_type &amp;value) &#123;
-        node_type left, right;
-        split_le(root, value, left, nullptr, right, nullptr);
-        node_type temp = new treap_node&lt;T&gt;(value);
-        root = join(join(left, temp), right);
-        return iterator(temp);
-    &#125;
-
-    iterator insert(iterator position, const value_type &amp;value) 
-        &#123; return insert(value); &#125;
-
-    template &lt;typename II&gt;
-    void insert(II first, II last) &#123; 
-        for (; first != last; first++) 
-            insert(*first); 
-    &#125;
-
-    size_type rank(iterator it) const &#123; return rank(it.node); &#125;
-    
-    size_type rank(const_iterator it) const &#123; return rank(it.node); &#125;
-
-    iterator at(size_type index) &#123;
-        if (index &lt; 0 || index &gt; size()) return end();
-        return iterator(at_internal(index));
-    &#125;
-
-    const_iterator at(size_type index) const &#123;
-        if (index &lt; 0 || index &gt; size()) return end();
-        return const_iterator(at_internal(index));
-    &#125;
-
-    void erase(iterator pos) &#123;
-        assert_valid(pos);
-        node_type a, b, c;
-        size_type rank = this-&gt;rank(pos.node);
-        split_size(root, rank, a, nullptr, c, nullptr);
-        split_size(a, rank - 1, a, nullptr, b, nullptr);
-        root = join(a, c);
-        // assert(b == pos.node);
-        delete b;
-    &#125;
-
-    size_type erase(const value_type &amp;key) &#123;
-        node_type a, b, c;
-        split_le(root, key, a, nullptr, c, nullptr);
-        split_re(a, key, a, nullptr, b, nullptr);
-        root = join(a, c);
-        if (b) &#123;
-            size_type ret = b-&gt;size;
-            recursive_free(b);
-            return ret;
-        &#125;
-        return 0;
-    &#125;
-
-    void erase(iterator first, iterator last) &#123;
-        size_type rank_first = rank(first);
-        size_type rank_last = rank(last);
-        node_type a, b, c;
-        split_size(root, rank_last, a, nullptr, c, nullptr);
-        split_size(a, rank_last - 1, a, nullptr, b, nullptr);
-        root = join(a, c);
-        if (b) recursive_free(b);
-    &#125;
-
-    void clear() &#123; if (root) recursive_free(root); &#125;
-
-    void swap(treap_multiset &amp;b) &#123; swap(root, b.root); &#125;
-
-    iterator find(const value_type &amp;key) &#123;
-        node_type ret = find_internal(key);
-        return ret ? iterator(ret) : end();
-    &#125;
-
-    const_iterator find(const value_type &amp;key) const &#123;
-        node_type ret = const_cast&lt;treap_multiset&lt;T&gt;*&gt;(this)-&gt;find_internal(key);
-        return ret ? const_iterator(ret) : end();
-    &#125;
-
-    size_type count(const value_type &amp;key) const &#123;
-        node_type a, b, c;
-        treap_multiset&lt;T&gt; *thiz = const_cast&lt;treap_multiset&lt;T&gt;*&gt;(this);
-        thiz-&gt;split_le(root, key, a, nullptr, c, nullptr);
-        thiz-&gt;split_re(root, key, a, nullptr, b, nullptr);
-        size_type ret = b ? b-&gt;size : 0;
-        thiz-&gt;root = thiz-&gt;join(thiz-&gt;join(a, b), c);
-        return ret;
-    &#125;
-
-    iterator lower_bound(const value_type &amp;key) &#123;
-        node_type ret = lower_bound_internal(key);
-        return ret ? iterator(ret) : end();
-    &#125;
-
-    const_iterator lower_bound(const value_type &amp;key) const &#123;
-        node_type ret = const_cast&lt;treap_multiset&lt;T&gt;*&gt;(this)-&gt;lower_bound_internal(key);
-        return ret ? const_iterator(ret) : end();
-    &#125;
-
-    iterator upper_bound(const value_type &amp;key) &#123;
-        node_type ret = upper_bound_internal(key);
-        return ret ? iterator(ret) : end();
-    &#125;
-
-    const_iterator upper_bound(const value_type &amp;key) const &#123;
-        node_type ret = const_cast&lt;treap_multiset&lt;T&gt;*&gt;(this)-&gt;upper_bound_internal(key);
-        return ret ? const_iterator(ret) : end();
-    &#125;
-
-    std::pair&lt;iterator, iterator&gt; equal_range(const value_type &amp;key) &#123;
-        return std::make_pair(lower_bound(key), upper_bound(key));
-    &#125;
-
-    std::pair&lt;const_iterator, const_iterator&gt; equal_range(const value_type &amp;key) const &#123;
-        return std::make_pair(lower_bound(key), upper_bound(key));
-    &#125;
-
-    size_type depth(node_type node) &#123;
-        if (!node) return 0;
-        return 1 + std::max(depth(node-&gt;left), depth(node-&gt;right));
-    &#125;
-    
-private:
-    Compare comp;
-    node_type root;
-
-    void recursive_free(node_type root) &#123;
-        if (root-&gt;left) 
-            recursive_free(root-&gt;left);       
-        if (root-&gt;right) 
-            recursive_free(root-&gt;right);
-        delete root;
-    &#125;
-
-    void split_le(node_type root, const value_type &amp;key, 
-        node_type &amp;left, node_type left_parent,
-        node_type &amp;right, node_type right_parent) &#123;
-        if (!root) &#123; left = right = nullptr; return; &#125;
-        if (!comp(key, root-&gt;value)) &#123;
-            left = root; root-&gt;parent = left_parent;
-            split_le(root-&gt;right, key, root-&gt;right, root, right, right_parent);
-        &#125; else &#123;
-            right = root; root-&gt;parent = right_parent;
-            split_le(root-&gt;left, key, left, left_parent, root-&gt;left, root);
-        &#125;
-        root-&gt;update_size();
-    &#125;
-
-    void split_re(node_type root, const value_type &amp;key, 
-        node_type &amp;left, node_type left_parent,
-        node_type &amp;right, node_type right_parent) &#123;
-        if (!root) &#123; left = right = nullptr; return; &#125;
-        if (comp(root-&gt;value, key)) &#123;
-            left = root; root-&gt;parent = left_parent;
-            split_re(root-&gt;right, key, root-&gt;right, root, right, right_parent);
-        &#125; else &#123;
-            right = root; root-&gt;parent = right_parent;
-            split_re(root-&gt;left, key, left, left_parent, root-&gt;left, root);
-        &#125;
-        root-&gt;update_size();
-    &#125;
-
-    void split_size(node_type root, size_type size, 
-        node_type &amp;left, node_type left_parent,
-        node_type &amp;right, node_type right_parent) &#123;
-        if (!root) &#123; left = right = nullptr; return; &#125;
-        size_type left_size = 1 + (root-&gt;left ? root-&gt;left-&gt;size : 0);
-        if (left_size &lt;= size) &#123;
-            left = root; root-&gt;parent = left_parent;
-            split_size(root-&gt;right, 
-                size - left_size, root-&gt;right, root, right, right_parent);
-        &#125; else &#123;
-            right = root; root-&gt;parent = right_parent;
-            split_size(root-&gt;left, size, left, left_parent, root-&gt;left, root);
-        &#125;
-        root-&gt;update_size();
-    &#125;
-
-    node_type join(node_type left, node_type right) &#123;
-        if (!left) return right;
-        if (!right) return left;
-        if (left-&gt;weight &lt;= right-&gt;weight) &#123;
-            node_type temp = join(left-&gt;right, right);
-            if (temp) temp-&gt;parent = left;
-            left-&gt;right = temp;
-            left-&gt;update_size();
-            return left;
-        &#125; else &#123;
-            node_type temp = join(left, right-&gt;left);
-            if (temp) temp-&gt;parent = right;
-            right-&gt;left = temp;
-            right-&gt;update_size();
-            return right;
-        &#125;
-    &#125;
-
-    node_type leftmost(node_type x) const &#123;
-        if (!x) return nullptr;
-        node_type ret = x; while (ret-&gt;left) ret = ret-&gt;left;
-        return ret;
-    &#125;
-
-    node_type rightmost(node_type x) const &#123;
-        if (!x) return nullptr;
-        node_type ret = x; while (ret-&gt;right) ret = ret-&gt;right;
-        return ret;
-    &#125;
-
-    node_type find_internal(const value_type &amp;key) &#123;
-        node_type a, b, c;
-        split_le(root, key, a, nullptr, c, nullptr);
-        split_re(root, key, a, nullptr, b, nullptr);
-        root = join(join(a, b), c);
-        return b;
-    &#125;
-
-    node_type lower_bound_internal(const value_type &amp;key) &#123;
-        node_type left, right;
-        split_re(root, key, left, nullptr, right, nullptr);
-        node_type ret = leftmost(right);
-        root = join(left, right);
-        return ret;
-    &#125;
-
-    node_type upper_bound_internal(const value_type &amp;key) &#123;
-        node_type left, right;
-        split_le(root, key, left, nullptr, right, nullptr);
-        node_type ret = leftmost(right);
-        root = join(left, right);
-        return ret;
-    &#125;
-
-    node_type at_internal(size_type index) const &#123;
-        node_type temp = root;
-        while (true) &#123;
-            size_type left_size = 1 + (temp-&gt;left ? temp-&gt;left-&gt;size : 0);
-            if (index == left_size) return temp;
-            else if (index &lt; left_size) temp = temp-&gt;left;
-            else temp = temp-&gt;right, index -= left_size;
-        &#125;
-        return nullptr; // UNREACHABLE
-    &#125;
-
-    size_type rank(node_type node) &#123;
-        bool from_right = true;
-        size_type ret = 0;
-        while (node) &#123;
-            if (from_right)
-                ret += 1 + (node-&gt;left ? node-&gt;left-&gt;size : 0);
-            if (node-&gt;parent)
-                from_right = node == node-&gt;parent-&gt;right;
-            node = node-&gt;parent;
-        &#125;
-        return ret;
-    &#125;
-
-    node_type deep_copy(node_type node) &#123;
-        if (!node) return nullptr;
-        node_type left = deep_copy(node-&gt;left);
-        node_type right = deep_copy(node-&gt;right);
-        node_type ret = new treap_node&lt;T&gt;(
-            left, right, nullptr,
-            node-&gt;weight, node-&gt;size, node-&gt;value
-        );
-        if (left) left-&gt;parent = ret;
-        if (right) right-&gt;parent = ret;
-        return ret;
-    &#125;
-
-    void assert_valid(iterator it) &#123;
-        if (!it.node || it.past_the_end)
-            throw std::runtime_error(&quot;invalid iterator&quot;);
-        node_type temp = it.node;
-        while (temp-&gt;parent) temp = temp-&gt;parent;
-        if (temp != root)
-            throw std::runtime_error(&quot;invalid iterator&quot;);
-    &#125;
-&#125;;</code></pre>
-<p>(The code above hasn't been thoroughly tested yet and could still contain bugs).</p>
 
       
     </div>

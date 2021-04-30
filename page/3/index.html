@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,154 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/07/PACT0705/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/07/PACT0705/" class="post-title-link" itemprop="url">PACT 07/05 我终于明白线性规划对偶是怎么回事了！</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-07 21:05:04" itemprop="dateCreated datePublished" datetime="2020-07-07T21:05:04+08:00">2020-07-07</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-07-12 11:14:36" itemprop="dateModified" datetime="2020-07-12T11:14:36+08:00">2020-07-12</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="什么是线性规划">什么是线性规划？</h1>
+<p>线性规划，简单地来说就是在一系列线性约束下最优化一个线性函数的过程。</p>
+<p>例如如下就是一个线性规划问题： <span class="math display">\[
+\begin{aligned}
+    \text{minimize}\quad &amp;7x_1+4x_2+3x_3\\
+    \text{subject to}\quad &amp;4x_1+2x_2-x_3\ge 50 \\
+    &amp;2x_1+x_2+3x_3\ge 20 \\
+    &amp;x_1,x_2,x_3 \ge 0
+\end{aligned}
+\]</span> 这部分自己很早以前就会了。</p>
+<p>在近似算法设计当中关于线性规划重要的一点是：<strong>它是可以在多项式时间内求得最优解的</strong>。具体的方法对于我们不重要，可以使椭圆形法或者其他内点法，反正只要知道可以就行了——我们就指望着它来帮助我们设计近似算法呢。</p>
+<h1 id="为什么要对偶">为什么要对偶？</h1>
+<p>对于一个最小化（最大化类似）的线性规划，我们问一个问题：</p>
+<blockquote>
+<p>目标函数是否可以<span class="math inline">\(\le \alpha\)</span>？</p>
+</blockquote>
+<p>答案如果是肯定的，这个问题有没有<strong>一个简短的肯定证明</strong>（Yes Certificate）？显然是有的：我们只要把一组目标函数是<span class="math inline">\(\alpha\)</span>的变量取值写出来，对方很快就可以验证我们的正确性。（“简短”与“很快”均指多项式空间与时间内，有简短肯定证明的问题被称为<span class="math inline">\(\mathsf{NP}\)</span>问题）</p>
+<p>那答案如果是否定的呢？这个问题有没有<strong>一个简短的否定证明</strong>（No Certificate）？直觉上这就难了。（有简短否定证明的问题被称为<span class="math inline">\(\textsf{co-NP}\)</span>问题，它和<span class="math inline">\(\mathsf{NP}\)</span>的关系是至今计算机界悬而未决的）</p>
+<p>幸好我们知道线性规划<span class="math inline">\(\in \mathsf{P}\)</span>，而<span class="math inline">\(\mathsf{P}\subseteq \textsf{NP} \cap \textsf{co-NP}\)</span>。也就是说确实是有否定回答的——是什么呢？（嘛，其实对于多项式时间算法，把算法的过程作为否定证明也可以算是“简短”的，因为一样的算法可以在多项式时间内验证它）</p>
+<p>如果我们可以给目标函数一个<span class="math inline">\(&gt;\alpha\)</span>的下界，不就证明目标函数不可能<span class="math inline">\(\le \alpha\)</span>了吗？</p>
+<p>目标函数的下界是什么？</p>
+<p><span class="math inline">\(0\)</span>？这个下界太平凡了。</p>
+<p>观察系数，因为<span class="math inline">\(x_1,x_2,x_3\ge 0\)</span>，而约束二式的各项系数都不大于目标函数的各项系数，因此 <span class="math display">\[
+\begin{aligned}
+    7x_1+4x_2+3x_3 \ge 4x_1+2x_2-x_3 \ge 50 \\
+    7x_1+4x_2+3x_3 \ge 2x_1+x_2+3x_3 \ge 20 \\
+\end{aligned}
+\]</span> 这个下界可以更好： <span class="math display">\[
+7x_1+4x_2+3x_3 \ge (4x_1+2x_2-x_3)+(2x_1+x_2+3x_3) \ge 70
+\]</span> 或者更好？ <span class="math display">\[
+7x_1+4x_2+3x_3 \ge (4x_1+2x_2-x_3)+\frac{4}{3}(2x_1+x_2+3x_3) \ge \frac{230}{3}
+\]</span> 这样下去会不会没完没了？不妨设两个约束的系数是<span class="math inline">\(y_1,y_2\ge0\)</span>，那我们的下界就是<span class="math inline">\(50y_1+20y_2\)</span>。 <span class="math display">\[
+\begin{aligned}
+    7x_1+4x_2+3x_3 &amp;\ge y_1(4x_1+2x_2-x_3)+y_2(2x_1+x_2+3x_3) \\
+        &amp;=(4y_1+2y_2)x_1+(2y_1+y_2)x_2+(-y_1+3y_2)x_3 \\
+        &amp;\ge 50y_1+20y_2 
+\end{aligned}
+\]</span> 为了确保我们上面的推理没有问题，约束和的各项系数不应大于目标函数的各项系数，因此又有<span class="math inline">\(4y_1+2y_2\le 7\)</span>，<span class="math inline">\(2y_1+y_2\le 4\)</span>，<span class="math inline">\(-y_1+3y_2\le 3\)</span>。我们希望下界越紧越好，所以<span class="math inline">\(50y_1+20y_2\)</span>要越大越好——我们想到了什么？另一个线性规划！ <span class="math display">\[
+\begin{aligned}
+    \text{maximize}\quad &amp;50y_1+20y_2\\
+    \text{subject to}\quad &amp;4y_1+2y_2\le 7 \\
+    &amp;2y_1+y_2\le 4 \\
+    &amp;-y_1+3y_2\le 3 \\
+    &amp;y_1,y_2\ge 0
+\end{aligned}
+\]</span> 这就是所谓的“对偶线性规划”。如果我们给出一组<span class="math inline">\(y_1,y_2\)</span>使得这个的目标函数<span class="math inline">\(&gt;\alpha\)</span>，那么我们原来规划的目标函数就不可能<span class="math inline">\(\le \alpha\)</span>，即这就是我们所寻找的简短否定证明。</p>
+<p>如果我们要求这个对偶规划的目标上界（也就是再对偶），不难发现我们又回到了最初的线性规划。</p>
+<p>而由我们构造对偶规划的过程，不难明白为什么所有变量都要非负，为什么对偶问题的变量数等于原问题的约束数，约束数等于原问题的变量数，为什么最小化问题的约数要转化成<span class="math inline">\(\ge\)</span>的形式，最大化问题的约数要转化成<span class="math inline">\(\le\)</span>的形式，为什么对偶前后不等号方向会变化等问题。</p>
+<p>一旦知道对偶的目的，这些步骤豁然开朗，而这些在大多教科书里是略过不讲的，或者先抛给你对偶的方式，再把这个目的冠以“弱对偶定理”的名号塞给你（此处点名《算法导论》），或许我们在阅读证明的时候能够明白这些步骤的用处，但是不免还是有些云里雾里。</p>
+<p>但是严谨地走一遍还是必要的，此处给出线性规划对偶的定义：对于线性规划 <span class="math display">\[
+\begin{aligned}
+    \text{minimize}\quad &amp;\sum_{j=1}^nc_jx_j\\
+    \text{subject to}\quad &amp;\sum_{j=1}^na_{ij}x_j\ge b_i \quad \forall i =1,2,\cdots,m \\
+    &amp;x_1, x_2, \cdots, x_n\ge0 
+\end{aligned}
+\]</span> 其对偶线性规划（Dual）为 <span class="math display">\[
+\begin{aligned}
+    \text{maximize}\quad &amp;\sum_{i=1}^mb_iy_i\\
+    \text{subject to}\quad &amp;\sum_{i=1}^ma_{ij}y_i\le c_j \quad \forall j =1,2,\cdots,n \\
+    &amp;y_1, y_2, \cdots, y_m\ge0 
+\end{aligned}
+\]</span> 此时一开始的线性规划被称为主线性规划（Primal）。反之亦然。</p>
+<p>所谓<strong>弱对偶原理</strong> <span class="math display">\[
+\sum_{j=1}^nc_jx_j \ge\sum_{i=1}^mb_iy_i
+\]</span> 的证明： <span class="math display">\[
+\begin{aligned}
+    \sum_{j=1}^nc_jx_j &amp;\ge \sum_{j=1}^n\left(\sum_{i=1}^ma_{ij}y_i\right)x_j \\
+    &amp;= \sum_{i=1}^m\left(\sum_{j=1}^na_{ij}x_j\right)y_i \\
+    &amp;\ge \sum_{i=1}^m b_iy_i
+\end{aligned}
+\]</span> 这其实就是我们之前例子中论述的严谨版本，注意到两个不等号之所以成立，不仅仅是因为<span class="math inline">\(\sum_{i=1}^ma_{ij}y_i \le c_j\)</span>以及<span class="math inline">\(\sum_{j=1}^na_{ij}x_j\ge b_i\)</span>，还有<span class="math inline">\(x_j\ge 0\)</span>和<span class="math inline">\(y_i\ge 0\)</span>，因此变量必须是非负的。</p>
+<p>除此以外，更强的一个结论被称为<strong>强对偶原理</strong>：对偶规划与主规划的最优解相等。证明参见《算法导论》，在近似算法设计中，弱对偶原理才是最重要的。</p>
+<h1 id="互补松弛条件">互补松弛条件</h1>
+<p>令<span class="math inline">\((x_1^*,x_2^*,\cdots,x_n^*)\)</span>与<span class="math inline">\((y_1^*,y_2^*,\cdots,y_m^*)\)</span>为主线性规划和对偶线性规划的最优解，强对偶原理表明 <span class="math display">\[
+\sum_{j=1}^nc_jx_j^*=\sum_{i=1}^mb_iy_i^*
+\]</span> 回过头看我们弱对偶原理的证明过程，两个不等号必须同时取等，于是便得到两个条件，成为所谓的互补松弛条件（Complementary Slackness Condition）：</p>
+<p><strong>主互补松弛条件：</strong><span class="math inline">\(x_j^*=0\)</span>或者<span class="math inline">\(\sum_{i=1}^ma_{ij}y_i = c_j\)</span>，即要么变量为<span class="math inline">\(0\)</span>，要么对偶规划里面的对应约束取等。</p>
+<p><strong>对偶互补松弛条件：</strong><span class="math inline">\(y_i^*=0\)</span>或者<span class="math inline">\(\sum_{j=1}^na_{ij}x_j = b_i\)</span>，即要么变量为<span class="math inline">\(0\)</span>，要么主规划里面的对应约束取等。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1591,102 +1739,6 @@ c[m,n]=c[m-1,n-1]-(m-1)c[m-1,n]
 <p>我考个250都能压线进队？！</p>
 <p>我可是根本就没认真复习啊，半年没碰OI了……</p>
 <p>唉，看来这次强行退役失败了，心情复杂……</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/04/17/PanDownload/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/04/17/PanDownload/" class="post-title-link" itemprop="url">自己对于PanDownload的一些想法</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2020-04-17 16:19:14 / 修改时间：19:45:59" itemprop="dateCreated datePublished" datetime="2020-04-17T16:19:14+08:00">2020-04-17</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>PanDownload前几天被封了。</p>
-<p>网络上那个群情激奋啊，看B站连“百度的七宗罪”都出来了。还有人把GFW做的DNS污染，域名置换等和PanDownload做的“多线程下载百度云盘”相并列，不乏讥讽地质问为何遭到制裁的是看起来程度最轻的PanDownload。</p>
-<p>我不是PanDownload的使用者，自己也很少用百度云盘，或许称不上是特别利益相关者吧。</p>
-<p>但看到这个新闻的时候我是很矛盾的。</p>
-<p>我讨厌百度吗？</p>
-<p>肯定的，我从八年前开始用百度云盘，从不限速的年代一路用到限速的坑爹时代，不恨是不可能的。</p>
-<p>我喜欢PanDownload吗？</p>
-<p>喜欢的，我自己两三年以前还在用很多油猴的提取直连的脚本，这种绕开限速薅羊毛的软件我不要太喜闻乐见。</p>
-<p>那在这次事件中我支持PanDownload吗？</p>
-<p>我其实想保持中立。</p>
-<p>我们对于PanDownload等一众软件的推崇源于对于百度免费用户限速的痛恶。由俭入奢易由奢入俭难，对于限速的痛恶则源于几年前限速不存在的事实。</p>
-<p>但是仔细想想，免费的大云盘这件天上掉馅饼的事情合理吗？</p>
-<p>参照如今硬盘的价格以及带宽的价格，我觉得百度留着云盘业务肯定不是做慈善的。在线存储是一种服务，是企业生产的一种产品，收费这件事情本身是无可厚非的。放眼国外市场，Dropbox，Google Drive等也没有做慈善的。不是空间小就是下载慢。</p>
-<p>要说百度可恶，也就可恶给用户提供了“一开始的美好”，用2TB的存储空间诱惑用户，等用户粘性培养上来之后，在几年前再限速到一个坑爹的地步，这个时候你左右为难。付钱吧，跟几年前比感觉亏了，不付钱吧，自己很多数据还存着呢。反正百度这几年的潜台词是越来越明显了：不付钱别玩，让你免费用已经是施舍你了，还BB那么多干嘛。</p>
-<p>这句话很让人恼火，非常让人恼火，但是仔细思考一下，似乎是对的。云盘是一个市场，在市场里哪有永远白嫖的份。这个时候最好的结局是期待着市场竞争逼着百度降价。但是我国云盘市场的竞争着实不够激烈，百度隐隐形成垄断之势，降价看来是遥遥无期了（话又说回来，一个月25块钱的价格换算成美元大概与Google Drive差不多，其实真没那么多好抱怨的）。</p>
-<p>这个时候PanDownload以及一众多线程下载软件出现了。几十个线程一起下，让免费用户看到了曙光。</p>
-<p>我们不妨把PanDownload看做是网盘市场的一个有力的竞争者（虽然竞争并非其初衷），把它的下载服务看做是一个全新的网盘产品，它提供的“网盘产品”的竞争性优势在于</p>
-<ol type="1">
-<li>和已有百度网盘资料的完全兼容</li>
-<li>免费用户的高速下载</li>
-</ol>
-<p>如果PanDownload的网盘产品真的是独立而全新的，那百度该死，谁也不能阻止PanDownload一统江湖。</p>
-<p>但是事实不是这个样子的，PanDownload提供的这个如此有竞争性的“产品”，是基于百度网盘的生产资料与资本建立起来的。PanDownload运用的多线程下载，亦或是其他软件的直链提取，这些都不是百度网盘官方提供的API，也不是百度网盘官方认可的。</p>
-<p>因此，全民的喜闻乐见与对于百度的痛恨，也改变不了PanDownload不正当竞争（视作竞争者）或者说侵犯百度权益（是做第三方软件）的事实。</p>
-<p>单纯地因为PanDownload是在造福人类，是在薅垃圾公司的羊毛，就对这种行为的本质视而不见，其实是违背法治社会的初衷的。</p>
-<p>这就仿佛所有人都认为张三是人渣，李四替天行道把张三打死了就可以不犯法一样。事实上，哪怕张三是在逃的杀人犯过街喊打喊打，如果不处于类似正当防卫的情形，李四把张三打死也是不对的。故意杀人就是故意杀人。何况百度作为一家公司目前来看还没有在云盘的运营中触犯法律（或许有垄断？不清楚）。前几天在B站上看罗翔老师说“法律要考虑民众的诉求，但是要超越民众的偏见”。</p>
-<p>百度这叫体量大，如果是一家新创业的公司，被这么一集体白嫖，搞得破产了怎么办？这种事情不是没有发生过。难道法律里面还要加入一条“如果体量够大而且民众不爽，某某法规就失效”？</p>
-<p>如果对百度不爽，就尽量避免去用它。现在搭建一个自己的网盘已经是很简单的一件事情了。</p>
-<p>何况部分用户离不开百度网盘的原因大概是因为下”资源“，所谓”资源“，又大致可以分为免费（说的不好一点就是盗版）的电影与一些淫秽资源。后者我不想多说啥（其实吧，我觉得一些黄站之于内容提供者也是PanDownload之于百度网盘的存在），但是免费下盗版竟然还有理了？</p>
-<p>没错，一直白嫖一直爽是中文互联网的常态，我自己也爱装破解版软件，看视频听音乐能不付钱就不付钱，但是理直气壮地说出来又是另一回事情了。百度给你下就不错了，PanDownload让你下爽了就下爽了，但是这种处于灰色地带的软件，要较真起来，我们真的不占理。</p>
-<p>或许吧，网民一直隐隐有一种心态，在网络上白嫖是对的，反正就是一堆数据拷来拷去，百度云盘也就是一个网站而已，付费下载闻所未闻。这种心态在我看来是有问题的。垄断着实可恶，但是支付给服务提供者报酬的道理还是不错的。</p>
-<p>因此，我觉得PanDownload虽然对于我们是一款好软件，但是最近取缔PanDownload这一事，我觉得还是无可厚非的。</p>
 
       
     </div>
