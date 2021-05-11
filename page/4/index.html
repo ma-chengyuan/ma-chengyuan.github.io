@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-count">93</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,144 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/06/21/%E7%BB%84%E5%90%88%E6%B1%82%E5%92%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/06/21/%E7%BB%84%E5%90%88%E6%B1%82%E5%92%8C/" class="post-title-link" itemprop="url">论省选中有意思的一道组合题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-06-21 14:45:33" itemprop="dateCreated datePublished" datetime="2020-06-21T14:45:33+08:00">2020-06-21</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-06-27 20:01:10" itemprop="dateModified" datetime="2020-06-27T20:01:10+08:00">2020-06-27</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>省选结束了，本人作为划水3年的OIer宣告原地退役，唯一写出正解的是D1T2。我其实觉得这道题挺有意思的（虽然大佬们都说只是推式子而已……嘛，毕竟本来没期待自己能做出来），就写篇文章记一下自己的想法吧。</p>
+<h1 id="题意">题意</h1>
+<p>给定整数<span class="math inline">\(n, x, P\le 10^9\)</span>，以及一个<span class="math inline">\(m \le 1000\)</span>次整系数多项式<span class="math inline">\(f\)</span>，求 <span class="math display">\[
+\left[\sum_{k=0}^nf(k)x^k\binom{n}{k}\right]\bmod P
+\]</span></p>
+<h1 id="心路历程">心路历程</h1>
+<h2 id="先乱搞一波">先乱搞一波</h2>
+<p>看到这个题目的第一眼我觉得颇为眼熟。虽然没学过奥数，印象当中《具体数学》里面花了很大笔墨讲由这种指数，多项式以及二项式系数组合而成的和式的处理方法，似乎最后也讲到了机械求和法，然并卵，印象止步于印象，机械求合法太复杂了自己并没有记下来。</p>
+<p>但是自己的残存记忆告诉我机械求和法的第一步是把求和式化成超几何函数，虽然后者我更没办法但是本着有逼就要装的思想……为什么不试一试呢？</p>
+<p>什么样的级数是超几何的？《具体数学》里面给出的方法是求相邻项之比<del>幸好这个我还没有忘记</del>，而显而易见地是多项式求比是求不出具有良好形式的结果的，因此<strong>多项式必须转化为性质更优良的下降阶乘幂处理</strong>（关于下降阶乘幂我记得两年之前就写过一篇成套方法和有限微积分的博文，现在想来下降阶乘幂在离散求和问题当中真的有非常良好的性质，我在这里就沿用《具体数学》里的记号了：<span class="math inline">\(k^{\underline m} = \prod_{i=0}^m (k-i)\)</span>）： <span class="math display">\[
+\begin{aligned}
+\frac{(k+1)^{\underline{m}}x^{k+1}\binom{n}{k+1}}{k^{\underline{m}}x^k\binom{n}{k}} &amp;= \frac{(k+1)x(n-k)}{(k-m+1)(k+1)} \\
+&amp;= \frac{(n-k)x}{k-m+1}
+\end{aligned}
+\]</span> 不出所料，结果是一个有理函数，也就是说可以化成高斯超几何函数呢！</p>
+<p>不出所料，半瓶水的某人也就知道这些了（悲）。</p>
+<p>但是<strong>下降阶乘幂的思想是可以有的嘛</strong>！</p>
+<h2 id="部分分摸鱼">部分分摸鱼</h2>
+<p>在乱搞如预想的那般失败之后我就开始看部分分。</p>
+<p>部分分里面有一个<span class="math inline">\(f\)</span>是常数的，愣了一会发现能用二项式定理，答案是<span class="math inline">\((1+x)^n\)</span>。</p>
+<p>然后还有一个<span class="math inline">\(x=1\)</span>的。这个要怎么解决？</p>
+<p>从最简单的一次多项式开始： <span class="math display">\[
+\sum_{k=0}^nk\binom{n}{k}=?
+\]</span> 推式子本人是不会的，结论也忘了，但是从组合意义上还是好想的：<strong><span class="math inline">\(k\binom{n}{k}\)</span>就是从<span class="math inline">\(n\)</span>个人里面选<span class="math inline">\(k\)</span>个人，然后钦定一个做队长的方案数，把它求和，就是从<span class="math inline">\(n\)</span>个人里面选若干人，然后从当中钦定一个队长的方案数。</strong>这是先选人再定队长的顺序，我们可以先选队长再选人嘛！从<span class="math inline">\(n\)</span>个人里面选一个队长有<span class="math inline">\(n\)</span>种方法，剩下的<span class="math inline">\((n-1)\)</span>个人要不要都行，所以是<span class="math inline">\(2^{n-1}\)</span>种，二者相乘： <span class="math display">\[
+\sum_{k=0}^nk\binom{n}{k}=n2^{n-1}
+\]</span> 就把一次的式子推出来了。</p>
+<p>那二次的式子呢？ <span class="math display">\[
+\sum_{k=0}^nk^2\binom{n}{k}=?
+\]</span> 如果沿用之前运用组合意义化简的思路，那<span class="math inline">\(k^2\)</span>就有“可以重复选”的含义在，是不好处理的。但是之前的乱搞告诉我们，是不是化成下降阶乘幂会好处理一点呢？ <span class="math display">\[
+\sum_{k=0}^nk(k-1)\binom{n}{k}=?
+\]</span> 答案是肯定的，思路和一次的完全一样，只是从“选队长”变成了“选队长和副队长“，因此很快就可以得出： <span class="math display">\[
+\sum_{k=0}^nk(k-1)\binom{n}{k}=n(n-1)2^{n-2}
+\]</span> 然后就可以很快地推广出去了： <span class="math display">\[
+\sum_{k=0}^nk^{\underline{m}}\binom{n}{k}=n^{\underline{m}}2^{n-m}
+\]</span> 这样几个部分分就基本拿到了。</p>
+<h2 id="把两者组合起来">把两者组合起来</h2>
+<p>那如果<span class="math inline">\(x\neq 1\)</span>且<span class="math inline">\(f\)</span>非常数要怎么做呢？我们不妨还是把<span class="math inline">\(f\)</span>想成下降阶乘幂（怎么拆另说）： <span class="math display">\[
+\sum_{k=0}^nk^{\underline{m}}x^k\binom{n}{k}=?
+\]</span> 然后思考其组合意义，稍开脑洞即可得到：</p>
+<p><strong><span class="math inline">\(k^{\underline{m}}x^k\binom{n}{k}\)</span>是从<span class="math inline">\(n\)</span>个人里面挑选<span class="math inline">\(k\)</span>个人，再给让当中<span class="math inline">\(m\)</span>人担任<span class="math inline">\(m\)</span>个不同职位，最后再让每个人从<span class="math inline">\(x\)</span>种颜色的帽子当中选一个戴上的方案数</strong>（不要问我怎么想到戴帽子的）。</p>
+<p>因此，由加法原理，对其求和之后就是从<span class="math inline">\(n\)</span>个人里面挑选<em>若干</em>个人，再给让当中<span class="math inline">\(m\)</span>人担任<span class="math inline">\(m\)</span>个不同职位，最后再让每个人从<span class="math inline">\(x\)</span>种颜色的帽子当中选一个戴上的方案数。</p>
+<p>那我们故技重施，调换顺序，不妨先从<span class="math inline">\(n\)</span>个人当中调出担任<span class="math inline">\(m\)</span>个职位的那<span class="math inline">\(m\)</span>个人（<span class="math inline">\(n^{\underline{m}}\)</span>种取法），再先让他们先选帽子（<span class="math inline">\(x^m\)</span>种选法），然后让剩下的<span class="math inline">\((n-m)\)</span>个人要不挑一个颜色的帽子进队要么滚蛋（<span class="math inline">\((1+x)^{n-m}\)</span>种取法）。于是就有了： <span class="math display">\[
+\sum_{k=0}^nk^{\underline{m}}x^k\binom{n}{k}=n^{\underline{m}}x^m(1+x)^{n-m}
+\]</span> 哇，式子就推出来了！</p>
+<h2 id="多项式拆分">多项式拆分</h2>
+<p>现在基于下降阶乘幂的式子已经推出来了，唯一剩下的就是把给定的<span class="math inline">\(f\)</span>拆成若干个下降阶乘幂的线性组合。 <span class="math display">\[
+\sum_{i=0}^ma_ik^i = \sum_{j=0}^m b_jk^{\underline{j}}
+\]</span> 即求<span class="math inline">\(b_j\)</span>的过程。</p>
+<p>显而易见地，我们需要从高次到低次拆，这样后拆出来的幂才不会对之前的结果造成影响。</p>
+<p>同时显然的是，我们需要知道下降阶乘幂展开后对应多项式的系数。</p>
+<p>现在回过来看，朴素的多项式乘法是完全可以胜任的。但是写多项式乘法毕竟比较繁琐，不如观察多项式系数的规律。</p>
+<p>令<span class="math inline">\(c[m, n]\)</span>表示下降阶乘幂<span class="math inline">\(x^{\underline m}\)</span>的展开式当中<span class="math inline">\(x^n\)</span>的系数。则由下降阶乘幂的定义： <span class="math display">\[
+x^{\underline m} = x^{\underline{m-1}}[x-(m-1)],\quad (m\ge 1)
+\]</span> 可以得出递推式： <span class="math display">\[
+c[m,n]=c[m-1,n-1]-(m-1)c[m-1,n]
+\]</span> 边界条件是<span class="math inline">\(c[0,0] = 1\)</span>以及<span class="math inline">\(c[m,0]=0\quad \forall m&gt;0\)</span>。这是一个类似杨辉三角的递推式，自然可以在<span class="math inline">\(\mathcal{O}\left(m^2\right)\)</span>的时间内算出来，代码也好写。</p>
+<p>至此，这道题目就完全解决了。</p>
+<p>其实不止如此，这个三角在考场上让我感到非常眼熟，回去查证了一下，果然<span class="math inline">\(c[m,n]\)</span>就是所谓的<strong>带符号的第一类斯特林数</strong>，“下降阶乘幂的展开系数”正是其重要的性质之一。</p>
+<h2 id="感想">感想</h2>
+<p>这道题对我的感触是比较深刻的，尤其是做出来之后，颇有一种成就感。</p>
+<p>细想来，我组合数学的公式其实几乎都没有背过，故而几乎所有的式子都是现场推出来的。而且推理的方式也不纯代数的暴算，而是通过combinatorial proof的方式。自从PACT学来这招之后我觉得这种方法实在是精妙。在最后自己还稀里糊涂地推演出了斯特林数的递推公式，或许这种高大上的组合数本身离我们就不遥远吧。</p>
+<p>而话又说回来，大佬们看我写的这篇文章，只怕有些不耐烦与乏味吧。那些认真学习过组合数学的选手，大概看到这道题只剩下满满的套路，毕竟斯特林数名声在外，falling factorial这个套路熟悉了也不难想到，而类似的组合式子大概课后的习题会有很多吧。看到诸多大佬将D1T2云淡风轻地说成“裸的推式子”，他们做这道题时的从容大概可见一斑。只有像自己这样偶尔翻翻《组合数学》和《具体数学》，半瓶水晃荡的，才会在考场上各种心情复杂，一惊一乍了。</p>
+<p>然而换一个角度，我觉得这道题对我来说真的不错，自己之前偶尔翻翻书也是。作为一道数学题，这道题并没有远远超出我的见识让我一筹莫展，也没有远远低于我的见识让我秒杀，恰是我稍微努力一下就能解决的。而这次考试正是给了日渐颓废，游手好闲的我一个“努力一下”的契机。就结果来看，解决这道题不仅给了我市选的信心，也给了我组合数学的信心，还让我在结题过程中观赏到了极佳的风景，似乎确实不赖。尤其是后者，若放在平时做题，随时可以查找资料，正确答案触手可及，那结论得出时大概也不会有考场上那么惊喜，那么愉悦了。</p>
+<h2 id="逆-转">逆 转</h2>
+<p>啊？出分了？！</p>
+<p>我考个250都能压线进队？！</p>
+<p>我可是根本就没认真复习啊，半年没碰OI了……</p>
+<p>唉，看来这次强行退役失败了，心情复杂……</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1944,131 +2082,6 @@ wasmModule.onRuntimeInitialized = () =&gt; &#123;
 <h1 id="结论">结论</h1>
 <p>总体下来我觉得WebAssembly现在技术上已经趋于成熟了，像我第一次积累了经验之后以后再用WebAssembly不踩那些坑的话体验是相当不错的。当然对于Emscripten来说在调用时的转化上目前还不是那么智能，还有很多要改进的地方（这也可能和JavaScript太放飞自我的设计有关？），使用Rust的开发我还没有试过，看官方文档上Game of Life的demo觉得非常有意思（我觉得Rust真的是绝对的后起之秀，各种方面的）。</p>
 <p>更有意思的是，这还不是优化的终点。我听说WebAssembly还有一个SIMD的提案，这似乎又可以让性能提升若干个台阶（当然我不知道目前的JIT VM能不能根据字节码进行自动向量化）。还真的就是啥native上的技术都往web端搬，浏览器也是啥活现在都要揽=_=，估计过几年就真成一个小的操作系统了（ChromeOS: Hold my chrome :）</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/01/10/Dewarp3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/01/10/Dewarp3/" class="post-title-link" itemprop="url">卷曲页面复原 3 ——完工</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2020-01-10 16:07:43 / 修改时间：20:14:31" itemprop="dateCreated datePublished" datetime="2020-01-10T16:07:43+08:00">2020-01-10</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="进展">进展！</h1>
-<p>自己写的网页终于功能全部完成啦！</p>
-<p>现在已经把成品网页放到博客上来了，上面几个链接最右边那个PageDewarp就是，戳进去就行了。</p>
-<p>放几张成品：</p>
-<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/lhyM24"><img src="https://s2.ax1x.com/2020/01/10/lhyM24.jpg" alt="lhyM24.jpg" /></a></p>
-<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/lhyKGF"><img src="https://s2.ax1x.com/2020/01/10/lhyKGF.png" alt="lhyKGF.png" /></a></p>
-<p>效果还是相当不错的。如果有二值化就更好了。</p>
-<h1 id="卷曲复原">卷曲复原</h1>
-<p>在确定了曲面的各个参数之后，整个纸面的曲面就有了，剩下的就是把卷曲复原，输出结果。</p>
-<p>卷曲复原的过程是一个图像上<strong>坐标映射</strong>的过程。我们遍历结果图像上的每一个坐标，唯一地确立其在输入图像上的源坐标，把源坐标的像素复制进来（或许再使用一些采样的技巧），拼成最终的结果，就成了。</p>
-<p>更具体一点，如果输出图像是<span class="math inline">\(w\times h\)</span>，我们就需要把页面曲面水平分成<span class="math inline">\(w\)</span>等分，垂直分成<span class="math inline">\(h\)</span>等分，形成一个网格。结果图像上的<span class="math inline">\((i, j)\)</span>像素就是网格中<span class="math inline">\((i,j)\)</span>对应点的三维坐标在原始图像上投影点对应的像素。</p>
-<p>垂直等分是简单的，因为在最早的假设里面我就假设页面的垂直边沿是直线。</p>
-<p>但是水平边沿是一条曲线，或者更精确的说，可以被近似看为一条分段三次样条曲线。怎么等分这样一个曲线呢？</p>
-<p>这种事情用数学解决是最理想的，只要能够解析地计算出任意区间曲线的长度，配合二分这个问题就解决了。但是三次函数曲线长度的积分是非初等的且无比复杂的，所以数学方法行不通。</p>
-<p><img src="https://s2.ax1x.com/2020/01/10/lh4vlV.png" alt="lh4vlV.png" /></p>
-<p>（Well，好像Mathematica告诉我算还是可以算的……）</p>
-<p>于是只能使用不那么优雅的数值方法解决了。飞快地写了一个Simpson Integration，效果看起来还不错，嘛反正精度不够缩小步长就可以了，和后面的计算比这个又不是瓶颈。</p>
-<pre class="line-numbers"><code class="language-javascript">// spline: 两端为(0, 0)和(1, 0)的分段样条曲线
-// res: 等分的数量
-const step = 0.0001;
-let len = 0, t = [];
-for (let i = 0; i &lt;= this.nodeCount; i++) &#123;
-    let [a, b, c, d] = spline[i]; // a + bx + cx^2 + dx^3
-    let xLeft = i === 0 ? 0 : this.splineNodes[i - 1][0];
-    let xRight = i === this.nodeCount ? 1 : this.splineNodes[i][0];
-    let f = x =&gt; Math.hypot(1, ((3 * d * x + 2 * c) * x + b));
-    for (let x = xLeft; x &lt; xRight; x += step) &#123;
-        let h = Math.min(xRight - x, step);
-        len += (f(x) + 4 * f(x + h / 2) + f(x + h)) * h / 6;
-        t.push([x, len, ((d * x + c) * x + b) * x + a]);
-    &#125;
-&#125;
-let ret = [], p = 0;
-for (let i = 1; i &lt;= res; i++) &#123;
-    let l = i / res * len;
-    while (p + 1 &lt; t.length &amp;&amp; t[p + 1][1] &lt;= l) p++;
-    let lt = t[p], rt = p + 1 === t.length ? [1, len, 0] : t[p + 1];
-    ret.push(l - lt[1] &lt;= rt[1] - l ? [lt[0], lt[2]] : [rt[0], rt[2]]);
-&#125;
-// ret 就是曲线上的点了</code></pre>
-<p>anyway，反正积的函数也没有那么畸形，也没那么着急优化，代码写得乱一点也就凑活着过去了<del>（疯狂为自己的懒找借口）</del></p>
-<p>求出曲线一连串等分点之后就可以做复原了：</p>
-<pre class="line-numbers"><code class="language-javascript">// vadd, multiply: 向量和，数乘
-// criticalPoints: 曲线等分点
-for (let x = 0; x &lt; resultWidth; x++) &#123; // 遍历结果的每一列像素
-    const top = vadd(this.upperLeft3D,
-        multiply(this.baseVec, criticalPoints[x][0]), multiply(this.normalVec, criticalPoints[x][1])); 
-    for (let y = 0; y &lt; resultHeight; y++) &#123; 
-        let coord = multiply(this.toCanvasCoord(this.project(
-            vadd(top, multiply(vertical, y / resultHeight)))), width / this.canvasWidth); // (x, y)对应的图像的原坐标
-        let di = (y * resultWidth + x) * 4;
-        let si = (Math.round(coord[1]) * width + Math.round(coord[0])) * 4;
-        // R, G, B, alpha四通道
-        imageDataResult.data[di] = imageDataOriginal.data[si];
-        imageDataResult.data[di + 1] = imageDataOriginal.data[si + 1];
-        imageDataResult.data[di + 2] = imageDataOriginal.data[si + 2];
-        imageDataResult.data[di + 3] = imageDataOriginal.data[si + 3];
-    &#125;
-&#125;</code></pre>
-<p>大概是OI写惯了觉得<span class="math inline">\(10^3\times 10^3\)</span>级别的运算没啥，直觉告诉我这一段代码跑得会很快。然而现实是残酷的，这段代码要跑三十秒左右，也不知道是哪里出了问题，V8的JIT都拯救不了。</p>
-<p>目前只能先用这么慢的代码将就着了，回头有空用WebAssembly试图优化一下吧。接下来应该都是工程问题了。</p>
 
       
     </div>

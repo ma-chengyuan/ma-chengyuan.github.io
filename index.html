@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-count">93</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,379 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/05/11/Docleaner/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/05/11/Docleaner/" class="post-title-link" itemprop="url">科学白嫖”图档清洁专家“</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-05-11 17:54:24 / 修改时间：18:50:15" itemprop="dateCreated datePublished" datetime="2021-05-11T17:54:24+08:00">2021-05-11</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><strong>代码仅作学习用途，请勿分享传播。</strong></p>
+<p>代码在<a target="_blank" rel="noopener" href="https://github.com/alan20210202/docleaner-web">这里</a>。</p>
+<h1 id="问题背景">问题背景</h1>
+<p>因为实体书购买麻烦、厚重、占地空间大（对于国外的一些原版教材来说，价格高昂），我一直是电子书的忠实拥趸。一般来说，市面上下载的到的电子书大致可以分为以下几类：</p>
+<ol type="1">
+<li>基于原内容的排版可变格式：一般为EPUB、MOBI或TXT格式，动态排版，在任何屏幕大小下都适合阅读。有索引，文字与图像本地渲染，清晰可辨。这是电子书的理想格式，但这种格式的书大多是以小说，我几乎没有见到过用这种格式排版的学术的教科书。</li>
+<li>基于原内容的PDF：基于书的源文件直接渲染得来，排版不可变，在没有重排软件的情况下需要大屏阅读器才能舒适阅读，并且需要适当对页边进行裁剪。大部分时候有索引，文字和图像本地渲染，清晰可辨。这种PDF可遇而不可求。有教授把这种格式的书放在官网上给学生们免费下载（比如说<a target="_blank" rel="noopener" href="https://www.designofapproxalgs.com/">这个</a>）——我愿称他们为大善人。</li>
+<li>精修的扫描PDF：是基于实体书扫描而来，文字部分经过OCR和轮廓平滑化变得更加清晰，公式可能经过重写也很清楚。良心一点的制作者会顺便把目录也做了。这种PDF（有的时候是DJVU）见到的概率比较高，libgen上十本里面能有六七本。我的Introduction to Linear Algebra就是这种类型。</li>
+<li><strong>三无的扫描PDF</strong>：PDF制作者只进行了基本的扫描。<strong>文字有倾斜，页面有阴影，页边缘出镜导致黑边</strong>，有些还会有铅笔的笔记。OCR是没有的，目录是不用指望的。这种是电子书里的下品，像我这样有一些轻微强迫症的会觉得很难受。</li>
+</ol>
+<p>最近自己要找的一本书搜遍了网上也只有三无版本，真的感觉头很大，体验极差。那么，有什么办法能把这种三无版本清理以下，使之朝精修PDF的方向上靠拢呢？</p>
+<p><strong><a target="_blank" rel="noopener" href="http://www.docleaner.cn/">图档清洁专家</a></strong>是我前几天在网上发现的。实测效果拔群。缺点是要付60块钱买正版。60元不是什么大钱，但是人是要有追求的：</p>
+<p></p>
+<p>正好，图档清理专家提供了<a target="_blank" rel="noopener" href="http://www.docleaner.cn/experience.html">在线体验</a>，这个在线体验提供的功能已经涵盖了我的需求了，但是为了防止我们白嫖地太爽，在线体验限制只能上传图片文件。对于我手里这本460页的教科书，一页页手工操作能把人折磨死。怎么办呢？</p>
+<p></p>
+<p>用Python自动化试试看？似乎能学到很多东西的样子。</p>
+<h1 id="代码实现">代码实现</h1>
+<p>我们的脚本需要实现以下功能：</p>
+<ol type="1">
+<li>将输入的PDF按页转换成高清图片。</li>
+<li>以某种方式程序化地调用在线体验的功能。</li>
+<li>将结果的图片下载下来重新拼合成为PDF。</li>
+<li>可以顺便使用<a target="_blank" rel="noopener" href="https://pypi.org/project/pytesseract/">pytesseract</a>实现OCR。</li>
+</ol>
+<h2 id="pdf光栅化">PDF光栅化</h2>
+<p>如果只考虑“将PDF转化为图片”的功能，最切题的库是<a target="_blank" rel="noopener" href="https://pypi.org/project/pdf2image/">pdf2image</a>，底层调用的工具是poppler。这也是我一开始的选择。</p>
+<p>但是后来转念一想，既然后面还有要将图片转PDF，PDF拼合的需求，寻找一款更为通用的PDF库是更明智的做法。</p>
+<p>经过一番搜索，跳过已经五年没有出过新版本的的PyPDF2，我选择了目前维护勤快的<a target="_blank" rel="noopener" href="https://pypi.org/project/PyMuPDF/">PyMuPDF</a>。PyMuPDF调用的是MuPDF这个用C写的成熟的PDF库，功能与性能都是有保障的。MuPDF的license上说明对于开源项目免费授权，因此我就大胆地用了。</p>
+<p>使用PyMuPDF进行PDF的光栅化，代码如下：</p>
+<pre class="line-numbers"><code class="language-python">import fitz
+from typing import Optional, Generator, Union
+from pathlib import Path
+
+StrPath = Union[str, os.PathLike]
+
+def convert_pdf_to_images(pdf: StrPath, fmt: str, dpi: int,
+                          output: Optional[StrPath] = None,
+                          first_page: Optional[int] = None,
+                          last_page: Optional[int] = None) \
+        -&gt; Generator[StrPath, None, None]:
+    &quot;&quot;&quot;
+    Converts a pdf file to images. This a necessary pre-processing step
+    because docleaner online only accepts images as inputs.
+    
+    :param pdf: The path to the pdf file.
+    :param fmt: Image file format. jpg is the fastest but not lossless; png is
+        lossless but slow; tiff is theoretically the best but occupies a lot of
+        disk space.
+    :param dpi: Pixel density of the output images.
+    :param output: The output directory of intermediate images.
+    :param first_page: First page to convert (starting from 1, inclusive).
+    :param last_page: Last page to convert (starting from 1, inclusive).
+    :return: A generator yielding the paths to the images.
+    &quot;&quot;&quot;
+    doc = fitz.Document(pdf)
+
+    @contextmanager
+    def normal_dir(dir_path):
+        Path(dir_path).mkdir(parents=True, exist_ok=True)
+        yield dir_path
+
+    matrix = fitz.Matrix(dpi / 72, dpi / 72)
+    first_page = 0 if first_page is None else first_page - 1
+    last_page = doc.page_count if last_page is None else last_page
+    with tempfile.TemporaryDirectory() if output is None else normal_dir(
+            output) as path:
+        for i in range(first_page, last_page):
+            filename = os.path.join(path, f&quot;&#123;i&#125;.&#123;fmt&#125;&quot;)
+            # noinspection PyUnresolvedReferences
+            doc[i].get_pixmap(matrix=matrix).save(filename)
+            yield filename
+        if output is None:
+            # Yield an empty string if we are using a temporary directory,
+            # because without this, the temporary directory will be cleaned
+            # up the moment the last filename is yielded, when the caller
+            # hasn&#39;t done anything to the yielded temp file yet. Yielding an
+            # emtpy string keeps the TemporaryDirectory object in memory
+            # longer so the problem is solved.
+            yield &quot;&quot;</code></pre>
+<p>这个代码乍一看是比较复杂，有几个重点：</p>
+<ol type="1">
+<li>代码写成了生成器的形式，这样便于和后续的其他功能进行更好的耦合。个人认为生成器是一个很不错的语法糖。</li>
+<li>为了方便静态检查，我这里给方法签名标注了类型。</li>
+<li>为了同时处理输出图片到临时目录和正常目录（可以用于其他工具）的情形，这里定义了名为<code>normal_dir</code>的<a target="_blank" rel="noopener" href="https://docs.python.org/3/library/contextlib.html">context manager</a>以和<code>TemporaryDirectory</code>保持形式上的一致。这样代码可以更加简短。要使用<code>TemporaryDirectory()</code>而不是<code>mkdtemp()</code>的原因是前者确保了临时文件夹最终会被删除。</li>
+<li>但是<code>TemporaryDirectory()</code>在结束后删除临时文件夹会带来一个问题：在<code>yield</code>最后一页的图片的路径之后，临时文件夹马上就被删除了，刚返回的路径也就失效了。调用这个生成器的代码使用的时候就会产生找不到文件的错误。一个粗暴的解决方案就是让<code>with</code>块执行得再久一点——比如说在下次调用的时候再结束。这就是最后<code>yield ""</code>的意义。</li>
+<li>PyMyPDF默认的<code>get_pixmap</code>方法输出的图片分辨率等于当前页面的边界矩形大小（bound rectangle）。这个边界矩形尺寸是以点数（pts）为单位的，1英寸等于72点，因此如果需要达到指定的DPI，<code>get_pixmap</code>在执行的时候就需要放大<code>dpi / 72</code>倍。这就是<code>matrix = fitz.Matrix(dpi / 72, dpi / 72)</code>的含义。</li>
+</ol>
+<p>剩下的无非就是看文档写代码。</p>
+<h2 id="使用selenium自动化在线体验">使用Selenium自动化“在线体验”</h2>
+<p>人工一页一页上传手抽筋怎么办？一个很自然的思路就是让代码来直接操控浏览器。在这方面，因为网站开发自动化测试的需求，有人已经帮我们写好轮子了——Selenium。</p>
+<p></p>
+<p>根据官网上的描述，Selenium和我们的需求完美对接，而且Selenium提供了Python的接口。</p>
+<p>使用Selenium的第一步是打开浏览器并且访问目标网页：</p>
+<pre class="line-numbers"><code class="language-python">from selenium import webdriver
+
+browser = webdriver.Chrome()
+# browser = webdriver.Firefox()
+# browser = webdriver.Edge()
+# browser = webdriver.Safari()
+browser.get(&quot;http://www.docleaner.cn/experience.html&quot;)</code></pre>
+<p>打开哪个浏览器就取决于个人喜好了。在这里需要注意：除了在Python环境里安装selenium包以外，还需要自行安装对应浏览器的WebDriver。具体如何装，怎么装，请参阅Selenium的文档。就我个人体验而言，Chrome的WebDriver启动得很快，但是默认会把日志写到控制台里面；Firefox得WebDriver要花一两秒启动，默认会写日志到geckodriver.log里面。</p>
+<p><img src="/2021/05/11/Docleaner/image-20210511180117997.png" class=""></p>
+<p>在执行以上代码之后要做两件事：</p>
+<ol type="1">
+<li>等待页面加载完毕（废话），以及</li>
+<li>打开去背景和自动纠斜这两个默认关闭但是很有用的开关。</li>
+</ol>
+<p>Selenium的API允许我们把两件事并在一起做，前提是我要知道两个开关的“路径”——CSS选择器或XPath都行。</p>
+<pre class="line-numbers"><code class="language-python">from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.ui import WebDriverWait
+
+WebDriverWait(browser, timeout).until(
+    expected_conditions.visibility_of_element_located(
+        (By.XPATH,
+        &quot;开关的XPath&quot;)
+    )
+).click()</code></pre>
+<p>以“自动纠斜”开关为例，其周围的HTML如下：</p>
+<pre class="line-numbers"><code class="language-html">&lt;div style=&quot;position: relative;&quot;&gt;
+    &lt;button type=&quot;button&quot; class=&quot;layui-btn layui-btn-primary buttoncss buttoncss0&quot; style=&quot;padding: 0 10px;&quot;&gt;
+        &lt;img src=&quot;http://www.docleaner.cn/templets/1/qwsoft//resource/images/jiuxie.png&quot;&gt;自动纠斜
+    &lt;/button&gt;
+    &lt;div class=&quot;buttoncheckbox&quot;&gt;
+        &lt;input type=&quot;checkbox&quot; name=&quot;exeConfig&quot; lay-filter=&quot;exeConfig&quot; value=&quot;自动纠斜&quot; lay-skin=&quot;primary&quot;&gt;
+        &lt;div class=&quot;layui-unselect layui-form-checkbox&quot; lay-skin=&quot;primary&quot;&gt;&lt;i class=&quot;layui-icon layui-icon-ok&quot;&gt;&lt;/i&gt;&lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<p>我们的目标是那个<code>&lt;button&gt;</code>元素，比较好找的是<code>&lt;input&gt;</code>元素，其XPath就是<code>//input[@value='自动纠斜']</code>。</p>
+<p>接下来我们要使用XPath的Axes语义间接地定位到<code>&lt;button&gt;</code>：</p>
+<p><code>//input[@value='自动纠斜']/parent::div/preceding-sibling::button</code></p>
+<p>语义很清楚，就不多解释了。完整的Axes列表可以看<a target="_blank" rel="noopener" href="https://www.w3schools.com/xml/xpath_axes.asp">这里</a>。</p>
+<p>类似地，我们可以定位上传按钮的位置：</p>
+<pre class="line-numbers"><code class="language-python">uploader = WebDriverWait(browser, timeout).until(
+    expected_conditions.presence_of_element_located(
+        (By.CLASS_NAME, &quot;layui-upload-file&quot;)))</code></pre>
+<p>注意到这里是<code>presence_of_element_located</code>，前面是<code>visibility_of_element_located</code>，区别在于后者必须要求元素在浏览器框里面可视，而前者只需要DOM里有就行了。我们之前需要点击开关，因此必须先看得见才行（而且可视是确保网页加载完毕的一个更靠谱的条件），而上传控件在网页里是一个隐藏起来的<code>&lt;input&gt;</code>，因此只要present in DOM就行了。</p>
+<p>往上传控件上传东西调用的是<code>send_keys</code>函数，很有意思：</p>
+<pre class="line-numbers"><code class="language-python">uploader.send_keys(file_path)</code></pre>
+<p>然后等一会网页右边就会出现处理后的图像。其实显示结果的<code>&lt;img&gt;</code>一直都在，只是直到处理完成之后才可见，我们借此找到这个控件并且作为处理完成的依据：</p>
+<pre class="line-numbers"><code class="language-python">result = WebDriverWait(browser, timeout).until(
+    expected_conditions.visibility_of_element_located(
+        (By.ID, &quot;dragImgRight&quot;)))</code></pre>
+<p>开发者很好心地（？）在结果图像控件的<code>src</code>字段直接使用base64编码图片，连额外下载的代码都免了，我们直接得到结果图像：</p>
+<pre class="line-numbers"><code class="language-python">import io
+import base64
+from PIL import Image
+
+result = result.get_attribute(&quot;src&quot;)
+result = base64.b64decode(
+    result.replace(&quot;data:image/jpg;base64,&quot;, &quot;&quot;))
+yield Image.open(io.BytesIO(result))</code></pre>
+<p>最后，注意把结果的<code>&lt;img&gt;</code>再藏起来，这样通过可见性来判断是否处理完成的逻辑在下一张图片传上去的时候才有效。经查，结果的可见性通过<code>&lt;img&gt;</code>父元素<code>class</code>列表里<code>layui-hide</code>的存在与否来判定。我们选择通过Selenium让浏览器执行JavaScript进行这种有点复杂度的操作：</p>
+<pre class="line-numbers"><code class="language-python">browser.execute_script(
+    &quot;arguments[0].parentNode.classList.add(&#39;layui-hide&#39;);&quot;, result)</code></pre>
+<p><code>arguments</code>自然就是后面传参的数组。</p>
+<p>完整的代码如下：</p>
+<pre class="line-numbers"><code class="language-python">def clean_doc_online(images: Generator[StrPath, None, None], browser: str) \
+        -&gt; Generator[Image.Image, None, None]:
+    &quot;&quot;&quot;
+    Cleans the scanned document pages using docleaner&#39;s online service.
+    
+    :param images: A generator yielding paths to document pages.
+    :param browser: Browser type, can be &quot;chrome&quot;, &quot;firefox&quot;, &quot;safari&quot;, or
+        &quot;edge&quot;. Requires the browser and its webdriver to be installed.
+    &quot;&quot;&quot;
+    if browser == &quot;chrome&quot;:
+        browser = webdriver.Chrome()
+    elif browser == &quot;firefox&quot;:
+        browser = webdriver.Firefox()
+    elif browser == &quot;safari&quot;:
+        browser = webdriver.Safari()
+    elif browser == &quot;edge&quot;:
+        browser = webdriver.Edge()
+    else:
+        raise RuntimeError(&quot;Unknown browser type&quot;)
+    # Timeout for web driver waits. 10s is a reasonable value unless you have
+    # a very high-res image / terrible network.
+    timeout = 10
+    browser.get(&quot;http://www.docleaner.cn/experience.html&quot;)
+
+    # Turn on background removal and automatic deskewing.
+    WebDriverWait(browser, timeout).until(
+        expected_conditions.visibility_of_element_located(
+            (By.XPATH,
+             &quot;//input[@value=&#39;去背景&#39;]/parent::div/preceding-sibling::button&quot;)
+        )
+    ).click()
+    WebDriverWait(browser, timeout).until(
+        expected_conditions.visibility_of_element_located(
+            (By.XPATH,
+             &quot;//input[@value=&#39;自动纠斜&#39;]/parent::div/preceding-sibling::button&quot;)
+        )
+    ).click()
+    # Wait for a while to ensure the changes take effect.
+    time.sleep(1)
+
+    uploader = WebDriverWait(browser, timeout).until(
+        expected_conditions.presence_of_element_located(
+            (By.CLASS_NAME, &quot;layui-upload-file&quot;)))
+
+    try:
+        uploader.send_keys(next(images))
+        while True:
+            # Write like this instead of a for loop enables us to fetch the
+            # next image while the browser &amp; remote server are processing the
+            # image just uploaded. Converting a pdf page to an image is slow,
+            # so we here save a lot of time :)
+            next_image = next(images)
+            # Wait for the result image to be visible.
+            result = WebDriverWait(browser, timeout).until(
+                expected_conditions.visibility_of_element_located(
+                    (By.ID, &quot;dragImgRight&quot;)))
+            # Hide the result image again so the wait condition above can be
+            # re-used.
+            browser.execute_script(
+                &quot;arguments[0].parentNode.classList.add(&#39;layui-hide&#39;);&quot;, result)
+            result = result.get_attribute(&quot;src&quot;)
+            result = base64.b64decode(
+                result.replace(&quot;data:image/jpg;base64,&quot;, &quot;&quot;))
+            yield Image.open(io.BytesIO(result))
+            if next_image == &quot;&quot;:
+                # See convert_pdf_to_images for the reason behind this weird
+                # branch.
+                break
+            uploader.send_keys(next_image)
+    except StopIteration:
+        pass
+
+    browser.quit()</code></pre>
+<p>注意三点：</p>
+<ol type="1">
+<li>之前在PDF转图片的设计中有返回空路径的奇技淫巧需要特判。</li>
+<li>在点击开关之后需要等一会来确保开关真的点下去了。</li>
+<li>循环的写法最好不要写成标准的<code>for</code>循环，因为这样的话文件图片上去之后代码就是干等。现在的写法确保了图片传上去之后立刻就获取下一张图片，之后再判断等待是否当前图片处理完成。再调用<code>next(images)</code>的过程中，浏览器也在独立于Python进程运行，因此我们毫无损失。将PDF的一页转化为一张高清图片需要1-2秒钟，而网站处理图片大概也是这么长时间，因此在这里循环写法的改变是一个很不错的优化。</li>
+</ol>
+<h1 id="将下载下来的图片拼合回pdf">将下载下来的图片拼合回PDF</h1>
+<p>这个功能的实现是相对简单，只要照着PyMuPDF的文档写就行了。</p>
+<p>同时，我注意到pytesseract里面有输入图片直接输出PDF的函数，因此可以一并在这里完成。</p>
+<p>顺便可以通过tqdm显示一个进度条，方便看清进度。</p>
+<p>最终代码如下：</p>
+<pre class="line-numbers"><code class="language-python">from tqdm import tqdm
+import pytesseract
+
+def convert_images_to_pdf(images: Generator[Image.Image, None, None],
+                          output: StrPath,
+                          ocr: bool = True, total: Optional[int] = None):
+    &quot;&quot;&quot;
+    Converts and merges images to a one-page pdf file, performing optional
+    OCR in the process.
+
+    :param images: A generator yielding PIL image objects.
+    :param output: Path to the result pdf.
+    :param ocr: Whether to perform OCR(Optical Character Recognition).
+    :param total: An optional integer hinting the total number of images given.
+        If supplied, a progress bar will be displayed during the conversion.
+    &quot;&quot;&quot;
+    doc = fitz.Document()
+    for image in images if total is None else tqdm(images, total=total):
+        if ocr:
+            pdf = pytesseract.image_to_pdf_or_hocr(image)
+            page = fitz.Document(stream=pdf, filetype=&quot;pdf&quot;)
+            doc.insert_pdf(page)
+        else:
+            # noinspection PyUnresolvedReferences
+            page = doc.new_page(width=image.width, height=image.height)
+            buffer = io.BytesIO()
+            image.save(buffer, format=&quot;jpeg&quot;)
+            page.insert_image(fitz.Rect(0, 0, image.width, image.height),
+                              stream=buffer)
+    doc.save(output)</code></pre>
+<h2 id="cli封装">CLI封装</h2>
+<p>在最后的最后，可以通过<a target="_blank" rel="noopener" href="https://click.palletsprojects.com/en/7.x/">Click</a>库，为脚本进行一个CLI的封装：</p>
+<pre class="line-numbers"><code class="language-python">import click
+
+@click.command()
+@click.argument(&quot;input&quot;, type=click.Path(exists=True))
+@click.argument(&quot;output&quot;, type=click.Path())
+@click.option(&quot;-f&quot;, &quot;--format&quot;, default=&quot;png&quot;,
+              help=&quot;Intermediate image format.&quot;)
+@click.option(&quot;-d&quot;, &quot;--dpi&quot;, default=300, help=&quot;DPI for rasterization.&quot;)
+@click.option(&quot;-b&quot;, &quot;--browser&quot;, default=&quot;chrome&quot;,
+              help=&quot;The browser selenium uses.&quot;)
+@click.option(&quot;--first-page&quot;, type=int, help=&quot;First page to convert/clean.&quot;)
+@click.option(&quot;--last-page&quot;, type=int, help=&quot;Last page to convert/clean.&quot;)
+@click.option(&quot;--ocr/--no-ocr&quot;, default=True,
+              help=&quot;Whether to perform OCR during the conversion.&quot;)
+@click.option(&quot;--clean/--dont-clean&quot;, default=True,
+              help=&quot;Whether to clean pdf using docleaner&#39;s online service.&quot;)
+def main(input: str, output: str, format: str, dpi: int, browser: str,
+         first_page: Optional[int], last_page: Optional[int], ocr: bool,
+         clean: bool):
+    images = convert_pdf_to_images(input, fmt=format, dpi=dpi,
+                                   first_page=first_page, last_page=last_page)
+    if clean:
+        images = clean_doc_online(images, browser)
+    doc = fitz.Document(input)
+    total = (doc.page_count if last_page is None else last_page) \
+        - (0 if first_page is None else first_page - 1)
+    convert_images_to_pdf(images, output, ocr=ocr, total=total)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()</code></pre>
+<p>大功告成！</p>
+<h1 id="优化避免开启浏览器">优化：避免开启浏览器</h1>
+<p>施工中~未完待续。</p>
+<h1 id="优化多进程加速">优化：多进程加速</h1>
+<p>施工中~未完待续。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1988,115 +2361,6 @@ impl Timer &#123;
 <p>Let's see how we design a simple AND gate.</p>
 <p>Suppose the only primitive components we have are NOT gate (torch), wire junction, and IO placeholder. The circuit diagram of AND gate is:</p>
 <p><img src="/2020/08/28/Minecraft%20ILP/ANDCD.svg" class=""></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/08/20/NOI%202020/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/08/20/NOI%202020/" class="post-title-link" itemprop="url">蒟蒻的NOI 2020退役记</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2020-08-20 16:23:58 / 修改时间：16:18:17" itemprop="dateCreated datePublished" datetime="2020-08-20T16:23:58+08:00">2020-08-20</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="day--1">Day -1</h1>
-<p>在中午太阳晒得最狠的时候到了学校。宿舍爬楼累死人，也不知道为啥学校楼要建那么高。幸好宿舍里的空调给力，好评。</p>
-<p>宿舍的环境还行。个人觉得比当年WC2018的要好。</p>
-<p>信号出奇地差，必须在直接靠窗的地方才有4G，不然连2G也别想收到，听宿管和小卖部阿姨说当初就是设计成这个样子的。差评。</p>
-<p>插座很多好评。</p>
-<p>但是还是没有桌子，无论用什么姿势看电脑都贼难受。同寝室的jtl带了一个床上架的桌子，看了直呼内行。床板贼硬，差评。</p>
-<p>伙食还可以，豆浆我觉得挺好喝的，就是湖南菜多多少少带点辣个人不是很能接受，而且菜很细碎的样子。</p>
-<p>睡前随随便便背了点笔试题。</p>
-<h1 id="day-0">Day 0</h1>
-<p>早上迷迷糊糊地去参加了开幕式。听到dzd说有剩饭扣1分大惊。其他就没啥印象了=_=。</p>
-<p>结束后拱火mr押题，mr说看到才艺表演一个跳舞的转来转去暗示会考平衡树，一本正经胡说八道.jpg。</p>
-<p>感觉周围大佬都贼多，互相之间也都认识，我一个蒟蒻在当中不知所措。自己看来对于在竞赛圈内的信息闭塞的可以。</p>
-<p>中午又背了一会笔试题，然后下午就去试机了。笔试没有想象中的难，但是确实是有超纲的，纠结了很久。幸好最后还是满分飘过了。唯一值得吐槽的或许是CCF十年不变的远古测评系统。</p>
-<p>随后在试机场上敲了一波LCT和FFT。看到jtl在写MTT有想敲三模数的冲动但是最后的合并调了好一会才勉强调出来，于是就很慌。</p>
-<p>晚上寝室里大家都在欢快地打板子。对面两个人都在打带花树，然后惊奇地发现带花树的代码似乎也没有想象中那么长。三个人讨论了一下觉得似乎有概率考分块的样子，但是笑一笑也就过去了。我自己把各种字符串的算法全部过了一遍。</p>
-<h1 id="day-1">Day 1</h1>
-<p>看到T1愣了好一会，愣是没有第一时间看出DP。不知道为什么当时满脑子都是Tarjan和缩点然后沿着这个方向陷入了死胡同。于是先敲了一个DFS，觉得自己要完蛋。</p>
-<p>看了T2又愣了一会，先敲了个暴力，然后觉得<span class="math inline">\(m\)</span>比较小的情况可以动态维护链并+容斥解决。先放着。</p>
-<p>看到T3深切地感受到这或许是个数据结构毒瘤？先敲了一个二维树状数组的暴力。当时脑子大概是坏掉了不是枚举矩形直接算而是枚举点算贡献。总之暴力复杂度似乎<span class="math inline">\(\mathcal O(nm\log^2 n)\)</span>非常差。然后认真思考了一下部分分，发现可以莫队。于是基于二维树状数组写了一个<span class="math inline">\(\mathcal O\left(n\sqrt m \log^2 n\right)\)</span>的算法。然后觉得<span class="math inline">\(\mathcal O(\log ^2n)\)</span>的二维数点不妥，改成了<span class="math inline">\(\mathcal O(\log n)\)</span>的可持久化线段树，于是暴力和莫队的复杂度都少了一个<span class="math inline">\(\log\)</span>。再一看发现莫队我可以用树状数组干嘛要二维数点，于是莫队的常数又降下来一点。瞄了一眼后面觉得应该可以用<span class="math inline">\(\mathcal O(n^{7/4})\)</span>的四维莫队，可惜当初没认真学高维莫队不知道块大小咋算了，于是作罢。最后敲了一个莫队和暴力的对拍放着。</p>
-<p>回到T2开始敲树剖和容斥，写了一个<span class="math inline">\(\mathcal O\left(m2^m\log^2n\right)\)</span>的算法。和暴力结合在一起觉得至少能拿<span class="math inline">\(32\)</span>分，常数小一点也可以冲冲<span class="math inline">\(40\)</span>样子。</p>
-<p>然后回到T1，突然发现这不就一个裸的DP吗，直骂自己前面傻逼。于是花5分钟敲完朴素DP，然后再花10分钟敲完环的部分分。</p>
-<p>然后发现边权至多为<span class="math inline">\(5\)</span>，意识到正解显然是用max-plus algebra下的矩阵快速幂进行优化，于是开始敲。此时离考试结束还有60分钟，心中贼慌。等到敲完离考试结束还有30分钟，心态爆炸，然后死活调不出来。只能把这个正解例程写在程序里作为最后之选。离交卷还有5分钟的时候不改了。检查其他两题的程序无误后就开始坐着怀疑自己前三个小时脑子到底在想什么……</p>
-<p>出考场觉得自己已经成为了时代的眼泪（笑）。</p>
-<p>下午三点去查分。听jtl说这次CCF准时出分没有咕简直是奇迹。结果就是<span class="math inline">\(50+32+40=122\)</span>。和预想的完全一致。这个时候就很后悔。如果当初早点看出矩阵快速幂把T1的正解调出来就好了。这个分觉得铁牌已经在向我招手。</p>
-<p>晚上讲题。T1的确是快速幂正解。T2的正解是线段树合并维护树形DP这个之前也在寝室里有了大概的想法，但是一看这个DP的状态设计果然神仙。出题人怒斥了我们打<span class="math inline">\(32\)</span>分树剖暴力的，说是什么数据结构学傻了……然后说写个虚树不就<span class="math inline">\(40\)</span>了吗。我下面听着就很无语：我也想打虚树，但是我不会啊…… T3的出题人原来就是各种OJ上人们一直吐槽的lxl。这个题目的内部名称似乎叫“第十三分块”？正解似乎是先建一个树套树然后再分治再分块……讲到一半就lost了，内心大骂出题人毒瘤。</p>
-<p>回寝室后所有人都是颓废的状态，gyc在打Splay的板子。剩下我们两个人开始摸鱼。</p>
-<h1 id="day-2">Day 2</h1>
-<p>T1一看给人一种网络流的既视感，然后发现图建不出来。退而求其次试图写出线性规划进行代数化建图，发现线性规划必须使用Big M的办法才能建出来，而且直观一看integrity gap大的离谱是不可能建图的。因为是求可行解也不知道目标函数咋写，所以也不能从对偶下手，只能作罢。敲了一个非常粗暴的DFS暴力枚举每道菜用哪两个原材料分别用多少，发现这个DFS在最坏情况下跑得巨慢无比——难不成我暴力骗分都不成？</p>
-<p>这个时候有了一个乱搞的intuition，就是枚举原料的排列然后按照排列来确定所用的原料。然后发现过不了样例，于是作罢。</p>
-<p>之后稍微改进了一点暴力，只枚举每道菜用哪两个原材料，最后时候用多少最后用网络流来判。这下终于拿到了<span class="math inline">\(15\)</span>分的暴力。顺便基于这个敲了一个随机化，但是似乎表现也不佳的样子。</p>
-<p>T2题面长度属实劝退。读完题面之后觉得似乎不是很可做。看了样例之后有了一点暴力的想法，写了一个复杂度为<span class="math inline">\(\mathcal O\left(2^{2^{h_{\text{max}}-1}}\right)\)</span>的算法。简单来说就是把输入的树补成最大树高然后枚举能否扩张成最大树高下的所有可能的二叉树形态。觉得除了<span class="math inline">\(12\)</span>分纯暴力还可以拿<span class="math inline">\(h_{\text{max}}=4\)</span>的分？之后就不会了。</p>
-<p>T3一看给我整懵了。可真就暴力不会写呗。直觉上似乎可以写Dijkstra然后在转移的时候排除掉当前路径下的割边。但是很快意识到Dijkstra的本质是DP而这个转移方案是有后效性的。事实上也是如此，样例都没有过。然后试验性地写了一个不可行的判定方法：求出最短路，如果把最短路去掉之后全图不连通，则不可行——也不知道这样对不对。</p>
-<p>5个小时就在三个题目的来回懵逼当中度过。</p>
-<p>这次CCF出分直接咕了将近两个小时。我们很明智地从一开始就待在寝室里，那些下去等分的就苦逼了。分数出来是<span class="math inline">\(15+12+5=32\)</span>、也差不多是我预想的这个水平，T2树高为<span class="math inline">\(4\)</span>的点我还是超时了，大概还是没有判同构去重的原因？</p>
-<p>下午去听讲题。T1正解的思路源于<span class="math inline">\(m=n-1\)</span>的思考，其他的情况都是向<span class="math inline">\(m=n-1\)</span>情况的规约，感觉是非常巧妙的。T2的最优算法居然是线性的？有点听蒙了。听到T3讲解的时候才意识到T3当中的图叫做弦图，而正解源于对于弦图性质的思考，最后用过两次类Dijkstra来解决，感觉是非常非常神奇，不明觉厉，自愧不如。</p>
-<p>讲的时候就出榜了，一看果然Cu，心情复杂，但是一开始也没有期望，所以也没有太沮丧。感觉心态真正崩盘的大概是jtl，人家Cu第一……差一分就Ag了。但是看榜还是有<span class="math inline">\(500\)</span>分以上的，觉得这些人真的很厉害。我或许不比他们笨，但是他们确实历练的比我这种多多了。我这种常年边缘划水的OIer果然不能和这些人比。</p>
-<h1 id="day-3">Day 3</h1>
-<p>看着手中的铜牌，意识到自己划水的OI之路至少到此为止暂时地画上了句号，颇有些不真实感。</p>
-<p>我一直在想，如果D1T1的正解我调出来了，我就是Ag了，会不会好一点呢？但是这终究也只是一个幻想而已罢了。一是比赛不能重来，二是我似乎也不知道缓存矩阵乘方的套路所以真写快速幂有可能复杂度还是会炸的样子。</p>
-<p>一如既往，自己复习的算法完美地和考试算法错开了。没有LCT，没有FFT，没有字符串。我深切意识到OI果然还是靠平时积累的，这种比赛临时抱佛脚很大概率是不靠谱的。</p>
-<p>还是要谢谢NOI最后给了我一个意识到自己有多菜的机会。还有那么多我没有学的啊~</p>
-<p>大概在没有竞赛压力之后我还是会对这些算法认真地研究一番的吧。觉得自己的心态是一个很奇妙的东西。在被父母逼着学竞赛的时候总觉得这些算法很烦，但是意识到自己远离竞赛之后，反而又觉得它们有趣起来了。</p>
-<p>网上看过很多这样的游记，一般到最后作者不是Au就是进队了，这种好事终究不会发生在我身上。</p>
-<p>唉。这就退役了。</p>
-<p>写于Day 3从长沙回上海的火车上。自己的思路一如既往地混乱。</p>
 
       
     </div>

@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-count">93</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,161 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/02/05/%E5%90%8E%E7%BC%80%E8%87%AA%E5%8A%A8%E6%9C%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/02/05/%E5%90%8E%E7%BC%80%E8%87%AA%E5%8A%A8%E6%9C%BA/" class="post-title-link" itemprop="url">后缀自动机笔记</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-02-05 12:59:08" itemprop="dateCreated datePublished" datetime="2019-02-05T12:59:08+08:00">2019-02-05</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2019-03-24 11:01:29" itemprop="dateModified" datetime="2019-03-24T11:01:29+08:00">2019-03-24</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>后缀自动机（Suffix Automaton）本质上就是接受字符串集合等于一个给定字符串<span class="math inline">\(S\)</span>后缀集合的最小化DFA。SAM可以在<span class="math inline">\(O(|S|)\)</span>的时间内构造出来。</p>
+<h1 id="等价关系">等价关系</h1>
+<p>在下文中统一设母串为<span class="math inline">\(S\)</span>。</p>
+<p><strong>定义1：</strong>令<span class="math inline">\(\operatorname{endpos}(s)\)</span>表示子串<span class="math inline">\(s\)</span>在<span class="math inline">\(S\)</span>中的<strong>结束位置集合</strong>。如<span class="math inline">\(S = abcababc, s = ab\)</span>，则<span class="math inline">\(\operatorname{endpos}(s) = \{2, 5, 7\}\)</span>。特别地，<span class="math inline">\(\operatorname{endpos}(\emptyset) = \{1,2,3, \cdots, |S|\}\)</span>。</p>
+<p><strong>引理1：</strong>两个子串<span class="math inline">\(u, w\)</span>是<span class="math inline">\(\operatorname{endpos}\)</span>等价的，且假设<span class="math inline">\(|u| &lt; |w|\)</span>，则<span class="math inline">\(u\)</span>是<span class="math inline">\(w\)</span>的一个后缀。</p>
+<p><strong>证明：</strong>脑补一下，不证自明。</p>
+<p><strong>引理2：</strong>考虑两个子串<span class="math inline">\(u, w\)</span>，假设<span class="math inline">\(|u| &lt; |w|\)</span>则<span class="math inline">\(\operatorname{endpos}(u)\)</span>与<span class="math inline">\(\operatorname{endpos}(v)\)</span>有且仅有以下两种关系：</p>
+<ol type="1">
+<li><span class="math inline">\(\operatorname{endpos}(w) \subseteq \operatorname{endpos}(u)\)</span>：此时<span class="math inline">\(u\)</span>一定是<span class="math inline">\(w\)</span>的后缀。</li>
+<li><span class="math inline">\(\operatorname{endpos}(w) \cap \operatorname{endpos}(u) = \emptyset\)</span>：其他。</li>
+</ol>
+<p><strong>证明：</strong>如果<span class="math inline">\(\operatorname{endpos}(w) \cap \operatorname{endpos}(u) \neq \emptyset\)</span>，那么它们至少都会在原串的某一点结束，结合<span class="math inline">\(|u| &lt; |w|\)</span>，<span class="math inline">\(u\)</span>一定就是<span class="math inline">\(w\)</span>的后缀，如此一来<span class="math inline">\(w\)</span>结束的地方<span class="math inline">\(u\)</span>也一定结束，因此<span class="math inline">\(\operatorname{endpos}(w) \subseteq \operatorname{endpos}(u)\)</span>。</p>
+<p><strong>引理3：</strong>考虑一个<span class="math inline">\(\operatorname{endpos}\)</span>等价类，如果将其中的串按照长度从小到大排序，则后一个串的长度一定比前一个串的长度严格大<span class="math inline">\(1\)</span>，或者说，这个等价类的字符串取遍了某一区间内的所有长度。</p>
+<p><strong>证明：</strong>记这个等价类当中最短的串为<span class="math inline">\(u\)</span>，最长的串为<span class="math inline">\(w\)</span>。首先由引理1，一个等价类必定由<span class="math inline">\(w\)</span>和它的一系列后缀组成。考虑长度在<span class="math inline">\(u, w\)</span>之间的<span class="math inline">\(w\)</span>的任意后缀<span class="math inline">\(x\)</span>，因为<span class="math inline">\(x\)</span>是<span class="math inline">\(w\)</span>的后缀，由引理2，<span class="math inline">\(\operatorname{endpos}(w) \subseteq \operatorname{endpos}(x)\)</span>，同时又因为<span class="math inline">\(u\)</span>是<span class="math inline">\(x\)</span>的后缀，<span class="math inline">\(\operatorname{endpos}(x) \subseteq \operatorname{endpos}(u)\)</span>，结合<span class="math inline">\(\operatorname{endpos}(w) = \operatorname{endpos}(u)\)</span>，则<span class="math inline">\(x\)</span>与<span class="math inline">\(u, w\)</span>也<span class="math inline">\(\operatorname{endpos}\)</span>等价。</p>
+<h1 id="后缀链接">后缀链接</h1>
+<p><span class="math inline">\(\operatorname{endpos}\)</span>集合描述了一个串在母串当中的出现情况。我们希望构建出来的DFA要最小化，因此我们自然希望一个节点表示一整个<span class="math inline">\(\operatorname{endpos}\)</span>的<strong>等价类</strong>。<strong>即SAM当中每个节点的<span class="math inline">\(\operatorname{endpos}\)</span>互不相同。</strong></p>
+<p><strong>定义2：</strong>对于一个节点<span class="math inline">\(v\)</span>，令<span class="math inline">\(\operatorname{endpos}(v)\)</span>表示其表示的<span class="math inline">\(\operatorname{endpos}\)</span>等价类。</p>
+<p>我们又知道一个节点表示的字符串是<span class="math inline">\(S\)</span>的某一个前缀的前几个后缀（引理3）（假设把后缀长度从大到小排序）。</p>
+<p><strong>定义3：</strong>既然某个节点<span class="math inline">\(v​\)</span>表示某前缀的前几个后缀，令<span class="math inline">\(\operatorname{link}(v)​\)</span>表示第一个不在等价类<span class="math inline">\(v​\)</span>中的后缀所在的等价类节点，称为<span class="math inline">\(v​\)</span>的<strong>后缀链接</strong>。</p>
+<p><strong>定义4：</strong>令<span class="math inline">\(\min(v)\)</span>表示节点<span class="math inline">\(v\)</span>表示的最短子串，<span class="math inline">\(\max(v)\)</span>表示节点<span class="math inline">\(v\)</span>表示的最长子串。</p>
+<p><strong>观察1：</strong>结合定义3，显然<span class="math inline">\(\left|\min(v)\right| = \left|\max(\operatorname{link}(v))\right| + 1\)</span>。</p>
+<p><strong>定义4：</strong>设SAM初始节点为<span class="math inline">\(v_0\)</span>，令<span class="math inline">\(\operatorname{link}(v_0) = \emptyset, \min(v_0) = \max(v_0) = \emptyset\)</span>。</p>
+<p><strong>引理4：</strong>节点与后缀链接构成一棵以初始节点<span class="math inline">\(v_0​\)</span>为根的树。</p>
+<p><strong>证明：</strong>后缀链接<span class="math inline">\(\operatorname{link}(v)\)</span>的表示的子串长度是严格小于<span class="math inline">\(v\)</span>。顺着后缀链接总可以退回到表示子串长度为<span class="math inline">\(0\)</span>的<span class="math inline">\(v_0\)</span>。</p>
+<p><strong>观察2：</strong>由引理2，定义3，<span class="math inline">\(\operatorname{endpos}(v) \subsetneq \operatorname{endpos}(\operatorname{link}(v))\)</span>。</p>
+<p><strong>观察3：</strong>因此，后缀链接组成的树也完全对应<span class="math inline">\(\operatorname{endpos}​\)</span>等价类的子集关系。</p>
+<h1 id="构建算法">构建算法</h1>
+<p>我们采用增量式的方法构建后缀自动机，即考虑在<span class="math inline">\(S\)</span>的SAM的基础上构建<span class="math inline">\(S|c\)</span>的后缀自动机：</p>
+<p>在算法中，我们对于一个节点<span class="math inline">\(v\)</span>只存储以下信息：</p>
+<ol type="1">
+<li><span class="math inline">\(\operatorname{link}(v)\)</span>：后缀链接</li>
+<li><span class="math inline">\(\operatorname{len}(v) = |\max(v)|​\)</span></li>
+<li>转移边</li>
+</ol>
+<p>算法流程如下：</p>
+<ol type="1">
+<li>令<span class="math inline">\(v_{\text{last}}\)</span>表示原来表示整个<span class="math inline">\(S\)</span>串的节点。</li>
+<li>创建新节点<span class="math inline">\(v_{\text{cur}}\)</span>用于表示串<span class="math inline">\(S|c\)</span>，令<span class="math inline">\(\operatorname{len}(v_{\text{cur}}) = \operatorname{len}(v_{\text{last}}) + 1\)</span>。</li>
+<li>从<span class="math inline">\(v_{\text{last}}​\)</span>开始顺着后缀链接一路向上，对于没有<span class="math inline">\(c​\)</span>转移边的节点添加到<span class="math inline">\(v_{\text{cur}}​\)</span>的后缀转移。如果一路到了<span class="math inline">\(v_0​\)</span>，那么令<span class="math inline">\(\operatorname{link}(v_{\text{cur}}) = v_0​\)</span>，否则在第一个存在<span class="math inline">\(c​\)</span>转移边的节点<span class="math inline">\(p​\)</span>出停住。记<span class="math inline">\(p​\)</span>顺<span class="math inline">\(c​\)</span>转移到<span class="math inline">\(q​\)</span>。</li>
+<li>判断：
+<ol type="1">
+<li>如果<span class="math inline">\(\operatorname{len}(q) = \operatorname{len}(p) + 1​\)</span>，则令<span class="math inline">\(\operatorname{link}(v_{\text{cur}}) = q​\)</span>。</li>
+<li>否则，将<span class="math inline">\(q\)</span>复制一份得到<span class="math inline">\(q&#39;\)</span>，令<span class="math inline">\(\operatorname{len}(q&#39;) = \operatorname{len}(p) + 1\)</span>。令<span class="math inline">\(\operatorname{link}(q) = q&#39;\)</span>且<span class="math inline">\(\operatorname{link}(v_{\text{cur}}) = q&#39;\)</span>。同时再顺着<span class="math inline">\(p\)</span>的后缀链接向上，把所有指向<span class="math inline">\(q\)</span>的<span class="math inline">\(c\)</span>转移边重定向到<span class="math inline">\(q&#39;\)</span>，直到到达初始节点或者遇到一个非<span class="math inline">\(q\)</span>的转移为止。</li>
+</ol></li>
+</ol>
+<h1 id="正确性证明">正确性证明</h1>
+<p>首先，算法从创建一个新状态<span class="math inline">\(v_{\text{cur}}​\)</span>开始，这个节点表示的字符串是<span class="math inline">\(S|c​\)</span>，同时也开辟一个新的等价类。</p>
+<p>接下来对于之前的后缀我们都要做相应的更新（加上<span class="math inline">\(c\)</span>才算新的后缀），最简单的方法就是给这些节点加上往<span class="math inline">\(v_{\text{cur}}\)</span>的字符<span class="math inline">\(c\)</span>转移边，但是这些转移边必须不与之前的转移冲突才行，因此我们到节点<span class="math inline">\(p\)</span>就停止了，再加就冲突了。（注意我们在这里每给一个节点<span class="math inline">\(v\)</span>（设表示串为<span class="math inline">\(S_v\)</span>）加一条<span class="math inline">\(c\)</span>转移边，我们就把<span class="math inline">\(S_v|c\)</span>加到了<span class="math inline">\(v_{\text{cur}}\)</span>表示的串集合当中。这决定了<span class="math inline">\(v_{\text{cur}}\)</span>的后缀链接应该链接到哪里。）</p>
+<p>首先如果我们找不到节点<span class="math inline">\(p\)</span>，也就是我们一路到了初始节点，那说明这个<span class="math inline">\(c\)</span>就根本没有<span class="math inline">\(S\)</span>中出现过，也说明<span class="math inline">\(v_{\text{cur}}\)</span>一下子表示了<span class="math inline">\(S|c\)</span>的所有非空后缀了，因此由后缀链接的定义<span class="math inline">\(\operatorname{link}(v_{\text{cur}}) = v_0\)</span>。</p>
+<p>如果我们确实在<span class="math inline">\(p\)</span>节点停下了，令<span class="math inline">\(p\)</span>代表的串集为<span class="math inline">\(S_p\)</span>，那<span class="math inline">\(q\)</span>的串集<span class="math inline">\(S_q\)</span>至少包含<span class="math inline">\(S_p|c\)</span>，而此时<span class="math inline">\(S_p|c\)</span>的<span class="math inline">\(\operatorname{endpos}\)</span>集合是被拓展的（因为现在<span class="math inline">\(S_p|c\)</span>也会在<span class="math inline">\(S|c\)</span>的末尾结束），因此：</p>
+<ol type="1">
+<li>如果<span class="math inline">\(S_q\)</span>只包含<span class="math inline">\(S_p|c\)</span>，也就是<span class="math inline">\(\operatorname{len}(q) = \operatorname{len}(p)+1\)</span>那么我们可以直接拓展<span class="math inline">\(q\)</span>的等价类。此时<span class="math inline">\(\operatorname{link}(v_{\text{cur}}) = q\)</span>。</li>
+<li>如果<span class="math inline">\(S_q\)</span>不只包含<span class="math inline">\(S_p|c\)</span>，也就是<span class="math inline">\(\operatorname{len}(q) &gt; \operatorname{len}(p) + 1\)</span>的话，那么<span class="math inline">\(S_q\)</span>中只有一部分串的<span class="math inline">\(\operatorname{endpos}\)</span>集合被拓展了，此时我们有必要重新开一个节点来表示拓展得到的新等价类。那些比<span class="math inline">\(S_p|c\)</span>长的，没有拓展的串仍然保留在<span class="math inline">\(q\)</span>，<span class="math inline">\(S_p|c\)</span>被单独移到了<span class="math inline">\(q&#39;\)</span>，由定义那么<span class="math inline">\(\operatorname{link}(q) = q&#39;\)</span>。最后我们需要做一些收尾工作，也就是把一些节点从转移到<span class="math inline">\(q\)</span>变成转移到<span class="math inline">\(q&#39;\)</span>，我们发现这些节点代表的串一定是<span class="math inline">\(S_p\)</span>的后缀，因此只要一路<span class="math inline">\(p\)</span>的后缀链接向上就行了。</li>
+</ol>
+<p>关于时空复杂度，首先这个算法本身的保证了状态数的上界是<span class="math inline">\(2|S| - 1 = O(|S|)​\)</span>的。</p>
+<p>其次这个算法的转移数也是线性的，这两个性质一起确保了整个算法的均摊复杂度是线性的。具体证明可以看<a target="_blank" rel="noopener" href="https://oi-wiki.org/string/sam/">这里</a>。</p>
+<h1 id="代码实现">代码实现</h1>
+<p>个人认为SAM的代码实现只要理解了SAM的原理其实是比SA简单的：</p>
+<pre class="line-numbers"><code class="language-cpp">namespace sam &#123;
+    int cnt = 1, last = 1;
+    const int EPSILON = 26;
+    int len[N], link[N], nxt[N][EPSILON];
+    
+    void extend(int c) &#123;
+        int cur = ++cnt, p = last;
+        len[cur] = len[last] + 1;
+        for (; p &amp;&amp; !nxt[p][c]; p = link[p]) nxt[p][c] = cur;
+        if (!p) link[cur] = 1;
+        else &#123;
+            int q = nxt[p][c];
+            if (len[q] == len[p] + 1) link[cur] = q;
+            else &#123;
+                int nq = ++cnt;
+                len[nq] = len[p] + 1;
+                link[nq] = link[q];
+                copy(nxt[q], nxt[q] + EPSILON, nxt[nq]);
+                for (; nxt[p][c] == q; p = link[p]) nxt[p][c] = nq;
+                link[q] = link[cur] = nq;
+            &#125;
+        &#125;
+        last = cur;
+    &#125;
+&#125;</code></pre>
+<p>SAM绝对是代码中“微言精义”的典范233。</p>
+<p>其次在DFS遍历SAM的后缀链接树的时候其实有一个小技巧，就是把节点按照<span class="math inline">\(\operatorname{len}\)</span>从大到小的顺序进行访问（这一步可以桶排），这样可以确保儿子节点一定在父亲节点之前访问到。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1948,84 +2103,6 @@ int main() &#123;
     &#125;
     return 0;
 &#125; </code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/06/Nim%E6%B8%B8%E6%88%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/06/Nim%E6%B8%B8%E6%88%8F/" class="post-title-link" itemprop="url">Nim博弈与阶梯博弈</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2018-09-06 20:31:36 / 修改时间：20:52:09" itemprop="dateCreated datePublished" datetime="2018-09-06T20:31:36+08:00">2018-09-06</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>觉得博弈论这种东西，知道结论代码巨短无比，不知道结论当场去世……</p>
-<h1 id="nim-博弈">Nim 博弈</h1>
-<h2 id="问题表述">问题表述</h2>
-<p>有<span class="math inline">\(n\)</span>堆石子，第<span class="math inline">\(i\)</span>堆石子有<span class="math inline">\(a_i\)</span>个，两个玩家轮流操作，每个玩家每轮可以选择一堆石子，取走至少一个石子（也可以把一堆取光，但不能不取）。不能操作者判负。已知每方均采取最优策略，问先手还是后手必胜？</p>
-<h2 id="解法">解法</h2>
-<p><strong>定理：</strong>Nim博弈先手必胜当且仅当<span class="math inline">\(\bigoplus_{i = 1}^n a_i \neq 0\)</span>。</p>
-<p><strong>证明：</strong>设<span class="math inline">\(\bigoplus_{i = 1}^n a_i = x \neq 0\)</span>，且<span class="math inline">\(x\)</span>的最高位为<span class="math inline">\(j\)</span>，由异或的性质，显然存在一个<span class="math inline">\(a_i\)</span>的第<span class="math inline">\(j\)</span>位为<span class="math inline">\(1\)</span>，且<span class="math inline">\(a_i \oplus x &lt; a_i\)</span>，我们选择第<span class="math inline">\(i\)</span>堆，令<span class="math inline">\(a_i = a_i \oplus x\)</span>，由异或的相消性，此时<span class="math inline">\(\bigoplus_{i = 1}^n a_i = 0\)</span>，我们把这样一个局面留给了后手，而后手无论怎么操作异或和都会变成非零。而不能操作的局面，即全零的局面的异或和同样为<span class="math inline">\(0\)</span>，又因为我们每次都可以那样地把锅推给对方，因此先手必胜。</p>
-<h1 id="阶梯博弈">阶梯博弈</h1>
-<h2 id="问题表述-1">问题表述</h2>
-<p>有<span class="math inline">\(n\)</span>阶阶梯从左到右从低到高排开，记地面为第<span class="math inline">\(0\)</span>级，第<span class="math inline">\(i\)</span>个阶梯上有<span class="math inline">\(a_i\)</span>个石子，两个玩家轮流操作，每个玩家每轮可以选择一个阶梯，将其中的至少一个石子转移到左边的阶梯（或者地面）上。不能操作者判负。已知每方均采取最优策略，问先手还是后手必胜？</p>
-<h2 id="解法-1">解法</h2>
-<p><strong>定理：</strong>阶梯博弈等价于奇数阶的Nim博弈。</p>
-<p><strong>证明：</strong>如果上一步对方从一个偶数阶的阶梯移动若干个石子到奇数阶，那么我们就原封不动地在这一步把这些石子再移到左边的偶数阶上去，因此偶数阶的石子的移动不造成影响。而既然偶数阶不造成影响，那么从奇数阶转移到偶数阶的操作等价于从奇数阶取走了若干石子（如果我们不看偶数阶），这样最后偶数阶的石子会全部到地面上，而奇数阶无法操作者自然就输了，证毕。</p>
-<p><strong>例题：</strong>POJ 1704</p>
 
       
     </div>

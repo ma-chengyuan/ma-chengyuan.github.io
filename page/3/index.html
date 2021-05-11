@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-count">93</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,148 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/08/PACT0706/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/08/PACT0706/" class="post-title-link" itemprop="url">PACT 07/06 线规舍入 + 背包问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-08 19:14:21" itemprop="dateCreated datePublished" datetime="2020-07-08T19:14:21+08:00">2020-07-08</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-07-12 11:15:32" itemprop="dateModified" datetime="2020-07-12T11:15:32+08:00">2020-07-12</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="线性规划舍入lp-rounding">线性规划舍入（LP Rounding）</h1>
+<p>对于很多的<span class="math inline">\(\mathsf{NP}\)</span>问题，我们都可以写出一个对应的整数规划（IP），然而写成整数规划本身没有啥用，因为整数规划也是<span class="math inline">\(\mathsf{NP}\)</span>的。但是整数规划可以通过<strong>松弛</strong>转变为线性规划，后者是可以在多项式时间内求解的，这就给近似算法的设计提供了一个思路。</p>
+<p>唯一的问题是，线性规划给出的解未必就是整数了（在例如网络流问题等特殊的问题下还是有可能的），因此我们需要在确保解的可行性的前提下对于线性规划的解进行舍入，这个技巧便成为LP rounding。</p>
+<p>以带权顶点覆盖问题为例，其整数规划为 <span class="math display">\[
+\begin{aligned}
+    \text{minimize}\quad &amp;\sum_{v\in V}c_vx_v \\
+    \text{subject to}\quad &amp;x_u+x_v\ge 1\quad \forall (u, v)\in E \\
+    &amp;x_v \in \{0,1\}\quad \forall v\in V
+\end{aligned}
+\]</span> <span class="math inline">\(x_v\)</span>表示<span class="math inline">\(v\)</span>是否被选入覆盖集当中。</p>
+<p>其松弛后的线性规划为 <span class="math display">\[
+\begin{aligned}
+    \text{minimize}\quad &amp;\sum_{v\in V}c_vx_v \\
+    \text{subject to}\quad &amp;x_u+x_v\ge 1\quad \forall (u, v)\in E \\
+    &amp;x_v \ge 0\quad \forall v\in V
+\end{aligned}
+\]</span> 显然这个线性规划在有的时候不会给出整数解，例如对于一个三角形，整数规划会给两个顶点的<span class="math inline">\(x\)</span>赋<span class="math inline">\(1\)</span>，而线性规划会给三个顶点赋<span class="math inline">\(\frac{1}{2}\)</span>。</p>
+<p>于是就需要舍入。如何舍入？设线性规划最优解<span class="math inline">\(x_v^*\ge \frac{1}{2}\)</span>时，整数规划的解<span class="math inline">\(\hat x_v\)</span>，则 <span class="math display">\[
+\hat x_v = \begin{cases}
+    1,&amp;x_v^*\ge \frac{1}{2} \\
+    0,&amp;x_v^*&lt; \frac{1}{2}
+\end{cases}
+\]</span> 由于我们的约束<span class="math inline">\(x_u+x_v\ge 1\)</span>，<span class="math inline">\(x_u,x_v\)</span>当中至少有一个<span class="math inline">\(\ge \frac{1}{2}\)</span>，因此这么<strong>舍入后的解依然是可行解</strong>。</p>
+<p>注意到如果按照这么舍入，<span class="math inline">\(\hat x_v \le 2x_v^*\)</span>，又注意到线性规划的最优解一定不大于原整数规划的最优解，即<span class="math inline">\(\mathrm{OPT}\)</span>： <span class="math display">\[
+\sum_{v\in V}c_v\hat x_v \le \sum_{v\in V}2c_vx_v^* = 2\sum_{v\in V}c_vx_v^* \le 2\cdot\mathrm{OPT}
+\]</span> 因此我们的算法就是一个<span class="math inline">\(2\)</span>倍近似算法。这个算法较之前极大匹配算法的优势在于其可以很好地处理点带权的情况。</p>
+<h1 id="背包问题">背包问题</h1>
+<h2 id="定义">定义</h2>
+<p><strong>输入：</strong><span class="math inline">\(n\)</span>件物品，每一件物品有重量<span class="math inline">\(w_i\)</span>和价值<span class="math inline">\(p_i\)</span>，以及背包容量<span class="math inline">\(W\)</span>。</p>
+<p><strong>目标：</strong>在物品总重不超过背包容量的前提下使得打包的物品价值总和最大。</p>
+<h2 id="贪心算法">贪心算法</h2>
+<p>一个非常简单直接的想法是按照价重比（<span class="math inline">\(\frac{p_i}{w_i}\)</span>）贪心，但是这个贪心非常容易被卡掉，比如说有两个物品，第一件物品的重量为<span class="math inline">\(1\)</span>，价值为<span class="math inline">\(1+\varepsilon\)</span>，第二件物品的重量和价值都是<span class="math inline">\(W\)</span>，那按照价重比贪心我会先选第一件，然后之后就不能选第二件了，这个方案就很糟糕，而且和最优解的差距可以任意大。</p>
+<p>但是有一个简单的小优化：假设物品<span class="math inline">\(i\)</span>是我们第一个因为放不下不选的物品，我们最后在贪心的方案和物品<span class="math inline">\(i\)</span>单件中择优输出，这个算法一下子就会好上很多——事实上这就是一个<span class="math inline">\(2\)</span>倍近似算法了。</p>
+<p><strong>证明：</strong>分两种情况。</p>
+<ol type="1">
+<li>贪心方案的总重<span class="math inline">\(&gt; \frac{W}{2}\)</span>。因为我们是按照价重比贪心的，因此最优解的总价重比不会大于我们贪心方案的价重比，而贪心方案的重量至多是<span class="math inline">\(B\)</span>，因此此时我们贪心方案的总价值至少为最优方案的<span class="math inline">\(\frac{1}{2}\)</span>。</li>
+<li>贪心方案的总重<span class="math inline">\(\le\frac{W}{2}\)</span>。装不下下一个，说明接下来的物品是重量<span class="math inline">\(&gt;\frac{W}{2}\)</span>的大块头，令这个物品为<span class="math inline">\(i\)</span>。这样的大块头在任何打包方案当中都至多塞一个。此时最优解总价值不大于当前贪心解价值与<span class="math inline">\(w_i\)</span>之和（这个论断可以通过画图的方式进行证明，目前似乎还没有找到更有说服力的纯文字证明）。因为我们最后择优输出，因此我们最终方案的总价值至少是最优方案的<span class="math inline">\(\frac{1}{2}\)</span>。</li>
+</ol>
+<h2 id="动态规划">动态规划</h2>
+<p>背包问题的动态规划是老生常谈的问题了，时间复杂度是<span class="math inline">\(\mathcal O(nW)\)</span>，看起来是多项式？其实不然，因为<span class="math inline">\(W\)</span>有关的信息只需要<span class="math inline">\(\mathcal O(\log W)\)</span>个比特存储，因此这个时间复杂度实际上是和输入长度成指数级的。</p>
+<h2 id="多项式时间近似方案ptas">多项式时间近似方案（PTAS）</h2>
+<p>接下来我们提供背包问题的一个多项式时间近似方案（PTAS）。什么是PTAS？一个PTAS可以认为是一类基于参数<span class="math inline">\(\varepsilon\)</span>的算法，且参数为<span class="math inline">\(\varepsilon\)</span>的算法构成问题的<span class="math inline">\((1+\varepsilon)\)</span>倍近似（对于最大化问题则可以是<span class="math inline">\((1-\varepsilon)\)</span>倍近似）。算法的运行时间可以和<span class="math inline">\(\frac{1}{\varepsilon}\)</span>成指数级（因为在每一个算法当中，<span class="math inline">\(\varepsilon\)</span>被视作常数），如果算法的运行时间和<span class="math inline">\(1 \over \varepsilon\)</span>成多项式级，则这个PTAS被称为完全多项式时间近似方案（FPTAS或FPAS）。</p>
+<p>要设计这个算法，我们先从DP入手。考虑背包问题的如下DP：设<span class="math inline">\(A(i, p)\)</span>是考虑前<span class="math inline">\(i\)</span>个物品，总价值为<span class="math inline">\(p\)</span>时的最小总重，则有如下转移： <span class="math display">\[
+A(i, p) = \begin{cases}
+    0, &amp;i=0 \text{ or }p=0 \\
+    A(i-1, p), &amp;p&lt;p_i \\
+    \min \{A(i-1,p),w_i+A(i-1,p-p_i)\}, &amp;\text{otherwise}
+\end{cases}
+\]</span> 如果设所有物品的最大价值是<span class="math inline">\(P\)</span>，那么显然总价值最多便是<span class="math inline">\(nP\)</span>，DP的时间复杂度就是<span class="math inline">\(\mathcal O(n^2P)\)</span>。我们主要担心的问题是<span class="math inline">\(P\)</span>太大，要解决这个问题，我们把<span class="math inline">\(P\)</span>缩小就行了。</p>
+<p>因此我们的PTAS是：<strong>对于每件物品，对其价格等比例缩小舍入，新的价格为<span class="math inline">\(p_i&#39;=\lfloor p_i / k\rfloor\)</span>。随后进行DP，并输出DP的最优解。</strong>设最优解为<span class="math inline">\(S\)</span>。</p>
+<p>这样一来我们的总价格是多少呢？（定义<span class="math inline">\(p(\cdot)\)</span>表示集合的价格）。 <span class="math display">\[
+\begin{aligned}
+    p(S) &amp;= \sum_{i \in S} p_i \\
+    &amp;\ge \sum_{i \in S} p_i&#39;k \\
+    &amp;= k\sum_{i \in S} p_i&#39; \\
+    &amp;\ge k\sum_{i \in \mathrm{OPT}} p_i&#39; \\
+    &amp;\ge k\sum_{i \in \mathrm{OPT}} \left(\frac{p_i}{k} - 1\right) \\
+    &amp;= \sum_{i \in \mathrm{OPT}} p_i- k|\mathrm{OPT}| \\
+    &amp;\ge \sum_{i \in \mathrm{OPT}} p_i - kn
+\end{aligned}
+\]</span> 第二个不等号处用到了DP的最优性。</p>
+<p>若令<span class="math inline">\(k=\frac{\varepsilon P}{n}\)</span>，则有 <span class="math display">\[
+\begin{aligned}
+    p(S) &amp;\ge \sum_{i \in \mathrm{OPT}} p_i - kn \\
+    &amp;= \sum_{i \in \mathrm{OPT}} p_i - \varepsilon P \\
+    &amp;\ge p(\mathrm{OPT}) - \varepsilon p(\mathrm{OPT}) \\
+    &amp;= (1-\varepsilon) p(\mathrm{OPT})
+\end{aligned}
+\]</span> 第二个不等号处用到了<span class="math inline">\(p(\mathrm{OPT}) \ge P\)</span>。（此处我们忽略不可能装得下的物品）</p>
+<p>因此这个算法确实是一个PTAS。这个算法的运行时间是多少呢？ <span class="math display">\[
+\mathcal{O} (n^2P) = \mathcal O \left(n^2 \frac{P}{k}\right) = \mathcal O\left(\frac{n^3}{\varepsilon}\right)
+\]</span> 可见这个算法其实不仅是一个PTAS，还是一个FPTAS。这个时间复杂度可以说是很优秀的了。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1601,144 +1743,6 @@ d(x,S) \le w_{uv} \le 2\cdot \mathrm{OPT}
     |S| = 2|M| \le 2\cdot \mathrm{OPT}
 \end{aligned}
 \]</span> 得证。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/06/21/%E7%BB%84%E5%90%88%E6%B1%82%E5%92%8C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/06/21/%E7%BB%84%E5%90%88%E6%B1%82%E5%92%8C/" class="post-title-link" itemprop="url">论省选中有意思的一道组合题</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-06-21 14:45:33" itemprop="dateCreated datePublished" datetime="2020-06-21T14:45:33+08:00">2020-06-21</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-06-27 20:01:10" itemprop="dateModified" datetime="2020-06-27T20:01:10+08:00">2020-06-27</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>省选结束了，本人作为划水3年的OIer宣告原地退役，唯一写出正解的是D1T2。我其实觉得这道题挺有意思的（虽然大佬们都说只是推式子而已……嘛，毕竟本来没期待自己能做出来），就写篇文章记一下自己的想法吧。</p>
-<h1 id="题意">题意</h1>
-<p>给定整数<span class="math inline">\(n, x, P\le 10^9\)</span>，以及一个<span class="math inline">\(m \le 1000\)</span>次整系数多项式<span class="math inline">\(f\)</span>，求 <span class="math display">\[
-\left[\sum_{k=0}^nf(k)x^k\binom{n}{k}\right]\bmod P
-\]</span></p>
-<h1 id="心路历程">心路历程</h1>
-<h2 id="先乱搞一波">先乱搞一波</h2>
-<p>看到这个题目的第一眼我觉得颇为眼熟。虽然没学过奥数，印象当中《具体数学》里面花了很大笔墨讲由这种指数，多项式以及二项式系数组合而成的和式的处理方法，似乎最后也讲到了机械求和法，然并卵，印象止步于印象，机械求合法太复杂了自己并没有记下来。</p>
-<p>但是自己的残存记忆告诉我机械求和法的第一步是把求和式化成超几何函数，虽然后者我更没办法但是本着有逼就要装的思想……为什么不试一试呢？</p>
-<p>什么样的级数是超几何的？《具体数学》里面给出的方法是求相邻项之比<del>幸好这个我还没有忘记</del>，而显而易见地是多项式求比是求不出具有良好形式的结果的，因此<strong>多项式必须转化为性质更优良的下降阶乘幂处理</strong>（关于下降阶乘幂我记得两年之前就写过一篇成套方法和有限微积分的博文，现在想来下降阶乘幂在离散求和问题当中真的有非常良好的性质，我在这里就沿用《具体数学》里的记号了：<span class="math inline">\(k^{\underline m} = \prod_{i=0}^m (k-i)\)</span>）： <span class="math display">\[
-\begin{aligned}
-\frac{(k+1)^{\underline{m}}x^{k+1}\binom{n}{k+1}}{k^{\underline{m}}x^k\binom{n}{k}} &amp;= \frac{(k+1)x(n-k)}{(k-m+1)(k+1)} \\
-&amp;= \frac{(n-k)x}{k-m+1}
-\end{aligned}
-\]</span> 不出所料，结果是一个有理函数，也就是说可以化成高斯超几何函数呢！</p>
-<p>不出所料，半瓶水的某人也就知道这些了（悲）。</p>
-<p>但是<strong>下降阶乘幂的思想是可以有的嘛</strong>！</p>
-<h2 id="部分分摸鱼">部分分摸鱼</h2>
-<p>在乱搞如预想的那般失败之后我就开始看部分分。</p>
-<p>部分分里面有一个<span class="math inline">\(f\)</span>是常数的，愣了一会发现能用二项式定理，答案是<span class="math inline">\((1+x)^n\)</span>。</p>
-<p>然后还有一个<span class="math inline">\(x=1\)</span>的。这个要怎么解决？</p>
-<p>从最简单的一次多项式开始： <span class="math display">\[
-\sum_{k=0}^nk\binom{n}{k}=?
-\]</span> 推式子本人是不会的，结论也忘了，但是从组合意义上还是好想的：<strong><span class="math inline">\(k\binom{n}{k}\)</span>就是从<span class="math inline">\(n\)</span>个人里面选<span class="math inline">\(k\)</span>个人，然后钦定一个做队长的方案数，把它求和，就是从<span class="math inline">\(n\)</span>个人里面选若干人，然后从当中钦定一个队长的方案数。</strong>这是先选人再定队长的顺序，我们可以先选队长再选人嘛！从<span class="math inline">\(n\)</span>个人里面选一个队长有<span class="math inline">\(n\)</span>种方法，剩下的<span class="math inline">\((n-1)\)</span>个人要不要都行，所以是<span class="math inline">\(2^{n-1}\)</span>种，二者相乘： <span class="math display">\[
-\sum_{k=0}^nk\binom{n}{k}=n2^{n-1}
-\]</span> 就把一次的式子推出来了。</p>
-<p>那二次的式子呢？ <span class="math display">\[
-\sum_{k=0}^nk^2\binom{n}{k}=?
-\]</span> 如果沿用之前运用组合意义化简的思路，那<span class="math inline">\(k^2\)</span>就有“可以重复选”的含义在，是不好处理的。但是之前的乱搞告诉我们，是不是化成下降阶乘幂会好处理一点呢？ <span class="math display">\[
-\sum_{k=0}^nk(k-1)\binom{n}{k}=?
-\]</span> 答案是肯定的，思路和一次的完全一样，只是从“选队长”变成了“选队长和副队长“，因此很快就可以得出： <span class="math display">\[
-\sum_{k=0}^nk(k-1)\binom{n}{k}=n(n-1)2^{n-2}
-\]</span> 然后就可以很快地推广出去了： <span class="math display">\[
-\sum_{k=0}^nk^{\underline{m}}\binom{n}{k}=n^{\underline{m}}2^{n-m}
-\]</span> 这样几个部分分就基本拿到了。</p>
-<h2 id="把两者组合起来">把两者组合起来</h2>
-<p>那如果<span class="math inline">\(x\neq 1\)</span>且<span class="math inline">\(f\)</span>非常数要怎么做呢？我们不妨还是把<span class="math inline">\(f\)</span>想成下降阶乘幂（怎么拆另说）： <span class="math display">\[
-\sum_{k=0}^nk^{\underline{m}}x^k\binom{n}{k}=?
-\]</span> 然后思考其组合意义，稍开脑洞即可得到：</p>
-<p><strong><span class="math inline">\(k^{\underline{m}}x^k\binom{n}{k}\)</span>是从<span class="math inline">\(n\)</span>个人里面挑选<span class="math inline">\(k\)</span>个人，再给让当中<span class="math inline">\(m\)</span>人担任<span class="math inline">\(m\)</span>个不同职位，最后再让每个人从<span class="math inline">\(x\)</span>种颜色的帽子当中选一个戴上的方案数</strong>（不要问我怎么想到戴帽子的）。</p>
-<p>因此，由加法原理，对其求和之后就是从<span class="math inline">\(n\)</span>个人里面挑选<em>若干</em>个人，再给让当中<span class="math inline">\(m\)</span>人担任<span class="math inline">\(m\)</span>个不同职位，最后再让每个人从<span class="math inline">\(x\)</span>种颜色的帽子当中选一个戴上的方案数。</p>
-<p>那我们故技重施，调换顺序，不妨先从<span class="math inline">\(n\)</span>个人当中调出担任<span class="math inline">\(m\)</span>个职位的那<span class="math inline">\(m\)</span>个人（<span class="math inline">\(n^{\underline{m}}\)</span>种取法），再先让他们先选帽子（<span class="math inline">\(x^m\)</span>种选法），然后让剩下的<span class="math inline">\((n-m)\)</span>个人要不挑一个颜色的帽子进队要么滚蛋（<span class="math inline">\((1+x)^{n-m}\)</span>种取法）。于是就有了： <span class="math display">\[
-\sum_{k=0}^nk^{\underline{m}}x^k\binom{n}{k}=n^{\underline{m}}x^m(1+x)^{n-m}
-\]</span> 哇，式子就推出来了！</p>
-<h2 id="多项式拆分">多项式拆分</h2>
-<p>现在基于下降阶乘幂的式子已经推出来了，唯一剩下的就是把给定的<span class="math inline">\(f\)</span>拆成若干个下降阶乘幂的线性组合。 <span class="math display">\[
-\sum_{i=0}^ma_ik^i = \sum_{j=0}^m b_jk^{\underline{j}}
-\]</span> 即求<span class="math inline">\(b_j\)</span>的过程。</p>
-<p>显而易见地，我们需要从高次到低次拆，这样后拆出来的幂才不会对之前的结果造成影响。</p>
-<p>同时显然的是，我们需要知道下降阶乘幂展开后对应多项式的系数。</p>
-<p>现在回过来看，朴素的多项式乘法是完全可以胜任的。但是写多项式乘法毕竟比较繁琐，不如观察多项式系数的规律。</p>
-<p>令<span class="math inline">\(c[m, n]\)</span>表示下降阶乘幂<span class="math inline">\(x^{\underline m}\)</span>的展开式当中<span class="math inline">\(x^n\)</span>的系数。则由下降阶乘幂的定义： <span class="math display">\[
-x^{\underline m} = x^{\underline{m-1}}[x-(m-1)],\quad (m\ge 1)
-\]</span> 可以得出递推式： <span class="math display">\[
-c[m,n]=c[m-1,n-1]-(m-1)c[m-1,n]
-\]</span> 边界条件是<span class="math inline">\(c[0,0] = 1\)</span>以及<span class="math inline">\(c[m,0]=0\quad \forall m&gt;0\)</span>。这是一个类似杨辉三角的递推式，自然可以在<span class="math inline">\(\mathcal{O}\left(m^2\right)\)</span>的时间内算出来，代码也好写。</p>
-<p>至此，这道题目就完全解决了。</p>
-<p>其实不止如此，这个三角在考场上让我感到非常眼熟，回去查证了一下，果然<span class="math inline">\(c[m,n]\)</span>就是所谓的<strong>带符号的第一类斯特林数</strong>，“下降阶乘幂的展开系数”正是其重要的性质之一。</p>
-<h2 id="感想">感想</h2>
-<p>这道题对我的感触是比较深刻的，尤其是做出来之后，颇有一种成就感。</p>
-<p>细想来，我组合数学的公式其实几乎都没有背过，故而几乎所有的式子都是现场推出来的。而且推理的方式也不纯代数的暴算，而是通过combinatorial proof的方式。自从PACT学来这招之后我觉得这种方法实在是精妙。在最后自己还稀里糊涂地推演出了斯特林数的递推公式，或许这种高大上的组合数本身离我们就不遥远吧。</p>
-<p>而话又说回来，大佬们看我写的这篇文章，只怕有些不耐烦与乏味吧。那些认真学习过组合数学的选手，大概看到这道题只剩下满满的套路，毕竟斯特林数名声在外，falling factorial这个套路熟悉了也不难想到，而类似的组合式子大概课后的习题会有很多吧。看到诸多大佬将D1T2云淡风轻地说成“裸的推式子”，他们做这道题时的从容大概可见一斑。只有像自己这样偶尔翻翻《组合数学》和《具体数学》，半瓶水晃荡的，才会在考场上各种心情复杂，一惊一乍了。</p>
-<p>然而换一个角度，我觉得这道题对我来说真的不错，自己之前偶尔翻翻书也是。作为一道数学题，这道题并没有远远超出我的见识让我一筹莫展，也没有远远低于我的见识让我秒杀，恰是我稍微努力一下就能解决的。而这次考试正是给了日渐颓废，游手好闲的我一个“努力一下”的契机。就结果来看，解决这道题不仅给了我市选的信心，也给了我组合数学的信心，还让我在结题过程中观赏到了极佳的风景，似乎确实不赖。尤其是后者，若放在平时做题，随时可以查找资料，正确答案触手可及，那结论得出时大概也不会有考场上那么惊喜，那么愉悦了。</p>
-<h2 id="逆-转">逆 转</h2>
-<p>啊？出分了？！</p>
-<p>我考个250都能压线进队？！</p>
-<p>我可是根本就没认真复习啊，半年没碰OI了……</p>
-<p>唉，看来这次强行退役失败了，心情复杂……</p>
 
       
     </div>

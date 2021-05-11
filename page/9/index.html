@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-count">93</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,192 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/01/%E5%9F%BA%E7%AB%99%E9%80%89%E5%9D%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/09/01/%E5%9F%BA%E7%AB%99%E9%80%89%E5%9D%80/" class="post-title-link" itemprop="url">NOIP模拟赛 基站选址</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2018-09-01 13:49:02 / 修改时间：17:28:25" itemprop="dateCreated datePublished" datetime="2018-09-01T13:49:02+08:00">2018-09-01</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="题意">题意</h1>
+<p>给定一个<span class="math inline">\(n\)</span>个顶点<span class="math inline">\(m\)</span>条边的无向图，第<span class="math inline">\(i\)</span>个节点有可靠度<span class="math inline">\(r_i\)</span>，要求在节点中选取四个节点建设基站，其中有两个主基站，两个副基站。要求两个主基站必须和分别剩下的三个基站相连边，而两个副基站必须分别和两个主基站相连边。一个由两个主基站<span class="math inline">\(a, b\)</span>和两个副基站<span class="math inline">\(c, d\)</span>组成的基站的总可靠度定义为<span class="math inline">\((r_a + 1)(r_b + b) + r_cr_d\)</span>，求最大总可靠度。</p>
+<p><span class="math inline">\(n \le 5 \times 10^4, m \le 2 \times 10^5\)</span>。</p>
+<h1 id="解法">解法</h1>
+<p>题目要求我们寻找的四个点其实是<strong>三元环的并</strong>，主基站就是公共边的两个端点，而副基站就是公共边两侧的另外两个节点，因此，如果我们能够找出所有的三元环，并且对于每一条边维护他所在三元环相对顶点可靠度的最大和次大值，我们就可以通过枚举每一条边的方式完成最大总可靠度的计算。</p>
+<p>因此，这个题目的核心就是寻找三元环，朴素的算法是<span class="math inline">\(O(n^3)\)</span>的，明显不足以通过此题，因此我们要寻找复杂度更优的做法。</p>
+<p><strong>我们把顶点分为两类——大点和小点</strong>，分类的依据是点的度数，如果一个顶点的度数大于<span class="math inline">\(\sqrt m\)</span>就分在大点里，反之就落在小点里。我们对大点和小点分别处理。</p>
+<p><strong>对于大点，我们暴力枚举每个点</strong>：</p>
+<p>因为对于无向图来说，有 <span class="math display">\[
+\sum_{i = 1}^n \deg(i) = 2m
+\]</span> 因此我们可以断言：大点的数量是<span class="math inline">\(O(\sqrt m)\)</span>的，因此枚举大点的时间复杂度是<span class="math inline">\(O((\sqrt m)^3) = O(m\sqrt m)\)</span>。</p>
+<p>在这里我们处理了全部由大点构成的三元环。</p>
+<p><strong>对于小点，我们暴力枚举它的两条出边并判断对面两个点是否相连</strong>：</p>
+<p>因为我们在枚举一个顶点<span class="math inline">\(u\)</span>的出边的时候，显然每条边都被枚举了<span class="math inline">\(\deg(u) - 1\)</span>次，所以图中小点发出的每一条边都被枚举了<span class="math inline">\(O(\sqrt m)\)</span>次，总共有<span class="math inline">\(O(m)\)</span>条边，因此处理小点的时间复杂度还是<span class="math inline">\(O(m \sqrt m)\)</span>。</p>
+<p>在这里我们处理了至少包含一个小点的三元环。</p>
+<p><strong>合并在一起，这个算法可以找到所有的三元环，总的时间复杂度为<span class="math inline">\(O(m \sqrt m)\)</span></strong>，虽然对于稠密图而言因为<span class="math inline">\(m = O(n^2)\)</span>因此算法的复杂度还是接近<span class="math inline">\(O(n^3)\)</span>，但对于题目中的图大小还是非常优秀的。</p>
+<p>代码实现也不是非常复杂，使用链式前向星存图，然后额外维护数组<code>grt</code>和<code>snd</code>表示一条边所在三元环中所对点可靠值最大和次大的点的编号，再首先一个哈希表用于快速查询点和点之间的相连关系就可以了，注意常数。</p>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;cmath&gt;
+
+using namespace std;
+typedef long long ll;
+const int N = 50100;
+const int M = 500100;
+const int HASH = 1000007;
+const int INF = 0x3f3f3f3f;
+int n, m;
+int r[N];
+int tot, fst[N], nxt[M], to[M];
+int deg[N], bc, sc;
+int big[N], small[N];
+int grt[M], snd[M];
+
+#define max(a, b) ((a) &gt; (b) ? (a) : (b))
+#define hashEdge(a, b) (((a) &lt;&lt; 12) | (b))
+
+int hfst[HASH], hnxt[M], hval[M], htot;
+int hl[M], hr[M];
+
+void link(int a, int b) &#123;
+    deg[a]++;
+    nxt[++tot] = fst[a];
+    fst[a] = tot; to[tot] = b;
+    hl[++htot] = a; hr[htot] = b;
+    hval[htot] = tot;
+    int ent = hashEdge(a, b) % HASH;
+    hnxt[htot] = hfst[ent];
+    hfst[ent] = htot;
+&#125; 
+
+inline int findEdge(int a, int b) &#123; 
+    int ent = hashEdge(a, b) % HASH;
+    for (int i = hfst[ent]; i; i = hnxt[i])
+        if (hl[i] == a &amp;&amp; hr[i] == b) return hval[i];
+    return -1; 
+&#125;
+
+inline void updateEdge(int e, int c) &#123;
+    if (c == grt[e] || c == snd[e]) return;
+    if (r[c] &gt;= r[grt[e]]) snd[e] = grt[e], grt[e] = c;
+    else if (r[c] &gt;= r[snd[e]]) snd[e] = c;
+&#125;
+
+inline void updateTriplet(int a, int b, int c, int ab, int ac, int bc) &#123;
+    updateEdge(ab, c);
+    updateEdge(ab ^ 1, c);
+    updateEdge(ac, b);
+    updateEdge(ac ^ 1, b);
+    updateEdge(bc, a);
+    updateEdge(bc ^ 1, a);
+&#125;
+
+int main() &#123;    
+    scanf(&quot;%d%d&quot;, &amp;n, &amp;m); tot = htot = 1; r[0] = -INF;
+    for (int i = 1; i &lt;= n; i++) scanf(&quot;%d&quot;, &amp;r[i]);
+    for (int i = 1; i &lt;= m; i++) &#123;
+        int a, b;
+        scanf(&quot;%d%d&quot;, &amp;a, &amp;b);
+        link(a, b);
+        link(b, a);
+    &#125;
+    int s = sqrt(m);
+    sc = bc = 0;
+    for (int i = 1; i &lt;= n; i++) &#123;
+        if (deg[i] &lt; s) small[++sc] = i;
+        else big[++bc] = i;
+    &#125;
+    for (int i = 1; i &lt;= sc; i++) &#123;
+        int w = small[i];
+        for (int wu = fst[w]; wu; wu = nxt[wu]) &#123;
+            int u = to[wu];
+            for (int wv = fst[w]; wv != wu; wv = nxt[wv]) &#123;
+                int v = to[wv];
+                int uv = findEdge(u, v);
+                if (uv &gt; 0) updateTriplet(w, u, v, wu, wv, uv);
+            &#125;
+        &#125;
+    &#125;
+    for (int i = 1; i &lt;= bc; i++) &#123;
+        int w = big[i];
+        for (int j = 1; j &lt; i; j++) &#123;
+            int u = big[j];
+            int wu = findEdge(w, u);
+            if (wu &lt; 0) continue;
+            for (int k = 1; k &lt; j; k++) &#123;
+                int v = big[k];
+                int wv = findEdge(w, v), uv = findEdge(u, v);
+                if (wv &gt; 0 &amp;&amp; uv &gt; 0)
+                    updateTriplet(w, u, v, wu, wv, uv);
+            &#125;
+        &#125;
+    &#125;
+    int ans = 0; 
+    for (int i = 2; i &lt;= tot; i++) &#123;
+        int a = to[i], b = to[i ^ 1];
+        int c = grt[i], d = snd[i];
+        if (c == 0 || d == 0) continue;
+        ans = max(ans, (r[a] + 1) * (r[b] + 1) + r[c] * r[d]);
+    &#125;
+    printf(&quot;%d\n&quot;, ans);
+    return 0;
+&#125;</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1601,96 +1787,6 @@ f(n) = \sum_{k = 1}^n k^2 = D(n) &amp;= \frac{2n^3 + 3n^2 + n}{6} \\
 <p>第二步，考虑到我们解的线性方程当中含有多项式，因此需要采用系数向量的表示方法，基本算数运算代价变为<span class="math inline">\(O(n)\)</span>，但是注意到线性方程组列出时已经是简化阶梯形式，因此<strong>不需要高斯消元，只需要代入消元</strong>，时间复杂度是<span class="math inline">\(O(n^2)\cdot O(n) = O(n^3)\)</span>。</p>
 <p>第三步的复杂度自然是<span class="math inline">\(O(n^2)\)</span>。</p>
 <p>因此，基于成套方法的算法的综合复杂度为<span class="math inline">\(O(n^3)\)</span>。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/08/21/%E5%BF%AB%E9%80%9F%E6%9E%9A%E4%B8%BE%E5%AD%90%E9%9B%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/08/21/%E5%BF%AB%E9%80%9F%E6%9E%9A%E4%B8%BE%E5%AD%90%E9%9B%86/" class="post-title-link" itemprop="url">快速枚举二进制子集的方法</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-08-21 19:45:19" itemprop="dateCreated datePublished" datetime="2018-08-21T19:45:19+08:00">2018-08-21</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-10-07 16:30:21" itemprop="dateModified" datetime="2018-10-07T16:30:21+08:00">2018-10-07</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="简介">简介</h1>
-<p>目标：对于一个<span class="math inline">\(n\)</span>位二进制表示的子集<code>x</code>，我们希望枚举其子集。</p>
-<p>朴素枚举其子集的代码，复杂度<span class="math inline">\(O(2^{n})\)</span>：</p>
-<pre class="line-numbers"><code class="language-cpp">for (int s = 0; s &lt;= x; s++)
-    if (s | x == x)
-        // s 表示的二进制是x的子集</code></pre>
-<p>快速枚举其子集的代码，复杂度<span class="math inline">\(O(2^{|X|})\)</span>，其中<span class="math inline">\(X\)</span>是<code>x</code>表示的集合：</p>
-<pre class="line-numbers"><code class="language-cpp">for (int s = x; s &gt; 0; s = (s - 1) &amp; x)
-    // s表示的二进制是x的子集
-// 以上算法不！会！处！理！空！集！，额外处理！</code></pre>
-<p><strong>正确性证明：</strong></p>
-<p>代码中的<code>&amp; x</code>保证<code>s</code>一定是<code>s</code>的子集，而<code>(s - 1)</code>保证枚举出来的<code>s</code>递减至0，详细证明不在此赘述<del>脑补即可</del>.</p>
-<h1 id="拓展">拓展</h1>
-<p>在很多的状压DP当中，我们不仅要枚举一个集合的子集，而是要枚举<span class="math inline">\([0, 2^n)\)</span>的所有二进制数表示的集合的子集，如果使用朴素地暴力做法，那么复杂度显然是<span class="math inline">\(O(4^n)\)</span>，可以过<span class="math inline">\(n \le 10\)</span>的数据。</p>
-<p><strong>那么如果我们使用刚刚介绍的优化方法，复杂度会变成多少呢？</strong></p>
-<p><strong>分析：</strong>总体复杂度为： <span class="math display">\[
-\sum_{i = 0}^n \binom{n}{i}2^i = \sum_{i = 0}^n \binom{n}{i}2^i1^{n - i}
-\]</span> 逆用二项式定理： <span class="math display">\[
-\sum_{i = 0}^n \binom{n}{i}2^n = (2 + 1)^n = 3^n
-\]</span> 因此，算法的复杂度为<span class="math inline">\(O(3^n)\)</span>（而且是最优的），可以通过<span class="math inline">\(n \le 15\)</span>的数据。</p>
 
       
     </div>
