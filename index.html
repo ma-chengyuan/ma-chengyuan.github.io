@@ -266,7 +266,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-05-13 16:23:54" itemprop="dateModified" datetime="2021-05-13T16:23:54+08:00">2021-05-13</time>
+        <time title="修改时间：2021-05-16 11:55:01" itemprop="dateModified" datetime="2021-05-16T11:55:01+08:00">2021-05-16</time>
       </span>
 
   
@@ -515,7 +515,7 @@ yield Image.open(io.BytesIO(result))</code></pre>
 <li>在点击开关之后需要等一会来确保开关真的点下去了。</li>
 <li>循环的写法最好不要写成标准的<code>for</code>循环，因为这样的话文件图片上去之后代码就是干等。现在的写法确保了图片传上去之后立刻就获取下一张图片，之后再判断等待是否当前图片处理完成。再调用<code>next(images)</code>的过程中，浏览器也在独立于Python进程运行，因此我们毫无损失。将PDF的一页转化为一张高清图片需要1-2秒钟，而网站处理图片大概也是这么长时间，因此在这里循环写法的改变是一个很不错的优化。</li>
 </ol>
-<h1 id="将下载下来的图片拼合回pdf">将下载下来的图片拼合回PDF</h1>
+<h2 id="将下载下来的图片拼合回pdf">将下载下来的图片拼合回PDF</h2>
 <p>这个功能的实现是相对简单，只要照着PyMuPDF的文档写就行了。</p>
 <p>同时，我注意到pytesseract里面有输入图片直接输出PDF的函数，因此可以一并在这里完成。</p>
 <p>顺便可以通过tqdm显示一个进度条，方便看清进度。</p>
@@ -585,7 +585,53 @@ if __name__ == &quot;__main__&quot;:
     main()</code></pre>
 <p>大功告成！</p>
 <h1 id="优化避免开启浏览器">优化：避免开启浏览器</h1>
-<p>施工中~未完待续。</p>
+<p>在写完代码发完朋友圈之后我才开始认真思考一个问题：</p>
+<blockquote>
+<p><strong>为啥不直接逆向在线体验的API啊？</strong></p>
+</blockquote>
+<p></p>
+<p>我之前自己把自己给绕进去了。</p>
+<p>Selenium模拟的好处是实现思路自然，只需要知道人工使用的方法而不需要知道内部的代码实现与网络通信。但缺点也很明显，需要开浏览器带来了一个明显的开销。浏览器的内存占用使得并行操作也存在一定的难度。</p>
+<p>而直接模拟网络请求的好处就是确保没有资源浪费，存在并行化的潜质，而且相较于浏览器涉及到的不见耦合较少具有更高的稳定性（前提是API不变。Selenium则相较之下在内部API变化但界面不变的情况下具备跨版本的稳定性）。</p>
+<p>试一试？</p>
+<p><img src="/2021/05/11/Docleaner/image-20210513174125304.png" class=""></p>
+<p>打开开发者界面，定位到上传图片的按钮，Firefox的调试器很贴心地告诉我这里有一个event，于是点进去。</p>
+<p><img src="/2021/05/11/Docleaner/image-20210516112926163.png" class=""></p>
+<p>网站的开发者很贴心地没有做minify也没有做混淆，甚至还留了注释。</p>
+<p>我发现上传的主要逻辑其实在<code>$('.exeDaqw').click()</code>里，于是进一步在源码当中搜索<code>.exeDaqw</code>，发现如下片段：</p>
+<p><img src="/2021/05/11/Docleaner/image-20210516113209489.png" class=""></p>
+<p>通过阅读片段可以发现，这个<code>.exeDaqw</code>元素是通过<code>layui.upload</code>渲染的。我孤陋寡闻，但Layui看起来是一个控件库，<a target="_blank" rel="noopener" href="https://www.layui.com/">事实</a>也是如此。通过<code>url</code>字段我得以确定上传图片的API地址。在随后的代码当中又可以发现图片清理的API地址。</p>
+<p><img src="/2021/05/11/Docleaner/image-20210516113732940.png" class=""></p>
+<p>通过开发者窗口的网络监视器可以看到请求的实际情况：</p>
+<p><img src="/2021/05/11/Docleaner/image-20210516114103508.png" class=""></p>
+<p>经过一波操作比对，摸索得到的API可以写成如下代码：</p>
+<pre class="line-numbers"><code class="language-python">import requests
+
+def clean_doc_requests(images: Generator[Tuple[bytes, str], None, None]) \
+        -&gt; Generator[Image.Image, None, None]:
+    &quot;&quot;&quot;
+    Cleans the scanned document pages using docleaner&#39;s online service.
+
+    :param images: A generator yielding (an image as raw bytes, its extension as string).
+    &quot;&quot;&quot;
+    for (image, ext) in images:
+        # noinspection HttpUrlsUsage
+        req = requests.post(&quot;http://service.docleaner.cn/attachCollect/upload&quot;,
+                            files=&#123;&quot;file&quot;: (f&quot;image.&#123;ext&#125;&quot;, image)&#125;)
+        data = &#123;
+            # Weird typo in the API.
+            &quot;paramers&quot;: &quot;降噪,去斑点,去黑边,去背景,自动纠斜&quot;,
+            &quot;type&quot;: &quot;image&quot;,
+            &quot;storePath&quot;: req.json()[&quot;data&quot;][&quot;storePath&quot;],
+            &quot;userId&quot;: &quot;&quot;
+        &#125;
+        # noinspection HttpUrlsUsage
+        req = requests.post(&quot;http://service.docleaner.cn/exe/daqw&quot;, data=data)
+        result = base64.b64decode(req.json()[&quot;data&quot;][&quot;outFileStr&quot;])
+        yield Image.open(io.BytesIO(result))</code></pre>
+<p>和之前上面的<code>clean_doc_online</code>代码对比，可以看到代码和逻辑确实都简洁了很多，这就是扒API直接用的优点了。我很幸运，这个站点的代码和注释都很清楚，所以逆向还原出API还是很容易的，对于更加复杂的一些站点，Selenium可能不失为一个更简单粗暴的好办法。</p>
+<p>但有意思的地方来了：上面的这串代码，跑的比Selenium要慢。原因在之前解释Selenium的时候大致讲过了。Selenium新开了一个浏览器进程，那里上传图片还是等待结果本质上不会阻塞Python的运行，所以通过优化循环的写法，可以上传图片和从PDF中获取下一页图片同时进行。而<code>requests</code>是Python库，在请求时是阻塞的，因此就慢了。</p>
+<p>失之东隅收之桑榆，虽然我们的“优化”让我们的代码反而变慢了，但是也为进一步的优化铺平了道路：在用Selenium的时候，因为同时开几十个浏览器不仅视觉上很离谱而且内存占用很高，所以并行处理很难；而同时开几十个并发的请求却是再容易不过的事情了。因此我们下一步的优化就是利用Python的多进程库进行加速。</p>
 <h1 id="优化多进程加速">优化：多进程加速</h1>
 <p>施工中~未完待续。</p>
 
