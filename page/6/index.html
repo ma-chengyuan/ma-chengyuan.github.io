@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,96 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/12/10/DummyDisplay/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/12/10/DummyDisplay/" class="post-title-link" itemprop="url">使用边角料糊一个Dummy Display</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-12-10 21:54:12" itemprop="dateCreated datePublished" datetime="2019-12-10T21:54:12+08:00">2019-12-10</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2019-12-12 22:00:34" itemprop="dateModified" datetime="2019-12-12T22:00:34+08:00">2019-12-12</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>决定把家里的旧的MBA改装成服务器。如此便要合上盖子。</p>
+<p>但是合上盖子系统似乎就自动休眠了，改设置也没有什么很好的效果，即使可以使用<code>caffeinate</code>，重启之后还是会有问题。何况就算避免了休眠，在检测不到Display的时候据说显卡也是不工作的（虽然不知道核显是否也是如此）。网传常见的解决方法是“显卡欺骗器”，也就是Dummy Display，通过在显示端口模拟协议让系统检测到一个并不存在的Display，就行了。</p>
+<p>但是Dummy Display一个现成的就要10块左右，而且对于MBA这种DP的接口还不是很好找。</p>
+<p>于是自己从家里搜刮出了一些边角料糊了一个，效果还不错，成品如下：</p>
+<p><img src="/2019/12/10/DummyDisplay/device.jpg" class=""></p>
+<p>使用的元件是一个DP转接头以及若干买Arduino送的电阻。</p>
+<p>怎么做到的呢？</p>
+<p>根据<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/VGA_connector">Wikipedia</a>上的表述，下图VGA端口的1, 2, 3线分别表示RGB的模拟信号，6, 7, 8对应返线。</p>
+<p><img src="/2019/12/10/DummyDisplay/VGA_Port.svg" class=""></p>
+<p>再根据Wiki上的资料，RGB线路的阻抗为<span class="math inline">\(75\mathrm{\Omega}\)</span>。对于VGA这种老式模拟接口，通常通过线路负载确定是否连接，因此为了欺骗端口，我们只需要在1-6，2-7，3-8分别接上三个<span class="math inline">\(75\mathrm{\Omega}\)</span>的电阻即可。</p>
+<p>但是家里面只搜出5个<span class="math inline">\(220\mathrm{\Omega}\)</span>的和<span class="math inline">\(5\)</span>个<span class="math inline">\(110\mathrm{\Omega}\)</span>的电阻，于是乎就有了上图的蜜汁接线。具体来说：</p>
+<ol type="1">
+<li>三个<span class="math inline">\(220\mathrm{\Omega}\)</span>并联</li>
+<li>两个<span class="math inline">\(220\mathrm{\Omega}\)</span>并上两个<span class="math inline">\(110\mathrm{\Omega}\)</span>的串联</li>
+<li>一个<span class="math inline">\(110\mathrm{\Omega}\)</span>并上两个<span class="math inline">\(110\mathrm{\Omega}\)</span>的串联</li>
+</ol>
+<p>最后每个电路的等效电阻就是<span class="math inline">\(220/3\approx 73.33\mathrm{\Omega}\)</span>，再假装有线阻就是<span class="math inline">\(75\mathrm{\Omega}\)</span>的水平，使用下来完全没问题，当然因为其他线没连，分辨率之类的信息是缺失的，我的电脑似乎默认<span class="math inline">\(1024\times768\)</span>处理了。</p>
+<p>不得不说还是VGA这种模拟的端口欺骗起来容易，HDMI这种数字端口就要复杂很多。</p>
+<p>（后续万用表测试下来<span class="math inline">\(110\mathrm{\Omega}\)</span>的实际电阻是<span class="math display">\[1\mathrm{k\Omega}\]</span>，大概是读色环的时候读反了<del>我依然坚持认为就应该按照我的方向读</del>，然而最后成品依然可以工作，只能认为是冗余比较高，或者是玄学了。）</p>
+<p>（似乎装了Linux之后就可以通过设置避免自动休眠了？）</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1645,224 +1735,6 @@ x_{n + 1} = \frac{x_n + \text{该二进制位}}{2}
 <p>我们观察到，出现问题的BCD位，一定是在右移之前是奇数的位，而奇数最低位上的<span class="math inline">\(1\)</span>，在右移之后，就到了右边的最高位上，也就是右边的哪一位右移之后会大于等于<span class="math inline">\(8\)</span>。</p>
 <p>而回到十进制，如果一个奇数位除以二，结果应该给右边的位加上<span class="math inline">\(5\)</span>，而我们之前算法中右移过来的<span class="math inline">\(1\)</span>让它加了<span class="math inline">\(8\)</span>，所以要减去<span class="math inline">\(3\)</span>。</p>
 <p>这就是“满八减三”的由来。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/02/15/%E6%B5%81%E6%B5%AA%E5%9C%B0%E7%90%83/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/02/15/%E6%B5%81%E6%B5%AA%E5%9C%B0%E7%90%83/" class="post-title-link" itemprop="url">流浪地球中的轨道运动学</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-02-15 00:00:00" itemprop="dateCreated datePublished" datetime="2019-02-15T00:00:00+08:00">2019-02-15</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-12-08 21:38:48" itemprop="dateModified" datetime="2019-12-08T21:38:48+08:00">2019-12-08</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><strong>这篇笔记写于2019/2/15，原供稿班级公众号，在某人决定博客重更之后重新整理发上来~</strong>2019/12/8上传</p>
-<p>[TOC]</p>
-<h1 id="为什么会有这篇文章">为什么会有这篇文章？</h1>
-<p>最近网上也都在吹爆《流浪地球》这部科幻片啊……</p>
-<p>然后我自己前几天也慕名去电影院看了一下，感觉特效之类的着实过瘾。但是作为一部定位为<strong>硬科幻</strong>的科幻片，除去画面以外，科学的严谨性还是很重要的。但是这部片子里面的一些科学设定在一个KSP玩家看来似乎……</p>
-<p><img src="http://ws3.sinaimg.cn/large/9150e4e5ly1fkkifa7choj203v04ca9y.jpg" alt="这不科学" /></p>
-<p>还是有些槽点呢……当然瑕不掩瑜。这篇文章就稍微指出一点我发现的《流浪地球》当中的一些Bug，这些Bug主要是轨道力学上的，也就当给同学们做一个科普吧。</p>
-<p>自己也是半瓶水，所以，欢迎指正。</p>
-<h1 id="定性吐槽">定性吐槽</h1>
-<p>电影里面的运动学乍一看是非常符合直觉的。比如说：</p>
-<ul>
-<li>地球的发动机一关，整个地球马上就往木星上靠过去了，轨道一下子<em>拐了一个弯</em></li>
-<li>空间站发动机一开，整个空间站马上就<em>直线</em>飞离地球了，轨道上看得一清二楚</li>
-<li>要引爆空间站，就直接对准目标<em>直线</em>冲刺过去了</li>
-</ul>
-<p>似乎没啥问题咯？</p>
-<p>Uhmmmmmm……</p>
-<p>这么说的话以下二位的棺材板就要压不住了：</p>
-<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/GodfreyKneller-IsaacNewton-1689.jpg/220px-GodfreyKneller-IsaacNewton-1689.jpg" alt="Newton" /></p>
-<p>（牛顿）</p>
-<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Johannes_Kepler_1610.jpg/220px-Johannes_Kepler_1610.jpg" alt="Kepler" /></p>
-<p>（开普勒）</p>
-<p>为啥嘞？</p>
-<h2 id="开普勒第一定律">开普勒第一定律</h2>
-<p>回忆一下我们第一学期学的牛顿第一定律：</p>
-<blockquote>
-<p><strong>牛顿第一定律：</strong>假若某物体所受合外力为零，则该物体的运动速度不变，即保持静止或做匀速直线运动。</p>
-</blockquote>
-<p>如果所受合力不是零，而是一直受到一个定质点的引力作用，物体的运动状态又会是怎样呢？</p>
-<p>开普勒结合牛顿的万有引力定律对牛顿第一定律进行了拓展，得出了开普勒第一定律：</p>
-<blockquote>
-<p><strong>开普勒第一定律：</strong>每一个行星都沿各自的<strong>椭圆</strong>轨道环绕太阳，而太阳则处在椭圆的一个焦点中。</p>
-</blockquote>
-<p>开普勒定律刻画的行星在只受太阳引力作用下的稳定运动轨道，但是真的只有椭圆这一种吗？</p>
-<p>其实定律实际推导出的轨道是<strong>圆锥曲线</strong>，即圆，椭圆，抛物线或双曲线中的任意一种，只是对于普通行星来说，后面两种轨道意味着飞掠而不是围绕，不符合实际，因此开普勒在定律表述里面便只说“椭圆”。</p>
-<p>那知道这个定律有啥用呢？</p>
-<h2 id="发动机不需要一直点火">发动机不需要一直点火！</h2>
-<p>首先，如果地球的行星发动机的推力够足，理论上是用不着像电影里面一直点火的，我们只需要<strong>在地球轨道附近把地球加速到足够高速然后熄火，那么根据开普勒定律，地球自己会沿一条圆锥曲线被甩离太阳，并在木星附近被木星捕获，沿以木星为焦点的抛物线或双曲线掠过木星进行引力弹弓加速，然后离开木星被甩出太阳系！</strong>这段过程中理想情况下地球只受星体引力影响，<strong>不需要发动机一直点火</strong>，除了进行一定的轨道修正！‘</p>
-<p>这个操作有没有实例呢？</p>
-<p>且看旅行者二号：</p>
-<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Voyager_spacecraft_model.png/260px-Voyager_spacecraft_model.png" alt="Voyager 2" /></p>
-<p>它在被火箭加速到足够高的速度之后就放飞自我了，之后走的轨道是什么样的呢？</p>
-<p><img src="https://s2.ax1x.com/2019/02/13/k03DaR.gif" alt="k03DaR.gif" /></p>
-<p>（绿色为木星轨道）</p>
-<p>在离开地球的十多年里，旅行者2号几乎没有启用过自己的轨道发动机，包括在飞掠火星木星等星体进行引力加速的时候也是如此。如果它是靠电影中的一直加速才飞到那么远的话，试问这么小的机体燃料放哪里呢？</p>
-<p>所以看到地球上的行星发动机一直燃烧了十七年，Emmm...编剧开心就好。（当然不排除是加速度过低导致需要持续加速的情况，这种情况下轨道确实比较难算，出偏差也是正常的，因此这其实不算一个特别大的Bug）</p>
-<h2 id="熄火点火之后的轨道不科学">熄火/点火之后的轨道不科学！</h2>
-<p>看过电影的同学应该记得，在行星发动机一半熄火的时候，地球马上就拐了一个弯，从飞掠木星变成栽进木星了，就好像有什么东西让它大幅度减速了一样。编剧在这里似乎混淆了速度和加速度的概念，就算地球发动机全部停机，地球几乎只受木星引力作用，地球也会沿着熄火前最后一刻所处的抛物线轨道继续运行：</p>
-<p><img src="https://s2.ax1x.com/2019/02/13/k03BZ9.jpg" alt="k03BZ9.jpg" /></p>
-<p>（图找的不是熄火的那个场景，只做演示用）</p>
-<p>也就是说，地球会继续按照“原轨道”的红线运行，而不是像影片中的那样当场轨道一拐拐到蓝色轨道上去了。</p>
-<p>也就是说，其实发生影片中所谓“危机”的概率会小非常多。</p>
-<p>什么？你说抛物线和双曲线本来就有一个拐点？那和影片当中的形状和位置都对不上好吗?</p>
-<p>同样的，空间站准备开溜时候的轨道也注定不是一条直线，它同时受着地球和木星的引力影响，做的是<strong>三体运动</strong>，轨迹怎么会那么漂亮呢？</p>
-<p>因为这样，空间站要开到地木之间引爆，也绝非一个“前进三！”的直线冲刺能够与解决的，复杂着呢！</p>
-<h1 id="定量吐槽">定量吐槽</h1>
-<p>小马在看完电影的当晚估算了一下：</p>
-<p><img src="https://s2.ax1x.com/2019/02/13/k03wqJ.png" alt="k03wqJ.png" /></p>
-<p>然后第二天就有同学告诉我我仿佛漏算了什么……确实是这样的，那这个定量的估算到底是怎么来的呢？</p>
-<h2 id="tsiolkovsky公式">Tsiolkovsky公式</h2>
-<p>在1903年，俄罗斯科学家齐奥尔科夫斯基推导出了著名的火箭公式： <span class="math display">\[
-\Delta v = v_e \ln \left(\frac{m_0}{m_1}\right)
-\]</span> （详细推导见<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Tsiolkovsky_rocket_equation">这里</a>）</p>
-<p>其中<span class="math inline">\(v_e\)</span>表示火箭工质的喷出速度，<span class="math inline">\(m_0\)</span>表示火箭的初始质量，<span class="math inline">\(m_1\)</span>表示火箭的燃烧后的末质量，<span class="math inline">\(\Delta v\)</span>表示火箭在发动机加速过程当中所获得的速度增量。</p>
-<p>什么叫工质喷出速度呢？“工质”就是火箭发动机喷嘴喷出的物质的代称，也是火箭发动机推力的来源：发动机给工质一个力将工质高速推离火箭，反作用力同时给火箭一个巨大的动力。</p>
-<p>如果假设地球的质量是<span class="math inline">\(m_e\)</span>，石头的质量是<span class="math inline">\(m_f\)</span>，那么在我们的情况下，公式可以写作： <span class="math display">\[
-\Delta v = v_e \ln \left(\frac{m_e}{m_e-m_f}\right)
-\]</span> 我们可以非常简单地估算出（或者借助网络查阅到）<span class="math inline">\(m_e\)</span>的值，因此只要我们知道了<span class="math inline">\(v_e\)</span>和<span class="math inline">\(\Delta v\)</span>，我们就可以由上式反解<span class="math inline">\(\frac{m_f}{m_e}\)</span>。从而算出作为燃料的石头的重量！</p>
-<h2 id="计算delta-v">计算<span class="math inline">\(\Delta v\)</span></h2>
-<h3 id="直接逃逸">直接逃逸</h3>
-<p>我们首先计算如果不借助木星的引力弹弓效应需要的最小<span class="math inline">\(\Delta v\)</span>大概是多少：</p>
-<p>首先我们计算在地球轨道上相对太阳的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Escape_velocity">逃逸速度</a>，取太阳的标准重力参数<span class="math inline">\(\mu = GM = 1.327124 \times 10^{20} \mathrm{m^3/s^2}\)</span>，取地日平均距离<span class="math inline">\(r_e = 1\mathrm{au} = 1.496 \times 10^{11} \mathrm{m}\)</span>，若假设轨道偏心率极小可以忽略不计，则根据机械能守恒逃逸速度可以计算如下： <span class="math display">\[
-\begin{aligned}
-v_{es} &amp;= \sqrt{\frac{2\mu}{r_e}} \\
-&amp;= \sqrt{\frac{2\times 1.327124 \times 10^{20} \mathrm{m^3/s^2}}{1.496 \times 10^{11} \mathrm{m}}} \\
-&amp;\approx 42.126\mathrm{km/s}
-\end{aligned}
-\]</span> 我们当然不用取<span class="math inline">\(\Delta v = 42.126\mathrm{km/s}\)</span>，因为地球绕太阳公转本来就有一定的线速度，地球的轨道速度如下： <span class="math display">\[
-v_o = \sqrt{\frac{\mu}{r_e}} = \frac{v_{es}}{\sqrt 2} \approx 29.784\mathrm{km/s}
-\]</span> 如果行星发动机顺着地球的公转方向加速，则<span class="math inline">\(\Delta v = v_{es} - v_o = 12337.1 \mathrm{m/s}\)</span>就够了。</p>
-<h3 id="借助木星">借助木星</h3>
-<p>我们接下来估算一下如果借助木星的引力弹弓效应加速大约需要多少<span class="math inline">\(\Delta v\)</span>。</p>
-<p>因为没有给定地木之间的位置关系，直接算引力弹弓难度极大<del>不会</del>，但是我们可以估算一下<span class="math inline">\(\Delta v\)</span>的下界：我们假设地球只需要在地球轨道和木星轨道之间执行一次<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Hohmann_transfer_orbit">霍曼转移</a>来进行交会。即让地球的椭圆轨道与木星轨道<strong>内切</strong>。基于<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Vis-viva_equation">Vis-viva公式</a>，取木星轨道半径为近日点的<span class="math inline">\(r_j = 7.405 \times 10^{11}\mathrm{m}\)</span>，则在地球轨道上加速所需要的<span class="math inline">\(\Delta v\)</span>为： <span class="math display">\[
-\begin{aligned}
-\Delta v &amp;= \sqrt{\frac{2\mu r_j}{r_e(r_e + r_j)}} - v_o \\
-&amp;= \sqrt{\frac{2\times 1.327 \times 10^{20} \mathrm{m^3/s^2} \times 7.405 \times 10^{11}\mathrm{m}}{1.496 \times 10^{11} \mathrm{m}\times (1.496 \times 10^{11} \mathrm{m} + 7.405 \times 10^{11}\mathrm{m})}} - 29.784\mathrm{km/s} \\
-&amp;\approx 8634.71 \mathrm{m/s}
-\end{aligned}
-\]</span> （假设地木轨道共面，不然还要修正轨道倾角）</p>
-<p>也就是说，就算地球不是想借助木星加速，只是想碰到木星的轨道，都需要这么多的<span class="math inline">\(\Delta v\)</span>，要借助木星加速一般轨道会更大一点，因此我们估算出来的是<span class="math inline">\(\Delta v\)</span>的下界。</p>
-<h2 id="发动机种类">发动机种类</h2>
-<p>我们已经算出了<span class="math inline">\(\Delta v\)</span>的大小，接下来让我们估一下<span class="math inline">\(v_e\)</span>的大小，我们同时会计算出来所需要燃料的质量。</p>
-<p>在下文中，取地球质量为<span class="math inline">\(m_e = 5.97\times10^{24}\mathrm{kg}\)</span>，岩石密度为<span class="math inline">\(\rho = 3000\mathrm{kg/m^3}\)</span>。</p>
-<h3 id="目前科技">目前科技</h3>
-<p>目前人类能够造出的<span class="math inline">\(v_e\)</span>最高（比冲最高）的化学燃料发动机大概是液氢液氧发动机，<span class="math inline">\(v_e \approx 4400\mathrm{m/s}\)</span>。（根据资料比冲最高的发动机其实是欧空局的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Dual-Stage_4-Grid">DS4G</a>（电推），<span class="math inline">\(v_e \approx 210000\mathrm{m/s}\)</span>，可惜推力只有<span class="math inline">\(2.5\mathrm{N}\)</span>，还贼费电。）</p>
-<p>因此，在直接逃逸的情况下我们有： <span class="math display">\[
-\begin{aligned}
-&amp;\quad \Delta v = v_e \ln \left(\frac{m_e}{m_e-m_f}\right) \\
-&amp;\Rightarrow \ln \left(\frac{m_e}{m_e-m_f}\right) = \frac{\Delta v}{v_e} \\
-&amp;\Rightarrow \frac{m_e-m_f}{m_e} = e^{-\frac{\Delta v}{v_e}} \\
-&amp;\Rightarrow m_f = \left(1 - e^{-\frac{\Delta v}{v_e}}\right)m_e
-\end{aligned}
-\]</span> 取相关数据带入，得<span class="math inline">\(m_f = 5.608 \times 10^{24}\mathrm{kg} \approx 94\%m_e\)</span>……</p>
-<p>Ummm……不用算了，要把地球挖空的。</p>
-<p>在借助木星引力加速的情况下其实也好不到哪里去，计算可以得到<span class="math inline">\(m_f = 5.131 \times 10^{24}\mathrm{kg} \approx 86\%m_e\)</span>。</p>
-<p>这个好一点，思考一下人类靠<span class="math inline">\(14\%\)</span>的地球可以干嘛吧，这还没算上后续的加速和减速，估计流浪到最后变成小行星了。<del>细思极恐</del></p>
-<p>以上计算其实反映出一点：<strong>因为逆用公式算出的只是燃油质量和火箭质量的比值，这个比值无论大到地球小到火箭都适用，也就是说大家看到巨大的火箭一般都有<span class="math inline">\(95\%\)</span>以上的质量是燃料，而剩下的质量包括了外壳，发动机，管线，最后才是载荷。</strong></p>
-<h3 id="外星科技">外星科技</h3>
-<p>既然影片当中的发动机叫“重聚变发动机”（先不纠结为啥重元素可以不吸能聚变），那推进方式肯定不是垃圾的氢氧机可以比拟的。这样吧，假设工质可以加速到光速（顺便压住了爱因斯坦的棺材板），取<span class="math inline">\(v_e = c = 299792458\mathrm{m/s}\)</span>。会怎么样呢？（关于相对论效应：齐奥尔科夫斯基公式只有在被推进物接近光速（Relativistic Rocket）的时候才需要修正，对于工质速度接近光速的情况则不用。）</p>
-<p>在直接加速的情况下，我们有<span class="math inline">\(m_f = 2.45673 \times 10^{20}\mathrm{kg} \approx 4.1\times 10^{-5}m_e\)</span>。似乎还可以接受哦？</p>
-<p>体积是多少呢？ <span class="math display">\[
-V_f = \frac{m_f}{\rho} = 8.19\times10^{16}\mathrm{m^3}\approx (434.256\mathrm{km})^3
-\]</span> 也就是说所需要的燃料可以装满一个边长<span class="math inline">\(434\mathrm{km}\)</span>的立方体！作为参考，国际空间站轨道高度为<span class="math inline">\(400\mathrm{km}\)</span>左右。</p>
-<p>如果嫌这个不够直接，取陆地地壳平均厚度<span class="math inline">\(33\mathrm{km}\)</span>，则需要挖掉整个面积为<span class="math inline">\(2.5 \times 10^{12}\mathrm{m^2}\)</span>大小的土地，而全球陆地面积才只有<span class="math inline">\(1.49\times 10^{14}\mathrm{m^2}\)</span>！这意味着：</p>
-<ul>
-<li>大概要把全球陆地都下挖<span class="math inline">\(550\mathrm{m}\)</span>左右，比环球金融中心高一点。</li>
-<li>把边长为<span class="math inline">\(1575\mathrm{km}\)</span>的一块正方形地壳挖光，作为参考，这约占我国国土的四分之一。</li>
-</ul>
-<p>利用木星加速需要多少燃料呢？带入可得<span class="math inline">\(m_f = 1.71947 \times 10^{20}\mathrm{kg}\)</span>，可以装满边长为<span class="math inline">\(385\mathrm{km}\)</span>的立方体。需要把全球陆地都下挖<span class="math inline">\(400\mathrm{m}\)</span>左右，如果打算把地壳挖光，则需要挖去的地壳面积为我国国土的五分之一左右。</p>
-<p>Emm……Emm……</p>
-<h2 id="质能转化角度">质能转化角度</h2>
-<p>换种思想，假设人类已经解锁了一个无敌恐怖的科技点，即把燃料的所有<strong>静能量</strong>转化为地球的<strong>机械能</strong>，那会怎么样呢？</p>
-<p>根据著名的质能方程式<span class="math inline">\(E=mc^2\)</span>，我们可以列式： <span class="math display">\[
-m_fc^2 = \frac{1}{2}m_e(v_o + \Delta v)^2 - \frac{1}{2}m_ev_o^2
-\]</span> 如果直接逃逸，解得燃料质量为<span class="math inline">\(m_f = 2.94629 \times 10^{16} \mathrm{kg}\)</span>。获取这么多燃料需要把<strong>整个上海市区</strong>的地壳挖空。</p>
-<p>如果借助木星。解得燃料质量为<span class="math inline">\(m_f = 1.95593 \times 10^{16} \mathrm{kg}\)</span>。获取这么多燃料也需要把<strong>整个上海中心城区</strong>的地壳挖空。</p>
-<p>这样开起来稍微可行一点了吧……似乎开掘一万座地下城挖剩的石料就够用了？</p>
-<p>但是这个视角的问题在于我们的假设，如果静能量全部转化成机械能，则：</p>
-<ul>
-<li>燃料必须在相互反应当中<strong>全部湮灭</strong>，作为对比，核聚变和核裂变当中湮灭的仅仅是反应物和产物之间的微小质量差（可能是每个原子一两个中子/质子），目前能够达到全部湮灭的方法只有把当中一半的燃料转化为反物质。</li>
-<li>湮灭产生的巨大能量必须全部收集，不能产生耗散。</li>
-<li>收集的能量必须全部转化成地球的机械能，这意味着<strong>不能有喷出的工质</strong>，因为这相当于有能量转化成工质机械能，同时<strong>整个体系必须不能发热，也发动机必须全部常温</strong>，不然会有热量作为热能耗散。</li>
-</ul>
-<p>这当中做到任何一点都是科技的极大进步，而但凡物质不能全部湮灭（而是采取核聚变），能量难以完全收集与转化，则能量的利用率只会千万倍地往下降，消耗的燃料也必将回归上一小节当中的恐怖水平。</p>
-<h1 id="结语">结语</h1>
-<p>经过上文的分析，我们发现其实流浪地球的世界观本身还是有一点不科学的，尤其是地球发动机，简直是Bug一般的存在。但是这并不是说流浪地球就不是一部好片子，因为几乎每一部科幻片都有能让人杠一杠的地方。因此写这篇文章只是为了分享一下自己想法，也帮助科普一下一些轨道力学的知识。当然在推式子的过程中也和同学们复习了一下指对数函数的知识，真是极好的。</p>
-<h2 id="安利">安利</h2>
-<p>什么？你问我自己怎么会想到这些？</p>
-<p>因为本人是Kerbal Space Program玩家啊#(滑稽)</p>
-<p><img src="https://s2.ax1x.com/2019/02/13/k03aMF.jpg" alt="k03aMF.jpg" /></p>
-<p>在这里给大家安利一下这款“游戏”，游戏本身非常硬核，需要玩家自己设计并且发射航天器进入轨道，自己规划轨道计算燃料，自己操控交会对接，模拟了近乎真实的物理系统，内有一个类似太阳系的星系。上述<span class="math inline">\(\Delta v\)</span>的计算，霍曼转移，燃料量的计算都是游戏当中的必修课<del>是的现在玩游戏都要用计算器</del>。个人认为比一些纯粹娱乐向的手游之类的更能从中学到知识，但同时因为这款游戏玩起来消耗大量脑细胞与时间，一般每周末玩两个小时就够了。</p>
-<p><img src="https://s2.ax1x.com/2019/02/13/k03rI1.jpg" alt="k03rI1.jpg" /></p>
-<p>（我自己搭的Jool飞掠器的截图，Jool对应太阳系的木星）</p>
-<p><del>从动手设计到发射成功现实当中花了一个半小时，游戏当中是两年半，失败五次。本质新手劝退向游戏</del></p>
-<p>当然，虽然这款游戏Steam上要七十多块，但是破解版烂大街。欢迎有兴趣的同学来玩。</p>
-<h2 id="数据来源">数据来源</h2>
-<p>大部分公式，数据均来源于英文维基百科，少部分来自NASA官网。</p>
-<p>公式全部基于万有引力定律与能量守恒定律，绝大部分的公式可以在高中知识下进行推导。</p>
 
       
     </div>

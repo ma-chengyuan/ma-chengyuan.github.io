@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,184 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/06/30/PACT0629/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/06/30/PACT0629/" class="post-title-link" itemprop="url">PACT 06/29 三大概率不等式以及近似算法初步</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-06-30 21:22:22" itemprop="dateCreated datePublished" datetime="2020-06-30T21:22:22+08:00">2020-06-30</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-07-12 11:17:08" itemprop="dateModified" datetime="2020-07-12T11:17:08+08:00">2020-07-12</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="概率论初步">概率论初步</h1>
+<h2 id="期望的线性性">期望的线性性</h2>
+<p><span class="math display">\[
+\mathbb{E}[X+Y] = \mathbb E [X] + \mathbb E[Y]
+\]</span></p>
+<h2 id="随机变量的方差">随机变量的方差</h2>
+<p><span class="math display">\[
+\begin{aligned}
+    \operatorname{Var}[X] &amp;:= \mathbb{E}\left[\left(X-\mathbb{E}[X]\right)^2\right] \\
+    &amp;= \mathbb{E} \left[X^2 - 2\mathbb{E}[X]X+\mathbb{E}[X]^2\right] \\
+    &amp;= \mathbb{E} \left[X^2\right] - 2\mathbb{E}[X]^2 + \mathbb{E}[X]^2 \\
+    &amp;= \mathbb{E} \left[X^2\right] - \mathbb{E}[X]^2
+\end{aligned}
+\]</span></p>
+<p><strong>推论：</strong>若随机变量<span class="math inline">\(X,Y\)</span>互相独立，则有：</p>
+<ol type="1">
+<li><span class="math inline">\(\operatorname{Var}[X+Y] = \operatorname{Var}[X] + \operatorname{Var}[Y]\)</span></li>
+<li><span class="math inline">\(\mathbb{E}[XY] = \mathbb{E}[X]\mathbb{E}[Y]\)</span></li>
+</ol>
+<p>（互相独立的定义：<span class="math inline">\(\forall x, y, \operatorname{Pr}[X=x\cap Y=y]=\operatorname{Pr}[X=x]\operatorname{Pr}[Y=y]\)</span>）</p>
+<h2 id="马尔科夫不等式">马尔科夫不等式</h2>
+<p>设<span class="math inline">\(X\)</span>为<strong>非负</strong>随机变量，则<span class="math inline">\(\forall a &gt;0\)</span>： <span class="math display">\[
+\operatorname{Pr}[X\ge a] \le \frac{\mathbb{E}[X]}{a}
+\]</span> <strong>证明：</strong> <span class="math display">\[
+\begin{aligned}
+    \mathbb{E}[X] &amp;= \sum_{x}x\operatorname{Pr}[X=x] \\
+    &amp;= \sum_{x&lt;a}x\operatorname{Pr}[X=x] + \sum_{x\ge a}x\operatorname{Pr}[X=x] \\
+    &amp;\ge \sum_{x\ge a}x\operatorname{Pr}[X=x] \\
+    &amp;\ge \sum_{x\ge a}a\operatorname{Pr}[X=x] \\
+    &amp;= a \sum_{x\ge a}\operatorname{Pr}[X=x] \\
+    &amp;= a \operatorname{Pr}[X\ge x]
+\end{aligned}
+\]</span> （离散形式，连续形式的证明方法类似）</p>
+<p>其中第一个<span class="math inline">\(\ge\)</span>依赖于<span class="math inline">\(X\)</span>非负的特性，因此非负是必须的！</p>
+<p>马尔科夫不等式让我们可以在只知道随机变量期望的情况下对于其分布概率进行粗略定界。</p>
+<h2 id="切比雪夫不等式">切比雪夫不等式</h2>
+<p>设<span class="math inline">\(X\)</span>为随机变量，则<span class="math inline">\(\forall a &gt; 0\)</span>： <span class="math display">\[
+\operatorname{Pr}\left[|X-\mathbb{E}[X]| \ge a\right] \le \frac{\operatorname{Var}[X]}{a^2}
+\]</span> <strong>证明：</strong> <span class="math display">\[
+\begin{aligned}
+    \operatorname{Pr}\left[|X-\mathbb{E}[X]| \ge a\right] &amp;= \operatorname{Pr}\left[(X-\mathbb{E}[X])^2 \ge a^2\right] \\
+    &amp;\le \frac{\mathbb{E}\left[(X-\mathbb{E}[X])^2\right]}{a^2} \\
+    &amp;= \frac{\operatorname{Var}[X]}{a^2}
+\end{aligned}
+\]</span> 注意到<span class="math inline">\(a^2&gt;0\)</span>且<span class="math inline">\((X-\mathbb{E}[X])^2\)</span>非负，因此我们可以在第二步使用马尔科夫不等式。</p>
+<p>如果我们不仅知道随机变量的期望（一阶矩），还知道其方差（二阶矩），那么切比雪夫不等式可以给出比马尔科夫不等式更为精确的上界。</p>
+<h2 id="切尔诺夫上界chernoff-bound">切尔诺夫上界（Chernoff Bound）</h2>
+<p>设随机变量<span class="math inline">\(X=\sum_{i=1}^n X_i\)</span>，其中<span class="math inline">\(X_1,\cdots,X_n\)</span>为<span class="math inline">\([0,1]\)</span>上互相独立的随机变量，则<span class="math inline">\(\forall t&gt;1\)</span>： <span class="math display">\[
+\operatorname{Pr}\left[|X - \mathbb{E}[X]| \ge t\mathbb{E}[X]\right] \le 2\exp\left(-\frac{t\mathbb{E}[X]}{3}\right)
+\]</span> 且<span class="math inline">\(\forall \epsilon \in (0,1]\)</span>： <span class="math display">\[
+\operatorname{Pr}\left[|X - \mathbb{E}[X]| \ge \epsilon\mathbb{E}[X]\right] \le 2\exp\left(-\frac{\epsilon^2\mathbb{E}[X]}{3}\right)
+\]</span> <em>加性切尔诺夫不等式（Additive Chernoff Bound）</em>：<span class="math inline">\(\forall b &gt;1\)</span>： <span class="math display">\[
+\operatorname{Pr}\left[|X - \mathbb{E}[X]| \ge b\right] \le 2\exp\left(-\frac{2b^2}{n}\right)
+\]</span></p>
+<h2 id="三个不等式给出上界的比较">三个不等式给出上界的比较</h2>
+<p>考虑如下问题：投<span class="math inline">\(n\)</span>次均质硬币，设随机变量<span class="math inline">\(X\)</span>表示头朝上的次数。估计<span class="math inline">\(\operatorname{Pr}\left[X\ge \frac{3n}{4}\right]\)</span>？</p>
+<p><strong>马尔科夫不等式：</strong></p>
+<p>显然，<span class="math inline">\(\mathbb{E}[X]=\frac{n}{2}\)</span>，且<span class="math inline">\(X\)</span>非负： <span class="math display">\[
+\operatorname{Pr}\left[X\ge \frac{3n}{4}\right] \le \frac{\frac{n}{2}}{\frac{3n}{4}} = \frac{2}{3}
+\]</span> 这个上界是很松的。</p>
+<p><strong>切比雪夫不等式：</strong></p>
+<p>设随机二元变量<span class="math inline">\(X_i\)</span>表示第<span class="math inline">\(i\)</span>次投是否头朝上，则显然<span class="math inline">\(X=\sum_{i=1}^nX_i\)</span>，且易得<span class="math inline">\(\operatorname{Var}[X_i]=\frac{1}{4}\)</span>，由于<span class="math inline">\(X_i\)</span>两两独立，则<span class="math inline">\(\operatorname{Var}[X]=\frac{n}{4}\)</span>，运用切比雪夫不等式： <span class="math display">\[
+\begin{aligned}
+    \operatorname{Pr}\left[X\ge \frac{3n}{4}\right] &amp;= \operatorname{Pr}\left[X - \frac{n}{2}\ge \frac{n}{4}\right] \\
+    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \frac{n}{2}\right|\ge \frac{n}{4}\right] \\
+    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \mathbb{E}[X]\right|\ge \frac{n}{4}\right] \\
+    &amp;\le \frac{1}{2} \frac{\frac{n}{4}}{\left(\frac{n}{4}\right)^2} \\
+    &amp;= \frac{2}{n}
+\end{aligned}
+\]</span> <strong>切尔诺夫上界：</strong></p>
+<p>显然，取<span class="math inline">\(\epsilon = \frac{1}{2}\)</span>： <span class="math display">\[
+\begin{aligned}
+    \operatorname{Pr}\left[X\ge \frac{3n}{4}\right] &amp;= \operatorname{Pr}\left[X - \frac{n}{2}\ge \frac{n}{4}\right] \\
+    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \frac{n}{2}\right|\ge \frac{n}{4}\right] \\
+    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \mathbb{E}[X]\right|\ge \frac{1}{2}\mathbb{E}[X]\right] \\
+    &amp;\le \exp\left(-\frac{1}{12}\cdot \frac{n}{2}\right)\\
+    &amp;= \exp\left(-\frac{n}{24}\right)
+\end{aligned}
+\]</span> 各上界的效果：</p>
+<p><img src="/2020/06/30/PACT0629/Bounds.png" class=""></p>
+<p>看来这个例子里面还是切比雪夫不等式给出的上界最好——是不是切尔诺夫上界我学到的形式本身太loose了？</p>
+<h1 id="近似算法初步">近似算法初步</h1>
+<h2 id="定义">定义</h2>
+<p>若算法<span class="math inline">\(A\)</span>满足以下条件，则称算法<span class="math inline">\(A\)</span>是某个问题（不妨假设是最小化问题）的<span class="math inline">\(\alpha\)</span>近似比的近似算法：</p>
+<ol type="1">
+<li><span class="math inline">\(A\)</span>是多项式时间的。</li>
+<li>对于所有输入，<span class="math inline">\(A\)</span>的输出<span class="math inline">\(\operatorname{soln}(A) \le \alpha \cdot\mathrm{OPT}\)</span>，其中<span class="math inline">\(\mathrm{OPT}\)</span>是该输入的最优解。</li>
+</ol>
+<p><em>对于最大化问题，第二个条件为<span class="math inline">\(\operatorname{soln}(A) \ge \frac{1}{\alpha} \cdot\mathrm{OPT}\)</span></em>。</p>
+<p>（继续假设是最小化问题）</p>
+<p>显然，为了精确计算<span class="math inline">\(\alpha\)</span>我们必须知道<span class="math inline">\(\mathrm{OPT}\)</span>，而这显然是不现实的（如果可以我还要近似算法干嘛？），因此我们退而求其次寻找<span class="math inline">\(\mathrm{OPT}\)</span>的一个比较紧的<strong>下界</strong>，我们的解与该下界之比自然就是<span class="math inline">\(\alpha\)</span>的上界了。</p>
+<h2 id="例最小顶点覆盖问题">例：最小顶点覆盖问题</h2>
+<p><strong>输入：</strong><span class="math inline">\(G=(V,E)\)</span></p>
+<p><strong>目标：</strong>最小化点集<span class="math inline">\(S\subseteq V\)</span>，同时满足<span class="math inline">\(\forall (u,v) \in E\)</span>，<span class="math inline">\(u\in S\)</span>或<span class="math inline">\(v \in S\)</span>。</p>
+<p>这是一个知名的NP Complete问题。在这里我们设计一个简单的<span class="math inline">\(2\)</span>近似算法。然而令人吃惊地是，<span class="math inline">\(2\)</span>的近似比已经是我们目前能够做到的最好结果！</p>
+<p><strong>思路：</strong>考虑<span class="math inline">\(G\)</span>的一个<strong>极大匹配</strong>，显然极大匹配是可以在多项式时间内求出的。</p>
+<p>同时注意到，任意无向图极大匹配的大小必定是其点覆盖集大小的下界，因为点覆盖必须取极大匹配当中每一条边的至少一个端点才能完成覆盖！</p>
+<p><strong>算法：</strong></p>
+<ol type="1">
+<li>计算<span class="math inline">\(G\)</span>的一个极大匹配<span class="math inline">\(M\)</span>。</li>
+<li>取极大匹配所有边的所有端点为<span class="math inline">\(S\)</span>。</li>
+</ol>
+<p><strong>为什么正确？</strong>考虑反证：若<span class="math inline">\(\exists (u,v) \in E\)</span>，使<span class="math inline">\(u\not\in S\)</span>且<span class="math inline">\(v \not \in S\)</span>，那显然边<span class="math inline">\((u, v)\)</span>还可以加入<span class="math inline">\(M\)</span>，这和<span class="math inline">\(M\)</span>的极大性是矛盾的。</p>
+<p>近似比证明： <span class="math display">\[
+\begin{aligned}
+    |S| = 2|M| \le 2\cdot \mathrm{OPT}
+\end{aligned}
+\]</span> 得证。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1856,232 +2034,6 @@ rcParams[&quot;axes.unicode_minus&quot;] = false</code></pre>
 <p>原生支持。</p>
 <h1 id="inspectdr-backend">InspectDR Backend</h1>
 <p>原生支持。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/01/14/WebAssembly/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/01/14/WebAssembly/" class="post-title-link" itemprop="url">WebAssembly初体验</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2020-01-14 13:16:58 / 修改时间：21:40:13" itemprop="dateCreated datePublished" datetime="2020-01-14T13:16:58+08:00">2020-01-14</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>我在之前用JavaScript实现了PageDewarp的核心算法。但是众所周知，JavaScript作为一门解释性语言并不适合运算密集型的任务，导致算法运行一次要30秒钟……这个效率虽然不能算特别差，我还是不满意的。所以又花了两天学习了WebAssembly把瓶颈算法用C重写了，现在在手机端一次也只需要1秒左右，效果自然是极好的。但是WebAssembly毕竟还是新科技，和现有的一些框架融合的确实不算好，在应用的过程中踩了非常多的坑，尤其是对于我这种1个月前还是Web萌新的人更是新坑老坑一起踩到怀疑人生（悲）。</p>
-<h1 id="webassembly-emscripten">WebAssembly &amp; Emscripten</h1>
-<p>什么是WebAssembly？</p>
-<p>WebAssembly是一种通过将静态的系统编程语言（比如说C，C++，Rust）AOT编译成一种基于栈虚拟机架构的字节码，然后在浏览器端再次实时JIT执行，来逼近这些语言native performance的技术。</p>
-<p>(<em>吐槽：</em>我最初看到WebAssembly的时候有一种莫名的，很强烈的Java Applet的既视感。)</p>
-<p>和CLR类似，WebAssembly只是字节码的标准，至于将特定语言编译成字节码的实现则是那些语言自己的事情。在目前的生态下，C和C++有名为Emscripten的基于LLVM的编译器，Rust则有它们自己的一套toolchain，两者都处于勉强凑活的水平。</p>
-<p>就我个人而言我其实觉得Rust在这方面做得最好，官方维护，官方文档。wasm_bindgen也给自定义数据结构类型提供了很好的支持，非常适合大项目开发。但是我只是实现一个小算法，Rust的那一套太重了，有一种boilerplate会比真正代码多的预感，所以我最终选择了C（至于为什么不是C++，那是因为name mangling已经破坏了我对它FFI能力产生了非常深的心理阴影）。</p>
-<p>前面说了，C对接WebAssembly的工具链是Emscripten。现在Emscripten的生态已经相对比较成熟了，跟着官方的<a target="_blank" rel="noopener" href="https://emscripten.org/docs/getting_started/downloads.html">Getting Started</a>走基本上就没有问题。写C的时候就按照正常的写法（我感觉Emscripten对于libc里面的大多数常用函数都做了适配）写就可以了。算法的代码很短：</p>
-<pre class="line-numbers"><code class="language-c">#include &lt;math.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;emscripten.h&gt;
-
-typedef struct v3 &#123;
-    float x, y, z;
-&#125; v3;
-v3 add(v3 a, v3 b) &#123;
-    return (v3) &#123; .x = a.x + b.x, .y = a.y + b.y, .z = a.z + b.z &#125;;
-&#125;
-v3 mul(v3 a, float k) &#123;
-    return (v3) &#123; .x = a.x * k, .y = a.y * k, .z = a.z * k &#125;;
-&#125;
-v3 a2v(float *a) &#123;
-    return (v3) &#123; .x = a[0], .y = a[1], .z = a[2] &#125;;
-&#125;
-EMSCRIPTEN_KEEPALIVE
-unsigned char *dewarp(
-        unsigned char *src, int srcWidth, int srcHeight,
-        int dstWidth, int dstHeight,
-        float *cpX, float *cpY,
-        float *upperLeft, float *baseVec, float *normalVec, 
-        float *vertical, float d
-        ) &#123;
-    v3 ul = a2v(upperLeft);
-    v3 bv = a2v(baseVec);
-    v3 nv = a2v(normalVec);
-    v3 vt = a2v(vertical);
-    unsigned char *dst = malloc(4 * dstWidth * dstHeight);
-    for (int x = 0; x &lt; dstWidth; x++) &#123;
-        v3 top = add(ul, add(mul(bv, cpX[x]), mul(nv, cpY[x])));
-        for (int y = 0; y &lt; dstHeight; y++) &#123;
-            v3 c = add(top, mul(vt, (float)y / dstHeight));
-            float sx = c.x / (1 + c.z / d); 
-            float sy = c.y / (1 + c.z / d); 
-            sx = (sx + 0.5f) * srcWidth;
-            sy = sy * srcWidth + 0.5f * srcHeight;
-            int di = (y * dstWidth + x) * 4;
-            int si = ((int)round(sy) * srcWidth + (int)round(sx)) * 4;
-            dst[di] = src[si];
-            dst[di + 1] = src[si + 1];
-            dst[di + 2] = src[si + 2];
-            dst[di + 3] = src[si + 3];
-        &#125;
-    &#125;
-    return dst;
-&#125;</code></pre>
-<p>注意函数前面加的<code>EMSCRIPTEN_KEEPALIVE</code>宏，这个宏一方面导出了函数，另一方面防止LLVM过于智能把这段函数当成dead code消除掉或者内联掉。如果不用这个宏，就需要在编译选项里加上<code>-s EXPORTED_FUNCTIONS="['_dewarp']"</code>。注意<strong>Emscripten在导出函数名称的时候都在前面加上了<code>_</code></strong>，直接引用的时候不能漏掉。</p>
-<p>另外一个要注意的点是程序内部是无法直接访问JavaScript里面的变量的，我用的是Vue，那就更不用说了。所有要用到的context都需要在参数里面传进来。而目前来说，Emscripten对于自定义结构体之类的支持很少，传参基本上只支持primitive types和指针。除此以外，在指针方面吧，Emscripten并没有自动帮我们做好数组的转换，这一部分需要自行编写，一维的还容易一点，高维的写起来就更难受了。可以参考这个<a target="_blank" rel="noopener" href="https://github.com/Planeshifter/emscripten-examples">repo</a>。</p>
-<pre class="line-numbers"><code class="language-javascript">function copyToHeap(typedArray) &#123;
-  let size = typedArray.length * typedArray.BYTES_PER_ELEMENT;
-  let offset = Module._malloc(size);
-  Module.HEAPU8.set(new Uint8Array(typedArray.buffer), offset);
-  return offset;
-&#125;
-
-Module[&quot;dewarp&quot;] = function(src, srcWidth, srcHeight, dstWidth, dstHeight, cpX, cpY, upperLeft, baseVec, normalVec, vertical, d) &#123;
-  let pSrc = copyToHeap(src);
-  let pCpX = copyToHeap(cpX), pCpY = copyToHeap(cpY);
-  let pUL = copyToHeap(upperLeft), pBV = copyToHeap(baseVec);
-  let pNV = copyToHeap(normalVec), pVertical = copyToHeap(vertical);
-  let pDst = Module._dewarp(pSrc, srcWidth, srcHeight, dstWidth, dstHeight, pCpX, pCpY, pUL, pBV, pNV, pVertical, d);
-  let ret = new Uint8ClampedArray(4 * dstWidth * dstHeight);
-  ret.set(new Uint8ClampedArray(Module.HEAPU8.buffer, pDst, 4 * dstWidth * dstHeight));
-  Module._free(pSrc); Module._free(pDst);
-  Module._free(pCpX); Module._free(pCpY);
-  Module._free(pUL); Module._free(pBV);
-  Module._free(pNV); Module._free(pVertical);
-  return ret;
-&#125;;</code></pre>
-<p>WebAssembly内部是简单的线性内存空间，可以使用<code>Module.HEAPU8</code>来获取一个<code>U8</code>的View。调用的时候直接<code>Module._dewarp</code>，依然注意要在C函数名前面加<code>_</code>。官方还提供了了<code>ccall</code>的调用方式，会自动对字符串做转码，在这里并不需要。在调用时指针一律当做整数处理。在返回时直接把返回数组在内存中的数据复制一份就行了。之后记得全部<code>free</code>掉就行了。</p>
-<p>编译的指令是：</p>
-<pre class="line-numbers shell"><code class="language-none">emcc -O3 dewarp.c -o dewarp.js --post-js dewarp_post.js \
-    -s ENVIRONMENT=&quot;web&quot; \
-    -s MODULARIZE=1 \
-    -s ALLOW_MEMORY_GROWTH=1</code></pre>
-<p>选项的意义如下：</p>
-<ul>
-<li><code>-O3</code>：优化级别，和一般的C编译器类似。<code>-O3</code>是最激进的优化之一。除了在字节码上优化还会minify生成的接口js。</li>
-<li><code>-o dewarp.js</code>：生成的接口文件名。</li>
-<li><code>--post-js dewarp_post.js</code>：把<code>dewarp_post.js</code>（也就是上面<code>copyToHeap</code>所在的文件）附到生成的<code>dewarp.js</code>后。类似地还有<code>--pre-js</code>。</li>
-<li><code>-s ENVIRONMENT="web"</code>：默认Emscripten在编译接口文件的时候会同时加入node和浏览器环境下不同的加载方案。我们这边只需要浏览器环境，加上这个选项有助于减少生成的接口js大小。何况在使用webpack的情况下不开这个webpack会傻乎乎地把<code>fs</code>加到dependencies里面然后报错，这个时候要不这里加选项要不webpack那里额外配置二选一。</li>
-<li><code>-s MODULARIZE=1</code>：在写Emscripten的js端的文件的时候<code>Module</code>是一个关键的变量。在默认情况下Emscripten把它定义为全局变量。这会造成命名污染。如果加上这个选项，编译出来的代码就相当于是在一个大的<code>function</code>里面。这个函数接受一个预先加了点东西的<code>Module</code>对象，加上自己的私货（还有我们在<code>dewarp_post.js</code>里面定义的helper函数）之后返回完成的<code>Module</code>。确保不会产生命名污染的问题。同时Emscripten会自动把这个大函数设成<code>module.exports</code>。</li>
-<li><code>-s ALLOW_MEMORY_GROWTH=1</code>：默认的内存空间是固定的，这个选项允许内存空间的扩张。图像处理算法占的内存比较大，不加这个选项会爆内存。</li>
-</ul>
-<p>另外还有两个常用的选项：</p>
-<ul>
-<li><code>-s EXPORTED_FUNCTIONS="['_foo', ...]"</code>：指定要导出的函数，这里的名称要加下划线。等号右边是js列表的写法。如果在C源码要导出的函数前加上<code>EMSCRIPTEN_KEEPALIVE</code>的话这里就不需要再指明了。</li>
-<li><code>-s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall', ...]"</code>：默认Emscripten不会把很多API导出，因为这有助于减小接口文件的大小，但是如果要用<code>ccall</code>和<code>cwrap</code>之类的API的话就要在这里指明。</li>
-</ul>
-<p>（自己一开始<code>-s</code>开头的选项一个都不知道要加，然后疯狂出问题，就暴毙了）</p>
-<p>编译完之后会生成两个文件，一个是接口的js文件，一个是wasm文件，里面存放的就是字节码了。</p>
-<h1 id="javascript端的磨合">Javascript端的磨合</h1>
-<p>Emscripten上的教程在这里说得非常轻巧：只要<code>&lt;script/&gt;</code>引入，然后接口js会自动加载wasm文件，然后调用方法就行了。这样做是没错，但是忽略了一点：大家现在都在用webpack之类的打包器，这类打包器面对WebAssembly需要特殊的配置才能确保其顺利运行。</p>
-<p>我之前一直避免自己动webpack配置这种东西，因为我觉得Vue CLI帮我安顿得挺好的自己一搞搞不好怎么挂的都不知道。刚开始配置我这个萌新就真马上跌进坑里了：网上教程里面写的都是<code>webpack.config.js</code>，然后我一直试都没有效果，纳闷了很久，才发觉因为我用的是Vue CLI，所以配置都在<code>vue.config.js</code>里面：</p>
-<pre class="line-numbers"><code class="language-javascript">module.exports = &#123;
-  ...
-  configureWebpack: &#123;
-    // 原来webpack.config.js的内容
-  &#125;
-&#125;;</code></pre>
-<p><del>这种坑有经验的开发者都不会进去吧？还是我太菜了</del></p>
-<p>同时注意如果开启ESLint的话，注意一定要在<code>.eslintignore</code>文件里面加上接口js，一方面自动生成的js不需要lint，另一方面由于上下文不足lint下来会有很多误报。</p>
-<p>在webpack的配置上，对于两种文件分别采取如下策略：</p>
-<ul>
-<li>wasm文件就是普通文件，应该使用<code>file-loader</code>。</li>
-<li>js文件由于采用<code>-s MODULARIZE=1</code>编译开关，会把一个函数挂载到<code>module.exports</code>上，这个时候就要用<code>exports-loader</code>加载。</li>
-</ul>
-<p>我这个萌新一开始对于loader的概念很困惑。因为我一开始觉得webpack一个打包的东西有哪里需要load呢？在那里用这些loader呢？后来意识到loader机制的意思是把</p>
-<pre class="line-numbers"><code class="language-javascript">import foo from &quot;bar&quot;</code></pre>
-<p>转变成</p>
-<pre class="line-numbers"><code class="language-javascript">var foo = some_loader(&quot;bar&quot;);</code></pre>
-<p>这件事情其实是挺有意思的。静态语言写多了就觉得模块导入语句应该有固定的语义才对，结果到JavaScript这里发现<code>import</code>其实纯粹是类似语法糖的元素，语义不固定=_=。</p>
-<p>倒腾一圈下来我项目当中的webpack配置如下：</p>
-<pre class="line-numbers"><code class="language-javascript">&#123;
-  module: &#123;
-    rules: [
-      &#123;
-        test: /dewarp\.js$/,
-        loader: &quot;exports-loader&quot;
-      &#125;,
-      &#123;
-        test: /dewarp\.wasm$/,
-        type: &quot;javascript/auto&quot;,
-        loader: &quot;file-loader&quot;,
-      &#125;
-    ]
-  &#125;,
-&#125;</code></pre>
-<p>还没完，在javascript代码里面这样写：</p>
-<pre class="line-numbers"><code class="language-javascript">// 指定用exports-loader，所以wasmInterface现在就是Emscripten导出的那个返回Module的大函数
-import wasmInterface from &quot;./wasm/dewarp.js&quot;
-// 指定用file-loader，所以wasmBytecode现在就是指向wasm文件的路径
-import wasmBytecode from &quot;./wasm/dewarp.wasm&quot;
-
-let wasmModule = wasmInterface(&#123;
-  // Emscripten导出的函数可以接受一个已经塞了东西的对象作为Module的基础
-  // 可以在里面定义Emscripten文档里面写的一些特殊函数，比如说这里的locateFile
-  // 如果定义了，在加载字节码的时候就会调用这个函数获取path的真实有效值，因为webpack
-  // 调整了文件位置关系，而Emscripten生成接口脚本时写入的是生成时的文件位置，因此我们
-  // 就必须在这个函数里告诉它真实的文件位置，不然会404翻车
-  locateFile(path) &#123;
-    return path.endsWith(&quot;.wasm&quot;) ? wasmBytecode : path;
-  &#125;
-&#125;); // 创建对象之后自动加载
-wasmModule.onRuntimeInitialized = () =&gt; &#123;
-  // 文件加载完毕
-&#125;;</code></pre>
-<p>在这么一番操作之后，我才终于可以在原来的地方写上</p>
-<pre class="line-numbers"><code class="language-javascript">wasmModule.dewarp(...) // 调用dewarp_post.js里面的helper函数，间接调用C函数</code></pre>
-<p>整个过程挺折腾的，但事实也确实证明这么折腾一番是值得的，性能提升三十倍，非常愉悦。</p>
-<h1 id="结论">结论</h1>
-<p>总体下来我觉得WebAssembly现在技术上已经趋于成熟了，像我第一次积累了经验之后以后再用WebAssembly不踩那些坑的话体验是相当不错的。当然对于Emscripten来说在调用时的转化上目前还不是那么智能，还有很多要改进的地方（这也可能和JavaScript太放飞自我的设计有关？），使用Rust的开发我还没有试过，看官方文档上Game of Life的demo觉得非常有意思（我觉得Rust真的是绝对的后起之秀，各种方面的）。</p>
-<p>更有意思的是，这还不是优化的终点。我听说WebAssembly还有一个SIMD的提案，这似乎又可以让性能提升若干个台阶（当然我不知道目前的JIT VM能不能根据字节码进行自动向量化）。还真的就是啥native上的技术都往web端搬，浏览器也是啥活现在都要揽=_=，估计过几年就真成一个小的操作系统了（ChromeOS: Hold my chrome :）</p>
 
       
     </div>

@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,158 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/09/PACT0707/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/09/PACT0707/" class="post-title-link" itemprop="url">PACT 07/07 装箱问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-09 19:58:23" itemprop="dateCreated datePublished" datetime="2020-07-09T19:58:23+08:00">2020-07-09</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-07-12 11:18:22" itemprop="dateModified" datetime="2020-07-12T11:18:22+08:00">2020-07-12</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="定义">定义</h1>
+<p><strong>输入：</strong><span class="math inline">\(n\)</span>件物品，第<span class="math inline">\(i\)</span>件物品的大小为<span class="math inline">\(a_i\in(0,1]\)</span>。</p>
+<p><strong>目标：</strong>将所有物品装进若干个大小为<span class="math inline">\(1\)</span>的箱内，并使所用的箱最少。</p>
+<h1 id="见缝插针算法first-fit">见缝插针算法（First-fit）</h1>
+<p>（总觉得自己的这个翻译有些问题……又似乎觉得没有问题……还是觉得有些问题？“首次适应”看起来太傻了，“先到先得”看起来又不大对劲……）</p>
+<p>我们可以很暴力地设计一个算法：</p>
+<ol type="1">
+<li>将所有物品任意排列。</li>
+<li>依次处理每一个物品，如果已经用的箱子里有一个还装得下就装进去，否则就新开一个箱子装进去。</li>
+</ol>
+<p>这个算法被称为first-fit algorithm，我将其翻译为见缝插针算法。</p>
+<p>这个算法是不是太粗暴了一点？其实可以证明，这个算法是一个<span class="math inline">\(2\)</span>倍近似算法。</p>
+<p><strong>引理：</strong>我们最终的打包方案当中，至多只有一个箱子是最多半满的（即在里面物品的体积<span class="math inline">\(\le \frac{1}{2}\)</span>）。</p>
+<p><strong>证明：</strong>考虑反证：如果有两个箱子都是最多半满，显然后开的那个箱子里的东西在算法运行的时候可以被塞进另外一个箱子里，就产生了矛盾。</p>
+<p>假设我们的算法用了<span class="math inline">\(B\)</span>个箱子，因为忽略可能有的一个半满的箱子，剩下的箱子里物品的大小都<span class="math inline">\(&gt;\frac{1}{2}\)</span>，显然有 <span class="math display">\[
+\frac{B-1}{2} &lt; \sum_{i=1}^n a_i
+\]</span> 因此 <span class="math display">\[
+B &lt; 2\sum_{i=1}^na_i + 1 \Rightarrow B\le 2\sum_{i=1}^na_i
+\]</span> 又因为最优方案所用箱子的总大小一定不小于物品的大小之和， <span class="math display">\[
+\sum_{i=1}^n a_i \le \mathrm{OPT} \Rightarrow B\le 2\cdot \mathrm{OPT}
+\]</span></p>
+<h1 id="ptas设计">PTAS设计</h1>
+<p><strong>定理：</strong>对于任意的<span class="math inline">\(\varepsilon \in \left(0,\frac{1}{2}\right]\)</span>，我们都能设计一个<span class="math inline">\((1+2\varepsilon)\)</span>倍的近似算法。</p>
+<p>在证明这个定理之前，我们不妨思考一下：什么时候暴力搜索是可以接受的？</p>
+<p>如果我们知道每个箱子最多装<span class="math inline">\(m\)</span>件物品，物品的大小只有<span class="math inline">\(k\)</span>种，那么对于一个箱子至多有几种装箱（装到放不下任何其他物品）的方案？运用一点组合数学的知识，不难得出答案是 <span class="math display">\[
+\binom{m + k-1}{m}
+\]</span> 不妨这个方案数为<span class="math inline">\(R\)</span>，假设我们有<span class="math inline">\(n\)</span>个箱子，最多有几种装箱的方案呢？ <span class="math display">\[
+\binom{n+R-1}{R-1} = \mathcal{O}\left(n^{R-1}\right)
+\]</span> 如果<span class="math inline">\(R\)</span>不是常数，那么显然暴力枚举算法的复杂度是指数级的。</p>
+<p>而如果<span class="math inline">\(R\)</span>是一个比较小的常数，也就是说<span class="math inline">\(m, k\)</span>都是比较小的常数的话，暴力搜索的时间复杂度就是多项式级别的。</p>
+<p>如何确保<span class="math inline">\(m\)</span>比较小？只要每件物品足够大就行了，于是我们把输入的物品分为</p>
+<ol type="1">
+<li><span class="math inline">\(a_i&lt;\varepsilon\)</span>的小物品，</li>
+<li>和<span class="math inline">\(a_i\ge \varepsilon\)</span>的大物品。</li>
+</ol>
+<p>我们暂时先不管小物品。如何设计一个放大物品的<span class="math inline">\((1+\varepsilon)\)</span>倍近似算法呢？</p>
+<p>由定义，每件大物品大小<span class="math inline">\(&gt;\varepsilon\)</span>，因此每个箱子能够放的大物品数目<span class="math inline">\(m&lt;\frac{1}{\varepsilon}\)</span>，如果我们想要用暴力，只要再把<span class="math inline">\(k\)</span>限制住就行了。</p>
+<p>为此，我们将所有物品按大小升序（或者说不降）排序，然后将排完的物品分成<span class="math inline">\(k\)</span>组，除了最后一组，每一组都有<span class="math inline">\(\lceil n/k \rceil\)</span>个物品。</p>
+<p>假设我们现在的要处理的问题实例为<span class="math inline">\(I\)</span>，我们创建一个新实例<span class="math inline">\(J\)</span>，其中每一个物品的大小被高估为它所在组最大物品的大小：</p>
+<p><img src="/2020/07/09/PACT0707/IJ.svg" class=""></p>
+<p>很显然，因为做<span class="math inline">\(J\)</span>的时候我们高估了物品的大小，也就是让问题更难了，每个<span class="math inline">\(J\)</span>的解都是<span class="math inline">\(I\)</span>的可行解。而<span class="math inline">\(J\)</span>当中物品的大小只有<span class="math inline">\(k\)</span>种，加上<span class="math inline">\(m\)</span>的限制，是可以暴力解决的。我们可以暴力把<span class="math inline">\(J\)</span>解出来，然后套到<span class="math inline">\(I\)</span>上面作为我们算法的解。但是如何分析呢？或者说，如何用<span class="math inline">\(I\)</span>的最优解来给我们<span class="math inline">\(J\)</span>的最优解一个上界呢？</p>
+<p>出于分析的目的，我们再考虑另一个问题实例<span class="math inline">\(J&#39;\)</span>，其中每一个物品的大小被低估为它所在组最小物品的大小：</p>
+<p><img src="/2020/07/09/PACT0707/IJ_.svg" class=""></p>
+<p>类似地，我们可以得出：每一个<span class="math inline">\(I\)</span>的可行解一定是<span class="math inline">\(J&#39;\)</span>的一个可行解，反之未必然，即 <span class="math display">\[
+\mathrm{OPT}_{J&#39;} \le \mathrm{OPT}_{I}
+\]</span> 现在思考一个问题：如果我们有一组<span class="math inline">\(J&#39;\)</span>的最优解，如何把它尽可能地转换成一组<span class="math inline">\(J\)</span>的可行解呢？</p>
+<p>一个方案是让<span class="math inline">\(J\)</span>的每个物品对应<span class="math inline">\(J&#39;\)</span>当中更大一组中的物品，然后就按照<span class="math inline">\(J’\)</span>最优解的方式装箱，这样除了最大的一组以外<span class="math inline">\(J\)</span>中的所有物品都有办法装箱了。令最大的那一组不知道怎么装箱的物品集合为<span class="math inline">\(Q\)</span>。</p>
+<p><img src="/2020/07/09/PACT0707/JJ.svg" class=""></p>
+<p>因为对于<span class="math inline">\(Q\)</span>里面的物品我们大不了一个箱子装一个，因此我们得到 <span class="math display">\[
+\mathrm{OPT}_{J} \le \mathrm{OPT}_{J&#39;}+|Q| \le \mathrm{OPT}_{I} + \left\lceil\frac{n}{k}\right\rceil
+\]</span> 注意因为我们是暴力解<span class="math inline">\(J\)</span>的，现在不等式的左边<span class="math inline">\(\mathrm{OPT}_J\)</span>就是我们算法的代价。为了证明近似比，我们希望上面不等式的右边变成一个<span class="math inline">\((1+\varepsilon)\mathrm{OPT}_I\)</span>。</p>
+<p>注意到在这个只有大物品的问题当中，<span class="math inline">\(\mathrm{OPT}_I \ge \lceil n\cdot \varepsilon \rceil\)</span>，因此，若令<span class="math inline">\(k=\left\lceil\frac{1}{\varepsilon^2}\right\rceil\)</span>。上面的分析就变成了 <span class="math display">\[
+\begin{aligned}
+    \mathrm{OPT}_{J} &amp;\le \mathrm{OPT}_{I} + \left\lceil\frac{n}{k}\right\rceil \\
+    &amp;\le \mathrm{OPT}_{I} + \left\lceil n \cdot \varepsilon^2\right\rceil \\
+        &amp;\le \mathrm{OPT}_{I} + \varepsilon\left\lfloor n \cdot \varepsilon\right\rfloor + 1 \\
+    &amp;\le \mathrm{OPT}_{I} + \varepsilon\mathrm{OPT}_{I}+1 \\
+    &amp;= (1+\varepsilon)\mathrm{OPT}_{I} +1
+\end{aligned}
+\]</span> 我们就证明了我们装大物品的近似比是<span class="math inline">\((1+\varepsilon)\)</span>。注意到这个多出来的<span class="math inline">\(+1\)</span>虽然让人不爽，但是在渐进意义下是可以忽略的。但是因为毕竟是在渐渐意义下，我们刚刚的算法不能被称为PTAS了，而是APTAS（Asymptotic PTAS）。（这个<span class="math inline">\(+1\)</span>也不是没有办法去掉，只是如果要去掉那<span class="math inline">\(k\)</span>的表达式可能要复杂一点）</p>
+<p>接下来再处理小物品：我们现在对于大物品已经有了一个渐进近似比为<span class="math inline">\((1+\varepsilon)\)</span>的算法，我们如何在这个算法的解的基础上尽可能优地把小物品加进去呢？我们不妨使用见缝插针的策略。我们分析一下这样的效果：</p>
+<ol type="1">
+<li>如果我们使用见缝插针算法装小物品不需要开新的箱子，那么箱子数不变，我们的算法总体来说渐进近似比还是<span class="math inline">\((1+\varepsilon)\)</span>。</li>
+<li>如果我们开了新的箱子。我们可以证明：在我们方案中，至多有一个箱子，其里面物品的大小总和不大于<span class="math inline">\((1-\varepsilon)\)</span>，且这个箱子一定是在装小物品的时候新开的。证明方式和之前分析见缝插针算法的时候是类似的：如果有两个<span class="math inline">\((1-\varepsilon)\)</span>满的箱子，那么后开的那个箱子里面装的小物品一定可以塞进另外一个先前开的箱子里面，于是便产生了矛盾。我们分析一下这个情况下我们算法的近似比。假设我们的算法开了<span class="math inline">\(B\)</span>个箱子：</li>
+</ol>
+<p><span class="math display">\[
+\left.\begin{aligned}
+    (B-1)(1-\varepsilon) &lt; \sum_{i=1}^na_i \le \mathrm{OPT} \Rightarrow B\le \frac{\mathrm{OPT}}{1-\varepsilon} \\
+    \varepsilon \in \left(0,\frac{1}{2}\right] \Rightarrow \frac{1}{1-\varepsilon} = 1+2\varepsilon
++\frac{\varepsilon(2\varepsilon-1)}{1-\varepsilon} \le 1+2\varepsilon
+\end{aligned} \right\}
+\Rightarrow B\le (1+2\varepsilon) \mathrm{OPT}
+\]</span></p>
+<p>综上，我们算法的渐进近似比是<span class="math inline">\((1+2\varepsilon)\)</span>。</p>
+<p>最后回顾一下我们的APTAS：</p>
+<ol type="1">
+<li>暂时忽略小物品。</li>
+<li>设<span class="math inline">\(k=\left\lceil\frac{1}{\varepsilon^2}\right\rceil\)</span>并以此创建新实例<span class="math inline">\(J\)</span>。</li>
+<li>暴力搜索求得<span class="math inline">\(J\)</span>的最优解。</li>
+<li>把我们的最优解直接套到<span class="math inline">\(I\)</span>上面，得到大物品的装箱方案。</li>
+<li>使用见缝插针法将小物品装箱。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1565,184 +1717,6 @@ d(x,S) \le w_{uv} \le 2\cdot \mathrm{OPT}
 <p>如此说来，即使是近似算法，通过判断输出代价是<span class="math inline">\(1\)</span>还是<span class="math inline">\(2\)</span>我们就能判断<span class="math inline">\(G\)</span>中有没有大小<span class="math inline">\(k\)</span>的支配集。而这个近似算法是多项式时间的，因此我们可以用多项式时间解决支配集问题这么一个NPC问题，即<span class="math inline">\(P=NP\)</span>。</p>
 <p>刚刚用到的这个技巧被称为“gap reduction”。</p>
 <p>整个定理的言下之意就是如果你也相信<span class="math inline">\(\mathsf{P}\neq \mathsf{NP}\)</span>，那么就可以洗洗睡了~</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/06/30/PACT0629/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/06/30/PACT0629/" class="post-title-link" itemprop="url">PACT 06/29 三大概率不等式以及近似算法初步</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-06-30 21:22:22" itemprop="dateCreated datePublished" datetime="2020-06-30T21:22:22+08:00">2020-06-30</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-07-12 11:17:08" itemprop="dateModified" datetime="2020-07-12T11:17:08+08:00">2020-07-12</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="概率论初步">概率论初步</h1>
-<h2 id="期望的线性性">期望的线性性</h2>
-<p><span class="math display">\[
-\mathbb{E}[X+Y] = \mathbb E [X] + \mathbb E[Y]
-\]</span></p>
-<h2 id="随机变量的方差">随机变量的方差</h2>
-<p><span class="math display">\[
-\begin{aligned}
-    \operatorname{Var}[X] &amp;:= \mathbb{E}\left[\left(X-\mathbb{E}[X]\right)^2\right] \\
-    &amp;= \mathbb{E} \left[X^2 - 2\mathbb{E}[X]X+\mathbb{E}[X]^2\right] \\
-    &amp;= \mathbb{E} \left[X^2\right] - 2\mathbb{E}[X]^2 + \mathbb{E}[X]^2 \\
-    &amp;= \mathbb{E} \left[X^2\right] - \mathbb{E}[X]^2
-\end{aligned}
-\]</span></p>
-<p><strong>推论：</strong>若随机变量<span class="math inline">\(X,Y\)</span>互相独立，则有：</p>
-<ol type="1">
-<li><span class="math inline">\(\operatorname{Var}[X+Y] = \operatorname{Var}[X] + \operatorname{Var}[Y]\)</span></li>
-<li><span class="math inline">\(\mathbb{E}[XY] = \mathbb{E}[X]\mathbb{E}[Y]\)</span></li>
-</ol>
-<p>（互相独立的定义：<span class="math inline">\(\forall x, y, \operatorname{Pr}[X=x\cap Y=y]=\operatorname{Pr}[X=x]\operatorname{Pr}[Y=y]\)</span>）</p>
-<h2 id="马尔科夫不等式">马尔科夫不等式</h2>
-<p>设<span class="math inline">\(X\)</span>为<strong>非负</strong>随机变量，则<span class="math inline">\(\forall a &gt;0\)</span>： <span class="math display">\[
-\operatorname{Pr}[X\ge a] \le \frac{\mathbb{E}[X]}{a}
-\]</span> <strong>证明：</strong> <span class="math display">\[
-\begin{aligned}
-    \mathbb{E}[X] &amp;= \sum_{x}x\operatorname{Pr}[X=x] \\
-    &amp;= \sum_{x&lt;a}x\operatorname{Pr}[X=x] + \sum_{x\ge a}x\operatorname{Pr}[X=x] \\
-    &amp;\ge \sum_{x\ge a}x\operatorname{Pr}[X=x] \\
-    &amp;\ge \sum_{x\ge a}a\operatorname{Pr}[X=x] \\
-    &amp;= a \sum_{x\ge a}\operatorname{Pr}[X=x] \\
-    &amp;= a \operatorname{Pr}[X\ge x]
-\end{aligned}
-\]</span> （离散形式，连续形式的证明方法类似）</p>
-<p>其中第一个<span class="math inline">\(\ge\)</span>依赖于<span class="math inline">\(X\)</span>非负的特性，因此非负是必须的！</p>
-<p>马尔科夫不等式让我们可以在只知道随机变量期望的情况下对于其分布概率进行粗略定界。</p>
-<h2 id="切比雪夫不等式">切比雪夫不等式</h2>
-<p>设<span class="math inline">\(X\)</span>为随机变量，则<span class="math inline">\(\forall a &gt; 0\)</span>： <span class="math display">\[
-\operatorname{Pr}\left[|X-\mathbb{E}[X]| \ge a\right] \le \frac{\operatorname{Var}[X]}{a^2}
-\]</span> <strong>证明：</strong> <span class="math display">\[
-\begin{aligned}
-    \operatorname{Pr}\left[|X-\mathbb{E}[X]| \ge a\right] &amp;= \operatorname{Pr}\left[(X-\mathbb{E}[X])^2 \ge a^2\right] \\
-    &amp;\le \frac{\mathbb{E}\left[(X-\mathbb{E}[X])^2\right]}{a^2} \\
-    &amp;= \frac{\operatorname{Var}[X]}{a^2}
-\end{aligned}
-\]</span> 注意到<span class="math inline">\(a^2&gt;0\)</span>且<span class="math inline">\((X-\mathbb{E}[X])^2\)</span>非负，因此我们可以在第二步使用马尔科夫不等式。</p>
-<p>如果我们不仅知道随机变量的期望（一阶矩），还知道其方差（二阶矩），那么切比雪夫不等式可以给出比马尔科夫不等式更为精确的上界。</p>
-<h2 id="切尔诺夫上界chernoff-bound">切尔诺夫上界（Chernoff Bound）</h2>
-<p>设随机变量<span class="math inline">\(X=\sum_{i=1}^n X_i\)</span>，其中<span class="math inline">\(X_1,\cdots,X_n\)</span>为<span class="math inline">\([0,1]\)</span>上互相独立的随机变量，则<span class="math inline">\(\forall t&gt;1\)</span>： <span class="math display">\[
-\operatorname{Pr}\left[|X - \mathbb{E}[X]| \ge t\mathbb{E}[X]\right] \le 2\exp\left(-\frac{t\mathbb{E}[X]}{3}\right)
-\]</span> 且<span class="math inline">\(\forall \epsilon \in (0,1]\)</span>： <span class="math display">\[
-\operatorname{Pr}\left[|X - \mathbb{E}[X]| \ge \epsilon\mathbb{E}[X]\right] \le 2\exp\left(-\frac{\epsilon^2\mathbb{E}[X]}{3}\right)
-\]</span> <em>加性切尔诺夫不等式（Additive Chernoff Bound）</em>：<span class="math inline">\(\forall b &gt;1\)</span>： <span class="math display">\[
-\operatorname{Pr}\left[|X - \mathbb{E}[X]| \ge b\right] \le 2\exp\left(-\frac{2b^2}{n}\right)
-\]</span></p>
-<h2 id="三个不等式给出上界的比较">三个不等式给出上界的比较</h2>
-<p>考虑如下问题：投<span class="math inline">\(n\)</span>次均质硬币，设随机变量<span class="math inline">\(X\)</span>表示头朝上的次数。估计<span class="math inline">\(\operatorname{Pr}\left[X\ge \frac{3n}{4}\right]\)</span>？</p>
-<p><strong>马尔科夫不等式：</strong></p>
-<p>显然，<span class="math inline">\(\mathbb{E}[X]=\frac{n}{2}\)</span>，且<span class="math inline">\(X\)</span>非负： <span class="math display">\[
-\operatorname{Pr}\left[X\ge \frac{3n}{4}\right] \le \frac{\frac{n}{2}}{\frac{3n}{4}} = \frac{2}{3}
-\]</span> 这个上界是很松的。</p>
-<p><strong>切比雪夫不等式：</strong></p>
-<p>设随机二元变量<span class="math inline">\(X_i\)</span>表示第<span class="math inline">\(i\)</span>次投是否头朝上，则显然<span class="math inline">\(X=\sum_{i=1}^nX_i\)</span>，且易得<span class="math inline">\(\operatorname{Var}[X_i]=\frac{1}{4}\)</span>，由于<span class="math inline">\(X_i\)</span>两两独立，则<span class="math inline">\(\operatorname{Var}[X]=\frac{n}{4}\)</span>，运用切比雪夫不等式： <span class="math display">\[
-\begin{aligned}
-    \operatorname{Pr}\left[X\ge \frac{3n}{4}\right] &amp;= \operatorname{Pr}\left[X - \frac{n}{2}\ge \frac{n}{4}\right] \\
-    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \frac{n}{2}\right|\ge \frac{n}{4}\right] \\
-    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \mathbb{E}[X]\right|\ge \frac{n}{4}\right] \\
-    &amp;\le \frac{1}{2} \frac{\frac{n}{4}}{\left(\frac{n}{4}\right)^2} \\
-    &amp;= \frac{2}{n}
-\end{aligned}
-\]</span> <strong>切尔诺夫上界：</strong></p>
-<p>显然，取<span class="math inline">\(\epsilon = \frac{1}{2}\)</span>： <span class="math display">\[
-\begin{aligned}
-    \operatorname{Pr}\left[X\ge \frac{3n}{4}\right] &amp;= \operatorname{Pr}\left[X - \frac{n}{2}\ge \frac{n}{4}\right] \\
-    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \frac{n}{2}\right|\ge \frac{n}{4}\right] \\
-    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \mathbb{E}[X]\right|\ge \frac{1}{2}\mathbb{E}[X]\right] \\
-    &amp;\le \exp\left(-\frac{1}{12}\cdot \frac{n}{2}\right)\\
-    &amp;= \exp\left(-\frac{n}{24}\right)
-\end{aligned}
-\]</span> 各上界的效果：</p>
-<p><img src="/2020/06/30/PACT0629/Bounds.png" class=""></p>
-<p>看来这个例子里面还是切比雪夫不等式给出的上界最好——是不是切尔诺夫上界我学到的形式本身太loose了？</p>
-<h1 id="近似算法初步">近似算法初步</h1>
-<h2 id="定义">定义</h2>
-<p>若算法<span class="math inline">\(A\)</span>满足以下条件，则称算法<span class="math inline">\(A\)</span>是某个问题（不妨假设是最小化问题）的<span class="math inline">\(\alpha\)</span>近似比的近似算法：</p>
-<ol type="1">
-<li><span class="math inline">\(A\)</span>是多项式时间的。</li>
-<li>对于所有输入，<span class="math inline">\(A\)</span>的输出<span class="math inline">\(\operatorname{soln}(A) \le \alpha \cdot\mathrm{OPT}\)</span>，其中<span class="math inline">\(\mathrm{OPT}\)</span>是该输入的最优解。</li>
-</ol>
-<p><em>对于最大化问题，第二个条件为<span class="math inline">\(\operatorname{soln}(A) \ge \frac{1}{\alpha} \cdot\mathrm{OPT}\)</span></em>。</p>
-<p>（继续假设是最小化问题）</p>
-<p>显然，为了精确计算<span class="math inline">\(\alpha\)</span>我们必须知道<span class="math inline">\(\mathrm{OPT}\)</span>，而这显然是不现实的（如果可以我还要近似算法干嘛？），因此我们退而求其次寻找<span class="math inline">\(\mathrm{OPT}\)</span>的一个比较紧的<strong>下界</strong>，我们的解与该下界之比自然就是<span class="math inline">\(\alpha\)</span>的上界了。</p>
-<h2 id="例最小顶点覆盖问题">例：最小顶点覆盖问题</h2>
-<p><strong>输入：</strong><span class="math inline">\(G=(V,E)\)</span></p>
-<p><strong>目标：</strong>最小化点集<span class="math inline">\(S\subseteq V\)</span>，同时满足<span class="math inline">\(\forall (u,v) \in E\)</span>，<span class="math inline">\(u\in S\)</span>或<span class="math inline">\(v \in S\)</span>。</p>
-<p>这是一个知名的NP Complete问题。在这里我们设计一个简单的<span class="math inline">\(2\)</span>近似算法。然而令人吃惊地是，<span class="math inline">\(2\)</span>的近似比已经是我们目前能够做到的最好结果！</p>
-<p><strong>思路：</strong>考虑<span class="math inline">\(G\)</span>的一个<strong>极大匹配</strong>，显然极大匹配是可以在多项式时间内求出的。</p>
-<p>同时注意到，任意无向图极大匹配的大小必定是其点覆盖集大小的下界，因为点覆盖必须取极大匹配当中每一条边的至少一个端点才能完成覆盖！</p>
-<p><strong>算法：</strong></p>
-<ol type="1">
-<li>计算<span class="math inline">\(G\)</span>的一个极大匹配<span class="math inline">\(M\)</span>。</li>
-<li>取极大匹配所有边的所有端点为<span class="math inline">\(S\)</span>。</li>
-</ol>
-<p><strong>为什么正确？</strong>考虑反证：若<span class="math inline">\(\exists (u,v) \in E\)</span>，使<span class="math inline">\(u\not\in S\)</span>且<span class="math inline">\(v \not \in S\)</span>，那显然边<span class="math inline">\((u, v)\)</span>还可以加入<span class="math inline">\(M\)</span>，这和<span class="math inline">\(M\)</span>的极大性是矛盾的。</p>
-<p>近似比证明： <span class="math display">\[
-\begin{aligned}
-    |S| = 2|M| \le 2\cdot \mathrm{OPT}
-\end{aligned}
-\]</span> 得证。</p>
 
       
     </div>

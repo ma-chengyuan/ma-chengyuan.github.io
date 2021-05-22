@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -235,6 +235,233 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/05/19/Docleaner-Optimization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/05/19/Docleaner-Optimization/" class="post-title-link" itemprop="url">科学白嫖“图档清洁专家”——优化篇</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-05-19 20:05:12" itemprop="dateCreated datePublished" datetime="2021-05-19T20:05:12+08:00">2021-05-19</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-05-22 18:21:18" itemprop="dateModified" datetime="2021-05-22T18:21:18+08:00">2021-05-22</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>书接<a href="/2021/05/11/Docleaner/" title="上文">上文</a>，我们使用Python + Selenium白嫖了原来要收费的图档清理大师，效果极好。然而，我们的代码还有很多可以优化之处，这就是写本文的由来。</p>
+<h1 id="方法优化避免开启浏览器">方法优化：避免开启浏览器</h1>
+<p>在写完代码发完朋友圈之后我才开始认真思考一个问题：</p>
+<blockquote>
+<p><strong>为啥不直接逆向在线体验的API啊？</strong></p>
+</blockquote>
+<p></p>
+<p>我之前自己把自己给绕进去了。</p>
+<p>Selenium模拟的好处是实现思路自然，只需要知道人工使用的方法而不需要知道内部的代码实现与网络通信。但缺点也很明显，需要开浏览器带来了一个明显的开销。浏览器的内存占用使得并行操作也存在一定的难度。</p>
+<p>而直接模拟网络请求的好处就是确保没有资源浪费，存在并行化的潜质，而且相较于浏览器涉及到的不见耦合较少具有更高的稳定性（前提是API不变。Selenium则相较之下在内部API变化但界面不变的情况下具备跨版本的稳定性）。</p>
+<p>试一试？</p>
+<p><img src="/2021/05/19/Docleaner-Optimization/image-20210513174125304.png" class=""></p>
+<p>打开开发者界面，定位到上传图片的按钮，Firefox的调试器很贴心地告诉我这里有一个event，于是点进去。</p>
+<p><img src="/2021/05/19/Docleaner-Optimization/image-20210516112926163.png" class=""></p>
+<p>网站的开发者很贴心地没有做minify也没有做混淆，甚至还留了注释。</p>
+<p>我发现上传的主要逻辑其实在<code>$('.exeDaqw').click()</code>里，于是进一步在源码当中搜索<code>.exeDaqw</code>，发现如下片段：</p>
+<p><img src="/2021/05/19/Docleaner-Optimization/image-20210516113209489.png" class=""></p>
+<p>通过阅读片段可以发现，这个<code>.exeDaqw</code>元素是通过<code>layui.upload</code>渲染的。我孤陋寡闻，但Layui看起来是一个控件库，<a target="_blank" rel="noopener" href="https://www.layui.com/">事实</a>也是如此。通过<code>url</code>字段我得以确定上传图片的API地址。在随后的代码当中又可以发现图片清理的API地址。</p>
+<p><img src="/2021/05/19/Docleaner-Optimization/image-20210516113732940.png" class=""></p>
+<p>通过开发者窗口的网络监视器可以看到请求的实际情况：</p>
+<p><img src="/2021/05/19/Docleaner-Optimization/image-20210516114103508.png" class=""></p>
+<p>经过一波操作比对，摸索得到的API可以写成如下代码：</p>
+<pre class="line-numbers"><code class="language-python">import requests
+
+def clean_doc_requests(images: Generator[Tuple[bytes, str], None, None]) \
+        -&gt; Generator[Image.Image, None, None]:
+    &quot;&quot;&quot;
+    Cleans the scanned document pages using docleaner&#39;s online service.
+
+    :param images: A generator yielding (an image as raw bytes, its extension as string).
+    &quot;&quot;&quot;
+    for (image, ext) in images:
+        # noinspection HttpUrlsUsage
+        req = requests.post(&quot;http://service.docleaner.cn/attachCollect/upload&quot;,
+                            files=&#123;&quot;file&quot;: (f&quot;image.&#123;ext&#125;&quot;, image)&#125;)
+        data = &#123;
+            # Weird typo in the API.
+            &quot;paramers&quot;: &quot;降噪,去斑点,去黑边,去背景,自动纠斜&quot;,
+            &quot;type&quot;: &quot;image&quot;,
+            &quot;storePath&quot;: req.json()[&quot;data&quot;][&quot;storePath&quot;],
+            &quot;userId&quot;: &quot;&quot;
+        &#125;
+        # noinspection HttpUrlsUsage
+        req = requests.post(&quot;http://service.docleaner.cn/exe/daqw&quot;, data=data)
+        result = base64.b64decode(req.json()[&quot;data&quot;][&quot;outFileStr&quot;])
+        yield Image.open(io.BytesIO(result))</code></pre>
+<p>和之前上面的<code>clean_doc_online</code>代码对比，可以看到代码和逻辑确实都简洁了很多，这就是扒API直接用的优点了。我很幸运，这个站点的代码和注释都很清楚，所以逆向还原出API还是很容易的，对于更加复杂的一些站点，Selenium可能不失为一个更简单粗暴的好办法。</p>
+<p>但有意思的地方来了：上面的这串代码，跑的比Selenium要慢。原因在之前解释Selenium的时候大致讲过了。Selenium新开了一个浏览器进程，那里上传图片还是等待结果本质上不会阻塞Python的运行，所以通过优化循环的写法，可以上传图片和从PDF中获取下一页图片同时进行。而<code>requests</code>是Python库，在请求时是阻塞的，因此就慢了。</p>
+<p>失之东隅收之桑榆，虽然我们的“优化”让我们的代码反而变慢了，但是也为进一步的优化铺平了道路：在用Selenium的时候，因为同时开几十个浏览器不仅视觉上很离谱而且内存占用很高，所以并行处理很难；而同时开几十个并发的请求却是再容易不过的事情了。因此我们下一步的优化就是利用Python的多进程库进行加速。</p>
+<h1 id="速度优化多进程加速">速度优化：多进程加速</h1>
+<p>Python写并行的格局，是和别处不同的。究其原因，GIL的存在硬是让多线程的并行成了并发。而绕过GIL的唯一途径就是多进程，这又涉及到了进程之间通信，同步等一连串复杂的逻辑，令人望而生畏（至少我是这样的）。</p>
+<p>但Python有一个好——battery included。我去官方文档转了一圈，发现Python的标准库里有一个multiprocessing模块，应付我这里的需求已经完全够用。具体来说，multiprocessing提供了一个进程池<code>Pool</code>：对于一般的</p>
+<pre class="line-numbers"><code class="language-python">output_iterator = map(function, input_iterator)</code></pre>
+<p>只需要改写成</p>
+<pre class="line-numbers"><code class="language-python">from multiprocessing import Pool
+with Pool(process_count) as p:
+    output_iterator = p.imap(function, input_iterator)</code></pre>
+<p>就可以把map的函数分派到线程池的多个线程上进行运算，并在结果出来之后进行保序归并，最终得到和<code>map</code>一样的结果。</p>
+<p>为了让我们的代码可以套用这个模式，我们需要把之前生成器套生成器的逻辑重构成单个函数：</p>
+<pre class="line-numbers"><code class="language-python">def clean_single_page(args: Tuple[StrPath, int, int, bool, bool]) \
+        -&gt; Union[Image.Image, bytes]:
+    &quot;&quot;&quot;
+    Cleans a single page.
+
+    :param args: A tuple consisting of (in order):
+        1. Path to the page (pdf or image),
+        2. Index (image index or page index in PDF),
+        3. DPI (-1 if an image is direcly supplied),
+        4. Whether to perform OCR,
+        5. Whether to actually clean the page.
+    :return:  If OCR is enabled, an OCR-ed PDF in raw bytes, otherwise a PIL
+        Image object representing the cleaned page.
+    &quot;&quot;&quot;
+    page, idx, dpi, ocr, clean = args
+    ...</code></pre>
+<p>如上所示，从PDF中提取页面图像、上传图像到图档清理大师进行清理、对于结果的OCR都是可以单独进行的，故合并。</p>
+<p>逻辑的合并自然导致参数的合并，而<code>map</code>接受的函数应当是单入单出的，于是我们就需要把所有参数打包成一个tuple进行用，并在函数体内部解包，即上面代码的第15行。</p>
+<p>把所有页面重新归并成PDF的函数也要进行一定的简化与修改：</p>
+<pre class="line-numbers"><code class="language-python">def merge_to_pdf(pages: Iterable[Union[Image.Image, bytes]], output: StrPath):
+    &quot;&quot;&quot;
+    Converts and merges images to a one-page pdf file, performing optional
+    OCR in the process.
+
+    :param pages: A generator yielding PIL image objects.
+    :param output: Path to the result pdf.
+    &quot;&quot;&quot;
+    doc = fitz.Document()
+    for page in pages:
+        if isinstance(page, Image.Image):
+            # noinspection PyUnresolvedReferences
+            doc_page = doc.new_page(width=page.width, height=page.height)
+            buffer = io.BytesIO()
+            page.save(buffer, format=&quot;jpeg&quot;)
+            doc_page.insert_image(fitz.Rect(0, 0, page.width, page.height),
+                              stream=buffer)
+        else:
+            page = fitz.Document(stream=page, filetype=&quot;pdf&quot;)
+            doc.insert_pdf(page)
+    doc.save(output)</code></pre>
+<p>最后，从之前的代码应该可以看出，我在编写代码的时候一直把逻辑分得比较开，目的是在可能的情况下使脚本的使用能够更加灵活。例如，能不能以通配符的形式直接读取图片进行优化？能不能再输出的时候直接输出到文件夹中而跳过PDF归并从而便于其他软件？多进程的优化是一个重要的重构，因此趁这个重构的机会我也把之前提到的功能理了理和调用<code>Pool</code>的代码一起加在了CLI入口点：</p>
+<pre class="line-numbers"><code class="language-python">@click.command()
+@click.argument(&quot;input&quot;, type=click.Path())
+@click.argument(&quot;output&quot;, type=click.Path())
+@click.option(&quot;-d&quot;, &quot;--dpi&quot;, default=300, help=&quot;DPI for rasterization.&quot;)
+@click.option(&quot;--first-page&quot;, type=int, help=&quot;First page to convert/clean.&quot;)
+@click.option(&quot;--last-page&quot;, type=int, help=&quot;Last page to convert/clean.&quot;)
+@click.option(&quot;--ocr/--no-ocr&quot;, default=True,
+              help=&quot;Whether to perform OCR during the conversion.&quot;)
+@click.option(&quot;--clean/--dont-clean&quot;, default=True,
+              help=&quot;Whether to clean pdf using docleaner&#39;s online service.&quot;)
+def main(input: str, output: str, dpi: int,
+         first_page: Optional[int], last_page: Optional[int], ocr: bool,
+         clean: bool):
+    if os.path.splitext(input)[1].lower() == &quot;.pdf&quot;:
+        # PDF mode
+        assert os.path.exists(input)
+        page_count = fitz.Document(input).page_count
+        first_page = 0 if first_page is None else first_page - 1
+        last_page = page_count if last_page is None else last_page
+        args = zip(repeat(input), range(first_page, last_page),
+                   repeat(dpi), repeat(ocr), repeat(clean))
+    else:
+        # Glob mode
+        files = sorted(glob.glob(input, recursive=True))
+        first_page = 0 if first_page is None else first_page - 1
+        last_page = len(files) if last_page is None else last_page
+        args = zip(files[first_page:last_page], repeat(0), repeat(-1),
+                   repeat(ocr), repeat(clean))
+    total = last_page - first_page
+    with Pool() as p:
+        results = tqdm(p.imap(clean_single_page, args), total=total)
+        if os.path.splitext(output)[1].lower() == &quot;.pdf&quot;:
+            merge_to_pdf(results, output)
+        elif not os.path.exists(output) or os.path.isdir(output):
+            if ocr:
+                raise RuntimeError(&quot;the OCR flag is useless because we are &quot;
+                                   &quot;writing images (not PDF) to the output &quot;
+                                   &quot;directory.&quot;)
+            if not os.path.exists(output):
+                Path(output).mkdir(parents=True)
+            for (index, page) in enumerate(results):
+                file_path = os.path.join(output, f&quot;&#123;index&#125;.jpg&quot;)
+                assert isinstance(page, Image.Image)
+                page.save(file_path)
+        else:
+            raise RuntimeError(&quot;invalid output format.&quot;)</code></pre>
+<p>在多进程优化之后，脚本花了11分21秒就把测试用的《态度改变与社会影响》一书全文清理完毕。和原来30-40分钟的耗时对比，显然我们的优化是卓有成效的。</p>
+<h1 id="大小优化">大小优化</h1>
+<p><strong>未完待续</strong></p>
+<p>现在唯一一个比较明显的问题就是：清理之后的结果文件实在是太大了。</p>
+<p>究其原因，现在的脚本是将PDF按一定的分辨率光栅化之后获得图像进行清理，而不是直接从PDF中提取本来存在的图像。现在方法的好处是实现简洁，无需考虑PDF内图像的存储方式（测试中发现直接提取PDF中图像提取出来可能是横的，这就说明PDF其实再显示的时候额外标注了旋转的信息，这在直接提取中会丢失），但坏处就是结果图像的大小和原本嵌入的图像大小无关，而且提取的过程中可能产生误差(artifact，不知道怎么翻最为恰当)。</p>
+<p>因此，解决这个问题也有两种思路：</p>
+<ol type="1">
+<li>治本：使用更复杂一点的逻辑对PDF中内嵌的图片进行保真的提取。这样一来结果文件的大小就和原来的文件大致一致，可能还会更小一点（考虑到清理的时候很多区域都会整个变成白色）。</li>
+<li>治标：使用更加优秀的图像压缩算法。</li>
+</ol>
+<p>第一种思路还未实验。关于第二种思路，我不禁想到Google出品的无脑图像压缩应用<a target="_blank" rel="noopener" href="https://squoosh.app/">Squoosh</a>。Squoosh提供CLI，而且压缩率可以达到30%-40%，很有的吸引力。进一步探究，Squoosh默认使用的压缩工具是<a target="_blank" rel="noopener" href="https://mozjpeg.com/">MozJPEG</a>。这款Mozilla出品的压缩编码器似乎也是唯一靠谱的我们脚本里能用的（Squoosh里其他的压缩器的输出格式无法嵌入到PDF中，而且耗时太长）。但我在Windows上测试MozJPEG的CLI，发现无法输出合法的JPEG文件。还在尝试中。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/05/11/Docleaner/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -266,7 +493,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-05-16 11:55:01" itemprop="dateModified" datetime="2021-05-16T11:55:01+08:00">2021-05-16</time>
+        <time title="修改时间：2021-05-19 20:35:42" itemprop="dateModified" datetime="2021-05-19T20:35:42+08:00">2021-05-19</time>
       </span>
 
   
@@ -379,7 +606,7 @@ browser = webdriver.Chrome()
 # browser = webdriver.Edge()
 # browser = webdriver.Safari()
 browser.get(&quot;http://www.docleaner.cn/experience.html&quot;)</code></pre>
-<p>打开哪个浏览器就取决于个人喜好了。在这里需要注意：除了在Python环境里安装selenium包以外，还需要自行安装对应浏览器的WebDriver。具体如何装，怎么装，请参阅Selenium的文档。就我个人体验而言，Chrome的WebDriver启动得很快，但是默认会把日志写到控制台里面；Firefox得WebDriver要花一两秒启动，默认会写日志到geckodriver.log里面。</p>
+<p>打开哪个浏览器就取决于个人喜好了。在这里需要注意：除了在Python环境里安装selenium包以外，还需要自行安装对应浏览器的WebDriver。具体如何装，怎么装，请参阅Selenium的文档。就我个人体验而言，Chrome的WebDriver启动得很快，但是默认会把日志写入控制台导致进度条显示混乱；Firefox得WebDriver要花一两秒启动，但默认会写日志到geckodriver.log里面。</p>
 <p><img src="/2021/05/11/Docleaner/image-20210511180117997.png" class=""></p>
 <p>在执行以上代码之后要做两件事：</p>
 <ol type="1">
@@ -584,56 +811,16 @@ def main(input: str, output: str, format: str, dpi: int, browser: str,
 if __name__ == &quot;__main__&quot;:
     main()</code></pre>
 <p>大功告成！</p>
-<h1 id="优化避免开启浏览器">优化：避免开启浏览器</h1>
-<p>在写完代码发完朋友圈之后我才开始认真思考一个问题：</p>
-<blockquote>
-<p><strong>为啥不直接逆向在线体验的API啊？</strong></p>
-</blockquote>
-<p></p>
-<p>我之前自己把自己给绕进去了。</p>
-<p>Selenium模拟的好处是实现思路自然，只需要知道人工使用的方法而不需要知道内部的代码实现与网络通信。但缺点也很明显，需要开浏览器带来了一个明显的开销。浏览器的内存占用使得并行操作也存在一定的难度。</p>
-<p>而直接模拟网络请求的好处就是确保没有资源浪费，存在并行化的潜质，而且相较于浏览器涉及到的不见耦合较少具有更高的稳定性（前提是API不变。Selenium则相较之下在内部API变化但界面不变的情况下具备跨版本的稳定性）。</p>
-<p>试一试？</p>
-<p><img src="/2021/05/11/Docleaner/image-20210513174125304.png" class=""></p>
-<p>打开开发者界面，定位到上传图片的按钮，Firefox的调试器很贴心地告诉我这里有一个event，于是点进去。</p>
-<p><img src="/2021/05/11/Docleaner/image-20210516112926163.png" class=""></p>
-<p>网站的开发者很贴心地没有做minify也没有做混淆，甚至还留了注释。</p>
-<p>我发现上传的主要逻辑其实在<code>$('.exeDaqw').click()</code>里，于是进一步在源码当中搜索<code>.exeDaqw</code>，发现如下片段：</p>
-<p><img src="/2021/05/11/Docleaner/image-20210516113209489.png" class=""></p>
-<p>通过阅读片段可以发现，这个<code>.exeDaqw</code>元素是通过<code>layui.upload</code>渲染的。我孤陋寡闻，但Layui看起来是一个控件库，<a target="_blank" rel="noopener" href="https://www.layui.com/">事实</a>也是如此。通过<code>url</code>字段我得以确定上传图片的API地址。在随后的代码当中又可以发现图片清理的API地址。</p>
-<p><img src="/2021/05/11/Docleaner/image-20210516113732940.png" class=""></p>
-<p>通过开发者窗口的网络监视器可以看到请求的实际情况：</p>
-<p><img src="/2021/05/11/Docleaner/image-20210516114103508.png" class=""></p>
-<p>经过一波操作比对，摸索得到的API可以写成如下代码：</p>
-<pre class="line-numbers"><code class="language-python">import requests
-
-def clean_doc_requests(images: Generator[Tuple[bytes, str], None, None]) \
-        -&gt; Generator[Image.Image, None, None]:
-    &quot;&quot;&quot;
-    Cleans the scanned document pages using docleaner&#39;s online service.
-
-    :param images: A generator yielding (an image as raw bytes, its extension as string).
-    &quot;&quot;&quot;
-    for (image, ext) in images:
-        # noinspection HttpUrlsUsage
-        req = requests.post(&quot;http://service.docleaner.cn/attachCollect/upload&quot;,
-                            files=&#123;&quot;file&quot;: (f&quot;image.&#123;ext&#125;&quot;, image)&#125;)
-        data = &#123;
-            # Weird typo in the API.
-            &quot;paramers&quot;: &quot;降噪,去斑点,去黑边,去背景,自动纠斜&quot;,
-            &quot;type&quot;: &quot;image&quot;,
-            &quot;storePath&quot;: req.json()[&quot;data&quot;][&quot;storePath&quot;],
-            &quot;userId&quot;: &quot;&quot;
-        &#125;
-        # noinspection HttpUrlsUsage
-        req = requests.post(&quot;http://service.docleaner.cn/exe/daqw&quot;, data=data)
-        result = base64.b64decode(req.json()[&quot;data&quot;][&quot;outFileStr&quot;])
-        yield Image.open(io.BytesIO(result))</code></pre>
-<p>和之前上面的<code>clean_doc_online</code>代码对比，可以看到代码和逻辑确实都简洁了很多，这就是扒API直接用的优点了。我很幸运，这个站点的代码和注释都很清楚，所以逆向还原出API还是很容易的，对于更加复杂的一些站点，Selenium可能不失为一个更简单粗暴的好办法。</p>
-<p>但有意思的地方来了：上面的这串代码，跑的比Selenium要慢。原因在之前解释Selenium的时候大致讲过了。Selenium新开了一个浏览器进程，那里上传图片还是等待结果本质上不会阻塞Python的运行，所以通过优化循环的写法，可以上传图片和从PDF中获取下一页图片同时进行。而<code>requests</code>是Python库，在请求时是阻塞的，因此就慢了。</p>
-<p>失之东隅收之桑榆，虽然我们的“优化”让我们的代码反而变慢了，但是也为进一步的优化铺平了道路：在用Selenium的时候，因为同时开几十个浏览器不仅视觉上很离谱而且内存占用很高，所以并行处理很难；而同时开几十个并发的请求却是再容易不过的事情了。因此我们下一步的优化就是利用Python的多进程库进行加速。</p>
-<h1 id="优化多进程加速">优化：多进程加速</h1>
-<p>施工中~未完待续。</p>
+<h1 id="测试">测试</h1>
+<p>我选取的测试书籍是津巴多的《态度改变与心理影响》。原文扫描版460页98.4MB，自动化脚本耗时半个小时左右处理完毕，结果大小为325MB。对比如下（典型页面）：</p>
+<p><img src="/2021/05/11/Docleaner/Comparison.jpg" class=""></p>
+<p>可以看到，脚本做出了显著的优化，但在脚本运行中也发现了一些可以改进的地方：</p>
+<ol type="1">
+<li>过于激进的光栅化分辨率使得结果文档的大小显著增加。</li>
+<li>基于Selenium的解决方案偶尔会出现开关没有开或者莫名其妙地关掉的情形。</li>
+<li>脚本的运行效率有待提升。</li>
+</ol>
+<p>对于这三点，我们将在以后的文章中进行改进。</p>
 
       
     </div>
@@ -2297,122 +2484,6 @@ impl Timer &#123;
 <p>以前觉得这个式子很高端的，现在有种莫名的幻灭感。</p>
 <p>但是写到这的时候多看了一眼，发现斯特林逼近的一个推导里用到了Wallis公式？</p>
 <p>突然有点不确定这算不算是循环论证了。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/08/28/Minecraft%20ILP/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/08/28/Minecraft%20ILP/" class="post-title-link" itemprop="url">Designing Computational Redstone Circuits Automatically in Minecraft with Integer Programming: Preliminary Thoughts and Tests</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-08-28 13:48:50" itemprop="dateCreated datePublished" datetime="2020-08-28T13:48:50+08:00">2020-08-28</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-11-25 17:05:52" itemprop="dateModified" datetime="2020-11-25T17:05:52+08:00">2020-11-25</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><strong>UNFINISHED ARTICLE -- WORK IN PROGRESS</strong></p>
-<p><strong>UNFINISHED ARTICLE -- WORK IN PROGRESS</strong></p>
-<p><strong>UNFINISHED ARTICLE -- WORK IN PROGRESS</strong></p>
-<p>This was a project I worked on two months ago, but it wasn't until now that I have the time to write it down and share it on my blog.</p>
-<h1 id="intro">Intro</h1>
-<p>Redstone has been a core element in the game Minecraft for quite some years. It is presumably the most untrivial one as well: while anyone could master nearly all Minecraft mechanics through experiences, it takes not only experience but also ingenuity to design a good redstone circuit. Few of us are bold enough to claim "I master redstone", even after playing Minecraft for a decade.</p>
-<p>So here comes the question: <strong>Can the design of redstone circuits, the core of Minecraft automations, be automated?</strong> and <strong>If so, how?</strong> (appreciate how meta this is :)</p>
-<p>Theoretically, the answer is "yes...but". Minecraft has a finite world, and each position has a finite number of possible blockstates. We can write a program to enumerate all possible placements of blocks until we find some placement corresponding to the desired redstone circuit. However, this needs exponential time and we may need to wait for a century before it could give us, for instance, a decent piston door. Moreover, if a circuit involves manipulation of entities (which could have infinite many states), then we are easily screwed.</p>
-<p>Well, perhaps it is difficult to let a program design any redstone circuit. But there is indeed a subset of redstone circuits whose design can very likely be automated -- <strong>computational redstone circuits</strong>, aka. logic gates, calculators, CPUs etc. Why? Because software that design their real world electronic counterparts are readily available -- they are called "EDA".</p>
-<p>As a high school student I, of course, know little about the inner workings of real-world EDA applications (and there doesn't seem to be a lot of resources out there). I am convinced that this problem is NPC (further articulated below), so designing an efficient polytime combinatorial algorithm doesn't seem plausible. That said, what about reducing this problem to some other NPC problems which we can solve relatively quickly with optimized algorithms / heuristics -- say, ILP? This is what I am trying to do here.</p>
-<h1 id="formulating-the-problem">Formulating the problem</h1>
-<p>"Designing computational redstone circuit automatically" is a vague idea, so it is necessary that we know what this truly means.</p>
-<h2 id="whats-the-input">What's the input?</h2>
-<p>The input should describe the intended functionality of a circuit. Recall how we usually describe a circuit: we draw a <strong>circuit diagram</strong>. I here characterize a redstone circuit diagram by the assumptions and constraints below:</p>
-<ol type="1">
-<li>A circuit contains two parts: <strong>wires and components</strong>.</li>
-<li>Components are the <strong>primitives</strong> of a circuit. E.g. A torch or a wire junction.</li>
-<li>A component has <strong>interfaces</strong>, either <strong>in or out</strong>, as where the component receives signals from and sends signals to.</li>
-<li>A wire connects <strong>an</strong> out-interface from a component ("source") to <strong>an</strong> in-interface of another component ("target").</li>
-<li>Wires are <strong>directed</strong>.</li>
-<li>Components are <strong>independent</strong>. i.e. they do not interfere with other components in any way other than being connected by wires from interfaces.</li>
-</ol>
-<p>A circuit diagram can be represented in a directed graph, with components as vertices and wires as edges. Source/target interfaces as extra information stored on edges.</p>
-<h2 id="whats-the-output">What's the output?</h2>
-<p>We want our program to tell us how the circuit we described in the input can be built in the Minecraft world. Therefore, we could define the the output to be a set of position - blockstate pairs, (which, in implementation, can be stored in a schematic file).</p>
-<p>However, we don't want to jump straight from a circuit diagram to a detailed Minecraft schematic because that means taking interference between components, quasi connectivity, update order -- basically everything that makes redstone engineering complex -- into consideration in the first place.</p>
-<p>Instead, we could first build our circuit in an <strong>ideal world</strong>, in which we forget about all those factors above, and then convert the ideal placement into an actual Minecraft schematic.</p>
-<p>What's an idea world?</p>
-<ol type="1">
-<li>A circuit consists of multiple ideal blocks.</li>
-<li>A component fully occupies a set of ideal blocks, some of which are its interfaces. How many and which blocks a certain type of component occupies depend on its size in Minecraft and how we plan to convert the ideal placement to a real schematic.</li>
-<li>A wire is a chain of blocks, where any adjacent two share a face. The first block is always the source interface and the last is always the target interface.</li>
-<li><strong>Exclusiveness: </strong>All components and all wires (ignoring their first and last block) mustn't overlap.</li>
-<li><strong>Mutual Independence: </strong>Unless both blocks are occupied by the same component / wire, anything in two adjacent cells do not interfere with each other.</li>
-<li>Wire junctions are special components and are exceptions to rule 2 and 3. A wire junction always have three interfaces (1 in &amp; 2 outs, or 2 ins &amp; 1 out). Multiple junctions can overlap and they can overlap with an interface of some component.</li>
-<li>There are times when we want to fix the location of some components in the input. These components are usually just placeholders that mark the position of IO. (We don't want to produce a circuit with an unreachable input/output in the center of everything else, right?)</li>
-</ol>
-<h2 id="the-objective">The Objective</h2>
-<ol type="1">
-<li>The circuit represented by the output must have the same functionality as described by the input circuit diagram.</li>
-<li>The delay of the circuit should be minimized.</li>
-</ol>
-<h2 id="example-the-and-gate">Example: the AND gate</h2>
-<p>Let's see how we design a simple AND gate.</p>
-<p>Suppose the only primitive components we have are NOT gate (torch), wire junction, and IO placeholder. The circuit diagram of AND gate is:</p>
-<p><img src="/2020/08/28/Minecraft%20ILP/ANDCD.svg" class=""></p>
 
       
     </div>

@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,207 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/17/%E7%82%B9%E5%88%86%E6%B2%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/09/17/%E7%82%B9%E5%88%86%E6%B2%BB/" class="post-title-link" itemprop="url">POJ 1741 / 点分治</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2018-09-17 14:09:37 / 修改时间：14:09:27" itemprop="dateCreated datePublished" datetime="2018-09-17T14:09:37+08:00">2018-09-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="题面">题面</h1>
+<p><a target="_blank" rel="noopener" href="http://poj.org/problem?id=1741">题面</a>，给定一个<span class="math inline">\(n\)</span>个节点的无根树，边带权，求树上长度不超过<span class="math inline">\(k\)</span>的简单路径的数量。</p>
+<p><span class="math inline">\(n \le 10^5\)</span></p>
+<h1 id="解法">解法</h1>
+<p>这道题所使用到的思想是分治，假设我们现在要处理一颗根为<span class="math inline">\(u\)</span>的树，很明显这棵树的路径<span class="math inline">\(x \to y\)</span>有两种：</p>
+<ol type="1">
+<li>如果<span class="math inline">\(x, y\)</span>在<span class="math inline">\(u\)</span>的同一棵子树里面，那么<span class="math inline">\(x \to y\)</span>一定不经过<span class="math inline">\(u\)</span>，只在某棵子树里面。</li>
+<li>如果<span class="math inline">\(x, y\)</span>在<span class="math inline">\(u\)</span>的不同子树里面，那么<span class="math inline">\(x \to y\)</span>一定经过<span class="math inline">\(u\)</span>。</li>
+</ol>
+<p>很明显第一种情况我们可以递归在子树里面做，因此我们主要处理第二种情况，准确来说，我们从<span class="math inline">\(u\)</span>开始DFS一波，求出<span class="math inline">\(d[x]\)</span>为<span class="math inline">\(x\)</span>到<span class="math inline">\(u\)</span>的距离（深度），那么我们要求的答案就变成了<span class="math inline">\(x, y\)</span>不属于<span class="math inline">\(u\)</span>的同一棵子树，且<span class="math inline">\(d[x] + d[y] \le k\)</span>的<span class="math inline">\((x, y)\)</span>的个数。</p>
+<p>我们先忽略“不属于同一棵子树”这个限制，考虑后面的条件，给定<span class="math inline">\(d​\)</span>，如何求<span class="math inline">\(d[x] + d[y] \le k​\)</span>的<span class="math inline">\((x, y)​\)</span>的个数？</p>
+<p>我们使用<strong>双指针</strong>的方法，把<span class="math inline">\(d\)</span>排序，然后维护两个指针<span class="math inline">\(i, j\)</span>，假设有<span class="math inline">\(cnt\)</span>个元素，初始化<span class="math inline">\(i = 1, j = cnt\)</span>。很明显随着<span class="math inline">\(i\)</span>的增加，<span class="math inline">\(j\)</span>必定单调不增！而对于任意时刻的满足<span class="math inline">\(d[i] + d[j] \le k\)</span>的<span class="math inline">\(i, j\)</span>，显然对于<span class="math inline">\(i &lt; x \le j\)</span>，都有<span class="math inline">\(d[i] + d[x] \le k\)</span>，因此我们把答案累加上<span class="math inline">\(j - i\)</span>。总体复杂度为<span class="math inline">\(O(cnt \log cnt)\)</span>，代码很短：</p>
+<pre class="line-numbers"><code class="language-cpp">sort(d + 1, d + 1 + cnt);
+int ret = 0;
+for (int i = 1, j = cnt; i &lt; j; ) &#123;
+    if (d[i] + d[j] &lt;= k) ret += j - i, i++;
+    else j--;
+&#125;</code></pre>
+<p>我们接下来考虑如何加上”不属于同一棵子树“的限制，假设我们递归计算的函数为<span class="math inline">\(calc(u)\)</span>，一开始初始化<span class="math inline">\(d[u] = 0\)</span>，然后统计了一波，假设我们多统计了都在子树<span class="math inline">\(v\)</span>里面的路径的数量，这是多少呢？很显然<strong>这些多统计的路径数等价于初始化<span class="math inline">\(d[v] = w_{uv}\)</span>之后<span class="math inline">\(calc(v)\)</span>的值</strong>，减去即可：</p>
+<pre class="line-numbers"><code class="language-cpp">...
+ans += calc(u);
+for (int e = fst[u]; e; e = nxt[e]) &#123;
+    int v = to[e];
+    if (vis[v]) continue;
+    dis[v] = len[e]; ans -= calc(v); // 减去多算的
+    ...
+&#125;</code></pre>
+<p>最后，还留下一个问题：<strong>从哪里开始分治呢？</strong>注意到如果我们出发点取得不好，选到了链的一端，那么复杂度就退化了，因此我们最好从<strong>无根树的重心开始分治</strong>，求重心是<span class="math inline">\(O(n)\)</span>的：</p>
+<pre class="line-numbers"><code class="language-cpp">void dfs_rt(int u, int p) &#123; // sz[0] 是总结点数，p是父节点
+    sz[u] = 1, f[u] = 0;
+    for (int e = fst[u]; e; e = nxt[e]) &#123;
+        int v = to[e];
+        if (vis[v] || v == p) continue;
+        dfs_rt(v, u);
+        sz[u] += sz[v];
+        f[u] = max(f[u], sz[v]);
+    &#125;
+    f[u] = max(f[u], sz[0] - sz[u]);
+    if (f[u] &lt; f[rt]) rt = u;
+&#125;</code></pre>
+<p>因此，最后算法的总框架就是：</p>
+<ol type="1">
+<li>从重心<span class="math inline">\(u\)</span>开始分治</li>
+<li>处理完重心以后，删除<span class="math inline">\(u\)</span>，递归处理其他的无根树。</li>
+</ol>
+<pre class="line-numbers"><code class="language-cpp">void dfs(int u) &#123;
+    vis[u] = 1; dis[u] = 0;
+    ans += calc(u);
+    for (int e = fst[u]; e; e = nxt[e]) &#123;
+        int v = to[e];
+        if (vis[v]) continue;
+        dis[v] = len[e]; ans -= calc(v);
+        rt = 0; sz[0] = sz[v];
+        dfs_rt(v, 0); dfs(rt);
+    &#125;
+&#125;</code></pre>
+<p>易证递归的深度不超过<span class="math inline">\(O(\log n)\)</span>，算上双指针中排序的时间，算法的总复杂度为<span class="math inline">\(O(n\log ^2 n)\)</span>。</p>
+<p>代码：</p>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;algorithm&gt;
+
+using namespace std;
+const int N = 10010;
+int n, k, fst[N], nxt[2 * N], to[2 * N], len[2 * N];
+int tot, cnt, vis[N], f[N], sz[N], dis[N], d[N], rt;
+int ans;
+
+void link(int a, int b, int w) &#123;
+    nxt[++tot] = fst[a];
+    fst[a] = tot; to[tot] = b;
+    len[tot] = w;
+&#125;
+
+void dfs_rt(int u, int p) &#123;
+    sz[u] = 1, f[u] = 0;
+    for (int e = fst[u]; e; e = nxt[e]) &#123;
+        int v = to[e];
+        if (vis[v] || v == p) continue;
+        dfs_rt(v, u);
+        sz[u] += sz[v];
+        f[u] = max(f[u], sz[v]);
+    &#125;
+    f[u] = max(f[u], sz[0] - sz[u]);
+    if (f[u] &lt; f[rt]) rt = u;
+&#125;
+
+void dfs_d(int u, int p) &#123;
+    d[++cnt] = dis[u];
+    for (int e = fst[u]; e; e = nxt[e]) &#123;
+        int v = to[e];
+        if (vis[v] || v == p) continue;
+        dis[v] = dis[u] + len[e];
+        dfs_d(v, u);
+    &#125;
+&#125;
+
+int calc(int u) &#123;
+    cnt = 0; dfs_d(u, 0);
+    sort(d + 1, d + 1 + cnt);
+    int ret = 0;
+    for (int i = 1, j = cnt; i &lt; j; ) &#123;
+        if (d[i] + d[j] &lt;= k) ret += j - i, i++;
+        else j--;
+    &#125;
+    return ret;
+&#125;
+
+void dfs(int u) &#123;
+    vis[u] = 1; dis[u] = 0;
+    ans += calc(u);
+    for (int e = fst[u]; e; e = nxt[e]) &#123;
+        int v = to[e];
+        if (vis[v]) continue;
+        dis[v] = len[e]; ans -= calc(v);
+        rt = 0; sz[0] = sz[v];
+        dfs_rt(v, 0); dfs(rt);
+    &#125;
+&#125;
+
+int main() &#123;
+    f[0] = 0x3f3f3f3f;
+    while (scanf(&quot;%d%d&quot;, &amp;n, &amp;k), n) &#123;
+        tot = 1; ans = 0;
+        fill(vis + 1, vis + 1 + n, 0);
+        fill(fst + 1, fst + 1 + n, 0);
+        for (int i = 1; i &lt;= n - 1; i++) &#123;
+            int a, b, w;
+            scanf(&quot;%d%d%d&quot;, &amp;a, &amp;b, &amp;w);
+            link(a, b, w);
+            link(b, a, w);
+        &#125;
+        sz[0] = n; dfs_rt(1, 0);
+        dfs(rt);
+        printf(&quot;%d\n&quot;, ans);
+    &#125;
+    return 0;
+&#125; </code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1417,174 +1618,6 @@ k \le {n \over i} &lt; k + 1 \\
 <p><strong>证明：</strong>我们可以这样想象：假设有一根数轴表示<span class="math inline">\(i\)</span>的不同取值，<span class="math inline">\(\left\lfloor \frac{n}{i} \right\rfloor\)</span>用<span class="math inline">\(O(\sqrt n)\)</span>个分割点把数轴分成了<span class="math inline">\(O(\sqrt n)\)</span>段（姑且叫它们<span class="math inline">\(N\)</span>段），<span class="math inline">\(\left\lfloor \frac{m}{i} \right\rfloor\)</span>用<span class="math inline">\(O(\sqrt m)\)</span>个分割点在不同的位置把数轴也分成了<span class="math inline">\(O(\sqrt m)\)</span>段（姑且叫它们<span class="math inline">\(M\)</span>段），现在把这些段overlay一下，你会发现现在总共有<span class="math inline">\(O(\sqrt n + \sqrt m)\)</span>个分割点把数轴分成了<span class="math inline">\(O(\sqrt n + \sqrt m)\)</span>段，每一段的取值可能不同（想一下，两个点只有不完全在相同的<span class="math inline">\(N\)</span>段和<span class="math inline">\(M\)</span>段时计算出来的<span class="math inline">\(\left\lfloor \frac{n}{i} \right\rfloor \left\lfloor \frac{m}{i} \right\rfloor\)</span>才可能不一样！）</p>
 <p><strong>结论：</strong><span class="math inline">\(i\)</span>所在的一段结束于<span class="math inline">\(\min\{\lfloor n / \lfloor n / i \rfloor \rfloor, \lfloor m / \lfloor m / i \rfloor \rfloor\}\)</span>。</p>
 <p><strong>证明：</strong>类似一维情况。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/01/%E6%95%B0%E8%AE%BA%E7%AC%94%E8%AE%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/01/%E6%95%B0%E8%AE%BA%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">蒟蒻的数论笔记——素数</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-09-01 17:30:31" itemprop="dateCreated datePublished" datetime="2018-09-01T17:30:31+08:00">2018-09-01</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-09-02 11:13:30" itemprop="dateModified" datetime="2018-09-02T11:13:30+08:00">2018-09-02</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><strong>定义</strong>：只能被<span class="math inline">\(1\)</span>和自身整除的数。</p>
-<h1 id="素数的判定">素数的判定</h1>
-<h2 id="试除法">试除法</h2>
-<p>如果<span class="math inline">\(n\)</span>不是素数那么它必定有一个不大于<span class="math inline">\(\sqrt n\)</span>的因子，因此我们枚举<span class="math inline">\([1, \sqrt n]\)</span>中的所有数挨个试除即可，时间复杂度<span class="math inline">\(O(\sqrt n)\)</span>，虽然慢但是保证正确。</p>
-<h2 id="费马判定法">费马判定法</h2>
-<p>逆用费马小定理，即若<span class="math inline">\(n\)</span>为素数则<span class="math inline">\(a^{n - 1} \equiv 1 \pmod n\)</span>，对于一个可能的<span class="math inline">\(n\)</span>我们尝试不同的<span class="math inline">\(a\)</span>并判断是否符合定理，如果不是那么<span class="math inline">\(n\)</span>一定不是素数，如果是，那么对于单个的<span class="math inline">\(a\)</span>我们正确的概率约为<span class="math inline">\(1 \over 4\)</span>，因此我们可以多试几次（比如<span class="math inline">\(20\)</span>次），这样基本上就可以保证正确性了。时间复杂度就是快速幂的复杂度<span class="math inline">\(O(\log n)\)</span>。</p>
-<p><strong>缺点：会被卡迈克尔数干死。</strong>如果合数<span class="math inline">\(n\)</span>是卡迈克尔数，那么对于所有和<span class="math inline">\(n\)</span>互素的<span class="math inline">\(a\)</span>，也有<span class="math inline">\(a^{n - 1} \equiv 1 \pmod n\)</span>，简而言之就是费马小定理逆定理的反例。最小的卡迈克尔数是<span class="math inline">\(561 = 3 \times 11 \times 17\)</span>。虽然这种数很稀少但是，在<span class="math inline">\([1, 1 \times 10^8]\)</span>之间总共有<span class="math inline">\(255\)</span>个卡迈克尔数，出题人想干死你还是很简单。</p>
-<h2 id="miller-rabin-判定法">Miller-Rabin 判定法</h2>
-<p><strong>引理</strong>：模素数<span class="math inline">\(n\)</span>意义下<span class="math inline">\(1\)</span>的平方根模<span class="math inline">\(n\)</span>为<span class="math inline">\(\pm 1\)</span>。</p>
-<p><strong>证明：</strong>设此时<span class="math inline">\(1\)</span>的平方根为<span class="math inline">\(x\)</span>： <span class="math display">\[
-\begin{aligned}
-x^2 &amp;\equiv 1 &amp;\pmod n\\
-x^2 - 1 &amp;\equiv 0 &amp;\pmod n\\
-(x + 1)(x - 1) &amp;\equiv 0 &amp;\pmod n\\
-\end{aligned}
-\]</span> 因此<span class="math inline">\(n\mid (x + 1)\)</span>或<span class="math inline">\(n\mid (x - 1)\)</span>，即<span class="math inline">\(x \equiv \pm1 \pmod n\)</span>，得证。</p>
-<p>对于一个奇素数<span class="math inline">\(n\)</span>，偶数<span class="math inline">\(n - 1\)</span>一定可以写成<span class="math inline">\(2^sd\)</span>的形式，其中<span class="math inline">\(d\)</span>是奇数。我们断言对于所有<span class="math inline">\(a\)</span>和某个<span class="math inline">\(r\)</span>以下两个不等式必有一个成立： <span class="math display">\[
-\begin{aligned}
-a^d &amp;\equiv 1 &amp;\pmod n \\
-a^{2^rd} &amp;\equiv -1 &amp;\pmod n
-\end{aligned}
-\]</span> 其中<span class="math inline">\(0 &lt; a &lt; n, 0 \le r &lt; s\)</span>。</p>
-<p><strong>证明：</strong>由费马小定理可得<span class="math inline">\(a^{2^sd} \equiv 1 \pmod n\)</span>，我们不断地对这个式子两边开根，由引理，如果开出<span class="math inline">\(-1\)</span>，那么下式成立，如果开了<span class="math inline">\(s\)</span>次没开出<span class="math inline">\(-1\)</span>，则上式成立。</p>
-<p>Miller-Rabin 判别法基于以上命题的逆否命题，即如果存在一个<span class="math inline">\(a\)</span>，使得<span class="math inline">\(a^d \not \equiv 1 \pmod n\)</span>且对于所有的<span class="math inline">\(0 \le r &lt; s\)</span>都有<span class="math inline">\(a^{2^rd} \not\equiv -1 \pmod n\)</span>，那<span class="math inline">\(n\)</span>一定不是素数。反之，<span class="math inline">\(n\)</span>就<em>很有可能</em>是素数。</p>
-<p>因此，Miller Rabin的工作流程如下：</p>
-<pre class="line-numbers"><code class="language-cpp">bool millerRabin(int n) &#123; // n &gt; 3
-    int s = 0, d = n - 1;
-    while (!(d &amp; 1)) s++, d &gt;&gt;= 1; // 分解s, d
-    for (int i = 1; i &lt;= K; i++) &#123; // K 越大越准
-        int a = rand() % (n - 3) + 2; // 随机一个[2, n - 2]的a
-        int x = qpow(a, d, n); // a^d mod n, qpow快速幂
-        if (x == 1 || x == n - 1) continue; // 不满足逆否命题, n - 1是r = 0时的下式
-        bool flag = false;
-        for (int j = 1; j &lt;= s - 1; j++) &#123;
-            x = x * x % n;
-            if (x == n - 1) &#123;
-                flag = true; // 不满足逆否命题
-                break;
-            &#125;
-        &#125;
-        if (flag) continue;
-        return false;
-    &#125;
-    return true;
-&#125;</code></pre>
-<p>要我说还是蛮复杂的，但是这个测试就已经不会被卡迈克尔数干死了。而且在<span class="math inline">\(K = 1\)</span>时就已经很准了。</p>
-<p>时间复杂度为<span class="math inline">\(O(n\log n)\)</span>。</p>
-<h2 id="自己的判定法">自己的判定法？</h2>
-<p>可以通过研究素数的更多性质，例如高次剩余的特性等等发明自己的判别法，如果在复杂度允许的情况下能够在<code>int</code>范围内没问题也可以用。</p>
-<h1 id="计算1-n的所有素数">计算<span class="math inline">\([1, n]\)</span>的所有素数</h1>
-<p>如何快速获得<span class="math inline">\([1, n]\)</span>的所有素数呢？如果对于<span class="math inline">\(n\)</span>个数都进行以上的素数判定肯定是非常慢的，因此我们需要筛法，顾名思义，就是把不是素数的全部筛掉，那么剩下的就都是素数了。</p>
-<h2 id="埃拉托色尼筛法">埃拉托色尼筛法</h2>
-<p>最朴素的筛法，基于的思想是如果我把每一个素数的倍数都标记成合数的话那么剩下没有标记的就是素数了，代码非常简洁，如下：</p>
-<pre class="line-numbers"><code class="language-cpp">bool v[N]; // 不是质数
-int prime[P], tot = 0;
-for (int i = 2; i &lt;= n; i++) &#123;
-    if (v[i]) continue;
-    prime[++tot] = i;
-    for (int j = 2; j &lt;= n / i; j++)
-        v[i * j] = true;
-&#125;</code></pre>
-<p>其复杂度应该为<span class="math inline">\(\sum_{素数p \le n} \left\lfloor \frac{n}{p} \right\rfloor\)</span>。由麦腾斯定理，这个式子在<span class="math inline">\(n \to \infty\)</span>时逼近<span class="math inline">\(n\ln\ln n\)</span>，因此埃拉托色尼筛法的时间复杂度为<span class="math inline">\(O(n\ln\ln n)\)</span>，一般<span class="math inline">\(n\)</span>可以达到<span class="math inline">\(10^7\)</span>。这个筛法有一个小优化我也在<a href="https://alan20210202.github.io/2018/08/21/筛法/">之前的笔记</a>中有提到。</p>
-<p>埃拉托色尼筛法的精髓在于它利用了<strong>约数和倍数的关系是成对的</strong>这一点，将素数判断这一个枚举约数的问题转化为了枚举倍数的问题并加快了速度，这一思想十分重要，在计算狄利克雷卷积和反演的时候也会用到（把对因数求和转化为对倍数算贡献）。</p>
-<h2 id="欧拉筛">欧拉筛</h2>
-<p>虽然<span class="math inline">\(\ln\ln n\)</span>这个因子已经很小了，但是面对<span class="math inline">\(n = 10^8\)</span>的时候还是会跪掉。因此我们需要一种筛法能够在<span class="math inline">\(O(n)\)</span>的时间内筛出所有的素数。</p>
-<p>我们发现埃氏筛效率欠佳的一点是：<em>一个合数会被每一个它的素因数筛掉共计好几次</em>。我们能不能让一个合数只被筛一次呢？</p>
-<pre class="line-numbers"><code class="language-cpp">bool v[N]; // 不是质数
-int prime[P], tot = 0;
-for (int i = 2; i &lt;= n; i++) &#123;
-    if (!v[i]) prime[++tot] = i;
-    for (int j = 1; i * prime[j] &lt;= n; j++) &#123;
-        v[i * prime[j]] = true;
-        if (i % prime[j] == 0) break;
-    &#125;
-&#125;</code></pre>
-<p>欧拉筛的精髓在于那句<code>if (i % prime[j] == 0) break;</code>。</p>
-<p><strong>结论：</strong>在欧拉筛中每个合数<em>会且仅会</em>被它的最小素因子筛去。</p>
-<p><strong>证明：</strong>设合数<span class="math inline">\(N\)</span>的最小素因子为<span class="math inline">\(p_o\)</span>，因为<span class="math inline">\(\frac{N}{p_0}\)</span>不可能被<span class="math inline">\(p_0\)</span>更小的素数所整除，因此在循环到<span class="math inline">\(i = \frac{N}{p_0}\)</span>时，内循环一定会在<code>break</code>之前筛到<span class="math inline">\(\frac{N}{p_0} \cdot p_0 = N\)</span>。而假设有<span class="math inline">\(N\)</span>有另外一个素因子<span class="math inline">\(p_1 &gt; p_0\)</span>，则显然<span class="math inline">\(p_0 \mid \frac{N}{p_1}\)</span>，因此在循环到<span class="math inline">\(i = \frac{N}{p_1}\)</span>时，内循环一定会在筛到（<code>prime[j]</code>为）<span class="math inline">\(p_0\)</span>之后就立刻<code>break</code>，因此一定不会再筛到<span class="math inline">\(\frac{N}{p_1} \cdot p_1\)</span>。</p>
-<p><strong>推论：</strong>因为合数的数量少于<span class="math inline">\(n\)</span>，因此欧拉筛的复杂度为<span class="math inline">\(O(n)\)</span>。</p>
-<p>欧拉筛原名线性筛，冠以欧拉之名纯粹是因为我们不仅用它筛素数，还可以顺便计算以欧拉函数为首的一票积性函数。</p>
-<h1 id="素因数分解">素因数分解</h1>
-<h2 id="试除法-1">试除法</h2>
-<p>如果<span class="math inline">\(n\)</span>为合数那么<span class="math inline">\(n\)</span>一定有一个不大于<span class="math inline">\(\sqrt n\)</span>的素因子，因此我们枚举<span class="math inline">\([1, \sqrt n]\)</span>中的所有数挨个试除即可，时间复杂度<span class="math inline">\(O(\sqrt n)\)</span>，是最常用的方法。</p>
-<h2 id="pollards-rho方法">Pollard's-Rho方法</h2>
-<p><strong>引理（生日悖论）：</strong>在<span class="math inline">\([1, N]\)</span>当中随机选出若干个数，平均需要抽出<span class="math inline">\(O(\sqrt N)\)</span>个数才会抽到两个相同的数。</p>
-<p><strong>简介：</strong>抽前<span class="math inline">\(k - 1\)</span>个数两两不同的概率为： <span class="math display">\[
-\frac{P(N, k - 1)}{N^{k - 1}} = \frac{N!}{(N - k+1)!N^{k-1}}
-\]</span> 如果你抽第<span class="math inline">\(k\)</span>个数，与之前<span class="math inline">\(k - 1\)</span>个数相同的概率为<span class="math inline">\(\frac{k - 1}{N}\)</span>，因此你恰巧在刚刚抽完第<span class="math inline">\(k\)</span>个数后得到两个相同的数的概率为： <span class="math display">\[
-\frac{N!}{(N - k+1)!N^{k-1}} \cdot \frac{k - 1}{N} = \frac{(k - 1)N}{(N - k +1)!N^k}
-\]</span> 因此为了得到两个相同的数你需要抽出的数的期望是： <span class="math display">\[
-\sum_{k = 2}^{N+1} \frac{k(k - 1)N}{(N - k +1)!N^k}
-\]</span> 它也<a target="_blank" rel="noopener" href="https://math.stackexchange.com/questions/693996/average-number-of-people-required-to-find-a-pair-with-same-birthday">等价</a>于TAOCP中的： <span class="math display">\[
-1 + \sum_{k = 1}^N \frac{N!}{(N-k)!N^k}
-\]</span> 神奇的数学家拉马努金曾对该函数进行过研究，并指出它渐进逼近<span class="math inline">\(\sqrt {\frac{\pi N}{2}}\)</span>。</p>
-<p>好的，现在假设我们需要分解出<span class="math inline">\(n = pq\)</span>的一个非平凡因子<span class="math inline">\(p\)</span>，假设我们有一个多项式同余函数<span class="math inline">\(g\)</span>（例如<span class="math inline">\(g(x) = (x^2 + 1) \bmod n\)</span>）。我们使用<span class="math inline">\(g\)</span>来迭代生成一个<em>伪随机</em>序列<span class="math inline">\(\{x_n\}\)</span>，它和其模<span class="math inline">\(p\)</span>的序列<span class="math inline">\(\{x_n \bmod p\}\)</span>相关联。由之前的生日悖论引理，前者平均在<span class="math inline">\(O(\sqrt n)\)</span>次迭代后产生循环，而后者只需要<span class="math inline">\(O(\sqrt p) &lt; O(\sqrt n)\)</span>次。我们可以在迭代中检测这个循环，从而完成对于素因数的分解。</p>
-<p>我们知道<span class="math inline">\(\{x_n \bmod p\}\)</span>产生循环当且仅当存在<span class="math inline">\(x_i, x_j\)</span>，有<span class="math inline">\(x_i \equiv x_j \pmod p\)</span>，此时<span class="math inline">\(x_i\)</span>和<span class="math inline">\(x_j\)</span>之间就是这个序列的一个循环节，但是我们预先是不知道<span class="math inline">\(p\)</span>的，那怎么判断以上条件是否成立呢？我们发现以上条件等价于<span class="math inline">\(p \mid |x_i - x_j|\)</span>，因为同时<span class="math inline">\(p \mid n\)</span>，所以此时<span class="math inline">\(p\)</span>最大可以为<span class="math inline">\(\gcd(n, |x_i - x_j|)\)</span>，因此如果我们发现<span class="math inline">\(\gcd(n, |x_i - x_j|) \neq 1\)</span>我们就已经找到了一个<span class="math inline">\(p = \gcd(n, |x_i - x_j|)\)</span>，非常巧妙！</p>
-<p>在算法实现中，我们使用弗洛伊德判圈算法，其精髓就是环上的追及问题，我们维护两个指针<span class="math inline">\(x_i, x_j\)</span>，从出发点开始<span class="math inline">\(x_i\)</span>一个一个地跳，<span class="math inline">\(x_j\)</span>两个两个地跳，他们的速度差为<span class="math inline">\(1\)</span>，只要出现了了一个环那么在某一时刻<span class="math inline">\(x_j\)</span>总是可以套<span class="math inline">\(x_i\)</span>一圈！每一轮过后我们检测$(n, |x_i - x_j|) $，如果不为<span class="math inline">\(1\)</span>那说明我们找到一个因子，但是如果为<span class="math inline">\(n\)</span>的话就是<span class="math inline">\(\{x_n\}\)</span>和<span class="math inline">\(\{x_n \bmod p\}\)</span>一起循环了，我们的算法就GG了，需要重新选定一个出发点（给<span class="math inline">\(g\)</span>的种子）。</p>
-<p>这个启发式算法的复杂度取决于<span class="math inline">\(O(\sqrt p)\)</span>，但是因为一般来说<span class="math inline">\(p \le \sqrt n\)</span>，因此算法的复杂度平均下来是<span class="math inline">\(O(n^{1 \over 4})\)</span>的，实测在<code>int</code>范围内快得飞起。</p>
 
       
     </div>

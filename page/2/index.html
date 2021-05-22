@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,122 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/08/28/Minecraft%20ILP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/08/28/Minecraft%20ILP/" class="post-title-link" itemprop="url">Designing Computational Redstone Circuits Automatically in Minecraft with Integer Programming: Preliminary Thoughts and Tests</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-28 13:48:50" itemprop="dateCreated datePublished" datetime="2020-08-28T13:48:50+08:00">2020-08-28</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-11-25 17:05:52" itemprop="dateModified" datetime="2020-11-25T17:05:52+08:00">2020-11-25</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><strong>UNFINISHED ARTICLE -- WORK IN PROGRESS</strong></p>
+<p><strong>UNFINISHED ARTICLE -- WORK IN PROGRESS</strong></p>
+<p><strong>UNFINISHED ARTICLE -- WORK IN PROGRESS</strong></p>
+<p>This was a project I worked on two months ago, but it wasn't until now that I have the time to write it down and share it on my blog.</p>
+<h1 id="intro">Intro</h1>
+<p>Redstone has been a core element in the game Minecraft for quite some years. It is presumably the most untrivial one as well: while anyone could master nearly all Minecraft mechanics through experiences, it takes not only experience but also ingenuity to design a good redstone circuit. Few of us are bold enough to claim "I master redstone", even after playing Minecraft for a decade.</p>
+<p>So here comes the question: <strong>Can the design of redstone circuits, the core of Minecraft automations, be automated?</strong> and <strong>If so, how?</strong> (appreciate how meta this is :)</p>
+<p>Theoretically, the answer is "yes...but". Minecraft has a finite world, and each position has a finite number of possible blockstates. We can write a program to enumerate all possible placements of blocks until we find some placement corresponding to the desired redstone circuit. However, this needs exponential time and we may need to wait for a century before it could give us, for instance, a decent piston door. Moreover, if a circuit involves manipulation of entities (which could have infinite many states), then we are easily screwed.</p>
+<p>Well, perhaps it is difficult to let a program design any redstone circuit. But there is indeed a subset of redstone circuits whose design can very likely be automated -- <strong>computational redstone circuits</strong>, aka. logic gates, calculators, CPUs etc. Why? Because software that design their real world electronic counterparts are readily available -- they are called "EDA".</p>
+<p>As a high school student I, of course, know little about the inner workings of real-world EDA applications (and there doesn't seem to be a lot of resources out there). I am convinced that this problem is NPC (further articulated below), so designing an efficient polytime combinatorial algorithm doesn't seem plausible. That said, what about reducing this problem to some other NPC problems which we can solve relatively quickly with optimized algorithms / heuristics -- say, ILP? This is what I am trying to do here.</p>
+<h1 id="formulating-the-problem">Formulating the problem</h1>
+<p>"Designing computational redstone circuit automatically" is a vague idea, so it is necessary that we know what this truly means.</p>
+<h2 id="whats-the-input">What's the input?</h2>
+<p>The input should describe the intended functionality of a circuit. Recall how we usually describe a circuit: we draw a <strong>circuit diagram</strong>. I here characterize a redstone circuit diagram by the assumptions and constraints below:</p>
+<ol type="1">
+<li>A circuit contains two parts: <strong>wires and components</strong>.</li>
+<li>Components are the <strong>primitives</strong> of a circuit. E.g. A torch or a wire junction.</li>
+<li>A component has <strong>interfaces</strong>, either <strong>in or out</strong>, as where the component receives signals from and sends signals to.</li>
+<li>A wire connects <strong>an</strong> out-interface from a component ("source") to <strong>an</strong> in-interface of another component ("target").</li>
+<li>Wires are <strong>directed</strong>.</li>
+<li>Components are <strong>independent</strong>. i.e. they do not interfere with other components in any way other than being connected by wires from interfaces.</li>
+</ol>
+<p>A circuit diagram can be represented in a directed graph, with components as vertices and wires as edges. Source/target interfaces as extra information stored on edges.</p>
+<h2 id="whats-the-output">What's the output?</h2>
+<p>We want our program to tell us how the circuit we described in the input can be built in the Minecraft world. Therefore, we could define the the output to be a set of position - blockstate pairs, (which, in implementation, can be stored in a schematic file).</p>
+<p>However, we don't want to jump straight from a circuit diagram to a detailed Minecraft schematic because that means taking interference between components, quasi connectivity, update order -- basically everything that makes redstone engineering complex -- into consideration in the first place.</p>
+<p>Instead, we could first build our circuit in an <strong>ideal world</strong>, in which we forget about all those factors above, and then convert the ideal placement into an actual Minecraft schematic.</p>
+<p>What's an idea world?</p>
+<ol type="1">
+<li>A circuit consists of multiple ideal blocks.</li>
+<li>A component fully occupies a set of ideal blocks, some of which are its interfaces. How many and which blocks a certain type of component occupies depend on its size in Minecraft and how we plan to convert the ideal placement to a real schematic.</li>
+<li>A wire is a chain of blocks, where any adjacent two share a face. The first block is always the source interface and the last is always the target interface.</li>
+<li><strong>Exclusiveness: </strong>All components and all wires (ignoring their first and last block) mustn't overlap.</li>
+<li><strong>Mutual Independence: </strong>Unless both blocks are occupied by the same component / wire, anything in two adjacent cells do not interfere with each other.</li>
+<li>Wire junctions are special components and are exceptions to rule 2 and 3. A wire junction always have three interfaces (1 in &amp; 2 outs, or 2 ins &amp; 1 out). Multiple junctions can overlap and they can overlap with an interface of some component.</li>
+<li>There are times when we want to fix the location of some components in the input. These components are usually just placeholders that mark the position of IO. (We don't want to produce a circuit with an unreachable input/output in the center of everything else, right?)</li>
+</ol>
+<h2 id="the-objective">The Objective</h2>
+<ol type="1">
+<li>The circuit represented by the output must have the same functionality as described by the input circuit diagram.</li>
+<li>The delay of the circuit should be minimized.</li>
+</ol>
+<h2 id="example-the-and-gate">Example: the AND gate</h2>
+<p>Let's see how we design a simple AND gate.</p>
+<p>Suppose the only primitive components we have are NOT gate (torch), wire junction, and IO placeholder. The circuit diagram of AND gate is:</p>
+<p><img src="/2020/08/28/Minecraft%20ILP/ANDCD.svg" class=""></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1981,158 +2097,6 @@ C_i^{\text N} \le 3C_i^* \Rightarrow \sum_{i=1}^nC_i^{\text N} \le 3\sum_{i=1}^n
     <div class="post-body" itemprop="articleBody">
           <p>刚刚启用了博客的评论功能，基于Valine。本帖用于测试（如果后续更换评论系统，则依然使用本帖进行测试）</p>
 <p>（真的会有人评论吗？）</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/09/PACT0707/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/07/09/PACT0707/" class="post-title-link" itemprop="url">PACT 07/07 装箱问题</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-07-09 19:58:23" itemprop="dateCreated datePublished" datetime="2020-07-09T19:58:23+08:00">2020-07-09</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-07-12 11:18:22" itemprop="dateModified" datetime="2020-07-12T11:18:22+08:00">2020-07-12</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="定义">定义</h1>
-<p><strong>输入：</strong><span class="math inline">\(n\)</span>件物品，第<span class="math inline">\(i\)</span>件物品的大小为<span class="math inline">\(a_i\in(0,1]\)</span>。</p>
-<p><strong>目标：</strong>将所有物品装进若干个大小为<span class="math inline">\(1\)</span>的箱内，并使所用的箱最少。</p>
-<h1 id="见缝插针算法first-fit">见缝插针算法（First-fit）</h1>
-<p>（总觉得自己的这个翻译有些问题……又似乎觉得没有问题……还是觉得有些问题？“首次适应”看起来太傻了，“先到先得”看起来又不大对劲……）</p>
-<p>我们可以很暴力地设计一个算法：</p>
-<ol type="1">
-<li>将所有物品任意排列。</li>
-<li>依次处理每一个物品，如果已经用的箱子里有一个还装得下就装进去，否则就新开一个箱子装进去。</li>
-</ol>
-<p>这个算法被称为first-fit algorithm，我将其翻译为见缝插针算法。</p>
-<p>这个算法是不是太粗暴了一点？其实可以证明，这个算法是一个<span class="math inline">\(2\)</span>倍近似算法。</p>
-<p><strong>引理：</strong>我们最终的打包方案当中，至多只有一个箱子是最多半满的（即在里面物品的体积<span class="math inline">\(\le \frac{1}{2}\)</span>）。</p>
-<p><strong>证明：</strong>考虑反证：如果有两个箱子都是最多半满，显然后开的那个箱子里的东西在算法运行的时候可以被塞进另外一个箱子里，就产生了矛盾。</p>
-<p>假设我们的算法用了<span class="math inline">\(B\)</span>个箱子，因为忽略可能有的一个半满的箱子，剩下的箱子里物品的大小都<span class="math inline">\(&gt;\frac{1}{2}\)</span>，显然有 <span class="math display">\[
-\frac{B-1}{2} &lt; \sum_{i=1}^n a_i
-\]</span> 因此 <span class="math display">\[
-B &lt; 2\sum_{i=1}^na_i + 1 \Rightarrow B\le 2\sum_{i=1}^na_i
-\]</span> 又因为最优方案所用箱子的总大小一定不小于物品的大小之和， <span class="math display">\[
-\sum_{i=1}^n a_i \le \mathrm{OPT} \Rightarrow B\le 2\cdot \mathrm{OPT}
-\]</span></p>
-<h1 id="ptas设计">PTAS设计</h1>
-<p><strong>定理：</strong>对于任意的<span class="math inline">\(\varepsilon \in \left(0,\frac{1}{2}\right]\)</span>，我们都能设计一个<span class="math inline">\((1+2\varepsilon)\)</span>倍的近似算法。</p>
-<p>在证明这个定理之前，我们不妨思考一下：什么时候暴力搜索是可以接受的？</p>
-<p>如果我们知道每个箱子最多装<span class="math inline">\(m\)</span>件物品，物品的大小只有<span class="math inline">\(k\)</span>种，那么对于一个箱子至多有几种装箱（装到放不下任何其他物品）的方案？运用一点组合数学的知识，不难得出答案是 <span class="math display">\[
-\binom{m + k-1}{m}
-\]</span> 不妨这个方案数为<span class="math inline">\(R\)</span>，假设我们有<span class="math inline">\(n\)</span>个箱子，最多有几种装箱的方案呢？ <span class="math display">\[
-\binom{n+R-1}{R-1} = \mathcal{O}\left(n^{R-1}\right)
-\]</span> 如果<span class="math inline">\(R\)</span>不是常数，那么显然暴力枚举算法的复杂度是指数级的。</p>
-<p>而如果<span class="math inline">\(R\)</span>是一个比较小的常数，也就是说<span class="math inline">\(m, k\)</span>都是比较小的常数的话，暴力搜索的时间复杂度就是多项式级别的。</p>
-<p>如何确保<span class="math inline">\(m\)</span>比较小？只要每件物品足够大就行了，于是我们把输入的物品分为</p>
-<ol type="1">
-<li><span class="math inline">\(a_i&lt;\varepsilon\)</span>的小物品，</li>
-<li>和<span class="math inline">\(a_i\ge \varepsilon\)</span>的大物品。</li>
-</ol>
-<p>我们暂时先不管小物品。如何设计一个放大物品的<span class="math inline">\((1+\varepsilon)\)</span>倍近似算法呢？</p>
-<p>由定义，每件大物品大小<span class="math inline">\(&gt;\varepsilon\)</span>，因此每个箱子能够放的大物品数目<span class="math inline">\(m&lt;\frac{1}{\varepsilon}\)</span>，如果我们想要用暴力，只要再把<span class="math inline">\(k\)</span>限制住就行了。</p>
-<p>为此，我们将所有物品按大小升序（或者说不降）排序，然后将排完的物品分成<span class="math inline">\(k\)</span>组，除了最后一组，每一组都有<span class="math inline">\(\lceil n/k \rceil\)</span>个物品。</p>
-<p>假设我们现在的要处理的问题实例为<span class="math inline">\(I\)</span>，我们创建一个新实例<span class="math inline">\(J\)</span>，其中每一个物品的大小被高估为它所在组最大物品的大小：</p>
-<p><img src="/2020/07/09/PACT0707/IJ.svg" class=""></p>
-<p>很显然，因为做<span class="math inline">\(J\)</span>的时候我们高估了物品的大小，也就是让问题更难了，每个<span class="math inline">\(J\)</span>的解都是<span class="math inline">\(I\)</span>的可行解。而<span class="math inline">\(J\)</span>当中物品的大小只有<span class="math inline">\(k\)</span>种，加上<span class="math inline">\(m\)</span>的限制，是可以暴力解决的。我们可以暴力把<span class="math inline">\(J\)</span>解出来，然后套到<span class="math inline">\(I\)</span>上面作为我们算法的解。但是如何分析呢？或者说，如何用<span class="math inline">\(I\)</span>的最优解来给我们<span class="math inline">\(J\)</span>的最优解一个上界呢？</p>
-<p>出于分析的目的，我们再考虑另一个问题实例<span class="math inline">\(J&#39;\)</span>，其中每一个物品的大小被低估为它所在组最小物品的大小：</p>
-<p><img src="/2020/07/09/PACT0707/IJ_.svg" class=""></p>
-<p>类似地，我们可以得出：每一个<span class="math inline">\(I\)</span>的可行解一定是<span class="math inline">\(J&#39;\)</span>的一个可行解，反之未必然，即 <span class="math display">\[
-\mathrm{OPT}_{J&#39;} \le \mathrm{OPT}_{I}
-\]</span> 现在思考一个问题：如果我们有一组<span class="math inline">\(J&#39;\)</span>的最优解，如何把它尽可能地转换成一组<span class="math inline">\(J\)</span>的可行解呢？</p>
-<p>一个方案是让<span class="math inline">\(J\)</span>的每个物品对应<span class="math inline">\(J&#39;\)</span>当中更大一组中的物品，然后就按照<span class="math inline">\(J’\)</span>最优解的方式装箱，这样除了最大的一组以外<span class="math inline">\(J\)</span>中的所有物品都有办法装箱了。令最大的那一组不知道怎么装箱的物品集合为<span class="math inline">\(Q\)</span>。</p>
-<p><img src="/2020/07/09/PACT0707/JJ.svg" class=""></p>
-<p>因为对于<span class="math inline">\(Q\)</span>里面的物品我们大不了一个箱子装一个，因此我们得到 <span class="math display">\[
-\mathrm{OPT}_{J} \le \mathrm{OPT}_{J&#39;}+|Q| \le \mathrm{OPT}_{I} + \left\lceil\frac{n}{k}\right\rceil
-\]</span> 注意因为我们是暴力解<span class="math inline">\(J\)</span>的，现在不等式的左边<span class="math inline">\(\mathrm{OPT}_J\)</span>就是我们算法的代价。为了证明近似比，我们希望上面不等式的右边变成一个<span class="math inline">\((1+\varepsilon)\mathrm{OPT}_I\)</span>。</p>
-<p>注意到在这个只有大物品的问题当中，<span class="math inline">\(\mathrm{OPT}_I \ge \lceil n\cdot \varepsilon \rceil\)</span>，因此，若令<span class="math inline">\(k=\left\lceil\frac{1}{\varepsilon^2}\right\rceil\)</span>。上面的分析就变成了 <span class="math display">\[
-\begin{aligned}
-    \mathrm{OPT}_{J} &amp;\le \mathrm{OPT}_{I} + \left\lceil\frac{n}{k}\right\rceil \\
-    &amp;\le \mathrm{OPT}_{I} + \left\lceil n \cdot \varepsilon^2\right\rceil \\
-        &amp;\le \mathrm{OPT}_{I} + \varepsilon\left\lfloor n \cdot \varepsilon\right\rfloor + 1 \\
-    &amp;\le \mathrm{OPT}_{I} + \varepsilon\mathrm{OPT}_{I}+1 \\
-    &amp;= (1+\varepsilon)\mathrm{OPT}_{I} +1
-\end{aligned}
-\]</span> 我们就证明了我们装大物品的近似比是<span class="math inline">\((1+\varepsilon)\)</span>。注意到这个多出来的<span class="math inline">\(+1\)</span>虽然让人不爽，但是在渐进意义下是可以忽略的。但是因为毕竟是在渐渐意义下，我们刚刚的算法不能被称为PTAS了，而是APTAS（Asymptotic PTAS）。（这个<span class="math inline">\(+1\)</span>也不是没有办法去掉，只是如果要去掉那<span class="math inline">\(k\)</span>的表达式可能要复杂一点）</p>
-<p>接下来再处理小物品：我们现在对于大物品已经有了一个渐进近似比为<span class="math inline">\((1+\varepsilon)\)</span>的算法，我们如何在这个算法的解的基础上尽可能优地把小物品加进去呢？我们不妨使用见缝插针的策略。我们分析一下这样的效果：</p>
-<ol type="1">
-<li>如果我们使用见缝插针算法装小物品不需要开新的箱子，那么箱子数不变，我们的算法总体来说渐进近似比还是<span class="math inline">\((1+\varepsilon)\)</span>。</li>
-<li>如果我们开了新的箱子。我们可以证明：在我们方案中，至多有一个箱子，其里面物品的大小总和不大于<span class="math inline">\((1-\varepsilon)\)</span>，且这个箱子一定是在装小物品的时候新开的。证明方式和之前分析见缝插针算法的时候是类似的：如果有两个<span class="math inline">\((1-\varepsilon)\)</span>满的箱子，那么后开的那个箱子里面装的小物品一定可以塞进另外一个先前开的箱子里面，于是便产生了矛盾。我们分析一下这个情况下我们算法的近似比。假设我们的算法开了<span class="math inline">\(B\)</span>个箱子：</li>
-</ol>
-<p><span class="math display">\[
-\left.\begin{aligned}
-    (B-1)(1-\varepsilon) &lt; \sum_{i=1}^na_i \le \mathrm{OPT} \Rightarrow B\le \frac{\mathrm{OPT}}{1-\varepsilon} \\
-    \varepsilon \in \left(0,\frac{1}{2}\right] \Rightarrow \frac{1}{1-\varepsilon} = 1+2\varepsilon
-+\frac{\varepsilon(2\varepsilon-1)}{1-\varepsilon} \le 1+2\varepsilon
-\end{aligned} \right\}
-\Rightarrow B\le (1+2\varepsilon) \mathrm{OPT}
-\]</span></p>
-<p>综上，我们算法的渐进近似比是<span class="math inline">\((1+2\varepsilon)\)</span>。</p>
-<p>最后回顾一下我们的APTAS：</p>
-<ol type="1">
-<li>暂时忽略小物品。</li>
-<li>设<span class="math inline">\(k=\left\lceil\frac{1}{\varepsilon^2}\right\rceil\)</span>并以此创建新实例<span class="math inline">\(J\)</span>。</li>
-<li>暴力搜索求得<span class="math inline">\(J\)</span>的最优解。</li>
-<li>把我们的最优解直接套到<span class="math inline">\(I\)</span>上面，得到大物品的装箱方案。</li>
-<li>使用见缝插针法将小物品装箱。</li>
-</ol>
 
       
     </div>
