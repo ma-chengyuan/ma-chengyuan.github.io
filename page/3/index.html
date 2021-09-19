@@ -235,7 +235,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/%E6%88%90%E5%A5%97%E6%96%B9%E6%B3%95/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/%E6%95%B0%E8%AE%BA%E7%AC%94%E8%AE%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -248,7 +248,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/%E6%88%90%E5%A5%97%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">成套方法</a>
+          <a href="/2021/07/25/%E6%95%B0%E8%AE%BA%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">蒟蒻的数论笔记——素数</a>
         </h2>
 
         <div class="post-meta-container">
@@ -266,7 +266,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-11-09 04:17:58" itemprop="dateModified" datetime="2018-11-09T04:17:58-05:00">2018-11-09</time>
+        <time title="修改时间：2018-09-01 23:13:32" itemprop="dateModified" datetime="2018-09-01T23:13:32-04:00">2018-09-01</time>
       </span>
 
   
@@ -279,110 +279,104 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="简介">简介</h1>
-<p>成套方法（repertoire method）可以用来求解一大类的递归式的封闭形式，由于和式也可以化为特殊的递归式，因而该方法对于处理和式也有很好的效果，具体而言，对于如下类似形式的递归式： <span class="math display">\[
-f(n) = \begin{cases}
-    \alpha &amp; n = 0 \\
-    f(n - 1) + \beta + \gamma n + \delta n^2 \cdots &amp; n &gt; 0
-\end{cases}
-\]</span> 我们总是可以大胆地猜想：<span class="math inline">\(f(n)\)</span>或许有着如下的封闭形式： <span class="math display">\[
-f(n) = A(n)\alpha + B(n)\beta + C(n)\gamma + D(n)\delta \cdots
-\]</span> 成套方法的精髓就是，试图用几组特殊的<span class="math inline">\(f(n)\)</span> （可以让我们相对容易地解出<span class="math inline">\(\alpha,\beta\)</span>等的值），来推测<span class="math inline">\(A(n), B(n)\)</span>等之间的关系，由于在上面的式子当中<span class="math inline">\(A(n),B(n)\)</span>等都是线性组合的，因而最后我们会得到一组线性方程，求解这一组线性方程我们可以得出<span class="math inline">\(A(n),B(n)\cdots\)</span>从而解出递归式的特殊形式。这是一个特殊→一般→特殊→一般→特殊的方法，十分巧妙。</p>
-<h1 id="例子求解sum_k1n-k2">例子：求解<span class="math inline">\(\sum_{k=1}^n k^2\)</span></h1>
-<p>这是一个和式，但是不打紧，我们可以把它处理成递归式。</p>
-<p>令<span class="math inline">\(f(n) = \sum_{k = 1}^n k^2\)</span>，那么有等价定义 <span class="math display">\[
-f(n) = \begin{cases}
-    0 &amp; n = 0 \\
-    f(n - 1) + n^2 &amp; n &gt; 0
-\end{cases}
-\]</span> 可以看到从和式到递归式的转化是十分自然的。</p>
-<p>这个递归式自然是满足最前面的形式的，其中<span class="math inline">\(\alpha = \beta = \gamma = 0, \delta = 1\)</span>，我们先着手求解一般情况，选取几组“特殊的”<span class="math inline">\(f(n)\)</span>：</p>
-<p>首先令<span class="math inline">\(f(n) = 1\)</span>，代入最开始的定义： <span class="math display">\[
-\begin{cases}
-1 &amp;= \alpha \\
-1 &amp;= 1 + \beta + \gamma n + \delta n^2 
-\end{cases}
-\]</span> 显然有<span class="math inline">\(\alpha = 1, \beta = \gamma = \delta = 0\)</span>，再把他们带入我们认为的“通用形式”： <span class="math display">\[
-f(n) = 1 = A(n)\cdot 1 + B(n)\cdot 0 + C(n)\cdot 0 + D(n)\cdot 0 \\
-\Rightarrow A(n) = 1
-\]</span> 很好，我们现在得到一组<span class="math inline">\(A(n),B(n),C(n),D(n)\)</span>的线性关系了，还需要三组！</p>
-<p>令<span class="math inline">\(f(n) = n\)</span> <span class="math display">\[
-\begin{cases}
-0 &amp;= \alpha \\
-n &amp;= n - 1 + \beta + \gamma n + \delta n^2 \\
-\end{cases} \\
+          <p><strong>定义</strong>：只能被<span class="math inline">\(1\)</span>和自身整除的数。</p>
+<h1 id="素数的判定">素数的判定</h1>
+<h2 id="试除法">试除法</h2>
+<p>如果<span class="math inline">\(n\)</span>不是素数那么它必定有一个不大于<span class="math inline">\(\sqrt n\)</span>的因子，因此我们枚举<span class="math inline">\([1, \sqrt n]\)</span>中的所有数挨个试除即可，时间复杂度<span class="math inline">\(O(\sqrt n)\)</span>，虽然慢但是保证正确。</p>
+<h2 id="费马判定法">费马判定法</h2>
+<p>逆用费马小定理，即若<span class="math inline">\(n\)</span>为素数则<span class="math inline">\(a^{n - 1} \equiv 1 \pmod n\)</span>，对于一个可能的<span class="math inline">\(n\)</span>我们尝试不同的<span class="math inline">\(a\)</span>并判断是否符合定理，如果不是那么<span class="math inline">\(n\)</span>一定不是素数，如果是，那么对于单个的<span class="math inline">\(a\)</span>我们正确的概率约为<span class="math inline">\(1 \over 4\)</span>，因此我们可以多试几次（比如<span class="math inline">\(20\)</span>次），这样基本上就可以保证正确性了。时间复杂度就是快速幂的复杂度<span class="math inline">\(O(\log n)\)</span>。</p>
+<p><strong>缺点：会被卡迈克尔数干死。</strong>如果合数<span class="math inline">\(n\)</span>是卡迈克尔数，那么对于所有和<span class="math inline">\(n\)</span>互素的<span class="math inline">\(a\)</span>，也有<span class="math inline">\(a^{n - 1} \equiv 1 \pmod n\)</span>，简而言之就是费马小定理逆定理的反例。最小的卡迈克尔数是<span class="math inline">\(561 = 3 \times 11 \times 17\)</span>。虽然这种数很稀少但是，在<span class="math inline">\([1, 1 \times 10^8]\)</span>之间总共有<span class="math inline">\(255\)</span>个卡迈克尔数，出题人想干死你还是很简单。</p>
+<h2 id="miller-rabin-判定法">Miller-Rabin 判定法</h2>
+<p><strong>引理</strong>：模素数<span class="math inline">\(n\)</span>意义下<span class="math inline">\(1\)</span>的平方根模<span class="math inline">\(n\)</span>为<span class="math inline">\(\pm 1\)</span>。</p>
+<p><strong>证明：</strong>设此时<span class="math inline">\(1\)</span>的平方根为<span class="math inline">\(x\)</span>： <span class="math display">\[
 \begin{aligned}
-&amp;\Rightarrow \alpha = \gamma = \delta = 0, \beta = 1 \\
-&amp;\Rightarrow B(n) = n
+x^2 &amp;\equiv 1 &amp;\pmod n\\
+x^2 - 1 &amp;\equiv 0 &amp;\pmod n\\
+(x + 1)(x - 1) &amp;\equiv 0 &amp;\pmod n\\
 \end{aligned}
-\]</span> 令<span class="math inline">\(f(n) = n^2\)</span>： <span class="math display">\[
-\begin{cases}
-0 &amp;= \alpha \\
-n^2 &amp;= (n - 1) ^ 2 + \beta + \gamma n + \delta n^2 \\
-&amp;= n^2 - 2n + 1 + \beta + \gamma n + \delta n^2
-\end{cases} \\
+\]</span> 因此<span class="math inline">\(n\mid (x + 1)\)</span>或<span class="math inline">\(n\mid (x - 1)\)</span>，即<span class="math inline">\(x \equiv \pm1 \pmod n\)</span>，得证。</p>
+<p>对于一个奇素数<span class="math inline">\(n\)</span>，偶数<span class="math inline">\(n - 1\)</span>一定可以写成<span class="math inline">\(2^sd\)</span>的形式，其中<span class="math inline">\(d\)</span>是奇数。我们断言对于所有<span class="math inline">\(a\)</span>和某个<span class="math inline">\(r\)</span>以下两个不等式必有一个成立： <span class="math display">\[
 \begin{aligned}
-&amp;\Rightarrow \alpha = \delta = 0, \beta = -1, \gamma = 2 \\
-&amp;\Rightarrow -B(n) + 2C(n) = n^2
+a^d &amp;\equiv 1 &amp;\pmod n \\
+a^{2^rd} &amp;\equiv -1 &amp;\pmod n
 \end{aligned}
-\]</span> 最后，令<span class="math inline">\(f(n) = n^3\)</span>： <span class="math display">\[
-\begin{cases}
-0 &amp;= \alpha \\
-n^3 &amp;= (n - 1) ^ 3 + \beta + \gamma n + \delta n^2 \\
-&amp;= n^3 - 3n^2 + 3n - 1 + \beta + \gamma n + \delta n^2
-\end{cases} \\
-\begin{aligned}
-&amp;\Rightarrow \alpha = 0, \beta = 1,\gamma = -3, \delta = 3 \\
-&amp;\Rightarrow B(n) - 3C(n) + 3D(n) = n^3
-\end{aligned}
-\]</span> 最后，把这四组关系结合起来： <span class="math display">\[
-\begin{cases}
-A(n) &amp;&amp; &amp;&amp; &amp;&amp; &amp;= 1 \\
-&amp;&amp;B(n) &amp;&amp;&amp;&amp; &amp;= n \\
-&amp;-&amp;B(n) &amp;+&amp; 2C(n) &amp;&amp; &amp;= n^2 \\
-&amp;&amp;B(n) &amp;-&amp; 3C(n) &amp;+&amp; 3D(n) &amp;= n^3
-\end{cases}
-\]</span> 非常简单的线性方程组，解得： <span class="math display">\[
-\begin{cases}
-A(n) = 1 \\
-B(n) = n \\
-C(n) = \frac{n^2 + n}{2} \\
-D(n) = \frac{2n^3 + 3n^2 + n}{6}\\
-\end{cases}
-\]</span> 这个时候，回到我们要解的递归式，其中<span class="math inline">\(\alpha = \beta = \gamma = 0, \delta = 1\)</span>,因此 <span class="math display">\[
-\begin{aligned}
-f(n) = \sum_{k = 1}^n k^2 = D(n) &amp;= \frac{2n^3 + 3n^2 + n}{6} \\
-&amp;= \frac{n(n + 1)(2n + 1)}{6}
-\end{aligned}
-\]</span> 求解到此结束，可以看到这个公式和我们的常识一致。虽然以上过程看似繁琐，但是注意<strong>我们已经求解了一大类的问题，因为<span class="math inline">\(A(n),B(n),C(n),D(n)\)</span>是不会因<span class="math inline">\(\alpha, \beta, \gamma, \delta\)</span>而变化的！</strong>，现在，对于<strong>任何的二次多项式的和式或者递归式</strong>我们都可以飞快地计算出其封闭形式。更有用的是，不仅仅是二次三项式，如果我们以后要处理三次多项式（意味着我们要加入<span class="math inline">\(\varepsilon\)</span>和<span class="math inline">\(E(n)\)</span>），<strong>之前的<span class="math inline">\(A(n),B(n),C(n),D(n)\)</span>的解也不会变化，因而只要继续带入<span class="math inline">\(f(n) = n^4\)</span>即可！</strong> （这是显然的）</p>
-<p><strong>注意：为了找出线性关系，我们也可以先找出<span class="math inline">\(\alpha, \beta\)</span>等的一组特解，然后基于这个解计算<span class="math inline">\(f(n)\)</span>，这和代入特殊<span class="math inline">\(f(n)\)</span>然后反解<span class="math inline">\(\alpha, \beta\)</span>是等价的！</strong></p>
-<h1 id="思考为什么可以这样做">思考：为什么可以这样做 ？</h1>
-<p>为什么几个看似毫不相关的<span class="math inline">\(f(n)\)</span>可以指导我们正在处理的特殊情形，注意到我们的步骤：</p>
-<ol type="1">
-<li>将特殊<span class="math inline">\(f(n)\)</span>带入递归式的定义，解出<span class="math inline">\(\alpha, \beta, \gamma, \delta\cdots\)</span></li>
-<li>将1的解带入假设的封闭形式，求出<span class="math inline">\(A(n), B(n), C(n), D(n)\cdots\)</span>的关系</li>
-</ol>
-<p>注意到，我们在第一步解出了<span class="math inline">\(\alpha, \beta\)</span>等的值，说明此时我们的特殊<span class="math inline">\(f(n)\)</span>本来就是以上的递归式定义可以表出的，而我们假设的通用形式是对任何一组参数通用的，因此求解出来的线性关系也是通用的。</p>
-<h1 id="思考真的万能和机械化吗">思考：真的“万能”和“机械化”吗？</h1>
-<p>成套方法从刚刚的示例可以看到似乎是非常机械化的，但是其实不然，《具体数学》中有言，成套方法对于线性的递归式最为有效，因此<span class="math inline">\(f(n - 1)\)</span>前是不能有系数的（不然直觉上通用形式里就会出现棘手的指数项），但是这不妨碍我们处理和式，其次，对于一开始的“通用形式”的构造和特殊<span class="math inline">\(f(n)\)</span>的构造其实不是那么简单的工作，对于多项式，我们可以很简单地构造多项式形式的“通用形式”，但是如果是：</p>
-<p><span class="math display">\[
-\sum_{k = 1}^n (-1)^k k^2
-\]</span> 最上面的通用形式就不管用了！我们需要自己寻找适合的通用定义和特殊函数值进行求解（这也是《具体数学》当中的习题），虽然找到之后的过程倒是非常地机械化没错。</p>
-<h1 id="思考作为算法实现的复杂度">思考：作为算法实现的复杂度？</h1>
-<p>我们仅在这里思考以上方法<em>在多项式情况下</em>的特例。</p>
-<p>成套方法分为三步走：</p>
-<ol type="1">
-<li>构造线性方程</li>
-<li>解线性方程</li>
-<li>回代</li>
-</ol>
-<p>第一步，由于是多项式的情况，观察之前的特例并结合二项式定理可以得到， 如果我们带入<span class="math inline">\(f(n) = n^k\)</span>的情况，对于对应<span class="math inline">\(n^m\)</span>的多项式系数（类似<span class="math inline">\(A(n), B(n)\)</span>），其系数为（在<span class="math inline">\(m \neq k\)</span>时，在<span class="math inline">\(m = k\)</span>时系数自然就是0了）：</p>
-<p><span class="math display">\[
--\binom{k}{m}(-1)^{k - m}
-\]</span> 因此，配合杨辉三角递推组合数，这一部分的时间复杂度可以做到<span class="math inline">\(O(n^2)\)</span>。</p>
-<p>第二步，考虑到我们解的线性方程当中含有多项式，因此需要采用系数向量的表示方法，基本算数运算代价变为<span class="math inline">\(O(n)\)</span>，但是注意到线性方程组列出时已经是简化阶梯形式，因此<strong>不需要高斯消元，只需要代入消元</strong>，时间复杂度是<span class="math inline">\(O(n^2)\cdot O(n) = O(n^3)\)</span>。</p>
-<p>第三步的复杂度自然是<span class="math inline">\(O(n^2)\)</span>。</p>
-<p>因此，基于成套方法的算法的综合复杂度为<span class="math inline">\(O(n^3)\)</span>。</p>
+\]</span> 其中<span class="math inline">\(0 &lt; a &lt; n, 0 \le r &lt; s\)</span>。</p>
+<p><strong>证明：</strong>由费马小定理可得<span class="math inline">\(a^{2^sd} \equiv 1 \pmod n\)</span>，我们不断地对这个式子两边开根，由引理，如果开出<span class="math inline">\(-1\)</span>，那么下式成立，如果开了<span class="math inline">\(s\)</span>次没开出<span class="math inline">\(-1\)</span>，则上式成立。</p>
+<p>Miller-Rabin 判别法基于以上命题的逆否命题，即如果存在一个<span class="math inline">\(a\)</span>，使得<span class="math inline">\(a^d \not \equiv 1 \pmod n\)</span>且对于所有的<span class="math inline">\(0 \le r &lt; s\)</span>都有<span class="math inline">\(a^{2^rd} \not\equiv -1 \pmod n\)</span>，那<span class="math inline">\(n\)</span>一定不是素数。反之，<span class="math inline">\(n\)</span>就<em>很有可能</em>是素数。</p>
+<p>因此，Miller Rabin的工作流程如下：</p>
+<pre class="line-numbers"><code class="language-cpp">bool millerRabin(int n) &#123; // n &gt; 3
+    int s = 0, d = n - 1;
+    while (!(d &amp; 1)) s++, d &gt;&gt;= 1; // 分解s, d
+    for (int i = 1; i &lt;= K; i++) &#123; // K 越大越准
+        int a = rand() % (n - 3) + 2; // 随机一个[2, n - 2]的a
+        int x = qpow(a, d, n); // a^d mod n, qpow快速幂
+        if (x == 1 || x == n - 1) continue; // 不满足逆否命题, n - 1是r = 0时的下式
+        bool flag = false;
+        for (int j = 1; j &lt;= s - 1; j++) &#123;
+            x = x * x % n;
+            if (x == n - 1) &#123;
+                flag = true; // 不满足逆否命题
+                break;
+            &#125;
+        &#125;
+        if (flag) continue;
+        return false;
+    &#125;
+    return true;
+&#125;</code></pre>
+<p>要我说还是蛮复杂的，但是这个测试就已经不会被卡迈克尔数干死了。而且在<span class="math inline">\(K = 1\)</span>时就已经很准了。</p>
+<p>时间复杂度为<span class="math inline">\(O(n\log n)\)</span>。</p>
+<h2 id="自己的判定法">自己的判定法？</h2>
+<p>可以通过研究素数的更多性质，例如高次剩余的特性等等发明自己的判别法，如果在复杂度允许的情况下能够在<code>int</code>范围内没问题也可以用。</p>
+<h1 id="计算1-n的所有素数">计算<span class="math inline">\([1, n]\)</span>的所有素数</h1>
+<p>如何快速获得<span class="math inline">\([1, n]\)</span>的所有素数呢？如果对于<span class="math inline">\(n\)</span>个数都进行以上的素数判定肯定是非常慢的，因此我们需要筛法，顾名思义，就是把不是素数的全部筛掉，那么剩下的就都是素数了。</p>
+<h2 id="埃拉托色尼筛法">埃拉托色尼筛法</h2>
+<p>最朴素的筛法，基于的思想是如果我把每一个素数的倍数都标记成合数的话那么剩下没有标记的就是素数了，代码非常简洁，如下：</p>
+<pre class="line-numbers"><code class="language-cpp">bool v[N]; // 不是质数
+int prime[P], tot = 0;
+for (int i = 2; i &lt;= n; i++) &#123;
+    if (v[i]) continue;
+    prime[++tot] = i;
+    for (int j = 2; j &lt;= n / i; j++)
+        v[i * j] = true;
+&#125;</code></pre>
+<p>其复杂度应该为<span class="math inline">\(\sum_{素数p \le n} \left\lfloor \frac{n}{p} \right\rfloor\)</span>。由麦腾斯定理，这个式子在<span class="math inline">\(n \to \infty\)</span>时逼近<span class="math inline">\(n\ln\ln n\)</span>，因此埃拉托色尼筛法的时间复杂度为<span class="math inline">\(O(n\ln\ln n)\)</span>，一般<span class="math inline">\(n\)</span>可以达到<span class="math inline">\(10^7\)</span>。这个筛法有一个小优化我也在<a href="https://alan20210202.github.io/2018/08/21/筛法/">之前的笔记</a>中有提到。</p>
+<p>埃拉托色尼筛法的精髓在于它利用了<strong>约数和倍数的关系是成对的</strong>这一点，将素数判断这一个枚举约数的问题转化为了枚举倍数的问题并加快了速度，这一思想十分重要，在计算狄利克雷卷积和反演的时候也会用到（把对因数求和转化为对倍数算贡献）。</p>
+<h2 id="欧拉筛">欧拉筛</h2>
+<p>虽然<span class="math inline">\(\ln\ln n\)</span>这个因子已经很小了，但是面对<span class="math inline">\(n = 10^8\)</span>的时候还是会跪掉。因此我们需要一种筛法能够在<span class="math inline">\(O(n)\)</span>的时间内筛出所有的素数。</p>
+<p>我们发现埃氏筛效率欠佳的一点是：<em>一个合数会被每一个它的素因数筛掉共计好几次</em>。我们能不能让一个合数只被筛一次呢？</p>
+<pre class="line-numbers"><code class="language-cpp">bool v[N]; // 不是质数
+int prime[P], tot = 0;
+for (int i = 2; i &lt;= n; i++) &#123;
+    if (!v[i]) prime[++tot] = i;
+    for (int j = 1; i * prime[j] &lt;= n; j++) &#123;
+        v[i * prime[j]] = true;
+        if (i % prime[j] == 0) break;
+    &#125;
+&#125;</code></pre>
+<p>欧拉筛的精髓在于那句<code>if (i % prime[j] == 0) break;</code>。</p>
+<p><strong>结论：</strong>在欧拉筛中每个合数<em>会且仅会</em>被它的最小素因子筛去。</p>
+<p><strong>证明：</strong>设合数<span class="math inline">\(N\)</span>的最小素因子为<span class="math inline">\(p_o\)</span>，因为<span class="math inline">\(\frac{N}{p_0}\)</span>不可能被<span class="math inline">\(p_0\)</span>更小的素数所整除，因此在循环到<span class="math inline">\(i = \frac{N}{p_0}\)</span>时，内循环一定会在<code>break</code>之前筛到<span class="math inline">\(\frac{N}{p_0} \cdot p_0 = N\)</span>。而假设有<span class="math inline">\(N\)</span>有另外一个素因子<span class="math inline">\(p_1 &gt; p_0\)</span>，则显然<span class="math inline">\(p_0 \mid \frac{N}{p_1}\)</span>，因此在循环到<span class="math inline">\(i = \frac{N}{p_1}\)</span>时，内循环一定会在筛到（<code>prime[j]</code>为）<span class="math inline">\(p_0\)</span>之后就立刻<code>break</code>，因此一定不会再筛到<span class="math inline">\(\frac{N}{p_1} \cdot p_1\)</span>。</p>
+<p><strong>推论：</strong>因为合数的数量少于<span class="math inline">\(n\)</span>，因此欧拉筛的复杂度为<span class="math inline">\(O(n)\)</span>。</p>
+<p>欧拉筛原名线性筛，冠以欧拉之名纯粹是因为我们不仅用它筛素数，还可以顺便计算以欧拉函数为首的一票积性函数。</p>
+<h1 id="素因数分解">素因数分解</h1>
+<h2 id="试除法-1">试除法</h2>
+<p>如果<span class="math inline">\(n\)</span>为合数那么<span class="math inline">\(n\)</span>一定有一个不大于<span class="math inline">\(\sqrt n\)</span>的素因子，因此我们枚举<span class="math inline">\([1, \sqrt n]\)</span>中的所有数挨个试除即可，时间复杂度<span class="math inline">\(O(\sqrt n)\)</span>，是最常用的方法。</p>
+<h2 id="pollards-rho方法">Pollard's-Rho方法</h2>
+<p><strong>引理（生日悖论）：</strong>在<span class="math inline">\([1, N]\)</span>当中随机选出若干个数，平均需要抽出<span class="math inline">\(O(\sqrt N)\)</span>个数才会抽到两个相同的数。</p>
+<p><strong>简介：</strong>抽前<span class="math inline">\(k - 1\)</span>个数两两不同的概率为： <span class="math display">\[
+\frac{P(N, k - 1)}{N^{k - 1}} = \frac{N!}{(N - k+1)!N^{k-1}}
+\]</span> 如果你抽第<span class="math inline">\(k\)</span>个数，与之前<span class="math inline">\(k - 1\)</span>个数相同的概率为<span class="math inline">\(\frac{k - 1}{N}\)</span>，因此你恰巧在刚刚抽完第<span class="math inline">\(k\)</span>个数后得到两个相同的数的概率为： <span class="math display">\[
+\frac{N!}{(N - k+1)!N^{k-1}} \cdot \frac{k - 1}{N} = \frac{(k - 1)N}{(N - k +1)!N^k}
+\]</span> 因此为了得到两个相同的数你需要抽出的数的期望是： <span class="math display">\[
+\sum_{k = 2}^{N+1} \frac{k(k - 1)N}{(N - k +1)!N^k}
+\]</span> 它也<a target="_blank" rel="noopener" href="https://math.stackexchange.com/questions/693996/average-number-of-people-required-to-find-a-pair-with-same-birthday">等价</a>于TAOCP中的： <span class="math display">\[
+1 + \sum_{k = 1}^N \frac{N!}{(N-k)!N^k}
+\]</span> 神奇的数学家拉马努金曾对该函数进行过研究，并指出它渐进逼近<span class="math inline">\(\sqrt {\frac{\pi N}{2}}\)</span>。</p>
+<p>好的，现在假设我们需要分解出<span class="math inline">\(n = pq\)</span>的一个非平凡因子<span class="math inline">\(p\)</span>，假设我们有一个多项式同余函数<span class="math inline">\(g\)</span>（例如<span class="math inline">\(g(x) = (x^2 + 1) \bmod n\)</span>）。我们使用<span class="math inline">\(g\)</span>来迭代生成一个<em>伪随机</em>序列<span class="math inline">\(\{x_n\}\)</span>，它和其模<span class="math inline">\(p\)</span>的序列<span class="math inline">\(\{x_n \bmod p\}\)</span>相关联。由之前的生日悖论引理，前者平均在<span class="math inline">\(O(\sqrt n)\)</span>次迭代后产生循环，而后者只需要<span class="math inline">\(O(\sqrt p) &lt; O(\sqrt n)\)</span>次。我们可以在迭代中检测这个循环，从而完成对于素因数的分解。</p>
+<p>我们知道<span class="math inline">\(\{x_n \bmod p\}\)</span>产生循环当且仅当存在<span class="math inline">\(x_i, x_j\)</span>，有<span class="math inline">\(x_i \equiv x_j \pmod p\)</span>，此时<span class="math inline">\(x_i\)</span>和<span class="math inline">\(x_j\)</span>之间就是这个序列的一个循环节，但是我们预先是不知道<span class="math inline">\(p\)</span>的，那怎么判断以上条件是否成立呢？我们发现以上条件等价于<span class="math inline">\(p \mid |x_i - x_j|\)</span>，因为同时<span class="math inline">\(p \mid n\)</span>，所以此时<span class="math inline">\(p\)</span>最大可以为<span class="math inline">\(\gcd(n, |x_i - x_j|)\)</span>，因此如果我们发现<span class="math inline">\(\gcd(n, |x_i - x_j|) \neq 1\)</span>我们就已经找到了一个<span class="math inline">\(p = \gcd(n, |x_i - x_j|)\)</span>，非常巧妙！</p>
+<p>在算法实现中，我们使用弗洛伊德判圈算法，其精髓就是环上的追及问题，我们维护两个指针<span class="math inline">\(x_i, x_j\)</span>，从出发点开始<span class="math inline">\(x_i\)</span>一个一个地跳，<span class="math inline">\(x_j\)</span>两个两个地跳，他们的速度差为<span class="math inline">\(1\)</span>，只要出现了了一个环那么在某一时刻<span class="math inline">\(x_j\)</span>总是可以套<span class="math inline">\(x_i\)</span>一圈！每一轮过后我们检测$(n, |x_i - x_j|) $，如果不为<span class="math inline">\(1\)</span>那说明我们找到一个因子，但是如果为<span class="math inline">\(n\)</span>的话就是<span class="math inline">\(\{x_n\}\)</span>和<span class="math inline">\(\{x_n \bmod p\}\)</span>一起循环了，我们的算法就GG了，需要重新选定一个出发点（给<span class="math inline">\(g\)</span>的种子）。</p>
+<p>这个启发式算法的复杂度取决于<span class="math inline">\(O(\sqrt p)\)</span>，但是因为一般来说<span class="math inline">\(p \le \sqrt n\)</span>，因此算法的复杂度平均下来是<span class="math inline">\(O(n^{1 \over 4})\)</span>的，实测在<code>int</code>范围内快得飞起。</p>
 
       
     </div>
