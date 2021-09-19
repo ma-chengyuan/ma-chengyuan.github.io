@@ -235,7 +235,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/08/27/%E6%88%90%E5%A5%97%E6%96%B9%E6%B3%95/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/08/28/BZOJ2085/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -248,7 +248,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/08/27/%E6%88%90%E5%A5%97%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">成套方法</a>
+          <a href="/2019/08/28/BZOJ2085/" class="post-title-link" itemprop="url">BZOJ 2085</a>
         </h2>
 
         <div class="post-meta-container">
@@ -259,14 +259,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-08-27 17:37:56" itemprop="dateCreated datePublished" datetime="2018-08-27T17:37:56+08:00">2018-08-27</time>
+      <time title="创建时间：2019-08-28 00:00:00" itemprop="dateCreated datePublished" datetime="2019-08-28T00:00:00-04:00">2019-08-28</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-11-09 17:17:57" itemprop="dateModified" datetime="2018-11-09T17:17:57+08:00">2018-11-09</time>
+        <time title="修改时间：2019-12-08 08:39:02" itemprop="dateModified" datetime="2019-12-08T08:39:02-05:00">2019-12-08</time>
       </span>
 
   
@@ -279,297 +279,107 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="简介">简介</h1>
-<p>成套方法（repertoire method）可以用来求解一大类的递归式的封闭形式，由于和式也可以化为特殊的递归式，因而该方法对于处理和式也有很好的效果，具体而言，对于如下类似形式的递归式： <span class="math display">\[
-f(n) = \begin{cases}
-    \alpha &amp; n = 0 \\
-    f(n - 1) + \beta + \gamma n + \delta n^2 \cdots &amp; n &gt; 0
-\end{cases}
-\]</span> 我们总是可以大胆地猜想：<span class="math inline">\(f(n)\)</span>或许有着如下的封闭形式： <span class="math display">\[
-f(n) = A(n)\alpha + B(n)\beta + C(n)\gamma + D(n)\delta \cdots
-\]</span> 成套方法的精髓就是，试图用几组特殊的<span class="math inline">\(f(n)\)</span> （可以让我们相对容易地解出<span class="math inline">\(\alpha,\beta\)</span>等的值），来推测<span class="math inline">\(A(n), B(n)\)</span>等之间的关系，由于在上面的式子当中<span class="math inline">\(A(n),B(n)\)</span>等都是线性组合的，因而最后我们会得到一组线性方程，求解这一组线性方程我们可以得出<span class="math inline">\(A(n),B(n)\cdots\)</span>从而解出递归式的特殊形式。这是一个特殊→一般→特殊→一般→特殊的方法，十分巧妙。</p>
-<h1 id="例子求解sum_k1n-k2">例子：求解<span class="math inline">\(\sum_{k=1}^n k^2\)</span></h1>
-<p>这是一个和式，但是不打紧，我们可以把它处理成递归式。</p>
-<p>令<span class="math inline">\(f(n) = \sum_{k = 1}^n k^2\)</span>，那么有等价定义 <span class="math display">\[
-f(n) = \begin{cases}
-    0 &amp; n = 0 \\
-    f(n - 1) + n^2 &amp; n &gt; 0
-\end{cases}
-\]</span> 可以看到从和式到递归式的转化是十分自然的。</p>
-<p>这个递归式自然是满足最前面的形式的，其中<span class="math inline">\(\alpha = \beta = \gamma = 0, \delta = 1\)</span>，我们先着手求解一般情况，选取几组“特殊的”<span class="math inline">\(f(n)\)</span>：</p>
-<p>首先令<span class="math inline">\(f(n) = 1\)</span>，代入最开始的定义： <span class="math display">\[
-\begin{cases}
-1 &amp;= \alpha \\
-1 &amp;= 1 + \beta + \gamma n + \delta n^2 
-\end{cases}
-\]</span> 显然有<span class="math inline">\(\alpha = 1, \beta = \gamma = \delta = 0\)</span>，再把他们带入我们认为的“通用形式”： <span class="math display">\[
-f(n) = 1 = A(n)\cdot 1 + B(n)\cdot 0 + C(n)\cdot 0 + D(n)\cdot 0 \\
-\Rightarrow A(n) = 1
-\]</span> 很好，我们现在得到一组<span class="math inline">\(A(n),B(n),C(n),D(n)\)</span>的线性关系了，还需要三组！</p>
-<p>令<span class="math inline">\(f(n) = n\)</span> <span class="math display">\[
-\begin{cases}
-0 &amp;= \alpha \\
-n &amp;= n - 1 + \beta + \gamma n + \delta n^2 \\
-\end{cases} \\
+          <p>本地笔记整理重发，原文写于2019/8/28，2019/12/8上传</p>
+<h1 id="分析">分析</h1>
+<p>首先使用哈希计算字符串两两之间的overlap，这个的时间复杂度不是特别显然： <span class="math display">\[
+\sum_{i=1}^n\sum_{j=1}^n\min\{a_i,a_j\}
+\]</span> 其中<span class="math inline">\(a_i, a_j\)</span>分别是第<span class="math inline">\(i\)</span>个和第<span class="math inline">\(j\)</span>个字符串的长度。假设<span class="math inline">\(a_i\)</span>从小到大排了序，那么就变为： <span class="math display">\[
+\sum_{i=1}^n \left[\sum_{j=1}^ia_j+(n-i)a_i\right]
+\]</span> 这样每一个<span class="math inline">\(a_i\)</span>都会被计算<span class="math inline">\(n-i+1+n-i=2n-2i+1\)</span>次，则时间复杂度为： <span class="math display">\[
 \begin{aligned}
-&amp;\Rightarrow \alpha = \gamma = \delta = 0, \beta = 1 \\
-&amp;\Rightarrow B(n) = n
+\sum_{i=1}^n (2n-2i+1)a_i
 \end{aligned}
-\]</span> 令<span class="math inline">\(f(n) = n^2\)</span>： <span class="math display">\[
-\begin{cases}
-0 &amp;= \alpha \\
-n^2 &amp;= (n - 1) ^ 2 + \beta + \gamma n + \delta n^2 \\
-&amp;= n^2 - 2n + 1 + \beta + \gamma n + \delta n^2
-\end{cases} \\
-\begin{aligned}
-&amp;\Rightarrow \alpha = \delta = 0, \beta = -1, \gamma = 2 \\
-&amp;\Rightarrow -B(n) + 2C(n) = n^2
-\end{aligned}
-\]</span> 最后，令<span class="math inline">\(f(n) = n^3\)</span>： <span class="math display">\[
-\begin{cases}
-0 &amp;= \alpha \\
-n^3 &amp;= (n - 1) ^ 3 + \beta + \gamma n + \delta n^2 \\
-&amp;= n^3 - 3n^2 + 3n - 1 + \beta + \gamma n + \delta n^2
-\end{cases} \\
-\begin{aligned}
-&amp;\Rightarrow \alpha = 0, \beta = 1,\gamma = -3, \delta = 3 \\
-&amp;\Rightarrow B(n) - 3C(n) + 3D(n) = n^3
-\end{aligned}
-\]</span> 最后，把这四组关系结合起来： <span class="math display">\[
-\begin{cases}
-A(n) &amp;&amp; &amp;&amp; &amp;&amp; &amp;= 1 \\
-&amp;&amp;B(n) &amp;&amp;&amp;&amp; &amp;= n \\
-&amp;-&amp;B(n) &amp;+&amp; 2C(n) &amp;&amp; &amp;= n^2 \\
-&amp;&amp;B(n) &amp;-&amp; 3C(n) &amp;+&amp; 3D(n) &amp;= n^3
-\end{cases}
-\]</span> 非常简单的线性方程组，解得： <span class="math display">\[
-\begin{cases}
-A(n) = 1 \\
-B(n) = n \\
-C(n) = \frac{n^2 + n}{2} \\
-D(n) = \frac{2n^3 + 3n^2 + n}{6}\\
-\end{cases}
-\]</span> 这个时候，回到我们要解的递归式，其中<span class="math inline">\(\alpha = \beta = \gamma = 0, \delta = 1\)</span>,因此 <span class="math display">\[
-\begin{aligned}
-f(n) = \sum_{k = 1}^n k^2 = D(n) &amp;= \frac{2n^3 + 3n^2 + n}{6} \\
-&amp;= \frac{n(n + 1)(2n + 1)}{6}
-\end{aligned}
-\]</span> 求解到此结束，可以看到这个公式和我们的常识一致。虽然以上过程看似繁琐，但是注意<strong>我们已经求解了一大类的问题，因为<span class="math inline">\(A(n),B(n),C(n),D(n)\)</span>是不会因<span class="math inline">\(\alpha, \beta, \gamma, \delta\)</span>而变化的！</strong>，现在，对于<strong>任何的二次多项式的和式或者递归式</strong>我们都可以飞快地计算出其封闭形式。更有用的是，不仅仅是二次三项式，如果我们以后要处理三次多项式（意味着我们要加入<span class="math inline">\(\varepsilon\)</span>和<span class="math inline">\(E(n)\)</span>），<strong>之前的<span class="math inline">\(A(n),B(n),C(n),D(n)\)</span>的解也不会变化，因而只要继续带入<span class="math inline">\(f(n) = n^4\)</span>即可！</strong> （这是显然的）</p>
-<p><strong>注意：为了找出线性关系，我们也可以先找出<span class="math inline">\(\alpha, \beta\)</span>等的一组特解，然后基于这个解计算<span class="math inline">\(f(n)\)</span>，这和代入特殊<span class="math inline">\(f(n)\)</span>然后反解<span class="math inline">\(\alpha, \beta\)</span>是等价的！</strong></p>
-<h1 id="思考为什么可以这样做">思考：为什么可以这样做 ？</h1>
-<p>为什么几个看似毫不相关的<span class="math inline">\(f(n)\)</span>可以指导我们正在处理的特殊情形，注意到我们的步骤：</p>
-<ol type="1">
-<li>将特殊<span class="math inline">\(f(n)\)</span>带入递归式的定义，解出<span class="math inline">\(\alpha, \beta, \gamma, \delta\cdots\)</span></li>
-<li>将1的解带入假设的封闭形式，求出<span class="math inline">\(A(n), B(n), C(n), D(n)\cdots\)</span>的关系</li>
-</ol>
-<p>注意到，我们在第一步解出了<span class="math inline">\(\alpha, \beta\)</span>等的值，说明此时我们的特殊<span class="math inline">\(f(n)\)</span>本来就是以上的递归式定义可以表出的，而我们假设的通用形式是对任何一组参数通用的，因此求解出来的线性关系也是通用的。</p>
-<h1 id="思考真的万能和机械化吗">思考：真的“万能”和“机械化”吗？</h1>
-<p>成套方法从刚刚的示例可以看到似乎是非常机械化的，但是其实不然，《具体数学》中有言，成套方法对于线性的递归式最为有效，因此<span class="math inline">\(f(n - 1)\)</span>前是不能有系数的（不然直觉上通用形式里就会出现棘手的指数项），但是这不妨碍我们处理和式，其次，对于一开始的“通用形式”的构造和特殊<span class="math inline">\(f(n)\)</span>的构造其实不是那么简单的工作，对于多项式，我们可以很简单地构造多项式形式的“通用形式”，但是如果是：</p>
-<p><span class="math display">\[
-\sum_{k = 1}^n (-1)^k k^2
-\]</span> 最上面的通用形式就不管用了！我们需要自己寻找适合的通用定义和特殊函数值进行求解（这也是《具体数学》当中的习题），虽然找到之后的过程倒是非常地机械化没错。</p>
-<h1 id="思考作为算法实现的复杂度">思考：作为算法实现的复杂度？</h1>
-<p>我们仅在这里思考以上方法<em>在多项式情况下</em>的特例。</p>
-<p>成套方法分为三步走：</p>
-<ol type="1">
-<li>构造线性方程</li>
-<li>解线性方程</li>
-<li>回代</li>
-</ol>
-<p>第一步，由于是多项式的情况，观察之前的特例并结合二项式定理可以得到， 如果我们带入<span class="math inline">\(f(n) = n^k\)</span>的情况，对于对应<span class="math inline">\(n^m\)</span>的多项式系数（类似<span class="math inline">\(A(n), B(n)\)</span>），其系数为（在<span class="math inline">\(m \neq k\)</span>时，在<span class="math inline">\(m = k\)</span>时系数自然就是0了）：</p>
-<p><span class="math display">\[
--\binom{k}{m}(-1)^{k - m}
-\]</span> 因此，配合杨辉三角递推组合数，这一部分的时间复杂度可以做到<span class="math inline">\(O(n^2)\)</span>。</p>
-<p>第二步，考虑到我们解的线性方程当中含有多项式，因此需要采用系数向量的表示方法，基本算数运算代价变为<span class="math inline">\(O(n)\)</span>，但是注意到线性方程组列出时已经是简化阶梯形式，因此<strong>不需要高斯消元，只需要代入消元</strong>，时间复杂度是<span class="math inline">\(O(n^2)\cdot O(n) = O(n^3)\)</span>。</p>
-<p>第三步的复杂度自然是<span class="math inline">\(O(n^2)\)</span>。</p>
-<p>因此，基于成套方法的算法的综合复杂度为<span class="math inline">\(O(n^3)\)</span>。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/08/21/%E5%BF%AB%E9%80%9F%E6%9E%9A%E4%B8%BE%E5%AD%90%E9%9B%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/08/21/%E5%BF%AB%E9%80%9F%E6%9E%9A%E4%B8%BE%E5%AD%90%E9%9B%86/" class="post-title-link" itemprop="url">快速枚举二进制子集的方法</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-08-21 19:45:19" itemprop="dateCreated datePublished" datetime="2018-08-21T19:45:19+08:00">2018-08-21</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-10-07 16:30:21" itemprop="dateModified" datetime="2018-10-07T16:30:21+08:00">2018-10-07</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="简介">简介</h1>
-<p>目标：对于一个<span class="math inline">\(n\)</span>位二进制表示的子集<code>x</code>，我们希望枚举其子集。</p>
-<p>朴素枚举其子集的代码，复杂度<span class="math inline">\(O(2^{n})\)</span>：</p>
-<pre class="line-numbers"><code class="language-cpp">for (int s = 0; s &lt;= x; s++)
-    if (s | x == x)
-        // s 表示的二进制是x的子集</code></pre>
-<p>快速枚举其子集的代码，复杂度<span class="math inline">\(O(2^{|X|})\)</span>，其中<span class="math inline">\(X\)</span>是<code>x</code>表示的集合：</p>
-<pre class="line-numbers"><code class="language-cpp">for (int s = x; s &gt; 0; s = (s - 1) &amp; x)
-    // s表示的二进制是x的子集
-// 以上算法不！会！处！理！空！集！，额外处理！</code></pre>
-<p><strong>正确性证明：</strong></p>
-<p>代码中的<code>&amp; x</code>保证<code>s</code>一定是<code>s</code>的子集，而<code>(s - 1)</code>保证枚举出来的<code>s</code>递减至0，详细证明不在此赘述<del>脑补即可</del>.</p>
-<h1 id="拓展">拓展</h1>
-<p>在很多的状压DP当中，我们不仅要枚举一个集合的子集，而是要枚举<span class="math inline">\([0, 2^n)\)</span>的所有二进制数表示的集合的子集，如果使用朴素地暴力做法，那么复杂度显然是<span class="math inline">\(O(4^n)\)</span>，可以过<span class="math inline">\(n \le 10\)</span>的数据。</p>
-<p><strong>那么如果我们使用刚刚介绍的优化方法，复杂度会变成多少呢？</strong></p>
-<p><strong>分析：</strong>总体复杂度为： <span class="math display">\[
-\sum_{i = 0}^n \binom{n}{i}2^i = \sum_{i = 0}^n \binom{n}{i}2^i1^{n - i}
-\]</span> 逆用二项式定理： <span class="math display">\[
-\sum_{i = 0}^n \binom{n}{i}2^n = (2 + 1)^n = 3^n
-\]</span> 因此，算法的复杂度为<span class="math inline">\(O(3^n)\)</span>（而且是最优的），可以通过<span class="math inline">\(n \le 15\)</span>的数据。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/08/21/HDU2204/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/08/21/HDU2204/" class="post-title-link" itemprop="url">HDU 2204 / 容斥原理</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-08-21 18:07:51" itemprop="dateCreated datePublished" datetime="2018-08-21T18:07:51+08:00">2018-08-21</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-09-01 22:02:36" itemprop="dateModified" datetime="2018-09-01T22:02:36+08:00">2018-09-01</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><a target="_blank" rel="noopener" href="http://acm.hdu.edu.cn/showproblem.php?pid=2204">题面</a></p>
-<p>大意：求在<span class="math inline">\([1, n]\)</span>中可以表示为<span class="math inline">\(m^k\)</span>形式的数的个数（<span class="math inline">\(m, k \in \mathbb{Z}^+, k &gt; 1,n \le 10^{18}\)</span>）</p>
-<p>这道题不像是有<span class="math inline">\(O(1)\)</span>的解法，但是哪怕是<span class="math inline">\(O(\sqrt{n})\)</span>的算法也会超时，因此直觉上我们应该寻找的是<span class="math inline">\(O(\log n)\)</span>的算法。</p>
-<p>首先，因为<span class="math inline">\(m = 1\)</span>的情形是trivial的，所以考虑<span class="math inline">\(m \ge 2\)</span>此时<span class="math inline">\(k \le \log_m n \le \log_2 n \le 60\)</span>，这也是<span class="math inline">\(k\)</span>的一个上界。</p>
-<p>接下来我们发现：如果一个数可以表示为<span class="math inline">\(m^4\)</span>的形式，也一定可以表示为<span class="math inline">\((m^2)^2\)</span>的形式，类似地，如果<span class="math inline">\(k = pq\)</span>是合数的话，那么<span class="math inline">\(m^k\)</span>一定可以表示为<span class="math inline">\((m^p)^q\)</span>和<span class="math inline">\((m^q)^p\)</span> 。</p>
-<p>令<span class="math inline">\(P(i)\)</span>表示可以表示为<span class="math inline">\(m^i\)</span>形式的数的个数，那么题目显然要我们求的是： <span class="math display">\[
-\left| \bigcup_{素数p\le\log_2n}P(p) \right|
-\]</span> 接下来就用容斥原理很快就能解决这道题了，代码非常的简洁，注意精度：</p>
+\]</span> 显然这个时候越前面的<span class="math inline">\(a_i\)</span>越大越好，但是<span class="math inline">\(a_i\)</span>是递增的，所以极限情况是各<span class="math inline">\(a_i\)</span>相等取最大值，时间复杂度就是<span class="math inline">\(O\left(n\sum_{i=1}^na_i\right)\)</span>。</p>
+<p>然后Floyd 矩阵乘法即可。</p>
+<p><del>双哈希大法好</del></p>
+<p><del>卡常Nice</del></p>
 <pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+#include &lt;cstring&gt;
 
 using namespace std;
+const int MOD1 = 998244353, MOD2 = 1e9 + 7;
+const int EPS = 26;
+const int N = 210;
+const int S = 100010;
 typedef long long ll;
-const double EPS = 1e-8;
-const int p[] = &#123; 0, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59 &#125;;
-ll n;
-
-ll calc(ll d, ll a) &#123;
-    if (a &gt; 60) return 0;
-    if (d == 0) 
-        return a == 1 ? 0 : (ll)(pow(n, 1.0 / a) + EPS) - 1;
-    return calc(d - 1, a) - calc(d - 1, a * p[d]);
+typedef pair&lt;int, int&gt; hsh;
+int n, m;
+vector&lt;hsh&gt; h[N];
+hsh p[S];
+inline hsh operator +(const hsh &amp;a, const hsh &amp;b) &#123;
+    hsh ret = make_pair(a.first + b.first, a.second + b.second);
+    if (ret.first &gt;= MOD1) ret.first -= MOD1;
+    if (ret.second &gt;= MOD2) ret.second -= MOD2;
+    return ret;
 &#125;
-
+inline hsh operator -(const hsh &amp;a, const hsh &amp;b) &#123;
+    hsh ret = make_pair(a.first - b.first, a.second - b.second);
+    if (ret.first &lt; 0) ret.first += MOD1;
+    if (ret.second &lt; 0) ret.second += MOD2;
+    return ret;
+&#125;
+inline hsh operator +(const hsh &amp;a, char b) &#123;
+    int c = b - &#39;a&#39;;
+    return make_pair(((ll)a.first * EPS + c) % MOD1, 
+            ((ll)a.second * EPS + c) % MOD2);
+&#125;
+inline hsh operator *(const hsh &amp;a, const hsh &amp;b) &#123;
+    return make_pair((ll)a.first * b.first % MOD1, 
+            (ll)a.second * b.second % MOD2);
+&#125;
+inline hsh cut(int i, int l, int r) &#123;
+    return h[i][r] - h[i][l] * p[r - l];    
+&#125;
+inline int intersect(int a, int b) &#123;
+    int la = h[a].size() - 1, lb = h[b].size() - 1;
+    int lim = a == b ? la - 1 : min(la, lb);
+    int ret = 0;
+    for (int i = 1; i &lt;= lim; i++)
+        if (cut(a, la - i, la) == cut(b, 0, i)) ret = i;
+    return ret;
+&#125;
+struct floyd &#123;
+    ll d[N][N];
+    floyd() &#123; memset(d, 0x3f, sizeof d); &#125;
+    ll *operator [](int x) &#123; return d[x]; &#125;
+    const ll *operator [](int x) const &#123; return d[x]; &#125;
+    floyd operator *(const floyd &amp;b) const &#123;
+        floyd ret;
+        for (int k = 1; k &lt;= n; k++)
+            for (int i = 1; i &lt;= n; i++)
+                for (int j = 1; j &lt;= n; j++) 
+                    ret[i][j] = min(ret[i][j], d[i][k] + b[k][j]);
+        return ret;
+    &#125;
+&#125; f;
 int main() &#123;
-    while (scanf(&quot;%lld&quot;, &amp;n) != EOF)
-        printf(&quot;%lld\n&quot;, -calc(17, 1) + 1);
+    scanf(&quot;%d%d&quot;, &amp;n, &amp;m);
+    int maxlen = 0;
+    for (int i = 1; i &lt;= n; i++) &#123;
+        static char tmp[S]; scanf(&quot;%s&quot;, tmp + 1);
+        int len = strlen(tmp + 1);
+        maxlen = max(maxlen, len);
+        h[i].push_back(make_pair(0, 0));
+        for (int j = 1; j &lt;= len; j++)
+            h[i].push_back(h[i].back() + tmp[j]);
+    &#125;
+    p[0] = make_pair(1, 1);
+    for (int i = 1; i &lt;= maxlen; i++) p[i] = p[i - 1] * make_pair(EPS, EPS);
+    for (int i = 1; i &lt;= n; i++)
+        for (int j = 1; j &lt;= n; j++) 
+            f[i][j] = h[j].size() - 1 - intersect(i, j);
+    floyd ans; for (int i = 1; i &lt;= n; i++) ans[i][i] = h[i].size() - 1;
+    int y = m - 1;
+    for (; y; y &gt;&gt;= 1) &#123;
+        if (y &amp; 1) ans = ans * f;
+        f = f * f;
+    &#125;   
+    ll mn = 1ll &lt;&lt; 60;
+    for (int i = 1; i &lt;= n; i++)
+        for (int j = 1; j &lt;= n; j++) mn = min(mn, ans[i][j]);
+    printf(&quot;%lld\n&quot;, mn);
     return 0;
 &#125;</code></pre>
 
@@ -598,7 +408,7 @@ int main() &#123;
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/08/21/%E7%AD%9B%E6%B3%95/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/07/31/FMT/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -611,7 +421,7 @@ int main() &#123;
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/08/21/%E7%AD%9B%E6%B3%95/" class="post-title-link" itemprop="url">优化埃氏筛的时间复杂度分析</a>
+          <a href="/2019/07/31/FMT/" class="post-title-link" itemprop="url">快速莫比乌斯变换笔记</a>
         </h2>
 
         <div class="post-meta-container">
@@ -622,14 +432,14 @@ int main() &#123;
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-08-21 10:00:04" itemprop="dateCreated datePublished" datetime="2018-08-21T10:00:04+08:00">2018-08-21</time>
+      <time title="创建时间：2019-07-31 00:00:00" itemprop="dateCreated datePublished" datetime="2019-07-31T00:00:00-04:00">2019-07-31</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-09-01 15:32:50" itemprop="dateModified" datetime="2018-09-01T15:32:50+08:00">2018-09-01</time>
+        <time title="修改时间：2020-08-06 22:21:30" itemprop="dateModified" datetime="2020-08-06T22:21:30-04:00">2020-08-06</time>
       </span>
 
   
@@ -642,37 +452,346 @@ int main() &#123;
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>对于优化后的埃氏筛法：</p>
-<pre class="line-numbers"><code class="language-cpp">bool v[N];
+          <p>本地笔记整理，原文写于2019/7/31，2019/12/8上传</p>
+<blockquote>
+<p>这个枚举子集啊从<span class="math inline">\(\mathcal O(4^n)\)</span>到<span class="math inline">\(\mathcal O(3^n)\)</span>只优化了一半，最后的目标一定是<span class="math inline">\(\mathcal O(2^n)\)</span>！ ——MR</p>
+</blockquote>
+<p>考虑加速在序列<span class="math inline">\(\{a\}, \{b\}\)</span>上的集合并卷积： <span class="math display">\[
+c_k = \sum_{i \cup j = k} a_ib_j
+\]</span> 利用和FFT类似的思想，考虑构造变换<span class="math inline">\(\operatorname{FMT}\{a\}\)</span>，使得： <span class="math display">\[
+\operatorname{FMT}\{a\}_i\times\operatorname{FMT}\{b\}_i = \operatorname{FMT}\{c\}_i
+\]</span> 观察到可以构造： <span class="math display">\[
+\operatorname{FMT}\{a\}_i = \sum_{j \subseteq i} a_j
+\]</span> 即前缀子集和。该变换成立的原因显然。</p>
+<p>然而朴素构造子集和的时间复杂度是<span class="math inline">\(O(3^n)\)</span>的，有没有办法优化呢?</p>
+<p>显然是有的，我们采用增量的方法，逐个考虑集合的每个元素<span class="math inline">\(x\)</span>，如果一个集合<span class="math inline">\(i\)</span>应该包含<span class="math inline">\(x\)</span>，则其子集可以包含也可以不包含<span class="math inline">\(x\)</span>，因此进行操作：<span class="math inline">\(a_i = a_i + a_{i\setminus x}\)</span></p>
+<p>代码是很短的：</p>
+<pre class="line-numbers"><code class="language-cpp">for (int i = 1; i &lt; (1 &lt;&lt; n); i &lt;&lt;= 1) // 枚举元素
+    for (int s = i &lt;&lt; 1, l = 0; l &lt; (1 &lt;&lt; n); l += s) // [l, l + s) 是一段区间
+        for (int k = 0; k &lt; i; k++) // 其中前半段没有i，后半段有i
+            a[l + i + k] += a[l + k]</code></pre>
+<p>逆向变换的代码也很简单：</p>
+<pre class="line-numbers"><code class="language-cpp">for (int i = 1; i &lt; (1 &lt;&lt; n); i &lt;&lt;= 1)
+    for (int s = i &lt;&lt; 1, l = 0; l &lt; (1 &lt;&lt; n); l += s)
+        for (int k = 0; k &lt; i; k++) 
+            a[l + i + k] -= a[l + k]</code></pre>
+<p>时间复杂度为 <span class="math display">\[
+\sum_{i = 0}^{n - 1} 2^{n - i - 1}\cdot 2^i = O(n2^n)
+\]</span></p>
 
-void sieve(int n) &#123;
-    memset(v, 0, sizeof(v));
-    for (int i = 2; i &lt;= n; i++) &#123;
-        if (v[i]) continue;
-        for (int j = i; j &lt;= n / i; j++)
-            v[i * j] = true;
-    &#125;
-&#125;</code></pre>
-<p>简单分析一下它的流程，我们发现当<code>i</code>不是素数的时候内层循环才会执行，而内层循环执行的次数约为<span class="math inline">\(\frac{n}{i} - i\)</span>次，暗示了其实对于<span class="math inline">\(i &gt; \sqrt{n}\)</span>，这个循环也不会被执行，这已经是埃氏筛的一个小优化：<em>即一个数只会被它前半部分的素数筛去</em>，那么总体的时间复杂度就可以表示为： <span class="math display">\[
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/07/08/Double%20Dabble%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/07/08/Double%20Dabble%E7%AE%97%E6%B3%95/" class="post-title-link" itemprop="url">Double Dabble算法笔记</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-07-08 00:00:00" itemprop="dateCreated datePublished" datetime="2019-07-08T00:00:00-04:00">2019-07-08</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2019-12-08 08:38:16" itemprop="dateModified" datetime="2019-12-08T08:38:16-05:00">2019-12-08</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>本地笔记整理，原文写于2019/7/8，2019/12/8上传</p>
+<p>Double Dabble算法是二进制转BCD的常用算法。</p>
+<h1 id="整数double-dabble算法">整数Double Dabble算法</h1>
+<p>（下文当中，"BCD位"指一个十进制位对应的四位二进制）</p>
+<p>首先，如果我们要计算一个二进制数的十进制值，除了位权展开以外，可以从左往右如此迭代： <span class="math display">\[
+x_{n + 1} = 2x_n + \text{该二进制位}
+\]</span> 这是非常显然的。</p>
+<p>在Double Dabble的图示当中，左边一列存储的是BCD的结果：</p>
+<p><img src="https://i.stack.imgur.com/EQvTh.png" alt="Image result for double dabble algorithm" /></p>
+<p>Double Dabble算法本身其实就是在这BCD的结果列进行如上的迭代操作（乘<span class="math inline">\(2\)</span>加位）。</p>
+<p>为了这样做，直觉上来讲，我们可以按照二进制的方法将BCD列中的结果乘<span class="math inline">\(2\)</span>（左移），然后进行一定的矫正（之前的左移可能破坏了BCD的性质），然后在加上原数的一个二进制位（最右边移进）。</p>
+<p>左移是平凡的，加上一位也是平凡的（因为左移之后最右边一位永远是<span class="math inline">\(2\)</span>，不会产生进位），问题在乘<span class="math inline">\(2\)</span>后为了维护BCD性质所进行的矫正上。</p>
+<p>首先，我们应该注意到，忽略进位，如果一个BCD位大于<span class="math inline">\(10\)</span>，我们需要减<span class="math inline">\(10\)</span>来获得正确的位，而减<span class="math inline">\(10\)</span>在四位二进制意义下就等同于加<span class="math inline">\(6\)</span>，即<span class="math inline">\(110_2\)</span>。</p>
+<p>Double Double算法的首先高在它甚至在乘<span class="math inline">\(2\)</span><strong>之前</strong>就进行了矫正。我们考虑哪些BCD位乘<span class="math inline">\(2\)</span>之后会出现问题，答案非常平凡：满<span class="math inline">\(5\)</span>的。而因为是在左移之前，加上的<span class="math inline">\(110_2\)</span>也就变成<span class="math inline">\(11_2\)</span>，即加<span class="math inline">\(3\)</span>。</p>
+<p>这就是“满五加三”的由来。</p>
+<p>不仅如此，Double Dabble算法高在因为这是对于左移之前的四位进行的操作，因而加<span class="math inline">\(3\)</span>之后会进位到四位当中的最高位，其左移之后就到左边的BCD位上去了...相当于巧妙handle进位的问题。</p>
+<h1 id="小数double-dabble算法">小数Double Dabble算法</h1>
+<p>小数Double Dabble似乎没多少人提到……但是本质确实是和整数算法一致的。</p>
+<p>我们进行小数二进制-十进制转化可以利用如下的从右往左的迭代过程： <span class="math display">\[
+x_{n + 1} = \frac{x_n + \text{该二进制位}}{2}
+\]</span> 我们同样要对结果列进行这样的操作。</p>
+<p>首先是<span class="math inline">\(x_n + \text{该二进制位}\)</span>的部分，由于结果列现在表示小数部分，加上去的二进制列就在整个结果列的左侧（整数部分），这无疑是平凡的。</p>
+<p>接下来是除<span class="math inline">\(2\)</span>的部分。基于二进制的思想，我们通过右移来完成除<span class="math inline">\(2\)</span>的操作。同时我们需要进行一定的矫正来维护BCD的性质。</p>
+<p>我们观察到，出现问题的BCD位，一定是在右移之前是奇数的位，而奇数最低位上的<span class="math inline">\(1\)</span>，在右移之后，就到了右边的最高位上，也就是右边的哪一位右移之后会大于等于<span class="math inline">\(8\)</span>。</p>
+<p>而回到十进制，如果一个奇数位除以二，结果应该给右边的位加上<span class="math inline">\(5\)</span>，而我们之前算法中右移过来的<span class="math inline">\(1\)</span>让它加了<span class="math inline">\(8\)</span>，所以要减去<span class="math inline">\(3\)</span>。</p>
+<p>这就是“满八减三”的由来。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/02/15/%E6%B5%81%E6%B5%AA%E5%9C%B0%E7%90%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/02/15/%E6%B5%81%E6%B5%AA%E5%9C%B0%E7%90%83/" class="post-title-link" itemprop="url">流浪地球中的轨道运动学</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-02-15 00:00:00" itemprop="dateCreated datePublished" datetime="2019-02-15T00:00:00-05:00">2019-02-15</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2019-12-08 08:38:50" itemprop="dateModified" datetime="2019-12-08T08:38:50-05:00">2019-12-08</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><strong>这篇笔记写于2019/2/15，原供稿班级公众号，在某人决定博客重更之后重新整理发上来~</strong>2019/12/8上传</p>
+<p>[TOC]</p>
+<h1 id="为什么会有这篇文章">为什么会有这篇文章？</h1>
+<p>最近网上也都在吹爆《流浪地球》这部科幻片啊……</p>
+<p>然后我自己前几天也慕名去电影院看了一下，感觉特效之类的着实过瘾。但是作为一部定位为<strong>硬科幻</strong>的科幻片，除去画面以外，科学的严谨性还是很重要的。但是这部片子里面的一些科学设定在一个KSP玩家看来似乎……</p>
+<p><img src="http://ws3.sinaimg.cn/large/9150e4e5ly1fkkifa7choj203v04ca9y.jpg" alt="这不科学" /></p>
+<p>还是有些槽点呢……当然瑕不掩瑜。这篇文章就稍微指出一点我发现的《流浪地球》当中的一些Bug，这些Bug主要是轨道力学上的，也就当给同学们做一个科普吧。</p>
+<p>自己也是半瓶水，所以，欢迎指正。</p>
+<h1 id="定性吐槽">定性吐槽</h1>
+<p>电影里面的运动学乍一看是非常符合直觉的。比如说：</p>
+<ul>
+<li>地球的发动机一关，整个地球马上就往木星上靠过去了，轨道一下子<em>拐了一个弯</em></li>
+<li>空间站发动机一开，整个空间站马上就<em>直线</em>飞离地球了，轨道上看得一清二楚</li>
+<li>要引爆空间站，就直接对准目标<em>直线</em>冲刺过去了</li>
+</ul>
+<p>似乎没啥问题咯？</p>
+<p>Uhmmmmmm……</p>
+<p>这么说的话以下二位的棺材板就要压不住了：</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/GodfreyKneller-IsaacNewton-1689.jpg/220px-GodfreyKneller-IsaacNewton-1689.jpg" alt="Newton" /></p>
+<p>（牛顿）</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Johannes_Kepler_1610.jpg/220px-Johannes_Kepler_1610.jpg" alt="Kepler" /></p>
+<p>（开普勒）</p>
+<p>为啥嘞？</p>
+<h2 id="开普勒第一定律">开普勒第一定律</h2>
+<p>回忆一下我们第一学期学的牛顿第一定律：</p>
+<blockquote>
+<p><strong>牛顿第一定律：</strong>假若某物体所受合外力为零，则该物体的运动速度不变，即保持静止或做匀速直线运动。</p>
+</blockquote>
+<p>如果所受合力不是零，而是一直受到一个定质点的引力作用，物体的运动状态又会是怎样呢？</p>
+<p>开普勒结合牛顿的万有引力定律对牛顿第一定律进行了拓展，得出了开普勒第一定律：</p>
+<blockquote>
+<p><strong>开普勒第一定律：</strong>每一个行星都沿各自的<strong>椭圆</strong>轨道环绕太阳，而太阳则处在椭圆的一个焦点中。</p>
+</blockquote>
+<p>开普勒定律刻画的行星在只受太阳引力作用下的稳定运动轨道，但是真的只有椭圆这一种吗？</p>
+<p>其实定律实际推导出的轨道是<strong>圆锥曲线</strong>，即圆，椭圆，抛物线或双曲线中的任意一种，只是对于普通行星来说，后面两种轨道意味着飞掠而不是围绕，不符合实际，因此开普勒在定律表述里面便只说“椭圆”。</p>
+<p>那知道这个定律有啥用呢？</p>
+<h2 id="发动机不需要一直点火">发动机不需要一直点火！</h2>
+<p>首先，如果地球的行星发动机的推力够足，理论上是用不着像电影里面一直点火的，我们只需要<strong>在地球轨道附近把地球加速到足够高速然后熄火，那么根据开普勒定律，地球自己会沿一条圆锥曲线被甩离太阳，并在木星附近被木星捕获，沿以木星为焦点的抛物线或双曲线掠过木星进行引力弹弓加速，然后离开木星被甩出太阳系！</strong>这段过程中理想情况下地球只受星体引力影响，<strong>不需要发动机一直点火</strong>，除了进行一定的轨道修正！‘</p>
+<p>这个操作有没有实例呢？</p>
+<p>且看旅行者二号：</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Voyager_spacecraft_model.png/260px-Voyager_spacecraft_model.png" alt="Voyager 2" /></p>
+<p>它在被火箭加速到足够高的速度之后就放飞自我了，之后走的轨道是什么样的呢？</p>
+<p><img src="https://s2.ax1x.com/2019/02/13/k03DaR.gif" alt="k03DaR.gif" /></p>
+<p>（绿色为木星轨道）</p>
+<p>在离开地球的十多年里，旅行者2号几乎没有启用过自己的轨道发动机，包括在飞掠火星木星等星体进行引力加速的时候也是如此。如果它是靠电影中的一直加速才飞到那么远的话，试问这么小的机体燃料放哪里呢？</p>
+<p>所以看到地球上的行星发动机一直燃烧了十七年，Emmm...编剧开心就好。（当然不排除是加速度过低导致需要持续加速的情况，这种情况下轨道确实比较难算，出偏差也是正常的，因此这其实不算一个特别大的Bug）</p>
+<h2 id="熄火点火之后的轨道不科学">熄火/点火之后的轨道不科学！</h2>
+<p>看过电影的同学应该记得，在行星发动机一半熄火的时候，地球马上就拐了一个弯，从飞掠木星变成栽进木星了，就好像有什么东西让它大幅度减速了一样。编剧在这里似乎混淆了速度和加速度的概念，就算地球发动机全部停机，地球几乎只受木星引力作用，地球也会沿着熄火前最后一刻所处的抛物线轨道继续运行：</p>
+<p><img src="https://s2.ax1x.com/2019/02/13/k03BZ9.jpg" alt="k03BZ9.jpg" /></p>
+<p>（图找的不是熄火的那个场景，只做演示用）</p>
+<p>也就是说，地球会继续按照“原轨道”的红线运行，而不是像影片中的那样当场轨道一拐拐到蓝色轨道上去了。</p>
+<p>也就是说，其实发生影片中所谓“危机”的概率会小非常多。</p>
+<p>什么？你说抛物线和双曲线本来就有一个拐点？那和影片当中的形状和位置都对不上好吗?</p>
+<p>同样的，空间站准备开溜时候的轨道也注定不是一条直线，它同时受着地球和木星的引力影响，做的是<strong>三体运动</strong>，轨迹怎么会那么漂亮呢？</p>
+<p>因为这样，空间站要开到地木之间引爆，也绝非一个“前进三！”的直线冲刺能够与解决的，复杂着呢！</p>
+<h1 id="定量吐槽">定量吐槽</h1>
+<p>小马在看完电影的当晚估算了一下：</p>
+<p><img src="https://s2.ax1x.com/2019/02/13/k03wqJ.png" alt="k03wqJ.png" /></p>
+<p>然后第二天就有同学告诉我我仿佛漏算了什么……确实是这样的，那这个定量的估算到底是怎么来的呢？</p>
+<h2 id="tsiolkovsky公式">Tsiolkovsky公式</h2>
+<p>在1903年，俄罗斯科学家齐奥尔科夫斯基推导出了著名的火箭公式： <span class="math display">\[
+\Delta v = v_e \ln \left(\frac{m_0}{m_1}\right)
+\]</span> （详细推导见<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Tsiolkovsky_rocket_equation">这里</a>）</p>
+<p>其中<span class="math inline">\(v_e\)</span>表示火箭工质的喷出速度，<span class="math inline">\(m_0\)</span>表示火箭的初始质量，<span class="math inline">\(m_1\)</span>表示火箭的燃烧后的末质量，<span class="math inline">\(\Delta v\)</span>表示火箭在发动机加速过程当中所获得的速度增量。</p>
+<p>什么叫工质喷出速度呢？“工质”就是火箭发动机喷嘴喷出的物质的代称，也是火箭发动机推力的来源：发动机给工质一个力将工质高速推离火箭，反作用力同时给火箭一个巨大的动力。</p>
+<p>如果假设地球的质量是<span class="math inline">\(m_e\)</span>，石头的质量是<span class="math inline">\(m_f\)</span>，那么在我们的情况下，公式可以写作： <span class="math display">\[
+\Delta v = v_e \ln \left(\frac{m_e}{m_e-m_f}\right)
+\]</span> 我们可以非常简单地估算出（或者借助网络查阅到）<span class="math inline">\(m_e\)</span>的值，因此只要我们知道了<span class="math inline">\(v_e\)</span>和<span class="math inline">\(\Delta v\)</span>，我们就可以由上式反解<span class="math inline">\(\frac{m_f}{m_e}\)</span>。从而算出作为燃料的石头的重量！</p>
+<h2 id="计算delta-v">计算<span class="math inline">\(\Delta v\)</span></h2>
+<h3 id="直接逃逸">直接逃逸</h3>
+<p>我们首先计算如果不借助木星的引力弹弓效应需要的最小<span class="math inline">\(\Delta v\)</span>大概是多少：</p>
+<p>首先我们计算在地球轨道上相对太阳的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Escape_velocity">逃逸速度</a>，取太阳的标准重力参数<span class="math inline">\(\mu = GM = 1.327124 \times 10^{20} \mathrm{m^3/s^2}\)</span>，取地日平均距离<span class="math inline">\(r_e = 1\mathrm{au} = 1.496 \times 10^{11} \mathrm{m}\)</span>，若假设轨道偏心率极小可以忽略不计，则根据机械能守恒逃逸速度可以计算如下： <span class="math display">\[
 \begin{aligned}
-\sum_{素数p \le \sqrt{n}} (\frac{n}{p} - p)
-&amp;= \sum_{素数p \le \sqrt{n}} \frac{n}{p} - \sum_{素数p \le \sqrt{n}} p \\
-&amp;= n \sum_{素数p \le \sqrt{n}} \frac{1}{p} - \sum_{素数p \le \sqrt{n}} p 
+v_{es} &amp;= \sqrt{\frac{2\mu}{r_e}} \\
+&amp;= \sqrt{\frac{2\times 1.327124 \times 10^{20} \mathrm{m^3/s^2}}{1.496 \times 10^{11} \mathrm{m}}} \\
+&amp;\approx 42.126\mathrm{km/s}
 \end{aligned}
-\]</span> 方便起见我们假设<span class="math inline">\(\sqrt{n}\)</span>为整数，这样就可以避免写<span class="math inline">\(\lfloor \sqrt{n} \rfloor\)</span>，我们先着手估计后半部分，即$_{素数p } p $的值，通过计算贡献的办法我们得到： <span class="math display">\[
-\sum_{素数p \le \sqrt{n}} p = \sqrt{n}\pi(\sqrt{n}) - \sum_{i = 2}^{\sqrt{n} - 1}\pi(i)
-\]</span> 根据素数定理，我们有<span class="math inline">\(\pi(x) \approx \frac{x}{\ln x}\)</span>，那么我们可以得到： <span class="math display">\[
+\]</span> 我们当然不用取<span class="math inline">\(\Delta v = 42.126\mathrm{km/s}\)</span>，因为地球绕太阳公转本来就有一定的线速度，地球的轨道速度如下： <span class="math display">\[
+v_o = \sqrt{\frac{\mu}{r_e}} = \frac{v_{es}}{\sqrt 2} \approx 29.784\mathrm{km/s}
+\]</span> 如果行星发动机顺着地球的公转方向加速，则<span class="math inline">\(\Delta v = v_{es} - v_o = 12337.1 \mathrm{m/s}\)</span>就够了。</p>
+<h3 id="借助木星">借助木星</h3>
+<p>我们接下来估算一下如果借助木星的引力弹弓效应加速大约需要多少<span class="math inline">\(\Delta v\)</span>。</p>
+<p>因为没有给定地木之间的位置关系，直接算引力弹弓难度极大<del>不会</del>，但是我们可以估算一下<span class="math inline">\(\Delta v\)</span>的下界：我们假设地球只需要在地球轨道和木星轨道之间执行一次<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Hohmann_transfer_orbit">霍曼转移</a>来进行交会。即让地球的椭圆轨道与木星轨道<strong>内切</strong>。基于<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Vis-viva_equation">Vis-viva公式</a>，取木星轨道半径为近日点的<span class="math inline">\(r_j = 7.405 \times 10^{11}\mathrm{m}\)</span>，则在地球轨道上加速所需要的<span class="math inline">\(\Delta v\)</span>为： <span class="math display">\[
 \begin{aligned}
- \sqrt{n}\pi(\sqrt{n}) - \sum_{i = 2}^{\sqrt{n} - 1}\pi(i) &amp;\approx \frac{n}{\ln \sqrt{n}} - \sum_{i = 2}^{\sqrt{n} - 1}\frac{i}{\ln i} \\
-&amp;= \frac{2n}{\ln n} - \sum_{i = 2}^{\sqrt{n} - 1}\frac{i}{\ln i} \\
-&amp;\approx \frac{2n}{\ln n} - \int_2^{\sqrt{n}}\frac{x}{\ln x}dx \\
-&amp;&lt; \frac{2n}{\ln n} - \frac{n}{\ln n} \\
-&amp;= O(\frac{n}{\ln n})
+\Delta v &amp;= \sqrt{\frac{2\mu r_j}{r_e(r_e + r_j)}} - v_o \\
+&amp;= \sqrt{\frac{2\times 1.327 \times 10^{20} \mathrm{m^3/s^2} \times 7.405 \times 10^{11}\mathrm{m}}{1.496 \times 10^{11} \mathrm{m}\times (1.496 \times 10^{11} \mathrm{m} + 7.405 \times 10^{11}\mathrm{m})}} - 29.784\mathrm{km/s} \\
+&amp;\approx 8634.71 \mathrm{m/s}
 \end{aligned}
-\]</span> 对于前半部分，我们有<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Mertens%27_theorems">Mertens Theorem</a>指出： <span class="math display">\[
-\lim_{n \to \infty} \left( \sum_{素数p \le n}\frac{1}{p} - \ln\ln n - M \right) = 0
-\]</span> 其中<span class="math inline">\(M \approx 0.2614972128\)</span> 为Meissel-Mertens’ Constant。</p>
-<p>这告诉我们前半部分的复杂度是<span class="math inline">\(O(n\ln\ln\sqrt{n}) = O (n\ln\ln n)\)</span> 的，因此合并起来，整个算法的复杂度为<span class="math inline">\(O(n\ln\ln n - \frac{n}{\ln n}) = O(n \ln\ln n)\)</span>，和优化前的复杂度一致。</p>
+\]</span> （假设地木轨道共面，不然还要修正轨道倾角）</p>
+<p>也就是说，就算地球不是想借助木星加速，只是想碰到木星的轨道，都需要这么多的<span class="math inline">\(\Delta v\)</span>，要借助木星加速一般轨道会更大一点，因此我们估算出来的是<span class="math inline">\(\Delta v\)</span>的下界。</p>
+<h2 id="发动机种类">发动机种类</h2>
+<p>我们已经算出了<span class="math inline">\(\Delta v\)</span>的大小，接下来让我们估一下<span class="math inline">\(v_e\)</span>的大小，我们同时会计算出来所需要燃料的质量。</p>
+<p>在下文中，取地球质量为<span class="math inline">\(m_e = 5.97\times10^{24}\mathrm{kg}\)</span>，岩石密度为<span class="math inline">\(\rho = 3000\mathrm{kg/m^3}\)</span>。</p>
+<h3 id="目前科技">目前科技</h3>
+<p>目前人类能够造出的<span class="math inline">\(v_e\)</span>最高（比冲最高）的化学燃料发动机大概是液氢液氧发动机，<span class="math inline">\(v_e \approx 4400\mathrm{m/s}\)</span>。（根据资料比冲最高的发动机其实是欧空局的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Dual-Stage_4-Grid">DS4G</a>（电推），<span class="math inline">\(v_e \approx 210000\mathrm{m/s}\)</span>，可惜推力只有<span class="math inline">\(2.5\mathrm{N}\)</span>，还贼费电。）</p>
+<p>因此，在直接逃逸的情况下我们有： <span class="math display">\[
+\begin{aligned}
+&amp;\quad \Delta v = v_e \ln \left(\frac{m_e}{m_e-m_f}\right) \\
+&amp;\Rightarrow \ln \left(\frac{m_e}{m_e-m_f}\right) = \frac{\Delta v}{v_e} \\
+&amp;\Rightarrow \frac{m_e-m_f}{m_e} = e^{-\frac{\Delta v}{v_e}} \\
+&amp;\Rightarrow m_f = \left(1 - e^{-\frac{\Delta v}{v_e}}\right)m_e
+\end{aligned}
+\]</span> 取相关数据带入，得<span class="math inline">\(m_f = 5.608 \times 10^{24}\mathrm{kg} \approx 94\%m_e\)</span>……</p>
+<p>Ummm……不用算了，要把地球挖空的。</p>
+<p>在借助木星引力加速的情况下其实也好不到哪里去，计算可以得到<span class="math inline">\(m_f = 5.131 \times 10^{24}\mathrm{kg} \approx 86\%m_e\)</span>。</p>
+<p>这个好一点，思考一下人类靠<span class="math inline">\(14\%\)</span>的地球可以干嘛吧，这还没算上后续的加速和减速，估计流浪到最后变成小行星了。<del>细思极恐</del></p>
+<p>以上计算其实反映出一点：<strong>因为逆用公式算出的只是燃油质量和火箭质量的比值，这个比值无论大到地球小到火箭都适用，也就是说大家看到巨大的火箭一般都有<span class="math inline">\(95\%\)</span>以上的质量是燃料，而剩下的质量包括了外壳，发动机，管线，最后才是载荷。</strong></p>
+<h3 id="外星科技">外星科技</h3>
+<p>既然影片当中的发动机叫“重聚变发动机”（先不纠结为啥重元素可以不吸能聚变），那推进方式肯定不是垃圾的氢氧机可以比拟的。这样吧，假设工质可以加速到光速（顺便压住了爱因斯坦的棺材板），取<span class="math inline">\(v_e = c = 299792458\mathrm{m/s}\)</span>。会怎么样呢？（关于相对论效应：齐奥尔科夫斯基公式只有在被推进物接近光速（Relativistic Rocket）的时候才需要修正，对于工质速度接近光速的情况则不用。）</p>
+<p>在直接加速的情况下，我们有<span class="math inline">\(m_f = 2.45673 \times 10^{20}\mathrm{kg} \approx 4.1\times 10^{-5}m_e\)</span>。似乎还可以接受哦？</p>
+<p>体积是多少呢？ <span class="math display">\[
+V_f = \frac{m_f}{\rho} = 8.19\times10^{16}\mathrm{m^3}\approx (434.256\mathrm{km})^3
+\]</span> 也就是说所需要的燃料可以装满一个边长<span class="math inline">\(434\mathrm{km}\)</span>的立方体！作为参考，国际空间站轨道高度为<span class="math inline">\(400\mathrm{km}\)</span>左右。</p>
+<p>如果嫌这个不够直接，取陆地地壳平均厚度<span class="math inline">\(33\mathrm{km}\)</span>，则需要挖掉整个面积为<span class="math inline">\(2.5 \times 10^{12}\mathrm{m^2}\)</span>大小的土地，而全球陆地面积才只有<span class="math inline">\(1.49\times 10^{14}\mathrm{m^2}\)</span>！这意味着：</p>
+<ul>
+<li>大概要把全球陆地都下挖<span class="math inline">\(550\mathrm{m}\)</span>左右，比环球金融中心高一点。</li>
+<li>把边长为<span class="math inline">\(1575\mathrm{km}\)</span>的一块正方形地壳挖光，作为参考，这约占我国国土的四分之一。</li>
+</ul>
+<p>利用木星加速需要多少燃料呢？带入可得<span class="math inline">\(m_f = 1.71947 \times 10^{20}\mathrm{kg}\)</span>，可以装满边长为<span class="math inline">\(385\mathrm{km}\)</span>的立方体。需要把全球陆地都下挖<span class="math inline">\(400\mathrm{m}\)</span>左右，如果打算把地壳挖光，则需要挖去的地壳面积为我国国土的五分之一左右。</p>
+<p>Emm……Emm……</p>
+<h2 id="质能转化角度">质能转化角度</h2>
+<p>换种思想，假设人类已经解锁了一个无敌恐怖的科技点，即把燃料的所有<strong>静能量</strong>转化为地球的<strong>机械能</strong>，那会怎么样呢？</p>
+<p>根据著名的质能方程式<span class="math inline">\(E=mc^2\)</span>，我们可以列式： <span class="math display">\[
+m_fc^2 = \frac{1}{2}m_e(v_o + \Delta v)^2 - \frac{1}{2}m_ev_o^2
+\]</span> 如果直接逃逸，解得燃料质量为<span class="math inline">\(m_f = 2.94629 \times 10^{16} \mathrm{kg}\)</span>。获取这么多燃料需要把<strong>整个上海市区</strong>的地壳挖空。</p>
+<p>如果借助木星。解得燃料质量为<span class="math inline">\(m_f = 1.95593 \times 10^{16} \mathrm{kg}\)</span>。获取这么多燃料也需要把<strong>整个上海中心城区</strong>的地壳挖空。</p>
+<p>这样开起来稍微可行一点了吧……似乎开掘一万座地下城挖剩的石料就够用了？</p>
+<p>但是这个视角的问题在于我们的假设，如果静能量全部转化成机械能，则：</p>
+<ul>
+<li>燃料必须在相互反应当中<strong>全部湮灭</strong>，作为对比，核聚变和核裂变当中湮灭的仅仅是反应物和产物之间的微小质量差（可能是每个原子一两个中子/质子），目前能够达到全部湮灭的方法只有把当中一半的燃料转化为反物质。</li>
+<li>湮灭产生的巨大能量必须全部收集，不能产生耗散。</li>
+<li>收集的能量必须全部转化成地球的机械能，这意味着<strong>不能有喷出的工质</strong>，因为这相当于有能量转化成工质机械能，同时<strong>整个体系必须不能发热，也发动机必须全部常温</strong>，不然会有热量作为热能耗散。</li>
+</ul>
+<p>这当中做到任何一点都是科技的极大进步，而但凡物质不能全部湮灭（而是采取核聚变），能量难以完全收集与转化，则能量的利用率只会千万倍地往下降，消耗的燃料也必将回归上一小节当中的恐怖水平。</p>
+<h1 id="结语">结语</h1>
+<p>经过上文的分析，我们发现其实流浪地球的世界观本身还是有一点不科学的，尤其是地球发动机，简直是Bug一般的存在。但是这并不是说流浪地球就不是一部好片子，因为几乎每一部科幻片都有能让人杠一杠的地方。因此写这篇文章只是为了分享一下自己想法，也帮助科普一下一些轨道力学的知识。当然在推式子的过程中也和同学们复习了一下指对数函数的知识，真是极好的。</p>
+<h2 id="安利">安利</h2>
+<p>什么？你问我自己怎么会想到这些？</p>
+<p>因为本人是Kerbal Space Program玩家啊#(滑稽)</p>
+<p><img src="https://s2.ax1x.com/2019/02/13/k03aMF.jpg" alt="k03aMF.jpg" /></p>
+<p>在这里给大家安利一下这款“游戏”，游戏本身非常硬核，需要玩家自己设计并且发射航天器进入轨道，自己规划轨道计算燃料，自己操控交会对接，模拟了近乎真实的物理系统，内有一个类似太阳系的星系。上述<span class="math inline">\(\Delta v\)</span>的计算，霍曼转移，燃料量的计算都是游戏当中的必修课<del>是的现在玩游戏都要用计算器</del>。个人认为比一些纯粹娱乐向的手游之类的更能从中学到知识，但同时因为这款游戏玩起来消耗大量脑细胞与时间，一般每周末玩两个小时就够了。</p>
+<p><img src="https://s2.ax1x.com/2019/02/13/k03rI1.jpg" alt="k03rI1.jpg" /></p>
+<p>（我自己搭的Jool飞掠器的截图，Jool对应太阳系的木星）</p>
+<p><del>从动手设计到发射成功现实当中花了一个半小时，游戏当中是两年半，失败五次。本质新手劝退向游戏</del></p>
+<p>当然，虽然这款游戏Steam上要七十多块，但是破解版烂大街。欢迎有兴趣的同学来玩。</p>
+<h2 id="数据来源">数据来源</h2>
+<p>大部分公式，数据均来源于英文维基百科，少部分来自NASA官网。</p>
+<p>公式全部基于万有引力定律与能量守恒定律，绝大部分的公式可以在高中知识下进行推导。</p>
 
       
     </div>

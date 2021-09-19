@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="回顾 微积分是数学分析中一类极为有力的工具，其中微分的核心是微分算子\(D\)，定义为： \[ Df(x) &#x3D; \lim_{h \to 0} \frac{f(x + h) - f(x)}{h} \] 若\(DF(x) &#x3D; f(x)\)我们称\(F(x)\)是\(f(x)\)的原函数，他们两个一起构成了积分的核心——牛顿-莱布尼茨公式： \[ \int_a^b f(x)dx &#x3D; F(b) -">
+<meta property="og:type" content="article">
+<meta property="og:title" content="有限微积分">
+<meta property="og:url" content="https://alan20210202.github.io/2021/07/25/%E6%9C%89%E9%99%90%E5%BE%AE%E7%A7%AF%E5%88%86/index.html">
+<meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
+<meta property="og:description" content="回顾 微积分是数学分析中一类极为有力的工具，其中微分的核心是微分算子\(D\)，定义为： \[ Df(x) &#x3D; \lim_{h \to 0} \frac{f(x + h) - f(x)}{h} \] 若\(DF(x) &#x3D; f(x)\)我们称\(F(x)\)是\(f(x)\)的原函数，他们两个一起构成了积分的核心——牛顿-莱布尼茨公式： \[ \int_a^b f(x)dx &#x3D; F(b) -">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-07-25T07:11:41.030Z">
+<meta property="article:modified_time" content="2019-09-04T14:34:50.000Z">
+<meta property="article:author" content="Chengyuan Ma">
+<meta property="article:tag" content="具体数学">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://alan20210202.github.io/2021/07/25/%E6%9C%89%E9%99%90%E5%BE%AE%E7%A7%AF%E5%88%86/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
+<title>有限微积分 | Chengyuan Ma's Blog</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
+    <script data-pjax>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-65HSG5NCY6');
+      }
+    </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Chengyuan Ma's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-pagedewarp"><a href="/dewarp/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>PageDewarp</a></li>
+        <li class="menu-item menu-item-english"><a href="/english/" rel="section"><i class="fa fa-globe-americas fa-fw"></i>English</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9E%E9%A1%BE"><span class="nav-number">1.</span> <span class="nav-text">回顾</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E5%92%8C%E8%AE%B0%E5%8F%B7"><span class="nav-number">2.</span> <span class="nav-text">定义和记号</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B3%A8%E5%85%A5%E7%81%B5%E9%AD%82"><span class="nav-number">3.</span> <span class="nav-text">注入灵魂</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%82%E6%B3%95%E5%88%99"><span class="nav-number">3.1.</span> <span class="nav-text">幂法则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ex%E7%9A%84%E5%AF%B9%E7%AD%89"><span class="nav-number">3.2.</span> <span class="nav-text">\(e^x\)的对等</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E6%95%B0%E5%87%BD%E6%95%B0"><span class="nav-number">3.3.</span> <span class="nav-text">指数函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%B3%95%E5%88%99"><span class="nav-number">3.4.</span> <span class="nav-text">其他法则？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E9%83%A8%E6%B1%82%E5%92%8C"><span class="nav-number">4.</span> <span class="nav-text">分部求和</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
+  <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
+  <div class="site-description" itemprop="description">不务正业高中生一枚</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://kalasearch.cn/" title="https:&#x2F;&#x2F;kalasearch.cn&#x2F;" rel="noopener" target="_blank">卡拉搜索</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/%E6%9C%89%E9%99%90%E5%BE%AE%E7%A7%AF%E5%88%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          有限微积分
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-25 03:11:41" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:41-04:00">2021-07-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2019-09-04 10:34:50" itemprop="dateModified" datetime="2019-09-04T10:34:50-04:00">2019-09-04</time>
+      </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="回顾">回顾</h1>
+<p>微积分是数学分析中一类极为有力的工具，其中微分的核心是微分算子<span class="math inline">\(D\)</span>，定义为： <span class="math display">\[
+Df(x) = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
+\]</span> 若<span class="math inline">\(DF(x) = f(x)\)</span>我们称<span class="math inline">\(F(x)\)</span>是<span class="math inline">\(f(x)\)</span>的原函数，他们两个一起构成了积分的核心——牛顿-莱布尼茨公式： <span class="math display">\[
+\int_a^b f(x)dx = F(b) - F(a)
+\]</span> 在微积分当中我们有一整套系统的规则来方便地计算各种形式的微分和积分，而依稀记得一句话：<strong>积分是黎曼和的极限</strong>，即积分是求和的连续情况，求和是积分的离散情况，既然我们可以系统地计算积分，那么我们可不可以系统地计算和式呢？答案是肯定的，《具体数学》中为我们引入的一类工具便是——<strong>有限微积分</strong>。（个人觉得叫离散微积分更好？）</p>
+<h1 id="定义和记号">定义和记号</h1>
+<p>仿照微分算子<span class="math inline">\(D\)</span>的定义我们首先定义差分算子<span class="math inline">\(D\)</span>： <span class="math display">\[
+\Delta f(x) = f(x + 1) - f(x)
+\]</span> 可以发现，差分算子本质是微分算子定义中<span class="math inline">\(h = 1\)</span>的特例，只不过在微分中<span class="math inline">\(h\)</span>无限接近于0，而在差分当中最小只能为1。</p>
+<p>类似地，若<span class="math inline">\(\Delta F(x) = f(x)\)</span>我们也可以称<span class="math inline">\(F(x)\)</span>是<span class="math inline">\(f(x)\)</span>的“原函数”，显然我们有： <span class="math display">\[
+\sum_a^b f(x) \delta x  = F(b) - F(a)
+\]</span> 我们在这里仿照定积分引入了一个新的记号<span class="math inline">\(\sum_a^b f(x)\delta x\)</span>，不难发现： <span class="math display">\[
+\sum_a^b f(x) \delta x = \sum_{x = a}^{b - 1}f(x)
+\]</span> 类似地，仿照不定积分的定义，我们还可以定义一个更为抽象的概念”不定和式“，即 <span class="math display">\[
+\sum f(x) \delta x = F(x) + C
+\]</span> <span class="math inline">\(C\)</span>也起类似积分常数的作用。</p>
+<h1 id="注入灵魂">注入灵魂</h1>
+<p>照葫芦画瓢到此为止，然而如果只有这么些记号是没有卵用的，就像你不能只靠微分的极限定义和莱布尼茨公式计算微积分一样，我们也不能指望靠这些记号就可以快速计算和式了，我们还需要类似于微积分当中的幂法则等一系列规则的支持。</p>
+<p>首先不证自明的一点是：<strong>在有限微积分中，差分算子对于加法和减法的分配率成立</strong>。</p>
+<h2 id="幂法则">幂法则</h2>
+<p>我们先考察微积分当中的幂法则在这里有没有等价的替代品，众所周知，幂法则是： <span class="math display">\[
+Dx^m = mx^{m-1}
+\]</span> 如果简单地把微分算子换成差分我们会得到： <span class="math display">\[
+\Delta x^m = (x + 1)^m - x^m
+\]</span> 接下来的展开势必就要用到二项式定理了，事到如今只要是正常人都知道最后是得不到$ mx^{m-1} $的，我们发现直接把幂法则照搬过来是行不通的，如果问题不是出在差分算子上那就是出在“幂”上了，那么现在问题变成了：<strong>我们能不能找到一种“幂”的定义，使它在差分算子作用下表现出类似幂法则的性质呢？</strong></p>
+<p>答案是肯定的，这种“幂”被称作下降阶乘幂，记作<span class="math inline">\(x^{\underline m}\)</span>，《具体数学》中对它的定义是： <span class="math display">\[
+x^{\underline m} = x(x - 1)(x - 2)\cdots(x - m + 1)
+\]</span> 显然无论是从形式还是从名字来看它都有一个更简洁的阶乘定义： <span class="math display">\[
+x^{\underline m} = \frac{x!}{(x - m)!}
+\]</span> 在《具体数学》中作者花了不少笔墨来把它最上面的定义推广到<span class="math inline">\(m &lt; 0\)</span>的情形，但是一切在阶乘定义中就很显然了，对于<span class="math inline">\(m &gt; 0\)</span>，我们有： <span class="math display">\[
+x^{\underline{-m}} = \frac{1}{(x + 1)(x + 2)\cdots(x + m)}
+\]</span> 我们也有类似<span class="math inline">\(x^{m + n} = x^mx^n\)</span>的规则： <span class="math display">\[
+x^{\underline{m + n}} = x^{\underline m}(x - m)^{\underline n}
+\]</span> 好的，让我们回到幂法则，那么如果我们结合下降阶乘幂和差分算子，我们会得到什么呢？ <span class="math display">\[
+\begin{aligned}
+\Delta x^{\underline m} &amp;= (x + 1)^{\underline m} - x^{\underline m} \\
+&amp;= \frac{(x + 1)!}{(x + 1 - m)!} - \frac{x!}{(x - m)!} \\
+&amp;= \frac{(x + 1)! - (x + 1 - m)x!}{(x + 1 - m)!} \\
+&amp;= \frac{x![(x + 1) - (x + 1 - m)]}{(x + 1 - m)!} \\
+&amp;= \frac{mx!}{[x - (m - 1)]!} \\
+&amp;= mx^{\underline{m - 1}}
+\end{aligned}
+\]</span> 我们成功地推出了“幂法则”！</p>
+<p>顺带一提，除了下降阶乘幂之外还有上升阶乘幂，定义为<span class="math inline">\(x^{\overline m} = \frac{(x + m - 1)!}{(x - 1)!}\)</span>，也有类似幂法则的性质，但是用起来比较麻烦，故我们使用下降阶乘幂。</p>
+<p>既然我们已经成功导出了有限微积分中差分算子的幂法则，那么对于不定和式，其幂法则也呼之欲出： <span class="math display">\[
+\sum x^{\underline m}\delta x = \frac{x^{\underline{m + 1}}}{m + 1} + C
+\]</span> 正如积分中对于幂法则在<span class="math inline">\(m = -1\)</span>的时候需要特殊处理，即<span class="math inline">\(\int x^{-1} dx = \ln x + C\)</span>，在求和当中，我们也有类似的： <span class="math display">\[
+\sum x^{\underline{-1}}\delta x = H_x + C
+\]</span> 其中<span class="math inline">\(H_x\)</span>表示调和级数的第<span class="math inline">\(x\)</span>项部分和，我们知道当<span class="math inline">\(x \to \infty\)</span>时有<span class="math inline">\(H_x = \ln x + \gamma\)</span>，其中<span class="math inline">\(\gamma\)</span>是欧拉-马歇罗尼常数。从此我们也可以看出上述规则确实是积分中对应公式的一个离散模拟。</p>
+<p>那么这些法则有什么用呢？我们可以再试试看求解如下和式： <span class="math display">\[
+\sum_{x = 1}^n x^2
+\]</span> 我在先前成套方法的介绍中曾利用成套方法对它进行过求解，过程相对来说比较繁琐，我们看看怎么用有限微积分秒杀这道题。</p>
+<p>首先，注意到： <span class="math display">\[
+x^2 = x^{\underline 2} + x^{\underline 1}
+\]</span> 所以： <span class="math display">\[
+\begin{aligned}
+\sum x^2 \delta x &amp;= \sum x^{\underline 2}\delta x + \sum x^{\underline 1}\delta x \\
+&amp;= \frac{x^{\underline 3}}{3} + \frac{x^{\underline 2}}{2} + C \\
+&amp;= \frac{2x(x - 1)(x - 2) + 3x(x - 1)}{6} + C \\
+&amp;= \frac{x(x - 1)(2x - 1)}{6} + C
+\end{aligned}
+\]</span> 接下来就是展现真正技术的时刻： <span class="math display">\[
+\begin{aligned}
+\sum_{x = 1}^n x^2 &amp;= \sum_1^{n + 1} x^2 \delta x \\
+&amp;= \frac{n(n + 1)(2n + 1)}{6} + C - \frac{1 \cdot 0 \cdot 1}{6} - C \\
+&amp;= \frac{n(n + 1)(2n + 1)}{6}
+\end{aligned}
+\]</span> 就非常舒服。<strong>通过归纳法可以证明，对于任何多项式，我们总是可以把它转换为若干个下降阶乘幂的线性组合</strong>，因此，对于一切多项式的和式，我们都能用有限微积分系统地求取！</p>
+<p><strong>运用指数为<span class="math inline">\(-2\)</span>的幂法则，你就会发现你得到了所谓的裂项公式。</strong></p>
+<h2 id="ex的对等"><span class="math inline">\(e^x\)</span>的对等</h2>
+<p>在微积分中，<span class="math inline">\(e^x\)</span>的具有非常好的性质，即导数和积分都等于自身，那么在有限微积分当中有没有类似的函数呢，幸运的是，找到这样的函数并不困难： <span class="math display">\[
+\begin{aligned}
+\Delta f(x) &amp;= f(x) \\ 
+f(x + 1) - f(x) &amp;= f(x) \\
+f(x + 1) &amp;= 2f(x)
+\end{aligned}
+\]</span> 这就很明显了，<span class="math inline">\(f(x) = 2^x\)</span>，或者对其平移的结果都满足差分等于自身的性质。</p>
+<p>因此，无惑乎我们有： <span class="math display">\[
+\begin{aligned}
+\sum_{x = 1}^n 2^x &amp;= \sum_1^{n + 1} 2^x \delta x \\
+&amp;= 2^{n + 1} - 2^0 \\
+&amp;= 2^{n + 1} - 1
+\end{aligned}
+\]</span></p>
+<h2 id="指数函数">指数函数</h2>
+<p>我们知道在微积分当中： <span class="math display">\[
+\int a^xdx = \frac{a^x}{\ln a} + C
+\]</span> 我们接下来探究在有限微积分当中是否有类似结论的出现，我们先猜想： <span class="math display">\[
+\sum a^x\delta x = ka^x + C
+\]</span> 两边取差分： <span class="math display">\[
+\begin{aligned}
+a^x &amp;= ka^{x + 1} - ka^x \\
+a^x &amp;= ka^x(a - 1) \\
+k &amp;= \frac{1}{a - 1}
+\end{aligned}
+\]</span> 因此： <span class="math display">\[
+\sum a^x\delta x = \frac{a^x}{a - 1} + C
+\]</span> <strong>使用这一规则可以直接推出等比数列求和公式</strong>。</p>
+<h2 id="其他法则">其他法则？</h2>
+<p>我们要不要把链式法则，积法则，商法则之类的全部搬到有限微积分里面了呢？其实是不用的，因为这些法则都是辅助我们计算微分的，其存在的原因便是使用微分的极限定义计算导数实在是太困难了，而差分算子则不然，计算一个函数的差分只要代进去就行了。</p>
+<p>但是，为了后文的方便，在此我们着重来讨论积法则在有限微积分当中的对等，在微积分当中，积法则是： <span class="math display">\[
+D(uv) = uDv + vDu
+\]</span> 那么在有限微积分当中： <span class="math display">\[
+\begin{aligned}
+\Delta(u(x)v(x)) &amp;= u(x + 1)v(x + 1) - u(x)v(x) \\
+&amp;= u(x + 1)v(x + 1) - u(x)v(x + 1) + u(x)v(x + 1) - u(x)v(x) \\
+&amp;= u(x)\Delta v(x) + v(x + 1)\Delta u(x)
+\end{aligned}
+\]</span> 记移进算子<span class="math inline">\(Ef(x) = f(x + 1)\)</span>，则有限微积分的积法则可以被表示为： <span class="math display">\[
+\begin{aligned}
+\Delta(uv) &amp;= u\Delta v + Ev\Delta u \\
+&amp;= Eu\Delta v + v\Delta u
+\end{aligned}
+\]</span></p>
+<h1 id="分部求和">分部求和</h1>
+<p>对于积分，我们有分部积分公式： <span class="math display">\[
+\int udv = uv - \int vdu
+\]</span> 其本质是对微分积法则移项并两边积分得到的成果，我们能不能也用上面推导出的有限微积分的“积法则”推导出分部求和呢？ <span class="math display">\[
+\begin{aligned}
+\Delta(uv) &amp;= u\Delta v + Ev\Delta u \\
+\Rightarrow u\Delta v &amp;= \Delta(uv) - Ev\Delta u \\
+\Rightarrow \sum u \Delta v &amp;= uv - \sum Ev\Delta u
+\end{aligned}
+\]</span> 最后的结果就是分部求和的公式，分部积分的经典例题是<span class="math inline">\(\int xe^xdx\)</span>，对应到有限微积分当中就是<span class="math inline">\(\sum x2^x\delta x\)</span>，运用我们刚得到的分部求和公式，令<span class="math inline">\(u = x, \Delta u = 1, v = 2^x, \Delta v = 2^x\)</span>我们就得到了： <span class="math display">\[
+\begin{aligned}
+\sum x2^x\delta x &amp;= x2^x - \sum 2^{x + 1}\delta x + C\\
+&amp;=x2^x - 2^{x + 1} + C
+\end{aligned}
+\]</span> 因此 <span class="math display">\[
+\begin{aligned}
+\sum_{i = 0}^nx2^x &amp;= \sum_0^{n + 1} x2^x\delta x \\
+&amp;= (n + 1)2^{n + 1} - 2^{n + 2} - 0\cdot 1 + 2 \\
+&amp;= (n - 1)2^{n + 1} + 2
+\end{aligned}
+\]</span> 计算这个和式甚至不需要思考！</p>
+<p>我们来试试上次成套方法博客中我说需要一定技巧的<span class="math inline">\(\sum_{x = 1}^n (-1)^xx^2\)</span>吧！</p>
+<p>令<span class="math inline">\(u = x^2, \Delta v = (-1)^x\)</span>可得<span class="math inline">\(\Delta u = 2x + 1, v = -\frac{ (-1)^x}{2}\)</span>： <span class="math display">\[
+\begin{aligned}
+\sum (-1)^xx^2\delta x &amp;= -\frac{x^2(-1)^x}{2} - \sum-\frac{ (-1)^{x + 1}}{2}(2x + 1)\delta x + C\\
+&amp;= -\frac{x^2(-1)^x}{2} - \sum\frac{(-1)^x(2x + 1)}{2}\delta x + C\\
+&amp;= -\frac{x^2(-1)^x}{2} - \sum\frac{(2x + 1)}{2}(-1)^x\delta x + C
+\end{aligned}
+\]</span> 观察这个式子的后项，我们故技重施，令<span class="math inline">\(u = \frac{(2x + 1)}{2}, \Delta u = 1, \Delta v = (-1)^x\)</span>： <span class="math display">\[
+\begin{aligned}
+\sum\frac{(2x + 1)}{2}(-1)^x\delta x &amp;= -\frac{(2x + 1)(-1)^x}{4} - \sum-\frac{ (-1)^{x + 1}}{2}\delta x + C\\
+&amp;= -\frac{(2x + 1)(-1)^x}{4} - \frac{1}{2}\sum(-1)^x\delta x + C\\
+&amp;= -\frac{(2x + 1)(-1)^x}{4} + \frac{1}{4}(-1)^x + C\\
+&amp;= -\frac{(-1)^xx}{2} + C
+\end{aligned}
+\]</span> 回到上式： <span class="math display">\[
+\begin{aligned}
+\sum (-1)^xx^2\delta x &amp;= -\frac{x^2(-1)^x}{2} + \frac{(-1)^xx}{2} + C\\
+&amp;= -\frac{(-1)^xx(x - 1)}{2} + C
+\end{aligned}
+\]</span> 给这个和式加上下界： <span class="math display">\[
+\begin{aligned}
+\sum_{x = 1}^n (-1)^xx^2 &amp;= -\frac{(-1)^{n + 1}n(n + 1)}{2} + -\frac{(-1)^1\cdot 0 \cdot 1}{2} \\
+&amp;= \frac{(-1)^nn(n + 1)}{2}
+\end{aligned}
+\]</span> 以上的过程如行云流水一般地系统化和顺畅，只要熟悉我们拆分出指数项，然后对多项式项不断使用差分降次——这其实是分部积分的技巧，但是得益于有限微积分和微积分的联系我们得以直接拿来用了。</p>
+<h1 id="总结">总结</h1>
+<p>综上所述，基于整数建立起来的有限微积分虽然不一定有传统的微积分那么好的性质，但是依然可以系统地高效地处理很多的求和问题，我们在有限微积分的公式推导中还顺便导出了平方和公式，裂项公式和等比数列公式等，而这一切公式的导出在有限微积分的背景下是那么地自然，以至于让人无法相信第一个属于小学奥数，第二个属于初中数学，而最后一个要在高中才能教到。虽然这也和我们独到的证明方法有关（一般来说这三个公式分别需要用到归纳法，叠缩和扰动法证明），但是可以预见的是，有限微积分的确在和式的处理上具有<strong>提纲掣领</strong>的作用，不容小觑。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%85%B7%E4%BD%93%E6%95%B0%E5%AD%A6/" rel="tag"># 具体数学</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/07/25/%E6%95%B4%E9%99%A4%E5%88%86%E5%9D%97/" rel="prev" title="整除分块">
+                  <i class="fa fa-chevron-left"></i> 整除分块
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/07/25/%E6%9C%80%E5%A4%A7m%E6%AE%B5%E8%BF%9E%E7%BB%AD%E5%AD%90%E6%AE%B5%E5%92%8C/" rel="next" title="最大多段连续子段和">
+                  最大多段连续子段和 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chengyuan Ma</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-nginx.min.js" integrity="sha512-/MNzg8GlnVrAau/TZClh1jxgHNX0HDgidbGnHS5x1OtbKiNoK3e0XNd1oV16xmmeDHjisa3GKLArUau+43GZ4A==" crossorigin="anonymous"></script>
+<script type = "text/javascript">
+    document.addEventListener('pjax:complete', function() {
+        if (typeof Prism !== 'undefined') {
+            Prism.highlightAll();
+        }
+    });
+</script>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+    <div class="pjax">
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+    </div>
+</body>
+</html>

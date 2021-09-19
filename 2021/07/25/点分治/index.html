@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="题面 题面，给定一个\(n\)个节点的无根树，边带权，求树上长度不超过\(k\)的简单路径的数量。 \(n \le 10^5\) 解法 这道题所使用到的思想是分治，假设我们现在要处理一颗根为\(u\)的树，很明显这棵树的路径\(x \to y\)有两种：  如果\(x, y\)在\(u\)的同一棵子树里面，那么\(x \to y\)一定不经过\(u\)，只在某棵子树里面。 如果\(x">
+<meta property="og:type" content="article">
+<meta property="og:title" content="POJ 1741 &#x2F; 点分治">
+<meta property="og:url" content="https://alan20210202.github.io/2021/07/25/%E7%82%B9%E5%88%86%E6%B2%BB/index.html">
+<meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
+<meta property="og:description" content="题面 题面，给定一个\(n\)个节点的无根树，边带权，求树上长度不超过\(k\)的简单路径的数量。 \(n \le 10^5\) 解法 这道题所使用到的思想是分治，假设我们现在要处理一颗根为\(u\)的树，很明显这棵树的路径\(x \to y\)有两种：  如果\(x, y\)在\(u\)的同一棵子树里面，那么\(x \to y\)一定不经过\(u\)，只在某棵子树里面。 如果\(x">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-07-25T07:11:41.050Z">
+<meta property="article:modified_time" content="2018-09-17T06:09:28.000Z">
+<meta property="article:author" content="Chengyuan Ma">
+<meta property="article:tag" content="刷题记录">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://alan20210202.github.io/2021/07/25/%E7%82%B9%E5%88%86%E6%B2%BB/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
+<title>POJ 1741 / 点分治 | Chengyuan Ma's Blog</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
+    <script data-pjax>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-65HSG5NCY6');
+      }
+    </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Chengyuan Ma's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-pagedewarp"><a href="/dewarp/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>PageDewarp</a></li>
+        <li class="menu-item menu-item-english"><a href="/english/" rel="section"><i class="fa fa-globe-americas fa-fw"></i>English</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A2%98%E9%9D%A2"><span class="nav-number">1.</span> <span class="nav-text">题面</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%A3%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">解法</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
+  <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
+  <div class="site-description" itemprop="description">不务正业高中生一枚</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://kalasearch.cn/" title="https:&#x2F;&#x2F;kalasearch.cn&#x2F;" rel="noopener" target="_blank">卡拉搜索</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/%E7%82%B9%E5%88%86%E6%B2%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          POJ 1741 / 点分治
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-25 03:11:41" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:41-04:00">2021-07-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2018-09-17 02:09:28" itemprop="dateModified" datetime="2018-09-17T02:09:28-04:00">2018-09-17</time>
+      </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="题面">题面</h1>
+<p><a target="_blank" rel="noopener" href="http://poj.org/problem?id=1741">题面</a>，给定一个<span class="math inline">\(n\)</span>个节点的无根树，边带权，求树上长度不超过<span class="math inline">\(k\)</span>的简单路径的数量。</p>
+<p><span class="math inline">\(n \le 10^5\)</span></p>
+<h1 id="解法">解法</h1>
+<p>这道题所使用到的思想是分治，假设我们现在要处理一颗根为<span class="math inline">\(u\)</span>的树，很明显这棵树的路径<span class="math inline">\(x \to y\)</span>有两种：</p>
+<ol type="1">
+<li>如果<span class="math inline">\(x, y\)</span>在<span class="math inline">\(u\)</span>的同一棵子树里面，那么<span class="math inline">\(x \to y\)</span>一定不经过<span class="math inline">\(u\)</span>，只在某棵子树里面。</li>
+<li>如果<span class="math inline">\(x, y\)</span>在<span class="math inline">\(u\)</span>的不同子树里面，那么<span class="math inline">\(x \to y\)</span>一定经过<span class="math inline">\(u\)</span>。</li>
+</ol>
+<p>很明显第一种情况我们可以递归在子树里面做，因此我们主要处理第二种情况，准确来说，我们从<span class="math inline">\(u\)</span>开始DFS一波，求出<span class="math inline">\(d[x]\)</span>为<span class="math inline">\(x\)</span>到<span class="math inline">\(u\)</span>的距离（深度），那么我们要求的答案就变成了<span class="math inline">\(x, y\)</span>不属于<span class="math inline">\(u\)</span>的同一棵子树，且<span class="math inline">\(d[x] + d[y] \le k\)</span>的<span class="math inline">\((x, y)\)</span>的个数。</p>
+<p>我们先忽略“不属于同一棵子树”这个限制，考虑后面的条件，给定<span class="math inline">\(d​\)</span>，如何求<span class="math inline">\(d[x] + d[y] \le k​\)</span>的<span class="math inline">\((x, y)​\)</span>的个数？</p>
+<p>我们使用<strong>双指针</strong>的方法，把<span class="math inline">\(d\)</span>排序，然后维护两个指针<span class="math inline">\(i, j\)</span>，假设有<span class="math inline">\(cnt\)</span>个元素，初始化<span class="math inline">\(i = 1, j = cnt\)</span>。很明显随着<span class="math inline">\(i\)</span>的增加，<span class="math inline">\(j\)</span>必定单调不增！而对于任意时刻的满足<span class="math inline">\(d[i] + d[j] \le k\)</span>的<span class="math inline">\(i, j\)</span>，显然对于<span class="math inline">\(i &lt; x \le j\)</span>，都有<span class="math inline">\(d[i] + d[x] \le k\)</span>，因此我们把答案累加上<span class="math inline">\(j - i\)</span>。总体复杂度为<span class="math inline">\(O(cnt \log cnt)\)</span>，代码很短：</p>
+<pre class="line-numbers"><code class="language-cpp">sort(d + 1, d + 1 + cnt);
+int ret = 0;
+for (int i = 1, j = cnt; i &lt; j; ) &#123;
+    if (d[i] + d[j] &lt;= k) ret += j - i, i++;
+    else j--;
+&#125;</code></pre>
+<p>我们接下来考虑如何加上”不属于同一棵子树“的限制，假设我们递归计算的函数为<span class="math inline">\(calc(u)\)</span>，一开始初始化<span class="math inline">\(d[u] = 0\)</span>，然后统计了一波，假设我们多统计了都在子树<span class="math inline">\(v\)</span>里面的路径的数量，这是多少呢？很显然<strong>这些多统计的路径数等价于初始化<span class="math inline">\(d[v] = w_{uv}\)</span>之后<span class="math inline">\(calc(v)\)</span>的值</strong>，减去即可：</p>
+<pre class="line-numbers"><code class="language-cpp">...
+ans += calc(u);
+for (int e = fst[u]; e; e = nxt[e]) &#123;
+    int v = to[e];
+    if (vis[v]) continue;
+    dis[v] = len[e]; ans -= calc(v); // 减去多算的
+    ...
+&#125;</code></pre>
+<p>最后，还留下一个问题：<strong>从哪里开始分治呢？</strong>注意到如果我们出发点取得不好，选到了链的一端，那么复杂度就退化了，因此我们最好从<strong>无根树的重心开始分治</strong>，求重心是<span class="math inline">\(O(n)\)</span>的：</p>
+<pre class="line-numbers"><code class="language-cpp">void dfs_rt(int u, int p) &#123; // sz[0] 是总结点数，p是父节点
+    sz[u] = 1, f[u] = 0;
+    for (int e = fst[u]; e; e = nxt[e]) &#123;
+        int v = to[e];
+        if (vis[v] || v == p) continue;
+        dfs_rt(v, u);
+        sz[u] += sz[v];
+        f[u] = max(f[u], sz[v]);
+    &#125;
+    f[u] = max(f[u], sz[0] - sz[u]);
+    if (f[u] &lt; f[rt]) rt = u;
+&#125;</code></pre>
+<p>因此，最后算法的总框架就是：</p>
+<ol type="1">
+<li>从重心<span class="math inline">\(u\)</span>开始分治</li>
+<li>处理完重心以后，删除<span class="math inline">\(u\)</span>，递归处理其他的无根树。</li>
+</ol>
+<pre class="line-numbers"><code class="language-cpp">void dfs(int u) &#123;
+    vis[u] = 1; dis[u] = 0;
+    ans += calc(u);
+    for (int e = fst[u]; e; e = nxt[e]) &#123;
+        int v = to[e];
+        if (vis[v]) continue;
+        dis[v] = len[e]; ans -= calc(v);
+        rt = 0; sz[0] = sz[v];
+        dfs_rt(v, 0); dfs(rt);
+    &#125;
+&#125;</code></pre>
+<p>易证递归的深度不超过<span class="math inline">\(O(\log n)\)</span>，算上双指针中排序的时间，算法的总复杂度为<span class="math inline">\(O(n\log ^2 n)\)</span>。</p>
+<p>代码：</p>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;algorithm&gt;
+
+using namespace std;
+const int N = 10010;
+int n, k, fst[N], nxt[2 * N], to[2 * N], len[2 * N];
+int tot, cnt, vis[N], f[N], sz[N], dis[N], d[N], rt;
+int ans;
+
+void link(int a, int b, int w) &#123;
+    nxt[++tot] = fst[a];
+    fst[a] = tot; to[tot] = b;
+    len[tot] = w;
+&#125;
+
+void dfs_rt(int u, int p) &#123;
+    sz[u] = 1, f[u] = 0;
+    for (int e = fst[u]; e; e = nxt[e]) &#123;
+        int v = to[e];
+        if (vis[v] || v == p) continue;
+        dfs_rt(v, u);
+        sz[u] += sz[v];
+        f[u] = max(f[u], sz[v]);
+    &#125;
+    f[u] = max(f[u], sz[0] - sz[u]);
+    if (f[u] &lt; f[rt]) rt = u;
+&#125;
+
+void dfs_d(int u, int p) &#123;
+    d[++cnt] = dis[u];
+    for (int e = fst[u]; e; e = nxt[e]) &#123;
+        int v = to[e];
+        if (vis[v] || v == p) continue;
+        dis[v] = dis[u] + len[e];
+        dfs_d(v, u);
+    &#125;
+&#125;
+
+int calc(int u) &#123;
+    cnt = 0; dfs_d(u, 0);
+    sort(d + 1, d + 1 + cnt);
+    int ret = 0;
+    for (int i = 1, j = cnt; i &lt; j; ) &#123;
+        if (d[i] + d[j] &lt;= k) ret += j - i, i++;
+        else j--;
+    &#125;
+    return ret;
+&#125;
+
+void dfs(int u) &#123;
+    vis[u] = 1; dis[u] = 0;
+    ans += calc(u);
+    for (int e = fst[u]; e; e = nxt[e]) &#123;
+        int v = to[e];
+        if (vis[v]) continue;
+        dis[v] = len[e]; ans -= calc(v);
+        rt = 0; sz[0] = sz[v];
+        dfs_rt(v, 0); dfs(rt);
+    &#125;
+&#125;
+
+int main() &#123;
+    f[0] = 0x3f3f3f3f;
+    while (scanf(&quot;%d%d&quot;, &amp;n, &amp;k), n) &#123;
+        tot = 1; ans = 0;
+        fill(vis + 1, vis + 1 + n, 0);
+        fill(fst + 1, fst + 1 + n, 0);
+        for (int i = 1; i &lt;= n - 1; i++) &#123;
+            int a, b, w;
+            scanf(&quot;%d%d%d&quot;, &amp;a, &amp;b, &amp;w);
+            link(a, b, w);
+            link(b, a, w);
+        &#125;
+        sz[0] = n; dfs_rt(1, 0);
+        dfs(rt);
+        printf(&quot;%d\n&quot;, ans);
+    &#125;
+    return 0;
+&#125; </code></pre>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" rel="tag"># 刷题记录</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/07/25/%E6%9C%80%E5%A4%A7m%E6%AE%B5%E8%BF%9E%E7%BB%AD%E5%AD%90%E6%AE%B5%E5%92%8C/" rel="prev" title="最大多段连续子段和">
+                  <i class="fa fa-chevron-left"></i> 最大多段连续子段和
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/07/25/%E7%89%9B%E9%A1%BF%E8%BF%AD%E4%BB%A3%E5%BC%80%E5%B9%B3%E6%96%B9/" rel="next" title="运用牛顿迭代法开平方根 —— 通项与分析">
+                  运用牛顿迭代法开平方根 —— 通项与分析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chengyuan Ma</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-nginx.min.js" integrity="sha512-/MNzg8GlnVrAau/TZClh1jxgHNX0HDgidbGnHS5x1OtbKiNoK3e0XNd1oV16xmmeDHjisa3GKLArUau+43GZ4A==" crossorigin="anonymous"></script>
+<script type = "text/javascript">
+    document.addEventListener('pjax:complete', function() {
+        if (typeof Prism !== 'undefined') {
+            Prism.highlightAll();
+        }
+    });
+</script>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+    <div class="pjax">
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+    </div>
+</body>
+</html>

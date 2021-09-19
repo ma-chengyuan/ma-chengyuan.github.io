@@ -235,7 +235,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/12/10/DummyDisplay/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/PACT0701/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -248,7 +248,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/12/10/DummyDisplay/" class="post-title-link" itemprop="url">使用边角料糊一个Dummy Display</a>
+          <a href="/2021/07/25/PACT0701/" class="post-title-link" itemprop="url">PACT 07/01 任务调度问题</a>
         </h2>
 
         <div class="post-meta-container">
@@ -259,14 +259,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2019-12-10 21:54:12" itemprop="dateCreated datePublished" datetime="2019-12-10T21:54:12+08:00">2019-12-10</time>
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-12-12 22:00:34" itemprop="dateModified" datetime="2019-12-12T22:00:34+08:00">2019-12-12</time>
+        <time title="修改时间：2020-07-04 03:23:26" itemprop="dateModified" datetime="2020-07-04T03:23:26-04:00">2020-07-04</time>
       </span>
 
   
@@ -279,702 +279,64 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>决定把家里的旧的MBA改装成服务器。如此便要合上盖子。</p>
-<p>但是合上盖子系统似乎就自动休眠了，改设置也没有什么很好的效果，即使可以使用<code>caffeinate</code>，重启之后还是会有问题。何况就算避免了休眠，在检测不到Display的时候据说显卡也是不工作的（虽然不知道核显是否也是如此）。网传常见的解决方法是“显卡欺骗器”，也就是Dummy Display，通过在显示端口模拟协议让系统检测到一个并不存在的Display，就行了。</p>
-<p>但是Dummy Display一个现成的就要10块左右，而且对于MBA这种DP的接口还不是很好找。</p>
-<p>于是自己从家里搜刮出了一些边角料糊了一个，效果还不错，成品如下：</p>
-<p><img src="/2019/12/10/DummyDisplay/device.jpg" class=""></p>
-<p>使用的元件是一个DP转接头以及若干买Arduino送的电阻。</p>
-<p>怎么做到的呢？</p>
-<p>根据<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/VGA_connector">Wikipedia</a>上的表述，下图VGA端口的1, 2, 3线分别表示RGB的模拟信号，6, 7, 8对应返线。</p>
-<p><img src="/2019/12/10/DummyDisplay/VGA_Port.svg" class=""></p>
-<p>再根据Wiki上的资料，RGB线路的阻抗为<span class="math inline">\(75\mathrm{\Omega}\)</span>。对于VGA这种老式模拟接口，通常通过线路负载确定是否连接，因此为了欺骗端口，我们只需要在1-6，2-7，3-8分别接上三个<span class="math inline">\(75\mathrm{\Omega}\)</span>的电阻即可。</p>
-<p>但是家里面只搜出5个<span class="math inline">\(220\mathrm{\Omega}\)</span>的和<span class="math inline">\(5\)</span>个<span class="math inline">\(110\mathrm{\Omega}\)</span>的电阻，于是乎就有了上图的蜜汁接线。具体来说：</p>
+          <h1 id="定义">定义</h1>
+<p><strong>输入：</strong><span class="math inline">\(n\)</span>个任务，第<span class="math inline">\(i\)</span>个任务的运行时间为<span class="math inline">\(p_i\)</span>，共有<span class="math inline">\(m\)</span>个相同的机器（一个任务在每台机器上运行时间都相同）。每台机器同一时间只能运行一个任务，每个任务只能在一台机器上运行（不能拆分）。</p>
+<p><strong>目标：</strong>合理地调度任务，使得完成所有任务的时间（makespan）最短。</p>
+<h1 id="下界估计">下界估计</h1>
+<p>自然而然地，我们首先思考<span class="math inline">\(\mathrm{OPT}\)</span>的下界。一个比较容易想到的下界是耗时最长的任务所需要的时间： <span class="math display">\[
+\mathrm{OPT} \ge \max_{i} \{p_i\}
+\]</span> 除此以外，考虑如果可以拆分任务，最短的运行时间是多少？自然是<span class="math inline">\(\frac{\sum_i p_i}{m}\)</span>，而这在现实中常常是做不到的，因此有： <span class="math display">\[
+\mathrm{OPT} \ge \frac{\sum_i p_i}{m}
+\]</span> 这两个下界对于之后的算法分析非常有用。</p>
+<h1 id="算法">算法</h1>
 <ol type="1">
-<li>三个<span class="math inline">\(220\mathrm{\Omega}\)</span>并联</li>
-<li>两个<span class="math inline">\(220\mathrm{\Omega}\)</span>并上两个<span class="math inline">\(110\mathrm{\Omega}\)</span>的串联</li>
-<li>一个<span class="math inline">\(110\mathrm{\Omega}\)</span>并上两个<span class="math inline">\(110\mathrm{\Omega}\)</span>的串联</li>
+<li>将所有的任务随机排成一列。</li>
+<li>当一台机器完成了一个任务变得闲置了，马上把列表上的下一项任务安排到这个机器上去执行。</li>
+<li>重复步骤2直至所有任务都被执行完毕。</li>
 </ol>
-<p>最后每个电路的等效电阻就是<span class="math inline">\(220/3\approx 73.33\mathrm{\Omega}\)</span>，再假装有线阻就是<span class="math inline">\(75\mathrm{\Omega}\)</span>的水平，使用下来完全没问题，当然因为其他线没连，分辨率之类的信息是缺失的，我的电脑似乎默认<span class="math inline">\(1024\times768\)</span>处理了。</p>
-<p>不得不说还是VGA这种模拟的端口欺骗起来容易，HDMI这种数字端口就要复杂很多。</p>
-<p>（后续万用表测试下来<span class="math inline">\(110\mathrm{\Omega}\)</span>的实际电阻是<span class="math display">\[1\mathrm{k\Omega}\]</span>，大概是读色环的时候读反了<del>我依然坚持认为就应该按照我的方向读</del>，然而最后成品依然可以工作，只能认为是冗余比较高，或者是玄学了。）</p>
-<p>（似乎装了Linux之后就可以通过设置避免自动休眠了？）</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/12/08/%E5%92%95%E5%92%95%E5%92%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/12/08/%E5%92%95%E5%92%95%E5%92%95/" class="post-title-link" itemprop="url">咕咕咕！以及穿越时空的新笔记（无误）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2019-12-08 20:18:30 / 修改时间：21:29:39" itemprop="dateCreated datePublished" datetime="2019-12-08T20:18:30+08:00">2019-12-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>自从上一次2月6日写关于SAM的笔记之后似乎这个博客就停更了好久~</p>
-<p>(**为什么在归档里有许多本篇之前SAM之后的？因为出于以下的原因某人把本地的笔记整理传了上来，通过改变<code>date</code>属性穿越时空把一些笔记送回了时间线的前端（即本地笔记的创建日期），如果看修改日期还是2019/12/8，因为是今天传的=_=**)</p>
-<p>在这大半年里还是发生了很多事情。</p>
-<p>比如说省选粗心失掉100分导致没进队。</p>
-<p>比如说CSP再心态爆炸导致分数不是最理想。</p>
-<p>比如自己的探究课题结题了</p>
-<p>比如自己暑假里参加实习去GIX之类的</p>
-<p>比如自己SAT也非常翻车的样子</p>
-<p>比如说自己仍然在纠结~</p>
-<p>回忆起来记得自己当初创设这个博客，很大程度上是觉得别人大佬的博客都很酷！</p>
-<p>然后传了一些文章。</p>
-<p>之后立flag发奋要搞OI，刚开始肯定是非常兴奋的，于是遇到很多题都会写文章，处于一个兴奋期吧。</p>
-<p>当时也把去年在狗社搞得一些机器人的成果传了上去。</p>
-<p>之后频率慢慢就往下降了。</p>
-<p>一方面自己去年NOIP没考好，所以后半学期就偏向于划水了<del>在咸鱼学校不脱产的高中生是这个样子的。</del></p>
-<p>另一方面有时候也觉得维护博客有点烦，因为是公网上的总想着自己写得要尽善尽美一些，久而久之写一篇文章的时间甚至超过了做题目本身的时间。“啊刷题要紧反正做过的题目我大致都有印象博客这种浪费时间的东西还是停一停吧”有很长一段时间都这么想过<del>对自己记忆的谜之自信</del>，<del>然而最后也没有刷特别多的题，真是一个悲伤的故事，我们学校的事情实在是太多了。</del></p>
-<p>自己倒是在本地维护了零零散散的一些做题心得。但是因为写得比较散，并没有上传。</p>
-<p>导致一路咕到现在的这种状况。</p>
-<p>最近才意识到博客不就是分享自己心得的吗……其实不必要过于正式。</p>
-<p>感觉自己朋友圈里面的很多东西都可以发到博客里来的样子。（反正朋友圈里看懂的人似乎也不多233）</p>
-<p>发现的很多好玩的也可以发的样子。</p>
-<p>脑洞也可以发的样子。</p>
-<p>这样想来维护博客似乎也没那么累，对于就是在本地写好<code>Markdown</code>，然后<code>git</code>同步一下，可能也就图片传图床可能会比较烦的样子。</p>
-<p>果然还是自己比较懒啊</p>
-<p>这个样子怎么行呢！？</p>
-<p>果然这个博客还是要有点生气啊！</p>
-<p>恢复更新！（Flag预定）</p>
-<p>先整理一下本地的一些零零碎碎的做题笔记，然后之后再看看有啥好玩的以后也发在这上面吧！</p>
-<p><sub>然而深知自己尿性，但愿这不要又是一次短暂的心血来潮吧！</sub></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/11/10/CometOJ1110C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/11/10/CometOJ1110C/" class="post-title-link" itemprop="url">Comet OJ 11/10模拟赛C / 分块</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-11-10 00:00:00" itemprop="dateCreated datePublished" datetime="2019-11-10T00:00:00+08:00">2019-11-10</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-12-08 21:38:26" itemprop="dateModified" datetime="2019-12-08T21:38:26+08:00">2019-12-08</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>本地笔记整理~原稿写于11/10，2019/12/8上传</p>
-<h1 id="题意">题意</h1>
-<blockquote>
-<p>若干年后。</p>
-<p>主持魔法学院重建工作的 <span class="math inline">\(\omega\)</span>坐在围墙上，与一旁的少女交谈。</p>
-<p>「老师老师，你知道咱们学院是怎么传递信息的吗？」</p>
-<p>「当然知道啊！」<span class="math inline">\(\omega\)</span> 笑着摸了摸少女的头说道，「魔法学院有 <span class="math inline">\(n\)</span>处地点，它们依次编号为 <span class="math inline">\(1\)</span>到 <span class="math inline">\(n\)</span> 。我们搭设了<span class="math inline">\(n-1\)</span>条线路，第<span class="math inline">\(i\)</span>条线路连接 <span class="math inline">\(u_i\)</span>号地点和 <span class="math inline">\(v_i\)</span>号地点。当然，任意两处地点间都存在一条由线路构成的路径。」</p>
-<p>少女调皮地歪了下脑袋。「但是老师，为什么我在<span class="math inline">\(1\)</span>号地点，经常收不到 <span class="math inline">\(n\)</span>号地点的信息呢？」</p>
-<p>「因为怕狡猾的敌人窃听我们啊。」<span class="math inline">\(\omega\)</span>回答道，「学院内部只使用 <span class="math inline">\(m\)</span>个频道，每处地点分别会选择性地屏蔽一些频道。两处地点能够直接通信，当且仅当它们被一条线路所连接，且存在两处地点都没有屏蔽的频道。为了测评通讯质量，我们定义『通讯值』为最多能把<span class="math inline">\(n\)</span>处地点分成多少<strong>非空</strong>组，满足不同组内的地点无法直接通信。」</p>
-<p>「这样一成不变的话，行动不是迟早会暴露在敌人面前吗？」</p>
-<p>「是啊。所以我们打算轮流执行<span class="math inline">\(q\)</span>次修改，第<span class="math inline">\(i\)</span>次修改会改变<span class="math inline">\(x_i\)</span>号地点的频道屏蔽状态。现在我来考考你，在修改之前以及每次修改后，你能分别求出通讯值是多少吗？」</p>
-<p>少女微微一笑，仿佛心中已有了答案。</p>
-</blockquote>
-<p>这题目的题面，有点尬啊。</p>
-<h1 id="解法">解法</h1>
-<p>考虑<span class="math inline">\(u,v\)</span>如果<span class="math inline">\(S_u \cap S_v \neq \emptyset\)</span>那么<span class="math inline">\(u,v\)</span>必在同一组内，因此若定义该条件为连边条件的话问题就变成了动态计算树子图的连通分量个数。</p>
-<p>因为每一次都是单点修改，所以每次只要计算少连了多少边就可以得知答案增加了多少。</p>
-<p>因此，问题被转化为如何快速计算一个节点所有相邻节点中与其集合交集非空的节点数，或者交集为空的节点数。</p>
-<p>对于一般的树，暴力大约是足够了，时间复杂度就是<span class="math inline">\(\mathcal O(q\deg(u))\)</span>，但是对于菊花图<span class="math inline">\(\deg(u) = \mathcal{O}(n)\)</span>，于是乎就没了。</p>
-<p>考虑转化为有根树，每个节点只有一个父亲，对于这个父亲我们现场算，我们接着维护一个数组<span class="math inline">\(f[u][S]\)</span>表示<span class="math inline">\(u\)</span>的儿子当中集合为<span class="math inline">\(S\)</span>的节点个数，然后在询问时变为<span class="math inline">\(\mathcal O\left(2^m\right)\)</span>查询。在修改时<span class="math inline">\(\mathcal O(1)\)</span>修改父亲的数组值。</p>
-<p>这当然是可以的，但是<span class="math inline">\(m\le 20\)</span>。还是不够。</p>
-<p>注意到如果<span class="math inline">\(A \cap B = \emptyset\)</span>，那么<span class="math inline">\(B \subseteq \overline A\)</span> ，因此，我们还可以维护数组<span class="math inline">\(f[u][S]\)</span>记录<span class="math inline">\(u\)</span>的儿子中集合为<span class="math inline">\(S\)</span>的子集的节点数，询问便是<span class="math inline">\(f[u][\overline{S_u}]\)</span>，变成了<span class="math inline">\(\mathcal O(1)\)</span>的复杂度，倒是修改变为了<span class="math inline">\(\mathcal O\left(2^m\right)\)</span>。依然不行。</p>
-<p>考虑合并两种解法，对于集合的前<span class="math inline">\(\left\lfloor \frac{m}{2} \right\rfloor\)</span>种元素，我们用第一种方法，对于集合的后<span class="math inline">\(\left\lceil \frac{m}{2} \right\rceil\)</span>种元素，我们用第二种方法，那么单次的查询修改就都到了<span class="math inline">\(\mathcal O\left(2^{m\over 2}\right)\)</span>。时间复杂度上是能通过该题了。</p>
-<p>但是这张表要<span class="math inline">\(\mathcal O\left(n2^m\right)\)</span>的空间不就炸了吗？</p>
-<p>为了解决炸空间的问题，我们只选择度数大于<span class="math inline">\(d\)</span>使用这种方法，对于小度数的节点暴力就完事了。</p>
-<p>总体复杂度就是<span class="math inline">\(\mathcal O \left(nd + \frac{n}{d}2^{m\over 2}\right)\)</span>。</p>
-<h1 id="代码">代码</h1>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-#include &lt;algorithm&gt;
-using namespace std;
-const int N = 100010;
-const int MS = 1 &lt;&lt; 10;
-const int D = 200;
-const int T = 500;
-int n, m, fa[N], w[N], all, tp, ans = 0;
-int fst[N], nxt[2 * N], to[2 * N], tot = 1;
-int f[D][MS][MS], id[N], cnt = 0 , deg[N];
-void link(int u, int v) &#123;
-    deg[u]++; deg[v]++;
-    nxt[++tot] = fst[u];
-    fst[u] = tot; to[tot] = v;
-&#125;
-void dfs(int u, int p) &#123;
-    fa[u] = p;
-    for (int e = fst[u]; e; e = nxt[e])
-        if (to[e] != p) dfs(to[e], u);
-&#125;
-inline int readbin() &#123;
-    char s[22]; scanf(&quot;%s&quot;, s);
-    int ans = 0;
-    for (int i = 0; i &lt; m; i++)
-        ans = (ans &lt;&lt; 1) | (s[i] - &#39;0&#39;);
-    return ans;
-&#125;
-void modify(int u, int x, int d) &#123;
-    int k = id[u];
-    int mask = (1 &lt;&lt; tp) - 1;
-    int fr = x &gt;&gt; tp, bk = x &amp; mask, c = mask ^ bk;
-    for (int s = c; s; s = c &amp; (s - 1))
-        f[k][fr][mask ^ s] += d;
-    f[k][fr][mask] += d;
-&#125;
-int query(int u, int x) &#123;
-    int k = id[u];
-    x = all ^ x;
-    int mask = (1 &lt;&lt; tp) - 1;
-    int fr = x &gt;&gt; tp, bk = x &amp; mask, ans = 0;
-    for (int s = fr; s; s = fr &amp; (s - 1))
-        ans += f[k][s][bk];
-    return ans + f[k][0][bk];
-&#125;
-void solve() &#123;
-    all = (1 &lt;&lt; m) - 1;
-    tp = (m + 1) / 2;
-    for (int i = 1; i &lt;= n; i++) 
-        if (deg[i] &gt; T) id[i] = ++cnt;
-    for (int i = 1; i &lt;= n; i++)
-        if (id[fa[i]]) modify(fa[i], w[i], 1);
-    int Q; scanf(&quot;%d&quot;, &amp;Q);
-    while (Q--) &#123;
-        int x, c; scanf(&quot;%d &quot;, &amp;x);
-        c = readbin();
-        int last = 0, now = 0;
-        if (id[x]) &#123;
-            last = query(x, w[x]);
-            now = query(x, c);
-            if (fa[x]) &#123;
-                last += (w[x] &amp; w[fa[x]]) == 0;
-                now += (c &amp; w[fa[x]]) == 0;
-            &#125;
-        &#125; else &#123;
-            for (int e = fst[x]; e; e = nxt[e]) &#123;
-                last += (w[x] &amp; w[to[e]]) == 0;
-                now += (c &amp; w[to[e]]) == 0;
-            &#125;
-        &#125;
-        printf(&quot;%d\n&quot;, (ans += now - last));
-        if (id[fa[x]]) &#123;
-            modify(fa[x], w[x], -1);
-            modify(fa[x], c, 1);
-        &#125;
-        w[x] = c; 
-    &#125;
-&#125;
-int main() &#123;
-    scanf(&quot;%d%d&quot;, &amp;n, &amp;m);
-    for (int i = 1; i &lt; n; i++) &#123;
-        int u, v; scanf(&quot;%d%d&quot;, &amp;u, &amp;v);
-        link(u, v); link(v, u);
-    &#125;
-    for (int i = 1; i &lt;= n; i++) w[i] = readbin(); 
-    dfs(1, 0); ans = n;
-    for (int i = 2; i &lt;= n; i++) if (w[i] &amp; w[fa[i]]) ans--;
-    printf(&quot;%d\n&quot;, ans);
-    solve();
-    return 0;
-&#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/10/28/BZOJ2118/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/10/28/BZOJ2118/" class="post-title-link" itemprop="url">BZOJ 2118 / 同余最短路</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-10-28 00:00:00" itemprop="dateCreated datePublished" datetime="2019-10-28T00:00:00+08:00">2019-10-28</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-12-08 21:38:30" itemprop="dateModified" datetime="2019-12-08T21:38:30+08:00">2019-12-08</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>本地笔记整理重发，原文写于2019/10/28，2019/12/8上传</p>
-<h1 id="题面">题面</h1>
-<p><strong>题意：</strong>求使得关于<span class="math inline">\(\{x_i\}\)</span>的方程 <span class="math display">\[
-\sum_{i=1}^n a_ix_i = b
-\]</span> 存在非负整数解的的<span class="math inline">\(b \in [l, r]\)</span>的个数。</p>
-<p><strong>数据范围：</strong><span class="math inline">\(n \le 12, a_i \le 5\times 10^5, l, r \in 10^{12}\)</span>。</p>
-<p>神题。不妨设<span class="math inline">\(a_1\)</span>为<span class="math inline">\(\{a_i\}\)</span>当中的最小值。则若对于任意的<span class="math inline">\(b \equiv x \pmod{a_1}\)</span>当中的<span class="math inline">\(b\)</span>如果符合题意有解，那么<span class="math inline">\(b+a_1\)</span>也一定有解。令满足这个性质的最小的<span class="math inline">\(b\)</span>为<span class="math inline">\(b_x\)</span>。</p>
-<p>考虑在此条件下如何计算解的数目，设<span class="math inline">\(m\)</span>以下满足题意的<span class="math inline">\(b\)</span>有<span class="math inline">\(f(m)\)</span>个，则可以得出计算式： <span class="math display">\[
-f(m) = \sum_{x=0}^{a_1-1} [b_x \le m]\left(\left\lfloor\frac{m-b_x}{a_1}\right\rfloor+1\right)
-\]</span> 原理显然。</p>
-<p>答案就是<span class="math inline">\(f(r) - f(l - 1)\)</span>。</p>
-<p>接下来考虑如何求取<span class="math inline">\(b_x\)</span>。考虑构建具有<span class="math inline">\(a_1\)</span>个点，编号分别为<span class="math inline">\(0,1,2,\cdots,a_1 - 1\)</span>的图，对于编号<span class="math inline">\(u\)</span>的点，向<span class="math inline">\((u + a_i) \bmod a_1, \ (i=2,3,\cdots, n)\)</span>连边。表示在模<span class="math inline">\(a_1\)</span>意义下，如果<span class="math inline">\(u\)</span>可以有解，那么<span class="math inline">\(u+a_i\)</span>也一定有解。</p>
-<p>由于<span class="math inline">\(0\)</span>是一定有平凡解的，我们从<span class="math inline">\(0\)</span>开始跑最短路，就可以求出<span class="math inline">\(b_x\)</span>。这背后的思想无疑是非常巧妙的。</p>
-<p>复杂度就是<span class="math inline">\(\mathcal{O}(na_1(\log n + \log a_1))\)</span>，即为Dijkstra的复杂度。</p>
-<h1 id="代码">代码</h1>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-#include &lt;algorithm&gt;
-#include &lt;queue&gt;
-
-using namespace std;
-typedef long long ll;
-typedef pair&lt;ll, int&gt; pli;
-const int N = 13;
-const int V = 500010;
-const int E = N * V;
-const ll INF = 1ll &lt;&lt; 60;
-ll n, Bl, Br, a[N], mn, len[E];
-int fst[V], nxt[E], to[E], tot = 1;
-ll dis[V];
-void link(int u, int v, ll w) &#123;
-    nxt[++tot] = fst[u];
-    fst[u] = tot; to[tot] = v; len[tot] = w;
-&#125;
-void dijkstra() &#123;
-    static priority_queue&lt;pli, vector&lt;pli&gt;, greater&lt;pli&gt; &gt; q;
-    fill(dis, dis + mn, INF);
-    dis[0] = 0; q.push(make_pair(0, 0));
-    while (!q.empty()) &#123;
-        pli p = q.top(); q.pop();
-        int u = p.second;
-        if (dis[u] != p.first) continue;
-        for (int e = fst[u]; e; e = nxt[e]) &#123;
-            int v = to[e];
-            if (dis[v] &gt; dis[u] + len[e]) &#123;
-                dis[v] = dis[u] + len[e];
-                q.push(make_pair(dis[v], v));
-            &#125;
-        &#125;
-    &#125;
-&#125;
-ll calc(ll x) &#123;
-    ll ans = 0;
-    for (int i = 0; i &lt; mn; i++)
-        if (x &gt;= dis[i]) ans += (x - dis[i]) / mn + 1;
-    return ans;
-&#125;
-int main() &#123;
-    scanf(&quot;%lld%lld%lld&quot;, &amp;n, &amp;Bl, &amp;Br);
-    for (int i = 1; i &lt;= n; i++) scanf(&quot;%lld&quot;, &amp;a[i]);
-    sort(a + 1, a + 1 + n); mn = a[1];
-    for (int i = 0; i &lt; mn; i++)
-        for (int j = 2; j &lt;= n; j++)
-            link(i, (i + a[j]) % mn, a[j]);
-    dijkstra();
-    printf(&quot;%lld\n&quot;, calc(Br) - calc(Bl - 1));  
-    return 0;
-&#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/10/25/Luogu4719/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/10/25/Luogu4719/" class="post-title-link" itemprop="url">Luogu 4719 / 动态DP</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-10-25 00:00:00" itemprop="dateCreated datePublished" datetime="2019-10-25T00:00:00+08:00">2019-10-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-07-30 14:10:42" itemprop="dateModified" datetime="2020-07-30T14:10:42+08:00">2020-07-30</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>本地笔记整理第一发，比较散，2019/12/8上传 <span class="math display">\[
-\newcommand{\dp}{\mathrm{dp}}
-\newcommand{\BigO}[1]{\mathcal{O}\left(#1\right)}
-\newcommand{\ldp}{\mathrm{ldp}}
-\newcommand{\lch}[1]{\mathrm{lch}(#1)}
-\newcommand{\hch}[1]{\mathrm{hch}(#1)}
-\]</span></p>
+<p>这个算法是非常简单且自然的。</p>
 <h1 id="分析">分析</h1>
-<p>题目要求求取带修改的树上最大独立集，朴素<span class="math inline">\(\BigO{n^2}\)</span>DP如下： <span class="math display">\[
+<p>我们算法给出结果的什么？自然是最后一个结束的任务的结束时间。如果我们设最后一个结束的任务为任务<span class="math inline">\(l\)</span>，且这个任务开始于<span class="math inline">\(s_l\)</span>，那么就有： <span class="math display">\[
+\mathrm{Cost} = s_l+p_l
+\]</span> 接下来我们进行放缩。</p>
+<p>考虑<span class="math inline">\(s_l\)</span>的上界是什么？</p>
+<p><img src="/2021/07/25/PACT0701/SIPM1.svg" class=""></p>
+<p>很显然，<strong>在<span class="math inline">\(s_l\)</span>时刻，除了<span class="math inline">\(l\)</span>即将运行的那台机器，其他机器上必须有任务在运行或者刚刚空下来</strong>（如果有机器已经空了一阵子了，那当时<span class="math inline">\(l\)</span>就会被安排到那台机器上去跑），因此不难得出<span class="math inline">\(ms_l \le \sum_{i\neq l} p_i\)</span>，即 <span class="math display">\[
+s_l \le \frac{\sum_{i \neq l}p_i}{m}
+\]</span> 因此 <span class="math display">\[
 \begin{aligned}
-    \dp[u][0] &amp;= \sum_{v \in \mathrm{ch}(u)} \max\left\{\dp[v][1], \dp[v][0]\right\} \\
-    \dp[u][1] &amp;= \mathrm{val}[u] + \sum_{v \in \mathrm{ch}(u)} \dp[v][0]
+\mathrm{Cost} &amp;= s_l+p_l \\
+&amp; \le \frac{\sum_{i \neq l}p_i}{m} + p_l \\
+&amp;= \frac{\sum_{i}p_i}{m} + \left(1 - \frac{1}{m}\right) p_l \\
+&amp;\le \frac{\sum_{i}p_i}{m} + \left(1 - \frac{1}{m}\right)\max_{i}\{p_i\} \\
+&amp;\le \mathrm{OPT} + \left(1 - \frac{1}{m}\right)\mathrm{OPT} \\
+&amp;= \left(2 - \frac{1}{m}\right)\mathrm{OPT}
 \end{aligned}
-\]</span></p>
-<p>但是这么一次转移是<span class="math inline">\(\BigO{n}\)</span>的，考虑优化，定义<span class="math inline">\(\mathrm{lch}(u)\)</span>为<span class="math inline">\(u\)</span>的轻儿子集合。<span class="math inline">\(\mathrm{hch}(u)\)</span>为<span class="math inline">\(u\)</span>的重儿子，稍微修改一下，定义</p>
-<p><span class="math display">\[
-\begin{aligned}
-\ldp[u][0] &amp;= \sum_{v \in \lch{u}} \max\left\{\dp[v][1], \dp[v][0]\right\} \\
-\ldp[u][1] &amp;= \mathrm{val}[u] + \sum_{v \in \lch{u}} \dp[v][0] \\
-\end{aligned}
-\]</span></p>
-<p>则有</p>
-<p><span class="math display">\[
-\begin{aligned}
-    \dp[u][0] &amp;= \max\left\{\dp[\hch{u}][0],\dp[\hch{u}][1]\right\} + \ldp[u][0]\\
-    \dp[u][1] &amp;= \dp[\hch{u}][0] + \ldp[u][1]
-\end{aligned}
-\]</span></p>
-<p>使用Max-Plus Algebra的方式重写：</p>
-<p><span class="math display">\[
-\begin{pmatrix}
-    \dp[u][0] \\
-    \dp[u][1]
-\end{pmatrix} = 
-\begin{pmatrix}
-    \ldp[u][0] &amp; \ldp[u][0] \\
-    \ldp[u][1] &amp; -\infty
-\end{pmatrix}
-\begin{pmatrix}
-    \dp[\hch{u}][0] \\
-    \dp[\hch{u}][1]
-\end{pmatrix}
-\]</span> 接下来只需要树链剖分维护矩阵转移就行了，单次修改的时间复杂度为<span class="math inline">\(\BigO{\log^2n}\)</span>。</p>
-<h1 id="代码">代码</h1>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-#include &lt;algorithm&gt;
-#include &lt;cstring&gt;
-
-using namespace std;
-const int N = 100010;
-const int T = 4 * N;
-const int INF = 0x3f3f3f3f;
-int n;
-int fst[N], nxt[2 * N], to[2 * N], tot = 1;
-struct vec &#123;
-    int a[2];
-    vec() &#123; memset(a, 0, sizeof a); &#125;
-    int &amp;operator [](int x) &#123; return a[x]; &#125;
-    const int &amp;operator [](int x) const &#123; return a[x]; &#125;
-&#125; eye;
-struct mat &#123;
-    int a[2][2];
-    mat() &#123; memset(a, 0, sizeof a); &#125;   
-    int *operator [](int x) &#123; return a[x]; &#125;
-    const int *operator [](int x) const &#123; return a[x]; &#125;
-    mat operator *(const mat &amp;b) const &#123;
-        mat c;
-        for (int i = 0; i &lt; 2; i++) &#123;
-            for (int j = 0; j &lt; 2; j++) &#123;
-                c[i][j] = -INF;
-                for (int k = 0; k &lt; 2; k++)
-                    c[i][j] = max(c[i][j], a[i][k] + b[k][j]);
-            &#125;
-        &#125;
-        return c;
-    &#125;
-    vec operator *(const vec &amp;b) const &#123;
-        vec c;
-        for (int i = 0; i &lt; 2; i++) &#123;
-            c[i] = -INF;
-            for (int j = 0; j &lt; 2; j++)
-                c[i] = max(c[i], a[i][j] + b[j]);
-        &#125;
-        return c;
-    &#125;
-&#125;;
-void link(int u, int v) &#123;
-    nxt[++tot] = fst[u];
-    fst[u] = tot; to[tot] = v;
-&#125;
-int cnt = 0, id[N], top[N], dep[N], bot[N], sz[N], son[N], fa[N];
-int a[N], ldp[N][2], dp[N][2];
-mat val[T], init[N];
-void dfs1(int u, int p) &#123;
-    dep[u] = dep[p] + 1; fa[u] = p;
-    sz[u] = 1; int mx = -1;
-    for (int e = fst[u]; e; e = nxt[e]) &#123;
-        int v = to[e];
-        if (v == p) continue;
-        dfs1(v, u); sz[u] += sz[v];
-        if (sz[v] &gt; mx) mx = sz[v], son[u] = v;
-    &#125;
-&#125;
-void dfs2(int u, int tp) &#123;
-    id[u] = ++cnt, top[u] = tp;
-    bot[top[u]] = u;
-    if (son[u]) dfs2(son[u], tp);
-    for (int e = fst[u]; e; e = nxt[e]) &#123;
-        int v = to[e];
-        if (v == fa[u] || v == son[u]) continue;
-        dfs2(v, v); 
-    &#125;
-&#125;
-#define lch (rt &lt;&lt; 1)
-#define rch (lch | 1)
-#define larg lch, l, mid
-#define rarg rch, mid + 1, r
-void pushup(int rt) &#123;
-    val[rt] = val[lch] * val[rch];
-&#125;
-void build(int rt, int l, int r) &#123;
-    if (l == r) return;
-    int mid = (l + r) &gt;&gt; 1;
-    build(larg); build(rarg);
-    pushup(rt);
-&#125;
-mat query(int rt, int l, int r, int ql, int qr) &#123;
-    if (ql &lt;= l &amp;&amp; r &lt;= qr) return val[rt];
-    int mid = (l + r) &gt;&gt; 1;
-    if (qr &lt;= mid) return query(larg, ql, qr);
-    if (ql &gt; mid) return query(rarg, ql, qr);
-    return query(larg, ql, qr) * query(rarg, ql, qr);
-&#125;
-void update(int rt, int l, int r, int p, const mat &amp;v) &#123;
-    if (l == r) &#123; val[rt] = v; return; &#125;
-    int mid = (l + r) &gt;&gt; 1;
-    if (p &lt;= mid) update(larg, p, v);
-    else update(rarg, p, v);
-    pushup(rt);
-&#125;
-void updateu(int u) &#123;
-    mat m; m[0][0] = m[0][1] = ldp[u][0];
-    m[1][0] = ldp[u][1]; m[1][1] = -INF;
-    update(1, 1, n, id[u], m);
-&#125;
-void dfs3(int u) &#123;
-    ldp[u][0] = 0, ldp[u][1] = a[u];
-    for (int e = fst[u]; e; e = nxt[e]) &#123;
-        int v = to[e];
-        if (v == fa[u]) continue;
-        dfs3(v);
-        if (v == son[u]) continue;
-        ldp[u][0] += max(dp[v][0], dp[v][1]);
-        ldp[u][1] += dp[v][0];
-    &#125;
-    updateu(u);
-    vec res = query(1, 1, n, id[u], id[bot[top[u]]]) * eye;
-    dp[u][0] = res[0]; dp[u][1] = res[1];
-&#125;
-void modify(int u, int p) &#123;
-    ldp[u][1] += p - a[u]; a[u] = p;
-    updateu(u);
-    while (true) &#123;
-        u = top[u];
-        vec res = query(1, 1, n, id[u], id[bot[u]]) * eye;
-        if (u != 1) &#123;
-            ldp[fa[u]][0] += max(res[0], res[1]) - max(dp[u][0], dp[u][1]);
-            ldp[fa[u]][1] += res[0] - dp[u][0];
-        &#125;
-        dp[u][0] = res[0]; dp[u][1] = res[1];
-        if (u == 1) break;
-        updateu(u = fa[u]);
-    &#125;
-&#125;
-int main() &#123;
-    int q; scanf(&quot;%d%d&quot;, &amp;n, &amp;q);
-    for (int i = 1; i &lt;= n; i++) scanf(&quot;%d&quot;, &amp;a[i]);
-    for (int i = 1; i &lt; n; i++) &#123;
-        int x, y; scanf(&quot;%d%d&quot;, &amp;x, &amp;y);
-        link(x, y); link(y, x);
-    &#125;
-    dfs1(1, 0); dfs2(1, 1); build(1, 1, n); dfs3(1);
-    while (q--) &#123;
-        int x, y; scanf(&quot;%d%d&quot;, &amp;x, &amp;y);
-        modify(x, y);
-        printf(&quot;%d\n&quot;, max(dp[1][0], dp[1][1]));
-    &#125;
-    return 0;
-&#125;</code></pre>
+\]</span> 我们就证明了我们的算法是一个<span class="math inline">\(2\)</span>倍近似算法！</p>
+<h1 id="提升近似比">提升近似比</h1>
+<p>能不能在这个算法的基础上提升呢？我们注意到将<span class="math inline">\(\mathrm{OPT}\)</span>作为<span class="math inline">\(p_l\)</span>的上界其实还是太松了。如果我们能够缩短<span class="math inline">\(p_l\)</span>，那上界的估计有没有改善的空间呢？</p>
+<p>于是我们在原来算法的基础上不妨进行一个改进：与其在一开始将所有任务随机排列，不如<strong>将其按照运行时间从大到小的顺序进行排序</strong>。这也很符合直觉，一开始就把需要时间很长的任务跑完，之后肯定有些机器空着有些机器还在忙，这个时候就可以用完成时间比较短的小任务来灵活地填补这些空缺了。</p>
+<p>这一下让近似比提升了多少呢？</p>
+<p><strong>引理：</strong>加上排序之后的算法具有<span class="math inline">\(\frac{3}{2}\)</span>的近似比。</p>
+<p><strong>证明：</strong>我们不妨分类讨论，</p>
+<p><strong>情形1. </strong><span class="math inline">\(p_l \le \frac{1}{2}\mathrm{OPT}\)</span>，这个时候按照我们上文分析的路子走直接就可以得到<span class="math inline">\(\mathrm{Cost} \le \frac{3}{2}\mathrm{OPT}\)</span>，就做完了。</p>
+<p><strong>情形2. </strong><span class="math inline">\(p_l &gt; \frac{1}{2}\mathrm{OPT}\)</span>，此时所有<span class="math inline">\(l\)</span>之前的任务也肯定具有大于<span class="math inline">\(\frac{1}{2} \mathrm{OPT}\)</span>的运行时间。注意到<strong>我们不需要考虑<span class="math inline">\(p_l\)</span>之后的任务</strong>，因为依据定义<span class="math inline">\(l\)</span>是最后结束的，后面的任务对于我们的结果没有影响。那<span class="math inline">\(l\)</span>之前的任务在最优调度里面是怎么样的呢？反证法可以很快说明：<strong>在最优调度里面，每一台机器至多只能处理一件任务</strong>（忽略<span class="math inline">\(l\)</span>之后的任务）！也就是说事实上<span class="math inline">\(l\)</span>以及之前的任务数目加起来不会超过机器数<span class="math inline">\(m\)</span>，那再想一想在这种机器充足的情况下，我们的算法在分配这些任务的时候也是一个机器一个任务，<span class="math inline">\(p_l\)</span>必定是从一开始就执行的，因此<span class="math inline">\(\mathrm{Cost}=p_l\)</span>，而显然<span class="math inline">\(\mathrm{OPT} \ge p_l\)</span>，因此必有<span class="math inline">\(\mathrm{Cost} = \mathrm{OPT}\)</span>，结束。（事实上，由于<span class="math inline">\(l\)</span>还是最后结束的任务，不难想通在一机器一任务的情形下，<span class="math inline">\(l\)</span>之前的所有任务都一定和<span class="math inline">\(l\)</span>花费相同的时间，或<span class="math inline">\(l\)</span>就是我们算法分配的第一个任务。）</p>
+<p>综上所述，近似比是<span class="math inline">\(\frac{3}{2}\)</span>。</p>
+<h1 id="进一步提升近似比">进一步提升近似比</h1>
+<p>通过对于上述论证的些许修改，我们其实可以证明：</p>
+<p><strong>引理：</strong>加上排序之后的算法具有<span class="math inline">\(\frac{4}{3}\)</span>的近似比。</p>
+<p><strong>证明：</strong>我们故技重施：</p>
+<p><strong>情形1. </strong><span class="math inline">\(p_l \le \frac{1}{3}\mathrm{OPT}\)</span>，这个时候我们直接就可以得到<span class="math inline">\(\mathrm{Cost} \le \frac{4}{3}\mathrm{OPT}\)</span>。</p>
+<p><strong>情形2. </strong><span class="math inline">\(p_l &gt; \frac{1}{3}\mathrm{OPT}\)</span>，此时所有<span class="math inline">\(l\)</span>之前的任务也肯定具有大于<span class="math inline">\(\frac{1}{3} \mathrm{OPT}\)</span>的运行时间。我们同样不考虑<span class="math inline">\(l\)</span>之后的任务。可以通过反证证明：<strong>在最优调度里，每一台机器至多只能处理两件任务！</strong>因此，我们确定有足够的机器让我们的算法得以这样调度任务：</p>
+<p><img src="/2021/07/25/PACT0701/SIPM2.svg" class=""></p>
+<p>（看着是不是很像双指针？）</p>
+<p>具体来说，如果我们把机器按照第一个任务的耗时降序排序，那么它们第二个任务的耗时一定成升序排列。（这并不难证明：第一个任务耗时最短的机器一定能够先领到列表中最长的任务作为第二个任务，之后的机器领到的任务时间递减）</p>
+<p>（在这里我们假定<span class="math inline">\(l\)</span>一定是第二个任务，如果<span class="math inline">\(l\)</span>从头开始运行而且时间特别长的话，参考上一节的证明）</p>
+<p>而接下来我们证明这样的分配方式是最优的。</p>
+<p>我们采取反证的方法：不妨假设在最优方案中存在两个机器，两个机器上都有两个任务，耗时分别为<span class="math inline">\((a,b)\)</span>和<span class="math inline">\((c,d)\)</span>，且<span class="math inline">\(a&gt;c,b&gt;d\)</span>。那么我们把两个机器上的第二个任务互换，变成<span class="math inline">\((a,d)\)</span>和<span class="math inline">\((c,b)\)</span>，不难发现此时完成任务的最短时间会减少，和“最优”矛盾。因此，对于最优方案的任意两台机器<span class="math inline">\((a,b)\)</span>和<span class="math inline">\((c,d)\)</span>，如果<span class="math inline">\(a&gt;c\)</span>那么<span class="math inline">\(b&lt;d\)</span>：</p>
+<p><img src="/2021/07/25/PACT0701/SIPM3.svg" class=""></p>
+<p>这正是我们算法所给出的调度方案。因此<span class="math inline">\(\mathrm{OPT}\)</span>不会比我们算法的结果更好了。</p>
+<p>综上所述，近似比为<span class="math inline">\(\frac{4}{3}\)</span>。</p>
 
       
     </div>
@@ -1001,7 +363,7 @@ int main() &#123;
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/09/12/%E6%9F%90%E7%89%B9%E6%AE%8A%E7%9A%84%E6%B1%82%E5%92%8C%E6%96%B9%E6%B3%95/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/PACT0629/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -1014,7 +376,7 @@ int main() &#123;
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/09/12/%E6%9F%90%E7%89%B9%E6%AE%8A%E7%9A%84%E6%B1%82%E5%92%8C%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">某特殊的求和方法</a>
+          <a href="/2021/07/25/PACT0629/" class="post-title-link" itemprop="url">PACT 06/29 三大概率不等式以及近似算法初步</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1025,14 +387,14 @@ int main() &#123;
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2019-09-12 00:00:00" itemprop="dateCreated datePublished" datetime="2019-09-12T00:00:00+08:00">2019-09-12</time>
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-12-08 21:37:16" itemprop="dateModified" datetime="2019-12-08T21:37:16+08:00">2019-12-08</time>
+        <time title="修改时间：2020-07-11 23:17:10" itemprop="dateModified" datetime="2020-07-11T23:17:10-04:00">2020-07-11</time>
       </span>
 
   
@@ -1045,239 +407,248 @@ int main() &#123;
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>本地稿整理，原稿供班级公众号，写于2019-09-12，2019-12-08上传</p>
-<h1 id="序">序</h1>
-<p>最近数学课上在讲数列。众所周知，我们主要探寻数列的两个属性：</p>
-<ol type="1">
-<li>通项公式</li>
-<li>前<span class="math inline">\(n\)</span>项和</li>
-</ol>
-<p>关于第二点，我们已经在课上学习了等差数列和等比数列前<span class="math inline">\(n\)</span>项和的计算方法，但是更为复杂的数列呢？例如数列<span class="math inline">\(\{a_n\},a_n=n^2,n\in\mathbb{N}^{\ast}\)</span>的前<span class="math inline">\(n\)</span>项和： <span class="math display">\[
-S_n = \sum_{x=1}^n x^2
-\]</span> 或是更复杂一点，<span class="math inline">\(a_n=2^nn^2,n\in\mathbb{N}^{\ast}\)</span>： <span class="math display">\[
-S_n = \sum_{x=1}^{n}2^xx^2
-\]</span> 或者更复杂呢？</p>
-<p>诚然，你可能知道平方和的公式，对于第二个式子也许也有巧办法解决。但是很多方法仍存在不少局限性。有没有更通用的办法呢？</p>
-<p>如果你自学过一点基础的微积分，你会不会想到，既然 <span class="math display">\[
-\int_{1}^n2^xx^2\mathrm{d}x
-\]</span> 可以通过分部积分比较套路地演算，变成数列之后有没有类似的方法呢？</p>
-<p>这篇文章想分享的，就是在通过类比微积分构造出的这样一种系统化的求和方法。</p>
-<p><em>下面的文章如果自学过微积分的话可能会比较好读，没学过也没关系，反正本身不用到任何微积分概念。</em></p>
-<p><em>这个方法是我在《具体数学》里面看到的，也似乎只有这一本书里讲到这个方法，网上都没有。但是真的很有效，也很成系统，很震撼。这里对记号和名词做了一点小修改并避免了一些概念。</em></p>
-<p><em>以下统一把数列看做函数，然后因为下面有非常多的函数，一定会牵涉到定义域的问题。但是好在这些函数的定义域都是平凡且显然的，所以就不写了。</em></p>
-<h1 id="基础记号与理念">基础记号与理念</h1>
-<p>定义<span class="math inline">\(f(x)\)</span>对于<span class="math inline">\(x\)</span>的<strong>差分</strong>为且记作： <span class="math display">\[
-\frac{\mathrm{\delta} f(x)}{\mathrm{\delta} x} = f(x+1)-f(x)
-\]</span> 易证差分对加减法有分配率： <span class="math display">\[
-\frac{\mathrm{\delta} \left[f(x) \pm g(x)\right]}{\mathrm{\delta} x} = \frac{\mathrm{\delta} f(x)}{\mathrm{\delta} x} \pm \frac{\mathrm{\delta} g(x)}{\mathrm{\delta} x}
-\]</span> 且易证其线性： <span class="math display">\[
-\frac{\mathrm{\delta} kf(x)}{\mathrm{\delta} x} = k\frac{\mathrm{\delta} f(x)}{\mathrm{\delta} x}
-\]</span> 又易证常数的差分为<span class="math inline">\(0\)</span>（显然地）。</p>
-<p>若<span class="math inline">\(F(x)\)</span>的差分为<span class="math inline">\(f(x)\)</span>，我们观察到对于<span class="math inline">\(a,b\in\mathbb{Z}, b &gt; a\)</span>，有： <span class="math display">\[
-F(b)-F(a) = \sum_{x=a}^{b-1} f(x)
-\]</span> 那么，一个求和问题就可以被规约为求同一函数两个函数值差的问题。</p>
-<p>因此，在这个框架下，如果要计算<span class="math inline">\(\sum_{x=a}^b f(x)\)</span>，我们就要：</p>
-<ol type="1">
-<li>找到合适的<span class="math inline">\(F(x)\)</span>，其差分为<span class="math inline">\(f(x)\)</span></li>
-<li>计算<span class="math inline">\(F(b+1)-F(a)\)</span></li>
-</ol>
-<p>（前几天课上讲的“累减法”是以上步骤的反向简化版）</p>
-<p>当中最核心，也是最有意思的一个步骤，自然就是寻找<span class="math inline">\(F(x)\)</span>。寻找<span class="math inline">\(F(x)\)</span>的过程本质上是<strong>差分的逆运算</strong>。不妨把这个逆运算称作”<strong>逆差分</strong>“。因为使用<span class="math inline">\(F(x)\)</span>易产生指代不清的问题，我们为<span class="math inline">\(f(x)\)</span>的逆差分定义如下记号： <span class="math display">\[
-F(x) = \sum f(x)\mathrm{\delta} x
-\]</span> 则由定义，可得： <span class="math display">\[
-\frac{\mathrm{\delta} \left(\sum f(x) \mathrm{\delta} x\right)}{\mathrm{\delta} x} = f(x), \sum \frac{\mathrm{\delta} f(x)}{\mathrm{\delta} x} \mathrm{\delta} x = f(x)
-\]</span> 举些例子： <span class="math display">\[
+          <h1 id="概率论初步">概率论初步</h1>
+<h2 id="期望的线性性">期望的线性性</h2>
+<p><span class="math display">\[
+\mathbb{E}[X+Y] = \mathbb E [X] + \mathbb E[Y]
+\]</span></p>
+<h2 id="随机变量的方差">随机变量的方差</h2>
+<p><span class="math display">\[
 \begin{aligned}
-\frac{\mathrm{\delta} x}{\mathrm{\delta} x} = 1 &amp;\Leftrightarrow \sum1\mathrm{\delta} x = x + C\\
-\frac{\mathrm{\delta} x^2}{\mathrm{\delta} x} = 2x+1 &amp;\Leftrightarrow \sum (2x+1)\mathrm{\delta} x = x^2 + C
-\end{aligned}
-\]</span> 为什么要<span class="math inline">\(+C\)</span>呢？因为<span class="math inline">\(f(x)\)</span>的逆差分<strong>不唯一</strong>：对于任意已知的<span class="math inline">\(f(x)\)</span>逆差分加上任意的常数依然是<span class="math inline">\(f(x)\)</span>的逆差分（差分的时候常数就抵消掉了）。这里的<span class="math inline">\(C\)</span>便是这个意思。</p>
-<p>逆差分由于是差分的逆运算，其对于加法的分配率以及线性亦显然。</p>
-<p>接下来的这篇文章的中心便是：如何计算<span class="math inline">\(\sum f(x) \mathrm{\delta} x\)</span>？</p>
-<p><strong>以下默认<span class="math inline">\(x,n \in \mathbb Z\)</span>。</strong></p>
-<h1 id="幂法则">“幂”法则</h1>
-<p>对微积分有些许了解的同学一定知道积分当中的幂法则： <span class="math display">\[
-\int x^m \mathrm{d}x=\frac{x^{m+1}}{m+1}+C
-\]</span> 它来源于微分的幂法则： <span class="math display">\[
-\frac{\mathrm{d}x^m}{\mathrm{d}x} = mx^{m-1}
-\]</span> 类似的幂法则在我们刚刚建立的框架当中的类比是什么呢？</p>
-<p>直接把微分换成差分？ <span class="math display">\[
-\frac{\mathrm{\delta} x^m}{\mathrm{\delta} x} = (x+1)^m-x^m = ?
-\]</span> 我们发现好像没有什么优雅的结果诶！</p>
-<p>会不会是"幂"出了问题呢？</p>
-<p>定义<strong>下降阶乘幂</strong><span class="math inline">\(x^{\underline{m}}\)</span>： <span class="math display">\[
-x^{\underline m} = x(x-1)(x-2)\cdots(x-m+1) = \frac{x!}{(x - m)!} , \quad x&gt;0,m\in \mathbb{Z}
-\]</span> （当然，最右边那个有阶乘的式子要有意义，应该<span class="math inline">\(x\ge m\)</span>，如果<span class="math inline">\(x&lt;m\)</span>，那么不妨令整个阶乘幂为<span class="math inline">\(0\)</span>）</p>
-<p>为什么要定义那么奇怪的幂呢？考查下降阶乘幂的差分： <span class="math display">\[
-\begin{aligned}
-\frac{\mathrm{\delta} x^{\underline m}}{\mathrm{\delta} x} &amp;= (x + 1)^{\underline m} - x^{\underline m} \\
-&amp;= \frac{(x + 1)!}{(x + 1 - m)!} - \frac{x!}{(x - m)!} \\
-&amp;= \frac{(x + 1)! - (x + 1 - m)x!}{(x + 1 - m)!} \\
-&amp;= \frac{x![(x + 1) - (x + 1 - m)]}{(x + 1 - m)!} \\
-&amp;= \frac{mx!}{[x - (m - 1)]!} \\
-&amp;= mx^{\underline{m - 1}}
-\end{aligned}
-\]</span> 我们发现在使用下降阶乘幂的情况下，我们就可以把微分当中的幂法则类比到差分当中了。</p>
-<p>同时，我们不妨探索一下常规幂的性质在下降阶乘幂中的类比： <span class="math display">\[
-x^{\underline{m + n}} = x^{\underline m}(x - m)^{\underline n}, \quad m,n\in \mathbb{Z}
-\]</span> 以及当<span class="math inline">\(m&lt;0\)</span>时： <span class="math display">\[
-x^{\underline{-m}} = \frac{1}{(x + 1)(x + 2)\cdots(x + m)}
-\]</span> 这些类比得来的性质有助于我们加深对于下降阶乘幂的认识。</p>
-<p>既然我们得到了差分的幂法则，逆差分中的幂法则也就呼之欲出了： <span class="math display">\[
-\sum x^{\underline m} \mathrm{\delta} x = \frac{x^{\underline{m+1}}}{m+1}+C,\quad m\in\mathbb{Z}, m\neq -1
-\]</span> 这些法则有什么用呢？我们先试试看用我们的方法推导等差数列求和公式吧！</p>
-<p>欲求式为 <span class="math display">\[
-S_n = \sum_{x=1}^n [a_1+(x-1)d]
-\]</span> 那么我们计算： <span class="math display">\[
-\begin{aligned}
-    \sum [a_1+(x-1)d]\mathrm{\delta} x &amp;= \sum[a_1-d+dx]\mathrm{\delta} x \\
-    &amp;= \sum(a_1 - d)\mathrm{\delta} x+\sum dx\mathrm{\delta} x \\
-    &amp;= (a_1-d)x + d\sum x^{\underline 1} \delta x \\
-    &amp;= (a_1-d)x + d\cdot\frac{x^{\underline 2}}{2} + C
-\end{aligned}
-\]</span> 然后根据之前提到的步骤分别代入<span class="math inline">\(x=1\)</span>和<span class="math inline">\(x=n+1\)</span>作差相减，就是答案： <span class="math display">\[
-\begin{aligned}
-\sum_{x=1}^n [a_1+(x-1)d] &amp;= \left[(a_1-d)(n+1)+d\cdot\frac{(n+1)^{\underline 2}}{2}\right] - \left[(a_1 - d)\cdot 1 + d\cdot\frac{1^{\underline 2}}{2} \right] \\
-&amp;= (a_1-d)n + \frac{n(n+1)}{2}d \\
-&amp;= na_1+\frac{n(n-1)}{2}d
-\end{aligned}
-\]</span> 是不是很简单？再比如说我们要求平方和 <span class="math display">\[
-\sum_{x=1}^n x^2
-\]</span> 然后我们发现 <span class="math display">\[
-x^2 = x^{\underline 2} + x^{\underline 1}
-\]</span> 那我们可以借此求取<span class="math inline">\(x^2\)</span>的逆差分： <span class="math display">\[
-\begin{aligned}
-\sum x^2 \mathrm{\delta} x &amp;= \sum x^{\underline 2}\mathrm{\delta} x + \sum x^{\underline 1}\mathrm{\delta} x \\
-&amp;= \frac{x^{\underline 3}}{3} + \frac{x^{\underline 2}}{2} + C \\
-&amp;= \frac{2x(x - 1)(x - 2) + 3x(x - 1)}{6} + C \\
-&amp;= \frac{x(x - 1)(2x - 1)}{6} + C
+    \operatorname{Var}[X] &amp;:= \mathbb{E}\left[\left(X-\mathbb{E}[X]\right)^2\right] \\
+    &amp;= \mathbb{E} \left[X^2 - 2\mathbb{E}[X]X+\mathbb{E}[X]^2\right] \\
+    &amp;= \mathbb{E} \left[X^2\right] - 2\mathbb{E}[X]^2 + \mathbb{E}[X]^2 \\
+    &amp;= \mathbb{E} \left[X^2\right] - \mathbb{E}[X]^2
 \end{aligned}
 \]</span></p>
-<p>代入上下界： <span class="math display">\[
+<p><strong>推论：</strong>若随机变量<span class="math inline">\(X,Y\)</span>互相独立，则有：</p>
+<ol type="1">
+<li><span class="math inline">\(\operatorname{Var}[X+Y] = \operatorname{Var}[X] + \operatorname{Var}[Y]\)</span></li>
+<li><span class="math inline">\(\mathbb{E}[XY] = \mathbb{E}[X]\mathbb{E}[Y]\)</span></li>
+</ol>
+<p>（互相独立的定义：<span class="math inline">\(\forall x, y, \operatorname{Pr}[X=x\cap Y=y]=\operatorname{Pr}[X=x]\operatorname{Pr}[Y=y]\)</span>）</p>
+<h2 id="马尔科夫不等式">马尔科夫不等式</h2>
+<p>设<span class="math inline">\(X\)</span>为<strong>非负</strong>随机变量，则<span class="math inline">\(\forall a &gt;0\)</span>： <span class="math display">\[
+\operatorname{Pr}[X\ge a] \le \frac{\mathbb{E}[X]}{a}
+\]</span> <strong>证明：</strong> <span class="math display">\[
 \begin{aligned}
-\sum_{x=1}^n x^2 &amp;= \frac{(n+1)[(n+1) - 1][2(n+1) - 1]}{6} - \frac{1(1- 1)(2\cdot1 - 1)}{6} \\
-&amp;= \frac{n(n+1)(2n+1)}{6}
+    \mathbb{E}[X] &amp;= \sum_{x}x\operatorname{Pr}[X=x] \\
+    &amp;= \sum_{x&lt;a}x\operatorname{Pr}[X=x] + \sum_{x\ge a}x\operatorname{Pr}[X=x] \\
+    &amp;\ge \sum_{x\ge a}x\operatorname{Pr}[X=x] \\
+    &amp;\ge \sum_{x\ge a}a\operatorname{Pr}[X=x] \\
+    &amp;= a \sum_{x\ge a}\operatorname{Pr}[X=x] \\
+    &amp;= a \operatorname{Pr}[X\ge x]
 \end{aligned}
-\]</span> 我们一不小心就推出了平方和公式？</p>
-<p>再来一个： <span class="math display">\[
-\sum_{x=1}^n \frac{1}{x(x+1)}
-\]</span> 我们先把它转变成： <span class="math display">\[
-\sum_{x=0}^{n-1}\frac{1}{(x+1)(x+2)}
-\]</span> 因为这样凑到了形式： <span class="math display">\[
-\frac{1}{(x+1)(x+2)} = x^{\underline{-2}}
-\]</span> 然后用幂法则逆差分： <span class="math display">\[
-\sum x^{\underline{-2}} \mathrm{\delta} x = \frac{x^{\underline{-1}}}{-1} + C= -\frac{1}{x+1} + C
-\]</span> 然后代入<span class="math inline">\(x=0\)</span>和<span class="math inline">\(x=n\)</span>相减： <span class="math display">\[
+\]</span> （离散形式，连续形式的证明方法类似）</p>
+<p>其中第一个<span class="math inline">\(\ge\)</span>依赖于<span class="math inline">\(X\)</span>非负的特性，因此非负是必须的！</p>
+<p>马尔科夫不等式让我们可以在只知道随机变量期望的情况下对于其分布概率进行粗略定界。</p>
+<h2 id="切比雪夫不等式">切比雪夫不等式</h2>
+<p>设<span class="math inline">\(X\)</span>为随机变量，则<span class="math inline">\(\forall a &gt; 0\)</span>： <span class="math display">\[
+\operatorname{Pr}\left[|X-\mathbb{E}[X]| \ge a\right] \le \frac{\operatorname{Var}[X]}{a^2}
+\]</span> <strong>证明：</strong> <span class="math display">\[
 \begin{aligned}
-\sum_{x=0}^{n-1}\frac{1}{(x+1)(x+2)} &amp;= \left(-\frac{1}{n+1}\right) - \left(-\frac{1}{0+1}\right) \\
-&amp;= 1-\frac{1}{n+1}
+    \operatorname{Pr}\left[|X-\mathbb{E}[X]| \ge a\right] &amp;= \operatorname{Pr}\left[(X-\mathbb{E}[X])^2 \ge a^2\right] \\
+    &amp;\le \frac{\mathbb{E}\left[(X-\mathbb{E}[X])^2\right]}{a^2} \\
+    &amp;= \frac{\operatorname{Var}[X]}{a^2}
 \end{aligned}
-\]</span> 这不就是裂项吗？</p>
-<p>其实，通过归纳可以证明，任何整式多项式都可以被表示为若干个下降阶乘幂的线性组合（且方法是显然的）。且裂项公式的另类证明也说明幂法则在指数为负数的时候也可以使用。（对于复杂的分式，我们也可以待定系数拆着做）。</p>
-<h1 id="指数法则">指数法则</h1>
-<p>自然而然地，我们接下来探究指数函数（包括底数为负数）的差分与逆差分： <span class="math display">\[
-\frac{\mathrm{\delta} a^{x}}{\mathrm{\delta} x} = a^{x+1}-a^x=(a-1)a^x
-\]</span> 因此 <span class="math display">\[
-\sum a^x\mathrm{\delta} x=\frac{a^x}{a-1} + C ,\quad a\neq 1
-\]</span> （要验证？再差分一下）</p>
-<p>因此 <span class="math display">\[
-\sum_{x=0}^{n-1}a^x = \frac{a^n}{a-1} - \frac{a^0}{a-1} = \frac{a^n-1}{a-1} ,\quad a\neq 1
-\]</span> 啊，是非平凡等比数列的求和公式呢。</p>
-<p>刚刚的结论也可以稍作拓展： <span class="math display">\[
+\]</span> 注意到<span class="math inline">\(a^2&gt;0\)</span>且<span class="math inline">\((X-\mathbb{E}[X])^2\)</span>非负，因此我们可以在第二步使用马尔科夫不等式。</p>
+<p>如果我们不仅知道随机变量的期望（一阶矩），还知道其方差（二阶矩），那么切比雪夫不等式可以给出比马尔科夫不等式更为精确的上界。</p>
+<h2 id="切尔诺夫上界chernoff-bound">切尔诺夫上界（Chernoff Bound）</h2>
+<p>设随机变量<span class="math inline">\(X=\sum_{i=1}^n X_i\)</span>，其中<span class="math inline">\(X_1,\cdots,X_n\)</span>为<span class="math inline">\([0,1]\)</span>上互相独立的随机变量，则<span class="math inline">\(\forall t&gt;1\)</span>： <span class="math display">\[
+\operatorname{Pr}\left[|X - \mathbb{E}[X]| \ge t\mathbb{E}[X]\right] \le 2\exp\left(-\frac{t\mathbb{E}[X]}{3}\right)
+\]</span> 且<span class="math inline">\(\forall \epsilon \in (0,1]\)</span>： <span class="math display">\[
+\operatorname{Pr}\left[|X - \mathbb{E}[X]| \ge \epsilon\mathbb{E}[X]\right] \le 2\exp\left(-\frac{\epsilon^2\mathbb{E}[X]}{3}\right)
+\]</span> <em>加性切尔诺夫不等式（Additive Chernoff Bound）</em>：<span class="math inline">\(\forall b &gt;1\)</span>： <span class="math display">\[
+\operatorname{Pr}\left[|X - \mathbb{E}[X]| \ge b\right] \le 2\exp\left(-\frac{2b^2}{n}\right)
+\]</span></p>
+<h2 id="三个不等式给出上界的比较">三个不等式给出上界的比较</h2>
+<p>考虑如下问题：投<span class="math inline">\(n\)</span>次均质硬币，设随机变量<span class="math inline">\(X\)</span>表示头朝上的次数。估计<span class="math inline">\(\operatorname{Pr}\left[X\ge \frac{3n}{4}\right]\)</span>？</p>
+<p><strong>马尔科夫不等式：</strong></p>
+<p>显然，<span class="math inline">\(\mathbb{E}[X]=\frac{n}{2}\)</span>，且<span class="math inline">\(X\)</span>非负： <span class="math display">\[
+\operatorname{Pr}\left[X\ge \frac{3n}{4}\right] \le \frac{\frac{n}{2}}{\frac{3n}{4}} = \frac{2}{3}
+\]</span> 这个上界是很松的。</p>
+<p><strong>切比雪夫不等式：</strong></p>
+<p>设随机二元变量<span class="math inline">\(X_i\)</span>表示第<span class="math inline">\(i\)</span>次投是否头朝上，则显然<span class="math inline">\(X=\sum_{i=1}^nX_i\)</span>，且易得<span class="math inline">\(\operatorname{Var}[X_i]=\frac{1}{4}\)</span>，由于<span class="math inline">\(X_i\)</span>两两独立，则<span class="math inline">\(\operatorname{Var}[X]=\frac{n}{4}\)</span>，运用切比雪夫不等式： <span class="math display">\[
 \begin{aligned}
-\frac{\mathrm{\delta} a^{x+k}}{\mathrm{\delta} x} &amp;= (a-1)a^{x+k}\\ \sum a^{x+k}\mathrm{\delta} x&amp;=\frac{a^{x+k}}{a-1} + C
+    \operatorname{Pr}\left[X\ge \frac{3n}{4}\right] &amp;= \operatorname{Pr}\left[X - \frac{n}{2}\ge \frac{n}{4}\right] \\
+    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \frac{n}{2}\right|\ge \frac{n}{4}\right] \\
+    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \mathbb{E}[X]\right|\ge \frac{n}{4}\right] \\
+    &amp;\le \frac{1}{2} \frac{\frac{n}{4}}{\left(\frac{n}{4}\right)^2} \\
+    &amp;= \frac{2}{n}
 \end{aligned}
-\]</span> 同时可以注意下： <span class="math display">\[
-\frac{\mathrm{\delta} 2^x}{\mathrm{\delta} x} = 2^x, \sum2^x\mathrm{\delta} x=2^x+C
-\]</span> 这是一个有意思的现象：<span class="math inline">\(2^x\)</span>（或更为广义来讲，<span class="math inline">\(2^{x+k}\)</span>）的差分与逆差分等于其自身。这与微积分中<span class="math inline">\(e^x\)</span>的地位是相似的。</p>
-<h1 id="分部求和">分部求和</h1>
-<p>如果仅有指数法则和幂法则，那么这套方法其实并没有那么优秀（计算的式子我们常规方法也能算啊！）</p>
-<p>真正让这套方法威力大幅提升的，是分部求和。</p>
-<p>你也许知道分部积分是从微分的积法则变化而来的： <span class="math display">\[
-\begin {aligned}
-&amp;\frac{\mathrm{d}f(x)g(x)}{\mathrm{d}x} = f(x)\frac{\mathrm{d}g(x)}{\mathrm{d}x} + g(x)\frac{\mathrm{d}f(x)}{\mathrm{d}x} \\
-\Longleftrightarrow&amp; f(x)\frac{\mathrm{d}g(x)}{\mathrm{d}x} = \frac{\mathrm{d}f(x)g(x)}{\mathrm{d}x}- g(x)\frac{\mathrm{d}f(x)}{\mathrm{d}x}\\
-\Longleftrightarrow  &amp;\int f(x)\mathrm{d}g(x) = f(x)g(x) - \int g(x)\mathrm{d}f(x) \\
-\end{aligned}
-\]</span> （出于统一风格的需要没有用<span class="math inline">\(u,v\)</span>，写得繁复了一点）</p>
-<p>我们类比着探寻差分下的积法则： <span class="math display">\[
+\]</span> <strong>切尔诺夫上界：</strong></p>
+<p>显然，取<span class="math inline">\(\epsilon = \frac{1}{2}\)</span>： <span class="math display">\[
 \begin{aligned}
-    \frac{\mathrm{\delta} f(x)g(x)}{\mathrm{\delta} x} &amp;= f(x+1)g(x+1) - f(x)g(x) \\
-    &amp;= f(x+1)g(x+1)-f(x)g(x+1)+f(x)g(x+1)-f(x)g(x) \\
-    &amp;= f(x)[g(x+1) - g(x)] + g(x+1)[f(x+1)-f(x)] \\
-    &amp;= f(x)\frac{\mathrm{\delta} g(x)}{\mathrm{\delta} x} + g(x+1)\frac{\mathrm{\delta} f(x)}{\mathrm{\delta} x}
+    \operatorname{Pr}\left[X\ge \frac{3n}{4}\right] &amp;= \operatorname{Pr}\left[X - \frac{n}{2}\ge \frac{n}{4}\right] \\
+    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \frac{n}{2}\right|\ge \frac{n}{4}\right] \\
+    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \mathbb{E}[X]\right|\ge \frac{1}{2}\mathbb{E}[X]\right] \\
+    &amp;\le \exp\left(-\frac{1}{12}\cdot \frac{n}{2}\right)\\
+    &amp;= \exp\left(-\frac{n}{24}\right)
 \end{aligned}
-\]</span> 因此 <span class="math display">\[
-\sum f(x) \mathrm{\delta} g(x) = f(x)g(x)-\sum g(x+1)\mathrm{\delta} f(x)
-\]</span> (<span class="math inline">\(\sum f(x) \mathrm{\delta} g(x) = \sum f(x)\frac{\mathrm{\delta} g(x)}{\cancel{\mathrm{\delta} x}} \cancel{\mathrm{\delta} x}\)</span>，虽然不是直接“约分”，但是是一种简便的记号)</p>
-<p>这便是逆差分当中的<strong>分部求和</strong>方法。</p>
-<p>怎么用？</p>
-<p>比如说我们要计算： <span class="math display">\[
-\sum x^22^x \mathrm{\delta} x
-\]</span> 那么令<span class="math inline">\(f(x)=x^2,\frac{\mathrm{\delta} g(x)}{\mathrm{\delta} x} = 2^x \Rightarrow g(x)=2^x\)</span>: <span class="math display">\[
+\]</span> 各上界的效果：</p>
+<p><img src="/2021/07/25/PACT0629/Bounds.png" class=""></p>
+<p>看来这个例子里面还是切比雪夫不等式给出的上界最好——是不是切尔诺夫上界我学到的形式本身太loose了？</p>
+<h1 id="近似算法初步">近似算法初步</h1>
+<h2 id="定义">定义</h2>
+<p>若算法<span class="math inline">\(A\)</span>满足以下条件，则称算法<span class="math inline">\(A\)</span>是某个问题（不妨假设是最小化问题）的<span class="math inline">\(\alpha\)</span>近似比的近似算法：</p>
+<ol type="1">
+<li><span class="math inline">\(A\)</span>是多项式时间的。</li>
+<li>对于所有输入，<span class="math inline">\(A\)</span>的输出<span class="math inline">\(\operatorname{soln}(A) \le \alpha \cdot\mathrm{OPT}\)</span>，其中<span class="math inline">\(\mathrm{OPT}\)</span>是该输入的最优解。</li>
+</ol>
+<p><em>对于最大化问题，第二个条件为<span class="math inline">\(\operatorname{soln}(A) \ge \frac{1}{\alpha} \cdot\mathrm{OPT}\)</span></em>。</p>
+<p>（继续假设是最小化问题）</p>
+<p>显然，为了精确计算<span class="math inline">\(\alpha\)</span>我们必须知道<span class="math inline">\(\mathrm{OPT}\)</span>，而这显然是不现实的（如果可以我还要近似算法干嘛？），因此我们退而求其次寻找<span class="math inline">\(\mathrm{OPT}\)</span>的一个比较紧的<strong>下界</strong>，我们的解与该下界之比自然就是<span class="math inline">\(\alpha\)</span>的上界了。</p>
+<h2 id="例最小顶点覆盖问题">例：最小顶点覆盖问题</h2>
+<p><strong>输入：</strong><span class="math inline">\(G=(V,E)\)</span></p>
+<p><strong>目标：</strong>最小化点集<span class="math inline">\(S\subseteq V\)</span>，同时满足<span class="math inline">\(\forall (u,v) \in E\)</span>，<span class="math inline">\(u\in S\)</span>或<span class="math inline">\(v \in S\)</span>。</p>
+<p>这是一个知名的NP Complete问题。在这里我们设计一个简单的<span class="math inline">\(2\)</span>近似算法。然而令人吃惊地是，<span class="math inline">\(2\)</span>的近似比已经是我们目前能够做到的最好结果！</p>
+<p><strong>思路：</strong>考虑<span class="math inline">\(G\)</span>的一个<strong>极大匹配</strong>，显然极大匹配是可以在多项式时间内求出的。</p>
+<p>同时注意到，任意无向图极大匹配的大小必定是其点覆盖集大小的下界，因为点覆盖必须取极大匹配当中每一条边的至少一个端点才能完成覆盖！</p>
+<p><strong>算法：</strong></p>
+<ol type="1">
+<li>计算<span class="math inline">\(G\)</span>的一个极大匹配<span class="math inline">\(M\)</span>。</li>
+<li>取极大匹配所有边的所有端点为<span class="math inline">\(S\)</span>。</li>
+</ol>
+<p><strong>为什么正确？</strong>考虑反证：若<span class="math inline">\(\exists (u,v) \in E\)</span>，使<span class="math inline">\(u\not\in S\)</span>且<span class="math inline">\(v \not \in S\)</span>，那显然边<span class="math inline">\((u, v)\)</span>还可以加入<span class="math inline">\(M\)</span>，这和<span class="math inline">\(M\)</span>的极大性是矛盾的。</p>
+<p>近似比证明： <span class="math display">\[
 \begin{aligned}
-\sum x^22^x \mathrm{\delta} x = \sum x^2 \mathrm{\delta}2^x&amp;=x^22^x- \sum 2^{x+1}\mathrm{\delta} x^2 \\
-&amp;= x^22^x- \sum 2^{x+1}(2x+1)\mathrm{\delta} x \\
-&amp;= x^22^x - \sum 2^{x+1}\mathrm{\delta} x - 2\sum x2^{x+1}\mathrm{\delta} x \\
-&amp;= x^22^x - 2^{x+1} - 4\sum x2^x\mathrm{\delta} x
+    |S| = 2|M| \le 2\cdot \mathrm{OPT}
 \end{aligned}
-\]</span> 再来，令<span class="math inline">\(f(x) = x,\frac{\mathrm{\delta} g(x)}{\mathrm{\delta} x} = 2^x \Rightarrow g(x)=2^x\)</span>： <span class="math display">\[
-\begin{aligned}
-\sum x2^x\mathrm{\delta} x &amp;= x2^x- \sum 2^{x+1} \mathrm{\delta} x \\
-&amp;= x2^x - 2^{x+1} + C \\
-\end{aligned}
-\]</span> 代回去： <span class="math display">\[
-\begin{aligned}
-\sum x^22^x \mathrm{\delta} x &amp;= x^22^x - 2^{x+1} - 4\left(x2^x - 2^{x+1}\right) + C \\
-&amp;=(x^2-4x+6)2^x+C
-\end{aligned}
-\]</span> 然后上下界就按需求随意加好了~</p>
-<p>（<span class="math inline">\(g(x)=2^x+C\)</span>的时候推导还成立吗？要不要考虑呢？）</p>
-<h1 id="换元求和"><del>换元求和</del></h1>
-<p>你也许会想</p>
-<blockquote>
-<p>既然我们都把分部积分类比到了分部求和，那么再把换元积分类比到换元求和岂不美哉？</p>
-</blockquote>
-<p>很遗憾，这在通常意义上是不可以的。</p>
+\]</span> 得证。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/PACT0630/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/07/25/PACT0630/" class="post-title-link" itemprop="url">PACT 06/30 $k$中心问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-07-11 23:17:28" itemprop="dateModified" datetime="2020-07-11T23:17:28-04:00">2020-07-11</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="定义">定义</h1>
+<p>定义所谓<span class="math inline">\(k\)</span>中心问题为：</p>
+<p><strong>输入：</strong>完全图<span class="math inline">\(G=(V,E)\)</span>，边带正权，且满足三角不等式<span class="math inline">\(w_{uv} \le w_{uk} + w_{kv}\)</span>，以及一个正整数<span class="math inline">\(k\)</span>。</p>
+<p><strong>目标：</strong>求一个点集<span class="math inline">\(|S|=k\)</span>（称为<span class="math inline">\(k\)</span>个中心），定义一个点到一个点集的距离 <span class="math display">\[
+d(u,S) = \min_{v\in S} w_{uv}
+\]</span> （显然，如果满足三角不等式，那么任意两点之间的最短距离就是直接连接两点的边权）</p>
+<p>要求最小化<span class="math inline">\(\max_{u\in V} d(u,S)\)</span>。即所有顶点到这<span class="math inline">\(k\)</span>个中心的<strong>最短路程的最大值</strong>（不妨称之为这个这个<span class="math inline">\(k\)</span>中心的<strong>代价</strong>）最小。</p>
+<h1 id="近似算法1gonzalez">近似算法1（Gonzalez）</h1>
+<h2 id="算法">算法</h2>
+<ol type="1">
+<li>任意选取一个顶点并将其加入<span class="math inline">\(S\)</span>。</li>
+<li>选取离当前<span class="math inline">\(S\)</span>最远的顶点加入<span class="math inline">\(S\)</span>。</li>
+<li>重复步骤2直至<span class="math inline">\(|S|=k\)</span>。</li>
+</ol>
+<p>第2步的操作是非常合乎直觉的：如果不把离<span class="math inline">\(S\)</span>最远的顶点加入<span class="math inline">\(S\)</span>的话，这条最远的边权就可能会被计入答案当中，这显然是不合算的，而如果将这个最远点作为新的中心，那么这条最远边就必定不会被计入答案。</p>
+<h2 id="分析">分析</h2>
+<p>这个算法给出方案的代价是什么？在这个算法的背景下，我们不妨说：<em>这个算法结果的代价是如果不跳出循环，下一个选取的中心到当前<span class="math inline">\(S\)</span>的距离</em>（依据第2步）。假设这个中心为<span class="math inline">\(x\)</span>，我们不妨画图：</p>
+<p><img src="/2021/07/25/PACT0630/Analysis1.jpg" class=""></p>
+<p>其中左边的<span class="math inline">\(S\)</span>是我们的解，右边是最优解（我们这里把他们化成了不重叠的形式，事实上有重叠对于我们的论证也不造成影响）。</p>
+<p>我们的解加上<span class="math inline">\(x\)</span>总共有<span class="math inline">\(k+1\)</span>个点，最优解有<span class="math inline">\(k\)</span>个点，因此由抽屉原理，至少左边有两个点，它们在最优解中的最近点是相同的（即图中的两条横叉边），且由于是最优解，两条边的长度都<span class="math inline">\(\le \mathrm{OPT}\)</span>。</p>
+<p>不妨设这两个点为<span class="math inline">\(u,v\)</span>，由三角不等式，可以得出<span class="math inline">\(w_{uv}\le2\cdot\mathrm{OPT}\)</span>。</p>
+<p>接下来不妨假设<span class="math inline">\(u,v\)</span>中的后来者为<span class="math inline">\(v\)</span>，为什么当时我们选择<span class="math inline">\(v\)</span>而不是<span class="math inline">\(x\)</span>加入<span class="math inline">\(S\)</span>呢？肯定是因为当时<span class="math inline">\(d(v,S)\ge d(x,S)\)</span>。而由<span class="math inline">\(d(v,S)\)</span>的定义可知，<span class="math inline">\(d(v,S)\le w_{uv}\)</span>，且由于随着<span class="math inline">\(S\)</span>的变大，<span class="math inline">\(d(x,S)\)</span>不增，因此我们解的代价（即现在的<span class="math inline">\(d(x,S)\)</span>）一定也是不大于当时的<span class="math inline">\(d(v,S)\)</span>。将这些不等式串联起来，便得到： <span class="math display">\[
+d(x,S) \le w_{uv} \le 2\cdot \mathrm{OPT}
+\]</span> 也就是说这个算法的近似比为<span class="math inline">\(2\)</span>。</p>
+<h1 id="近似算法2hochbaum-shmoys">近似算法2（Hochbaum &amp; Shmoys）</h1>
+<h2 id="算法-1">算法</h2>
+<p>我们不妨<strong>假设我们已经知道了最优解的代价</strong><span class="math inline">\(\mathrm{OPT}\)</span>，那么我们要怎么做呢？</p>
+<ol type="1">
+<li>我们选取任意顶点<span class="math inline">\(u_1\)</span>加入中心，并以为中心画一个半径为的球，钦定球内的所有点归<span class="math inline">\(u_1\)</span>。</li>
+<li>我们接着选取一个在这个球以外的一个顶点<span class="math inline">\(u_2\)</span>加入中心，并以<span class="math inline">\(u_2\)</span>为中心画一个半径为<span class="math inline">\(2\cdot \mathrm{OPT}\)</span>的球，钦定球里面的点归<span class="math inline">\(u_2\)</span>。</li>
+<li>我们接着选取一个在<span class="math inline">\(u_1\)</span>和<span class="math inline">\(u_2\)</span>的球外的点<span class="math inline">\(u_3\)</span>作为中心……</li>
+<li>重复上述步骤，直至图上的所有点都归一个至多<span class="math inline">\(2\cdot \mathrm{OPT}\)</span>远处的中心管。</li>
+</ol>
+<p>画在图上大概是这样的：</p>
+<p><img src="/2021/07/25/PACT0630/HS.jpg" class=""></p>
+<p>可以看到，可能会有点同时处在多个中心的“势力范围”之内，但这并不重要，我们只需要确保每个点离最近的一个中心至多<span class="math inline">\(2\cdot \mathrm{OPT}\)</span>那么远就行了。</p>
+<h2 id="分析-1">分析</h2>
+<p>我们接下来证明这是一个<span class="math inline">\(2\)</span>近似算法。算法本身的流程确保了<span class="math inline">\(2\)</span>的近似比，因此唯一需要证明的就是这个算法产生的中心不超过要求的<span class="math inline">\(k\)</span>个。</p>
+<p>不妨反证：如果产生了超过<span class="math inline">\(k\)</span>个中心呢？</p>
+<p><img src="/2021/07/25/PACT0630/Analysis2.jpg" class=""></p>
+<p>那么根据抽屉原理，至少有两个中心在最优解中的最近点是相同的（这和我们分析第一个算法时的逻辑是完全相同的），由三角不等式，这两个中心之间的距离<span class="math inline">\(\le 2\cdot \mathrm{OPT}\)</span>。但是根据算法，中心之间两两距离应该大于<span class="math inline">\(2\cdot \mathrm{OPT}\)</span>，这就产生了矛盾。</p>
+<p>因此必定不会有超过<span class="math inline">\(k\)</span>个中心，证毕。</p>
+<p>还剩下来一个问题：这个算法假定我们知道<span class="math inline">\(\mathrm{OPT}\)</span>，但是实际上我们不知道啊！</p>
+<p>但是我们知道<span class="math inline">\(\mathrm{OPT}\)</span><em>一定是某一条边的边权</em>，因此我们只需要按边权从小到大<strong>枚举每一条边，把边权当做<span class="math inline">\(\mathrm{OPT}\)</span>试试看</strong>，如果产生超过<span class="math inline">\(k\)</span>个中心那必然不是<span class="math inline">\(\mathrm{OPT}\)</span>（这是我们推论的逆否），而反之则可能就是<span class="math inline">\(\mathrm{OPT}\)</span>（但无论如何，事实上是<span class="math inline">\(\mathrm{OPT}\)</span>的那条边一定是没有问题的）。因为我们在这里只在意是否是多项式时间复杂度而不在意复杂度本身，而枚举边自然是多项式时间的，因此没有任何问题（当然，在实现过程中可以考虑使用二分，但这就是后话了）。</p>
+<h1 id="近似比可以更好吗">近似比可以更好吗？</h1>
+<p><strong>定理：</strong>如果存在一个多项式时间的，近似比<span class="math inline">\(&lt;2\)</span>的<span class="math inline">\(k\)</span>中心问题的近似算法，那么<span class="math inline">\(\mathsf{P}=\mathsf{NP}\)</span>。</p>
+<p><strong>证明：</strong>考虑<em>最小支配集问题</em>的判定形式：</p>
+<p><strong>输入：</strong>无向图<span class="math inline">\(G=(V,E)\)</span>以及正整数<span class="math inline">\(k\)</span>。</p>
+<p><strong>判定：</strong>是否存在一个大小为<span class="math inline">\(k\)</span>的支配集？支配集定义为一个点集<span class="math inline">\(S\subseteq V\)</span>，使得<span class="math inline">\(\forall u\in V\)</span>，要么<span class="math inline">\(u\in S\)</span>或者<span class="math inline">\(u\)</span>的邻居<span class="math inline">\(\in S\)</span>。</p>
+<p>最小支配集问题是NPC的。我们接下来将其规约到<span class="math inline">\(k\)</span>中心问题（也是判定形式）：</p>
+<p><strong>输入：</strong>完全图<span class="math inline">\(G&#39;\)</span>，正整数<span class="math inline">\(k,b\)</span>。</p>
+<p><strong>判定：</strong>是否存在一个代价<span class="math inline">\(\le b\)</span>的<span class="math inline">\(k\)</span>中心的方案？</p>
+<p>如何规约？不难想到，我们可以让<span class="math inline">\(G\)</span>与<span class="math inline">\(G&#39;\)</span>用相同的点集，而对于所有在<span class="math inline">\(G\)</span>中的边，其在<span class="math inline">\(G&#39;\)</span>中的边权为<span class="math inline">\(1\)</span>。而对于所有不在<span class="math inline">\(G\)</span>中的边，其在<span class="math inline">\(G&#39;\)</span>中的边权为<span class="math inline">\(2\)</span>（为什么是<span class="math inline">\(2\)</span>？直觉上我们会首先想到<span class="math inline">\(\infty\)</span>，但是这样就不满足三角不等式了，因此改成<span class="math inline">\(2\)</span>）。令两个问题当中的<span class="math inline">\(k\)</span>相等，且<span class="math inline">\(b=1\)</span>，我们就完成了规约。</p>
 <p>为什么？</p>
-<p>因为换元积分逆用的是微分的链式法则。</p>
-<p>差分有链式法则吗？ <span class="math display">\[
-\begin{aligned}
-    \frac{\mathrm{\delta} f[g(x)]}{\mathrm{\delta} x} &amp;= f[g(x+1)] - f[g(x)] \\
-    &amp;\stackrel{?}{=} \left\{f[g(x)+1]-f[g(x)]\right\}[g(x+1)-g(x)] \\
-    &amp;= \frac{\mathrm{\delta} f[g(x)]}{\mathrm{\delta} g(x)} \cdot \frac{\mathrm{\delta} g(x)}{\mathrm{\delta} x}
-\end{aligned}
-\]</span> 打问号的那一步是推不过来的，除非<span class="math inline">\(g(x+1)=g(x)+1 \Longleftrightarrow \frac{\mathrm{\delta} g(x)}{\mathrm{\delta} x} = 1\)</span>。在这种特例条件下，<span class="math inline">\(g(x)=x+C\)</span>，也就是说我们只能在这样形式的<span class="math inline">\(g(x)\)</span>上应用链式法则/换元求和——这个形式不就是平移吗？</p>
-<p>而在其他形式的<span class="math inline">\(g(x)\)</span>当中，正如我们所看到的一样，推不过去。</p>
-<p>其实，我们没有必要将所有微积分里面的要素全部类比到我们的体系里面。比如说，微分的链式法则与商法则之所以必要是因为微分按照定义计算十分繁琐，而差分的定义本身就可以用来进行计算，因而不需要链式法则与商法则。类似地，微积分里面一些关于三角的技巧也不用，也不能类比到我们的框架当中，因为在离散的情况很难对待三角。</p>
-<h1 id="小结">小结</h1>
-<p>这篇文章给大家分享了一整套可以用来机械化一部分求和计算的方法,并在此方法框架内推导了我们所学过的许多求和公式。这个方法精彩且难能可贵的是，这个方法完全是借助于<strong>类比</strong>的思想借鉴微积分体系建立起来的。因而如果同学们有关于微积分的了解，那么会发现知识的迁移可以很快完成。这种类比的方法是我们数学学习过程中应该提倡的。</p>
-<blockquote>
-<p>这套方法有名字吗？</p>
-</blockquote>
-<p>《具体数学》当中称该方法为“有限微积分”，我个人认为“离散微积分”更为恰当，但是既然是离散的，那么“微”和“积”自然无从说起，我个人一直想回避给这个方法命名（<del>就是一个微积分的类比又不是什么开拓性创新有啥好命名的</del>）。</p>
-<blockquote>
-<p>考试/作业可以用吗？</p>
-</blockquote>
-<p>我觉得肯定是不行的。首先我确信考试或者作业大概率不会出这种求和。其次我确定很多人并没有听说过这个方法。再其次这套方法和其他技巧还不大一样，是成体系的，所以如果你要用也要像这篇文章一样从头开始定义差分写一大堆。然而如果真的碰到了这样的题目，你当然……可以……在草稿纸上……假装是灵光一闪得到答案……然后归纳证明对吧……我觉得老师大概也不会拿你怎么样？</p>
-<h1 id="调和级数与自然对数"><em>调和级数与自然对数</em></h1>
-<p>这里只是对于幂法则的一个简要补充，可以跳过。</p>
-<p>你也许注意到，正如积分的幂法则一样，我们逆差分的幂法则规定指数不能为<span class="math inline">\(-1\)</span>。原因显然。</p>
-<p>那指数<span class="math inline">\(-1\)</span>怎么办呢？</p>
-<p>你也许知道 <span class="math display">\[
-\int_1^n x^{-1}\mathrm{d}x=\ln n
-\]</span> 那类比着不妨看看 <span class="math display">\[
-\sum_{x=0}^{n-1} x^{\underline{-1}} = \frac{1}{1}+\frac{1}{2}+\cdots+\frac{1}{n}=?
-\]</span> 这不是调和级数吗？这和<span class="math inline">\(\ln n\)</span> 看起来一点都不像啊！然而，可以证明， <span class="math display">\[
-\lim_{n\to\infty} \left(- \ln n + \sum_{x=1}^n \frac{1}{x}\right) = \gamma \approx 0.57722
-\]</span> <span class="math inline">\(\gamma\)</span>被称作欧拉-马歇罗尼常数。当然这和这篇文章的主题已经一点关系都没有了，权当是对于指数为<span class="math inline">\(-1\)</span>情况的探究与补全吧。</p>
-<h1 id="bonus"><em>Bonus</em></h1>
-<p>暑假里刷计算机竞赛的时候小马碰到一道神奇的数列题。当时所有人都是打表找规律做的（计算机竞赛日常，你写出程序就行），但是我一直很好奇有没有严谨的推导。数列是这个样子的： <span class="math display">\[
-\begin{aligned}
-    a_1 &amp;= 1 \\
-    a_n &amp;= \left(\sum_{i=1}^{n-1} i\cdot a_i\right) \bmod n ,\quad n\ge2, n\in \mathbb{N^{\ast}}
-\end{aligned}
-\]</span> 求<span class="math inline">\(a_n\)</span>的通项公式。我趁这篇文章的机会问问各位大佬有没有想法，有的话可以和我分享一下。</p>
+<p>在这样的规约下，一个在<span class="math inline">\(G\)</span>中的支配集必然对应一个<span class="math inline">\(G&#39;\)</span>当中代价为<span class="math inline">\(1\)</span>的相同大小的<span class="math inline">\(k\)</span>中心，反之亦然。</p>
+<p>也就是说，如果我们可以解决这个规约后的<span class="math inline">\(k\)</span>中心问题，那么我们就能解决原来的最小支配集问题了。</p>
+<p>这个时候就可以看出为什么近似比<span class="math inline">\(&lt;2\)</span>的近似算法牛逼了：</p>
+<ol type="1">
+<li>如果<span class="math inline">\(G\)</span>当中有符合要求的支配集，那么<span class="math inline">\(k\)</span>中心的<span class="math inline">\(\mathrm{OPT}=1\)</span>，而由于近似比<span class="math inline">\(&lt;2\)</span>且边权只有<span class="math inline">\(1,2\)</span>，因此即使是近似算法也会次次给出<span class="math inline">\(1\)</span>。</li>
+<li>如果<span class="math inline">\(G\)</span>当中没有符合要求的支配集，那么<span class="math inline">\(k\)</span>中心的<span class="math inline">\(\mathrm{OPT} = 2\)</span>，而由于近似比<span class="math inline">\(&lt;2\)</span>且边权只有<span class="math inline">\(1,2\)</span>，因此即使是近似算法也只能给出<span class="math inline">\(2\)</span>。</li>
+</ol>
+<p>如此说来，即使是近似算法，通过判断输出代价是<span class="math inline">\(1\)</span>还是<span class="math inline">\(2\)</span>我们就能判断<span class="math inline">\(G\)</span>中有没有大小<span class="math inline">\(k\)</span>的支配集。而这个近似算法是多项式时间的，因此我们可以用多项式时间解决支配集问题这么一个NPC问题，即<span class="math inline">\(P=NP\)</span>。</p>
+<p>刚刚用到的这个技巧被称为“gap reduction”。</p>
+<p>整个定理的言下之意就是如果你也相信<span class="math inline">\(\mathsf{P}\neq \mathsf{NP}\)</span>，那么就可以洗洗睡了~</p>
 
       
     </div>
@@ -1304,7 +675,7 @@ x^2 = x^{\underline 2} + x^{\underline 1}
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/08/28/BZOJ2085/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/NTT/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -1317,7 +688,7 @@ x^2 = x^{\underline 2} + x^{\underline 1}
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/08/28/BZOJ2085/" class="post-title-link" itemprop="url">BZOJ 2085</a>
+          <a href="/2021/07/25/NTT/" class="post-title-link" itemprop="url">NTT笔记</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1328,14 +699,14 @@ x^2 = x^{\underline 2} + x^{\underline 1}
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2019-08-28 00:00:00" itemprop="dateCreated datePublished" datetime="2019-08-28T00:00:00+08:00">2019-08-28</time>
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-12-08 21:39:01" itemprop="dateModified" datetime="2019-12-08T21:39:01+08:00">2019-12-08</time>
+        <time title="修改时间：2019-02-03 22:58:48" itemprop="dateModified" datetime="2019-02-03T22:58:48-05:00">2019-02-03</time>
       </span>
 
   
@@ -1348,107 +719,209 @@ x^2 = x^{\underline 2} + x^{\underline 1}
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>本地笔记整理重发，原文写于2019/8/28，2019/12/8上传</p>
-<h1 id="分析">分析</h1>
-<p>首先使用哈希计算字符串两两之间的overlap，这个的时间复杂度不是特别显然： <span class="math display">\[
-\sum_{i=1}^n\sum_{j=1}^n\min\{a_i,a_j\}
-\]</span> 其中<span class="math inline">\(a_i, a_j\)</span>分别是第<span class="math inline">\(i\)</span>个和第<span class="math inline">\(j\)</span>个字符串的长度。假设<span class="math inline">\(a_i\)</span>从小到大排了序，那么就变为： <span class="math display">\[
-\sum_{i=1}^n \left[\sum_{j=1}^ia_j+(n-i)a_i\right]
-\]</span> 这样每一个<span class="math inline">\(a_i\)</span>都会被计算<span class="math inline">\(n-i+1+n-i=2n-2i+1\)</span>次，则时间复杂度为： <span class="math display">\[
-\begin{aligned}
-\sum_{i=1}^n (2n-2i+1)a_i
-\end{aligned}
-\]</span> 显然这个时候越前面的<span class="math inline">\(a_i\)</span>越大越好，但是<span class="math inline">\(a_i\)</span>是递增的，所以极限情况是各<span class="math inline">\(a_i\)</span>相等取最大值，时间复杂度就是<span class="math inline">\(O\left(n\sum_{i=1}^na_i\right)\)</span>。</p>
-<p>然后Floyd 矩阵乘法即可。</p>
-<p><del>双哈希大法好</del></p>
-<p><del>卡常Nice</del></p>
+          <p>NTT的思想与FFT类似，但是避免了浮点数运算带来的精度问题。</p>
+<h1 id="原根">原根</h1>
+<p><strong>定义：</strong>设<span class="math inline">\(m &gt; 1\)</span>且<span class="math inline">\(\gcd(a, m) = 1\)</span>，使得<span class="math inline">\(a^d \equiv 1 \pmod m\)</span>的最小<span class="math inline">\(d\)</span>称为<span class="math inline">\(a\)</span>模<span class="math inline">\(m\)</span>的<strong>阶</strong>，记作<span class="math inline">\(d = \delta_m(a)\)</span>。</p>
+<p><strong>定理：</strong>显然，对于所有<span class="math inline">\(a^d \equiv 1 \pmod m\)</span>，都有<span class="math inline">\(\delta_m(a) \mid d\)</span>。</p>
+<p>同时根据欧拉定理我们有 <span class="math display">\[
+a^{\varphi(m)} \equiv 1 \pmod m
+\]</span> 因此有<span class="math inline">\(\delta_m(a) \mid \varphi(m)\)</span>。</p>
+<p><strong>定义：</strong>若<span class="math inline">\(\delta_m(g) = \varphi(m)\)</span>则称<span class="math inline">\(g\)</span>为模<span class="math inline">\(m\)</span>意义下的<strong>原根</strong>。</p>
+<p><span class="math inline">\(m​\)</span>存在原根当且仅当<span class="math inline">\(m = 2,4,p^n, 2p^n​\)</span>，其中<span class="math inline">\(p​\)</span>为奇素数，<span class="math inline">\(n \in \mathbb{Z}​\)</span>。</p>
+<p><strong>原根的意义：</strong>如果<span class="math inline">\(m\)</span>存在原根<span class="math inline">\(g\)</span>，那<span class="math inline">\(g^0, g^1, g^2, \cdots, g^{\varphi(m) - 1}\)</span>恰能表示所有<span class="math inline">\(\varphi(m)\)</span>个与<span class="math inline">\(m\)</span>互素的数，且构成<span class="math inline">\(m\)</span>的简化剩余系。</p>
+<p><strong>原根的计算方法：</strong>原根只有<span class="math inline">\(\varphi(\varphi(m))\)</span>个，因此只要枚举即可。</p>
+<h1 id="ntt">NTT</h1>
+<p>NTT中使用单位原根代替单位复数根进行计算，单位原根定义为： <span class="math display">\[
+g_n = g^{\varphi(p) / n} = g^{(p - 1)/n}
+\]</span> 其中<span class="math inline">\(g\)</span>为模素数<span class="math inline">\(p\)</span>的原根。</p>
+<p>显然<span class="math inline">\(g_n\)</span>有与单位负数根类似的性质： <span class="math display">\[
+g_n^n = g^{p - 1} \equiv 1 \pmod p
+\]</span> 又因为<span class="math inline">\(\left(g_n^{n / 2}\right)^2 \equiv 1 \pmod p\)</span>以及一些二次剩余的知识，<span class="math inline">\(g_n^{n / 2} \bmod p\)</span>只可能是<span class="math inline">\(\pm 1\)</span>，又因为原根的性质 <span class="math display">\[
+g_n^{n / 2} \equiv -1 \pmod p
+\]</span> 同时，观察<span class="math inline">\(g_n\)</span>的定义，易证<span class="math inline">\(g_{2n}^{2k} = g_n^k\)</span>（折半引理），原根具备所有FFT中利用的单位复数根的性质，因此也可以使用单位原根进行FFT，得到的算法就是NTT（Number Theoretic Transform），NTT适用于整数序列的变换，且精度与数值稳定性较FFT更优。</p>
+<p>代码：</p>
 <pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
 #include &lt;algorithm&gt;
-#include &lt;vector&gt;
-#include &lt;cstring&gt;
 
 using namespace std;
-const int MOD1 = 998244353, MOD2 = 1e9 + 7;
-const int EPS = 26;
-const int N = 210;
-const int S = 100010;
+const int MOD = 998244353;
+const int N = 270000;
+const int G = 3, INVG = 332748118;
 typedef long long ll;
-typedef pair&lt;int, int&gt; hsh;
-int n, m;
-vector&lt;hsh&gt; h[N];
-hsh p[S];
-inline hsh operator +(const hsh &amp;a, const hsh &amp;b) &#123;
-    hsh ret = make_pair(a.first + b.first, a.second + b.second);
-    if (ret.first &gt;= MOD1) ret.first -= MOD1;
-    if (ret.second &gt;= MOD2) ret.second -= MOD2;
-    return ret;
-&#125;
-inline hsh operator -(const hsh &amp;a, const hsh &amp;b) &#123;
-    hsh ret = make_pair(a.first - b.first, a.second - b.second);
-    if (ret.first &lt; 0) ret.first += MOD1;
-    if (ret.second &lt; 0) ret.second += MOD2;
-    return ret;
-&#125;
-inline hsh operator +(const hsh &amp;a, char b) &#123;
-    int c = b - &#39;a&#39;;
-    return make_pair(((ll)a.first * EPS + c) % MOD1, 
-            ((ll)a.second * EPS + c) % MOD2);
-&#125;
-inline hsh operator *(const hsh &amp;a, const hsh &amp;b) &#123;
-    return make_pair((ll)a.first * b.first % MOD1, 
-            (ll)a.second * b.second % MOD2);
-&#125;
-inline hsh cut(int i, int l, int r) &#123;
-    return h[i][r] - h[i][l] * p[r - l];    
-&#125;
-inline int intersect(int a, int b) &#123;
-    int la = h[a].size() - 1, lb = h[b].size() - 1;
-    int lim = a == b ? la - 1 : min(la, lb);
-    int ret = 0;
-    for (int i = 1; i &lt;= lim; i++)
-        if (cut(a, la - i, la) == cut(b, 0, i)) ret = i;
-    return ret;
-&#125;
-struct floyd &#123;
-    ll d[N][N];
-    floyd() &#123; memset(d, 0x3f, sizeof d); &#125;
-    ll *operator [](int x) &#123; return d[x]; &#125;
-    const ll *operator [](int x) const &#123; return d[x]; &#125;
-    floyd operator *(const floyd &amp;b) const &#123;
-        floyd ret;
-        for (int k = 1; k &lt;= n; k++)
-            for (int i = 1; i &lt;= n; i++)
-                for (int j = 1; j &lt;= n; j++) 
-                    ret[i][j] = min(ret[i][j], d[i][k] + b[k][j]);
-        return ret;
+int n, m; 
+ll a[N], b[N];
+
+ll qpow(ll x, ll y) &#123;
+    ll ret = 1;
+    for (; y; y &gt;&gt;= 1) &#123;
+        if (y &amp; 1) ret = ret * x % MOD;
+        x = x * x % MOD;
     &#125;
-&#125; f;
+    return ret;
+&#125;
+
+void ntt(int len, ll *x, int dir = 1) &#123;
+    static ll X[N];
+    for (int i = 0, k = 0; i &lt; len; i++) &#123;
+        X[i] = x[k];
+        int y = len &gt;&gt; 1;
+        while (y &amp; k) k ^= y, y &gt;&gt;= 1;
+        k |= y;
+    &#125;
+    for (int s = 2; s &lt;= len; s &lt;&lt;= 1) &#123;
+        ll w_ = qpow(G, (MOD - 1) / s);
+        if (dir == -1) w_ = qpow(w_, MOD - 2);
+        for (int l = 0; l &lt; len; l += s) &#123;
+            int mid = l + (s &gt;&gt; 1);
+            ll w = 1;
+            for (int i = 0; i &lt; s &gt;&gt; 1; i++) &#123;
+                ll t = w * X[mid + i] % MOD;
+                X[mid + i] = (X[l + i] - t) % MOD;
+                X[l + i] = (X[l + i] + t) % MOD;
+                w = w * w_ % MOD;
+            &#125;
+        &#125;
+    &#125;
+    copy(X, X + len, x);
+&#125;
+
 int main() &#123;
     scanf(&quot;%d%d&quot;, &amp;n, &amp;m);
-    int maxlen = 0;
-    for (int i = 1; i &lt;= n; i++) &#123;
-        static char tmp[S]; scanf(&quot;%s&quot;, tmp + 1);
-        int len = strlen(tmp + 1);
-        maxlen = max(maxlen, len);
-        h[i].push_back(make_pair(0, 0));
-        for (int j = 1; j &lt;= len; j++)
-            h[i].push_back(h[i].back() + tmp[j]);
-    &#125;
-    p[0] = make_pair(1, 1);
-    for (int i = 1; i &lt;= maxlen; i++) p[i] = p[i - 1] * make_pair(EPS, EPS);
-    for (int i = 1; i &lt;= n; i++)
-        for (int j = 1; j &lt;= n; j++) 
-            f[i][j] = h[j].size() - 1 - intersect(i, j);
-    floyd ans; for (int i = 1; i &lt;= n; i++) ans[i][i] = h[i].size() - 1;
-    int y = m - 1;
+    for (int i = 0; i &lt;= n; i++) scanf(&quot;%lld&quot;, &amp;a[i]);
+    for (int i = 0; i &lt;= m; i++) scanf(&quot;%lld&quot;, &amp;b[i]);
+    int sz = 1; while (sz &lt; n + m + 1) sz &lt;&lt;= 1;
+    ntt(sz, a); ntt(sz, b);
+    for (int i = 0; i &lt; sz; i++) printf(&quot;%lld %lld\n&quot;, a[i], b[i]);
+    for (int i = 0; i &lt; sz; i++) a[i] = a[i] * b[i] % MOD;
+    ntt(sz, a, -1); ll inv = qpow(sz, MOD - 2);
+    for (int i = 0; i &lt; n + m + 1; i++)
+        printf(&quot;%lld &quot;, (a[i] * inv % MOD + MOD) % MOD);
+    puts(&quot;&quot;);
+    return 0;
+&#125; </code></pre>
+<h1 id="常用的ntt素数">常用的NTT素数</h1>
+<p>NTT所用的素数应该满足什么条件呢？观察<span class="math inline">\(g_n\)</span>的定义显然我们期望对于一定范围内的<span class="math inline">\(k\)</span>（比如说<span class="math inline">\(2^k \le 2\times 10^5\)</span>）都最好有<span class="math inline">\(2^k \mid p-1\)</span>。即<span class="math inline">\(p = a\times 2^k +1\)</span>的形式。</p>
+<p>常见的NTT素数为：</p>
+<ol type="1">
+<li><span class="math inline">\(998244353 = 7\times 17\times 2^{23} + 1​\)</span></li>
+<li><span class="math inline">\(1004535809 = 479 \times 2^{21} + 1\)</span></li>
+<li><span class="math inline">\(469762049 = 7 \times 2^{26} + 1\)</span></li>
+<li><span class="math inline">\(2281701377 = 17 \times 2^{27} + 1\)</span></li>
+<li><span class="math inline">\(167772161 = 5 \times 2^{25} + 1\)</span></li>
+</ol>
+<p>这些素数的原根都包含<span class="math inline">\(3\)</span>。</p>
+<h1 id="任意模数ntt">任意模数NTT</h1>
+<p>有些时候题目要求任意模数的NTT变换，这个时候我们可以选取三个上述列表中模数分别进行NTT，然后通过CRT进行合并。具体上来说，对于一个数<span class="math inline">\(x\)</span>，若有： <span class="math display">\[
+\begin{aligned}
+x &amp;\equiv b_1 &amp;\pmod{p_1} \\
+x &amp;\equiv b_2 &amp;\pmod{p_2} \\
+x &amp;\equiv b_3 &amp;\pmod{p_3} 
+\end{aligned}
+\]</span> 我们考虑两两合并，先求解<span class="math inline">\(b_1 + k_1p_1 \equiv b_2 \pmod {p_2}​\)</span>，不难得到<span class="math inline">\(k_1 = p_1^{-1}(b_2 - b_1)​\)</span>（逆元在模<span class="math inline">\(p_2​\)</span>意义下）。</p>
+<p>令<span class="math inline">\(x&#39; = b_1 + k_1p_1\)</span>，再求解<span class="math inline">\(x = x&#39; + k_2p_1p_2 \equiv b_3 \pmod {p_3}\)</span>，此时有<span class="math inline">\(k_2 = (p_1p_2)^{-1}(b_3 - x&#39;)\)</span>（逆元在模<span class="math inline">\(p_3\)</span>意义下）。</p>
+<p>在计算的最后再对于指定的模数取模即可。</p>
+<p>代码：</p>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;algorithm&gt;
+
+using namespace std;
+typedef long long ll;
+const ll G = 3;
+const ll MOD1 = 998244353, MOD2 = 1004535809, MOD3 = 469762049;
+const int N = 270000;
+int n, m, P;
+
+int qpow(int x, int y, int mod) &#123;
+    int ret = 1;
     for (; y; y &gt;&gt;= 1) &#123;
-        if (y &amp; 1) ans = ans * f;
-        f = f * f;
-    &#125;   
-    ll mn = 1ll &lt;&lt; 60;
-    for (int i = 1; i &lt;= n; i++)
-        for (int j = 1; j &lt;= n; j++) mn = min(mn, ans[i][j]);
-    printf(&quot;%lld\n&quot;, mn);
+        if (y &amp; 1) ret = (ll)ret * x % mod;
+        x = (ll)x * x % mod;
+    &#125;
+    return ret;
+&#125;
+
+struct mint &#123;
+    int m1, m2, m3;
+    mint() &#123;&#125;
+    mint(int x) : m1(x % MOD1), m2(x % MOD2), m3(x % MOD3) &#123;&#125;
+    mint(int m1, int m2, int m3) : m1(m1), m2(m2), m3(m3) &#123;&#125;
+    mint reduce() &#123; 
+        return mint(m1 + (m1 &gt;&gt; 31 &amp; MOD1), // m1 &gt;&gt; 31 是符号位
+                    m2 + (m2 &gt;&gt; 31 &amp; MOD2), 
+                    m3 + (m3 &gt;&gt; 31 &amp; MOD3));
+    &#125;
+    mint operator +(const mint &amp;x) const &#123;
+        return mint(m1 + x.m1 - MOD1, 
+                    m2 + x.m2 - MOD2, 
+                    m3 + x.m3 - MOD3).reduce();
+    &#125;
+    mint operator -(const mint &amp;x) const &#123;
+        return mint(m1 - x.m1, m2 - x.m2, m3 - x.m3).reduce();
+    &#125;
+    mint operator *(const mint &amp;x) const &#123;
+        return mint((ll)m1 * x.m1 % MOD1, 
+                    (ll)m2 * x.m2 % MOD2, 
+                    (ll)m3 * x.m3 % MOD3);
+    &#125;
+    mint inv() &#123;
+        return mint(qpow(m1, MOD1 - 2, MOD1), 
+                    qpow(m2, MOD2 - 2, MOD2), 
+                    qpow(m3, MOD3 - 2, MOD3));
+    &#125;
+    int get() &#123;
+        const int INV_1 = qpow(MOD1, MOD2 - 2, MOD2);
+        const int INV_2 = qpow((ll)MOD1 * MOD2 % MOD3, MOD3 - 2, MOD3);
+        ll x = (ll)(m2 - m1 + MOD2) % MOD2 * INV_1 % MOD2 * MOD1 + m1;
+        return ((ll)(m3 - x % MOD3 + MOD3) % MOD3 * INV_2 % MOD3 
+                * ((ll)MOD1 * MOD2 % P) % P + x) % P;
+    &#125;
+    static mint unit(int s) &#123;
+        return mint(qpow(G, (MOD1 - 1) / s, MOD1), 
+                    qpow(G, (MOD2 - 1) / s, MOD2), 
+                    qpow(G, (MOD3 - 1) / s, MOD3));
+    &#125;
+&#125; a[N], b[N];
+
+void ntt(int len, mint *x, int dir = 1) &#123;
+    static mint X[N];
+    for (int i = 0, k = 0; i &lt; len; i++) &#123;
+        X[i] = x[k];
+        int y = len &gt;&gt; 1;
+        while (y &amp; k) k ^= y, y &gt;&gt;= 1;
+        k |= y;
+    &#125;
+
+    for (int s = 2; s &lt;= len; s &lt;&lt;= 1) &#123;
+        mint w_ = mint::unit(s);
+        if (dir == -1) w_ = w_.inv();
+        for (int l = 0; l &lt; len; l += s) &#123;
+            int mid = l + (s &gt;&gt; 1);
+            mint w = 1;
+            for (int i = 0; i &lt; s &gt;&gt; 1; i++) &#123;
+                mint t = w * X[mid + i];
+                X[mid + i] = X[l + i] - t;
+                X[l + i] = X[l + i] + t;
+                w = w * w_;
+            &#125;
+        &#125;
+    &#125;
+    if (dir == -1) &#123;
+        mint inv = mint(len, len, len).inv();
+        for (int i = 0; i &lt; len; i++) X[i] = X[i] * inv;
+    &#125;
+    copy(X, X + len, x);
+&#125;
+
+int main() &#123;
+    scanf(&quot;%d%d%d&quot;, &amp;n, &amp;m, &amp;P);
+    for (int i = 0; i &lt;= n; i++) &#123; int tmp; scanf(&quot;%d&quot;, &amp;tmp); a[i] = tmp; &#125;
+    for (int i = 0; i &lt;= m; i++) &#123; int tmp; scanf(&quot;%d&quot;, &amp;tmp); b[i] = tmp; &#125;
+    int sz = 1; while (sz &lt; n + m + 1) sz &lt;&lt;= 1;
+    ntt(sz, a); ntt(sz, b);
+    for (int i = 0; i &lt; sz; i++) a[i] = a[i] * b[i];
+    ntt(sz, a, -1);
+    for (int i = 0; i &lt; n + m + 1; i++) printf(&quot;%d &quot;, a[i].get());
+    puts(&quot;&quot;);
     return 0;
 &#125;</code></pre>
 
@@ -1477,7 +950,7 @@ int main() &#123;
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/08/22/%E6%96%AF%E5%9D%A6%E7%BA%B3%E6%A0%91/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/NOI%202020/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -1490,7 +963,7 @@ int main() &#123;
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/08/22/%E6%96%AF%E5%9D%A6%E7%BA%B3%E6%A0%91/" class="post-title-link" itemprop="url">斯坦纳树</a>
+          <a href="/2021/07/25/NOI%202020/" class="post-title-link" itemprop="url">蒟蒻的NOI 2020退役记</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1501,14 +974,14 @@ int main() &#123;
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2019-08-22 21:14:38" itemprop="dateCreated datePublished" datetime="2019-08-22T21:14:38+08:00">2019-08-22</time>
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-12-08 21:37:53" itemprop="dateModified" datetime="2019-12-08T21:37:53+08:00">2019-12-08</time>
+        <time title="修改时间：2020-08-20 04:18:18" itemprop="dateModified" datetime="2020-08-20T04:18:18-04:00">2020-08-20</time>
       </span>
 
   
@@ -1521,28 +994,51 @@ int main() &#123;
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>本地笔记整理，原文写于2019/8/22，2019/12/8上传 <span class="math display">\[
-\newcommand{\dp}{\mathrm{dp}}
-\newcommand{\len}{\mathrm{len}}
-\newcommand{\stf}{\mathrm{dp_{forest}}}
-\]</span></p>
-<hr />
-<p>斯坦纳树是生成树的推广形式，只要求所有顶点的一个子集联通即可。</p>
-<h1 id="最小斯坦纳树">最小斯坦纳树</h1>
-<p>一般的所求的都是最小斯坦纳树问题，使用状压DP解决。定义<span class="math inline">\(\dp[i][S]\)</span>为从<span class="math inline">\(i\)</span>点出发，与<span class="math inline">\(S\)</span>集合当中的点保持联通的最小代价。首先我们有子集转移： <span class="math display">\[
-\dp[i][S] = \min_{T\subset S}\left\{\dp[i][T]+\dp[i][S\setminus T]\right\}
-\]</span></p>
-<p>但是这样有些边就会被多算，因此在这一步过后还要加上转移： <span class="math display">\[
-\dp[i][S] = \min\left\{\dp[i][S], \min_{i \to j} \left\{\dp[j][S]+\len[i\to j]\right\}\right\}
-\]</span> 这个转移就有后效性，但是可以使用SPFA解决。</p>
-<h1 id="最小斯坦纳森林">最小斯坦纳森林</h1>
-<p>最小斯坦纳森林是最小斯坦纳树的升级版本，要求构造一棵最小权森林使得每一类顶点之间两两连通。</p>
-<p>定义 <span class="math display">\[
-\stf[S]=\min_{i\in V}\left\{\dp[i][S]\right\}
-\]</span> 表示<span class="math inline">\(S\)</span>中节点都在一棵树上的最小值。</p>
-<p>然后由类似的转移： <span class="math display">\[
-\stf[S] = \min_{T\subset S}\left\{\stf[T]+\stf[S\setminus T]\right\}
-\]</span> 但是注意，转移时的<span class="math inline">\(S\)</span>和<span class="math inline">\(T\)</span>要满足某一个种类的节点要么都在，要么都不在。</p>
+          <h1 id="day--1">Day -1</h1>
+<p>在中午太阳晒得最狠的时候到了学校。宿舍爬楼累死人，也不知道为啥学校楼要建那么高。幸好宿舍里的空调给力，好评。</p>
+<p>宿舍的环境还行。个人觉得比当年WC2018的要好。</p>
+<p>信号出奇地差，必须在直接靠窗的地方才有4G，不然连2G也别想收到，听宿管和小卖部阿姨说当初就是设计成这个样子的。差评。</p>
+<p>插座很多好评。</p>
+<p>但是还是没有桌子，无论用什么姿势看电脑都贼难受。同寝室的jtl带了一个床上架的桌子，看了直呼内行。床板贼硬，差评。</p>
+<p>伙食还可以，豆浆我觉得挺好喝的，就是湖南菜多多少少带点辣个人不是很能接受，而且菜很细碎的样子。</p>
+<p>睡前随随便便背了点笔试题。</p>
+<h1 id="day-0">Day 0</h1>
+<p>早上迷迷糊糊地去参加了开幕式。听到dzd说有剩饭扣1分大惊。其他就没啥印象了=_=。</p>
+<p>结束后拱火mr押题，mr说看到才艺表演一个跳舞的转来转去暗示会考平衡树，一本正经胡说八道.jpg。</p>
+<p>感觉周围大佬都贼多，互相之间也都认识，我一个蒟蒻在当中不知所措。自己看来对于在竞赛圈内的信息闭塞的可以。</p>
+<p>中午又背了一会笔试题，然后下午就去试机了。笔试没有想象中的难，但是确实是有超纲的，纠结了很久。幸好最后还是满分飘过了。唯一值得吐槽的或许是CCF十年不变的远古测评系统。</p>
+<p>随后在试机场上敲了一波LCT和FFT。看到jtl在写MTT有想敲三模数的冲动但是最后的合并调了好一会才勉强调出来，于是就很慌。</p>
+<p>晚上寝室里大家都在欢快地打板子。对面两个人都在打带花树，然后惊奇地发现带花树的代码似乎也没有想象中那么长。三个人讨论了一下觉得似乎有概率考分块的样子，但是笑一笑也就过去了。我自己把各种字符串的算法全部过了一遍。</p>
+<h1 id="day-1">Day 1</h1>
+<p>看到T1愣了好一会，愣是没有第一时间看出DP。不知道为什么当时满脑子都是Tarjan和缩点然后沿着这个方向陷入了死胡同。于是先敲了一个DFS，觉得自己要完蛋。</p>
+<p>看了T2又愣了一会，先敲了个暴力，然后觉得<span class="math inline">\(m\)</span>比较小的情况可以动态维护链并+容斥解决。先放着。</p>
+<p>看到T3深切地感受到这或许是个数据结构毒瘤？先敲了一个二维树状数组的暴力。当时脑子大概是坏掉了不是枚举矩形直接算而是枚举点算贡献。总之暴力复杂度似乎<span class="math inline">\(\mathcal O(nm\log^2 n)\)</span>非常差。然后认真思考了一下部分分，发现可以莫队。于是基于二维树状数组写了一个<span class="math inline">\(\mathcal O\left(n\sqrt m \log^2 n\right)\)</span>的算法。然后觉得<span class="math inline">\(\mathcal O(\log ^2n)\)</span>的二维数点不妥，改成了<span class="math inline">\(\mathcal O(\log n)\)</span>的可持久化线段树，于是暴力和莫队的复杂度都少了一个<span class="math inline">\(\log\)</span>。再一看发现莫队我可以用树状数组干嘛要二维数点，于是莫队的常数又降下来一点。瞄了一眼后面觉得应该可以用<span class="math inline">\(\mathcal O(n^{7/4})\)</span>的四维莫队，可惜当初没认真学高维莫队不知道块大小咋算了，于是作罢。最后敲了一个莫队和暴力的对拍放着。</p>
+<p>回到T2开始敲树剖和容斥，写了一个<span class="math inline">\(\mathcal O\left(m2^m\log^2n\right)\)</span>的算法。和暴力结合在一起觉得至少能拿<span class="math inline">\(32\)</span>分，常数小一点也可以冲冲<span class="math inline">\(40\)</span>样子。</p>
+<p>然后回到T1，突然发现这不就一个裸的DP吗，直骂自己前面傻逼。于是花5分钟敲完朴素DP，然后再花10分钟敲完环的部分分。</p>
+<p>然后发现边权至多为<span class="math inline">\(5\)</span>，意识到正解显然是用max-plus algebra下的矩阵快速幂进行优化，于是开始敲。此时离考试结束还有60分钟，心中贼慌。等到敲完离考试结束还有30分钟，心态爆炸，然后死活调不出来。只能把这个正解例程写在程序里作为最后之选。离交卷还有5分钟的时候不改了。检查其他两题的程序无误后就开始坐着怀疑自己前三个小时脑子到底在想什么……</p>
+<p>出考场觉得自己已经成为了时代的眼泪（笑）。</p>
+<p>下午三点去查分。听jtl说这次CCF准时出分没有咕简直是奇迹。结果就是<span class="math inline">\(50+32+40=122\)</span>。和预想的完全一致。这个时候就很后悔。如果当初早点看出矩阵快速幂把T1的正解调出来就好了。这个分觉得铁牌已经在向我招手。</p>
+<p>晚上讲题。T1的确是快速幂正解。T2的正解是线段树合并维护树形DP这个之前也在寝室里有了大概的想法，但是一看这个DP的状态设计果然神仙。出题人怒斥了我们打<span class="math inline">\(32\)</span>分树剖暴力的，说是什么数据结构学傻了……然后说写个虚树不就<span class="math inline">\(40\)</span>了吗。我下面听着就很无语：我也想打虚树，但是我不会啊…… T3的出题人原来就是各种OJ上人们一直吐槽的lxl。这个题目的内部名称似乎叫“第十三分块”？正解似乎是先建一个树套树然后再分治再分块……讲到一半就lost了，内心大骂出题人毒瘤。</p>
+<p>回寝室后所有人都是颓废的状态，gyc在打Splay的板子。剩下我们两个人开始摸鱼。</p>
+<h1 id="day-2">Day 2</h1>
+<p>T1一看给人一种网络流的既视感，然后发现图建不出来。退而求其次试图写出线性规划进行代数化建图，发现线性规划必须使用Big M的办法才能建出来，而且直观一看integrity gap大的离谱是不可能建图的。因为是求可行解也不知道目标函数咋写，所以也不能从对偶下手，只能作罢。敲了一个非常粗暴的DFS暴力枚举每道菜用哪两个原材料分别用多少，发现这个DFS在最坏情况下跑得巨慢无比——难不成我暴力骗分都不成？</p>
+<p>这个时候有了一个乱搞的intuition，就是枚举原料的排列然后按照排列来确定所用的原料。然后发现过不了样例，于是作罢。</p>
+<p>之后稍微改进了一点暴力，只枚举每道菜用哪两个原材料，最后时候用多少最后用网络流来判。这下终于拿到了<span class="math inline">\(15\)</span>分的暴力。顺便基于这个敲了一个随机化，但是似乎表现也不佳的样子。</p>
+<p>T2题面长度属实劝退。读完题面之后觉得似乎不是很可做。看了样例之后有了一点暴力的想法，写了一个复杂度为<span class="math inline">\(\mathcal O\left(2^{2^{h_{\text{max}}-1}}\right)\)</span>的算法。简单来说就是把输入的树补成最大树高然后枚举能否扩张成最大树高下的所有可能的二叉树形态。觉得除了<span class="math inline">\(12\)</span>分纯暴力还可以拿<span class="math inline">\(h_{\text{max}}=4\)</span>的分？之后就不会了。</p>
+<p>T3一看给我整懵了。可真就暴力不会写呗。直觉上似乎可以写Dijkstra然后在转移的时候排除掉当前路径下的割边。但是很快意识到Dijkstra的本质是DP而这个转移方案是有后效性的。事实上也是如此，样例都没有过。然后试验性地写了一个不可行的判定方法：求出最短路，如果把最短路去掉之后全图不连通，则不可行——也不知道这样对不对。</p>
+<p>5个小时就在三个题目的来回懵逼当中度过。</p>
+<p>这次CCF出分直接咕了将近两个小时。我们很明智地从一开始就待在寝室里，那些下去等分的就苦逼了。分数出来是<span class="math inline">\(15+12+5=32\)</span>、也差不多是我预想的这个水平，T2树高为<span class="math inline">\(4\)</span>的点我还是超时了，大概还是没有判同构去重的原因？</p>
+<p>下午去听讲题。T1正解的思路源于<span class="math inline">\(m=n-1\)</span>的思考，其他的情况都是向<span class="math inline">\(m=n-1\)</span>情况的规约，感觉是非常巧妙的。T2的最优算法居然是线性的？有点听蒙了。听到T3讲解的时候才意识到T3当中的图叫做弦图，而正解源于对于弦图性质的思考，最后用过两次类Dijkstra来解决，感觉是非常非常神奇，不明觉厉，自愧不如。</p>
+<p>讲的时候就出榜了，一看果然Cu，心情复杂，但是一开始也没有期望，所以也没有太沮丧。感觉心态真正崩盘的大概是jtl，人家Cu第一……差一分就Ag了。但是看榜还是有<span class="math inline">\(500\)</span>分以上的，觉得这些人真的很厉害。我或许不比他们笨，但是他们确实历练的比我这种多多了。我这种常年边缘划水的OIer果然不能和这些人比。</p>
+<h1 id="day-3">Day 3</h1>
+<p>看着手中的铜牌，意识到自己划水的OI之路至少到此为止暂时地画上了句号，颇有些不真实感。</p>
+<p>我一直在想，如果D1T1的正解我调出来了，我就是Ag了，会不会好一点呢？但是这终究也只是一个幻想而已罢了。一是比赛不能重来，二是我似乎也不知道缓存矩阵乘方的套路所以真写快速幂有可能复杂度还是会炸的样子。</p>
+<p>一如既往，自己复习的算法完美地和考试算法错开了。没有LCT，没有FFT，没有字符串。我深切意识到OI果然还是靠平时积累的，这种比赛临时抱佛脚很大概率是不靠谱的。</p>
+<p>还是要谢谢NOI最后给了我一个意识到自己有多菜的机会。还有那么多我没有学的啊~</p>
+<p>大概在没有竞赛压力之后我还是会对这些算法认真地研究一番的吧。觉得自己的心态是一个很奇妙的东西。在被父母逼着学竞赛的时候总觉得这些算法很烦，但是意识到自己远离竞赛之后，反而又觉得它们有趣起来了。</p>
+<p>网上看过很多这样的游记，一般到最后作者不是Au就是进队了，这种好事终究不会发生在我身上。</p>
+<p>唉。这就退役了。</p>
+<p>写于Day 3从长沙回上海的火车上。自己的思路一如既往地混乱。</p>
 
       
     </div>
@@ -1569,7 +1065,7 @@ int main() &#123;
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/07/31/FMT/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/Nim%E6%B8%B8%E6%88%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -1582,7 +1078,7 @@ int main() &#123;
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/07/31/FMT/" class="post-title-link" itemprop="url">快速莫比乌斯变换笔记</a>
+          <a href="/2021/07/25/Nim%E6%B8%B8%E6%88%8F/" class="post-title-link" itemprop="url">Nim博弈与阶梯博弈</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1593,14 +1089,14 @@ int main() &#123;
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2019-07-31 00:00:00" itemprop="dateCreated datePublished" datetime="2019-07-31T00:00:00+08:00">2019-07-31</time>
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-08-07 10:21:29" itemprop="dateModified" datetime="2020-08-07T10:21:29+08:00">2020-08-07</time>
+        <time title="修改时间：2018-09-06 08:52:10" itemprop="dateModified" datetime="2018-09-06T08:52:10-04:00">2018-09-06</time>
       </span>
 
   
@@ -1613,32 +1109,503 @@ int main() &#123;
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>本地笔记整理，原文写于2019/7/31，2019/12/8上传</p>
+          <p>觉得博弈论这种东西，知道结论代码巨短无比，不知道结论当场去世……</p>
+<h1 id="nim-博弈">Nim 博弈</h1>
+<h2 id="问题表述">问题表述</h2>
+<p>有<span class="math inline">\(n\)</span>堆石子，第<span class="math inline">\(i\)</span>堆石子有<span class="math inline">\(a_i\)</span>个，两个玩家轮流操作，每个玩家每轮可以选择一堆石子，取走至少一个石子（也可以把一堆取光，但不能不取）。不能操作者判负。已知每方均采取最优策略，问先手还是后手必胜？</p>
+<h2 id="解法">解法</h2>
+<p><strong>定理：</strong>Nim博弈先手必胜当且仅当<span class="math inline">\(\bigoplus_{i = 1}^n a_i \neq 0\)</span>。</p>
+<p><strong>证明：</strong>设<span class="math inline">\(\bigoplus_{i = 1}^n a_i = x \neq 0\)</span>，且<span class="math inline">\(x\)</span>的最高位为<span class="math inline">\(j\)</span>，由异或的性质，显然存在一个<span class="math inline">\(a_i\)</span>的第<span class="math inline">\(j\)</span>位为<span class="math inline">\(1\)</span>，且<span class="math inline">\(a_i \oplus x &lt; a_i\)</span>，我们选择第<span class="math inline">\(i\)</span>堆，令<span class="math inline">\(a_i = a_i \oplus x\)</span>，由异或的相消性，此时<span class="math inline">\(\bigoplus_{i = 1}^n a_i = 0\)</span>，我们把这样一个局面留给了后手，而后手无论怎么操作异或和都会变成非零。而不能操作的局面，即全零的局面的异或和同样为<span class="math inline">\(0\)</span>，又因为我们每次都可以那样地把锅推给对方，因此先手必胜。</p>
+<h1 id="阶梯博弈">阶梯博弈</h1>
+<h2 id="问题表述-1">问题表述</h2>
+<p>有<span class="math inline">\(n\)</span>阶阶梯从左到右从低到高排开，记地面为第<span class="math inline">\(0\)</span>级，第<span class="math inline">\(i\)</span>个阶梯上有<span class="math inline">\(a_i\)</span>个石子，两个玩家轮流操作，每个玩家每轮可以选择一个阶梯，将其中的至少一个石子转移到左边的阶梯（或者地面）上。不能操作者判负。已知每方均采取最优策略，问先手还是后手必胜？</p>
+<h2 id="解法-1">解法</h2>
+<p><strong>定理：</strong>阶梯博弈等价于奇数阶的Nim博弈。</p>
+<p><strong>证明：</strong>如果上一步对方从一个偶数阶的阶梯移动若干个石子到奇数阶，那么我们就原封不动地在这一步把这些石子再移到左边的偶数阶上去，因此偶数阶的石子的移动不造成影响。而既然偶数阶不造成影响，那么从奇数阶转移到偶数阶的操作等价于从奇数阶取走了若干石子（如果我们不看偶数阶），这样最后偶数阶的石子会全部到地面上，而奇数阶无法操作者自然就输了，证毕。</p>
+<p><strong>例题：</strong>POJ 1704</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/Nginx%20Proxy/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/07/25/Nginx%20Proxy/" class="post-title-link" itemprop="url">Nginx带子路径的反向代理配置文件的正确写法</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2019-12-16 09:09:50" itemprop="dateModified" datetime="2019-12-16T09:09:50-05:00">2019-12-16</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>最近折腾服务器把Aria2、H5AI、Jellyfin、Jupyter等集合到一个端口访问（因为开端口映射实在是一件麻烦事），于是需要经常用到Nginx的反向代理。之前的配置文件的效果一直都不是最完美，瑕疵体现在redirect之后就会忽略到子路径导致404。在网上多方搜索之后我终于找到了一个总体靠谱的写法（感觉Nginx的流行度还是比不上Apache），记下来留自己备用。</p>
+<pre class="line-numbers"><code class="language-nginx">location /SUB_PATH &#123;
+    return 302 $scheme://$host:$port/SUB_PATH/;
+&#125;
+location /SUB_PATH/ &#123;
+    proxy_pass xxxxx;
+    proxy_pass_request_headers on;
+    proxy_redirect ~^/(.*) $scheme://$host:$port/SUB_PATH/$1;        
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Host $http_host;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $http_connection;
+    # proxy_buffering off; 
+&#125;</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/Minecraft%20ILP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/07/25/Minecraft%20ILP/" class="post-title-link" itemprop="url">Designing Computational Redstone Circuits Automatically in Minecraft with Integer Programming: Preliminary Thoughts and Tests</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-11-25 04:05:54" itemprop="dateModified" datetime="2020-11-25T04:05:54-05:00">2020-11-25</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><strong>UNFINISHED ARTICLE -- WORK IN PROGRESS</strong></p>
+<p><strong>UNFINISHED ARTICLE -- WORK IN PROGRESS</strong></p>
+<p><strong>UNFINISHED ARTICLE -- WORK IN PROGRESS</strong></p>
+<p>This was a project I worked on two months ago, but it wasn't until now that I have the time to write it down and share it on my blog.</p>
+<h1 id="intro">Intro</h1>
+<p>Redstone has been a core element in the game Minecraft for quite some years. It is presumably the most untrivial one as well: while anyone could master nearly all Minecraft mechanics through experiences, it takes not only experience but also ingenuity to design a good redstone circuit. Few of us are bold enough to claim "I master redstone", even after playing Minecraft for a decade.</p>
+<p>So here comes the question: <strong>Can the design of redstone circuits, the core of Minecraft automations, be automated?</strong> and <strong>If so, how?</strong> (appreciate how meta this is :)</p>
+<p>Theoretically, the answer is "yes...but". Minecraft has a finite world, and each position has a finite number of possible blockstates. We can write a program to enumerate all possible placements of blocks until we find some placement corresponding to the desired redstone circuit. However, this needs exponential time and we may need to wait for a century before it could give us, for instance, a decent piston door. Moreover, if a circuit involves manipulation of entities (which could have infinite many states), then we are easily screwed.</p>
+<p>Well, perhaps it is difficult to let a program design any redstone circuit. But there is indeed a subset of redstone circuits whose design can very likely be automated -- <strong>computational redstone circuits</strong>, aka. logic gates, calculators, CPUs etc. Why? Because software that design their real world electronic counterparts are readily available -- they are called "EDA".</p>
+<p>As a high school student I, of course, know little about the inner workings of real-world EDA applications (and there doesn't seem to be a lot of resources out there). I am convinced that this problem is NPC (further articulated below), so designing an efficient polytime combinatorial algorithm doesn't seem plausible. That said, what about reducing this problem to some other NPC problems which we can solve relatively quickly with optimized algorithms / heuristics -- say, ILP? This is what I am trying to do here.</p>
+<h1 id="formulating-the-problem">Formulating the problem</h1>
+<p>"Designing computational redstone circuit automatically" is a vague idea, so it is necessary that we know what this truly means.</p>
+<h2 id="whats-the-input">What's the input?</h2>
+<p>The input should describe the intended functionality of a circuit. Recall how we usually describe a circuit: we draw a <strong>circuit diagram</strong>. I here characterize a redstone circuit diagram by the assumptions and constraints below:</p>
+<ol type="1">
+<li>A circuit contains two parts: <strong>wires and components</strong>.</li>
+<li>Components are the <strong>primitives</strong> of a circuit. E.g. A torch or a wire junction.</li>
+<li>A component has <strong>interfaces</strong>, either <strong>in or out</strong>, as where the component receives signals from and sends signals to.</li>
+<li>A wire connects <strong>an</strong> out-interface from a component ("source") to <strong>an</strong> in-interface of another component ("target").</li>
+<li>Wires are <strong>directed</strong>.</li>
+<li>Components are <strong>independent</strong>. i.e. they do not interfere with other components in any way other than being connected by wires from interfaces.</li>
+</ol>
+<p>A circuit diagram can be represented in a directed graph, with components as vertices and wires as edges. Source/target interfaces as extra information stored on edges.</p>
+<h2 id="whats-the-output">What's the output?</h2>
+<p>We want our program to tell us how the circuit we described in the input can be built in the Minecraft world. Therefore, we could define the the output to be a set of position - blockstate pairs, (which, in implementation, can be stored in a schematic file).</p>
+<p>However, we don't want to jump straight from a circuit diagram to a detailed Minecraft schematic because that means taking interference between components, quasi connectivity, update order -- basically everything that makes redstone engineering complex -- into consideration in the first place.</p>
+<p>Instead, we could first build our circuit in an <strong>ideal world</strong>, in which we forget about all those factors above, and then convert the ideal placement into an actual Minecraft schematic.</p>
+<p>What's an idea world?</p>
+<ol type="1">
+<li>A circuit consists of multiple ideal blocks.</li>
+<li>A component fully occupies a set of ideal blocks, some of which are its interfaces. How many and which blocks a certain type of component occupies depend on its size in Minecraft and how we plan to convert the ideal placement to a real schematic.</li>
+<li>A wire is a chain of blocks, where any adjacent two share a face. The first block is always the source interface and the last is always the target interface.</li>
+<li><strong>Exclusiveness: </strong>All components and all wires (ignoring their first and last block) mustn't overlap.</li>
+<li><strong>Mutual Independence: </strong>Unless both blocks are occupied by the same component / wire, anything in two adjacent cells do not interfere with each other.</li>
+<li>Wire junctions are special components and are exceptions to rule 2 and 3. A wire junction always have three interfaces (1 in &amp; 2 outs, or 2 ins &amp; 1 out). Multiple junctions can overlap and they can overlap with an interface of some component.</li>
+<li>There are times when we want to fix the location of some components in the input. These components are usually just placeholders that mark the position of IO. (We don't want to produce a circuit with an unreachable input/output in the center of everything else, right?)</li>
+</ol>
+<h2 id="the-objective">The Objective</h2>
+<ol type="1">
+<li>The circuit represented by the output must have the same functionality as described by the input circuit diagram.</li>
+<li>The delay of the circuit should be minimized.</li>
+</ol>
+<h2 id="example-the-and-gate">Example: the AND gate</h2>
+<p>Let's see how we design a simple AND gate.</p>
+<p>Suppose the only primitive components we have are NOT gate (torch), wire junction, and IO placeholder. The circuit diagram of AND gate is:</p>
+<p><img src="/2021/07/25/Minecraft%20ILP/ANDCD.svg" class=""></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/Manjaro-VM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/07/25/Manjaro-VM/" class="post-title-link" itemprop="url">用LaTeX实时记数学笔记？！</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-03-02 01:50:04" itemprop="dateModified" datetime="2020-03-02T01:50:04-05:00">2020-03-02</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>我几个月前看到国外有人<a target="_blank" rel="noopener" href="https://castel.dev/post/lecture-notes-1/">分享</a>用LaTeX实时记1700页数学笔记的感受，当时就被惊艳到了，心生向往。这次因为疫情待在家里上在线课程，总算是给了我一个带电脑进课堂的机会。于是我也仿照原作者的做法尝试了用记LaTeX笔记，这篇文章就来写一写我配置环境时遇到的坑和使用感受。</p>
+<h1 id="系统选择">系统选择</h1>
+<p>原文的作者采用的是Ubuntu发行版+bspwm作为桌面管理器，但是bspwm太小众，网上的资料很少。而且实测装在Ubuntu上默认的配置在视觉上不协调（还要自己去装一个像样的状态栏，总之就是太烦了）。相比之下i3作为另一个Tiling Window Manager比bspwm资料多多了，也比较适合我这种小白。权衡之下我选用Manjaro + i3。在Virtual Box下安装。</p>
+<h1 id="配置镜像">配置镜像</h1>
+<p>这一步不是必须的，因为Manjaro的默认源在国内的速度也还可以接受（~400kBps）。但是换了交大的源之后可以到10MBps：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -Syy
+sudo pacman-mirrors -i -c China -m rank
+sudo pacman -Syyu</code></pre>
+<p>然后编辑<code>/etc/pacman.conf</code>加上ArchLinuxCN的交大镜像：</p>
+<pre class="line-numbers"><code class="language-ini">[archlinuxcn]
+SigLevel = Optional TrustedOnly
+Server = https://mirrors.sjtug.sjtu.edu.cn/archlinux-cn/$arch</code></pre>
+<p>最后导入一下密钥环，镜像就配置完了：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -Syy &amp;&amp; sudo pacman -S archlinuxcn-keyring</code></pre>
+<h1 id="安装virtual-box-ga">安装Virtual Box GA</h1>
+<p>Manjaro默认对于虚拟机的支持不是很好。我不选择在VMWare上装Manjaro的主要原因也是因为我没有找到VMWare下自动分辨率比较简单的解决方案。在Virtual Box下只要装Virtual Box Guest Addition就可以了，美滋滋。</p>
+<p>先安装基本的编译套件：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -S gcc make</code></pre>
+<p>然后查看一下Linux内核版本：</p>
+<pre class="line-numbers shell"><code class="language-none">uname -r</code></pre>
+<p>是5.4，因此安装5.4的headers：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -S linux54-headers</code></pre>
+<p>之后在Virtual Box菜单下插入GA的iso文件。我最初是手动挂载的（因为找不到i3里面怎么开文件管理器），就是<code>sudo blkid</code>看一下设备然后<code>mount</code>（如果出现不支持<code>iso9660</code>直接重启）。后来意识到文件管理器的名字是<code>pcmanfm</code>，再发现默认可以直接<code>mod + F3</code>打开文件管理器，于是就可以在上面直接操作了。<code>cd</code>进去运行<code>autorun.sh</code>跑完重启。就发现可以自动适应外部分辨率以及共享剪贴板了，非常方便。</p>
+<h1 id="配置键位">配置键位</h1>
+<p>默认Manjaro配置的<code>mod</code>键是<code>super</code>，也就是Win键。但是实测Win键在虚拟机环境下会有小问题（例如Win + L总是会被Windows先拦截导致锁屏）。所以我到<code>~/.i3/config</code>里面把<code>mod</code>键改成了<code>alt</code>。我还把i3默认的<code>jkl:</code>键位改成了和Vim相一致的<code>hjkl</code>键位。</p>
+<h1 id="中文相关">中文相关</h1>
+<p>Manjaro默认的中文渲染很有问题（装系统的时候居然没有中文字体！）。因此需要手动配置中文的渲染。</p>
+<p>我基本上是按照<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/Font_Configuration/Chinese_(简体中文)">Arch Wiki</a>上的Android类字体配置的。但是Arch Wiki上没有配置给终端用的等宽字体，需要个人发挥一下。我最喜欢的等宽字体是Sarasa Gothic（因为有中文）（去除中文我现在最喜欢的是Jetbrains Mono）。我发现ArchLinuxCN的源上已经有这款字体了，于是直接安装：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -S ttf-sarasa-gothic</code></pre>
+<p>然后修改<code>~/.Xresources</code></p>
+<pre class="line-numbers"><code class="language-ini">URxvt.font: xft:Sarasa Term SC:size=12</code></pre>
+<p>重启一下就好了（其实不用重启，<code>xrdb ~/.Xresources</code>也行？）</p>
+<p>接着是输入法。我原来准备装搜狗的，但是搜狗因为各种奇奇怪怪的原因（比如说字体找不到，比如说默认装<code>fcitx</code>的时候没有<code>qt4</code>的支持需要额外安装）不能用，在各种坑之后我决定不用它改用sunpinyin+cloud pinyin的组合，试用下来也是相当令人满意的：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -S fcitx-im
+sudo pacman -S fcitx-configtool
+sudo pacman -S fcitx-sunpinyin fcitx-cloudpinyin</code></pre>
+<p>安装后在<code>~/.xprofile</code>里面加上下列几行启用fcitx</p>
+<pre class="line-numbers shell"><code class="language-none">export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=&quot;@im=fcitx&quot;
+fcitx -d</code></pre>
+<p>最后一行是我自己加上的，因为似乎由于一些原因fcitx它开机不自启……</p>
+<h1 id="配置tex">配置TeX</h1>
+<p>终于可以开始进入正题了，首先安装TeXLive：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -S texlive-most texlive-langchinese</code></pre>
+<p>接着安装Vim Plug，在<code>~/.vimrc</code>里面写入自动安装脚本（手动安装亦可）以及一些基本的配置：</p>
+<pre class="line-numbers"><code class="language-vim">set number
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set smartindent
+
+syntax on
+
+if empty(glob(&#39;~/.vim/autoload/plug.vim&#39;))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif</code></pre>
+<p>接着安装所必要的VimTeX插件以及UltiSnips插件并进行相关的配置：</p>
+<pre class="line-numbers"><code class="language-vim">call plug#begin(&#39;~/.vim/plugged&#39;)
+
+Plug &#39;lervag/vimtex&#39;
+let g:tex_flavor=&#39;latex&#39;
+let g:vimtex_view_method=&#39;zathura&#39;
+let g:vimtex_quickfix_mode=0
+set conceallevel=1
+let g:tex_conceal=&#39;abdmg&#39;
+
+Plug &#39;sirver/ultisnips&#39;
+let g:UltiSnipsExpandTrigger=&#39;&lt;tab&gt;&#39;
+let g:UltiSnipsJumpForwardTrigger=&#39;&lt;tab&gt;&#39;
+let g:UltiSnipsJumpBackwardTrigger=&#39;&lt;s-tab&gt;&#39;
+let g:UltiSnipsSnippetDirectories=[&#39;mysnippets&#39;]
+
+call plug#end()</code></pre>
+<p>安装Zathura作为PDF阅读器：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -S zathura zathura-pdf-mupdf</code></pre>
+<p>我查到Manjaro i3终端默认的背景色是<code>#222D31</code>，因此在<code>~/.config/zathura/zathurarc</code>里面写入</p>
+<pre class="line-numbers"><code class="language-none">set default-bg &quot;#222D31&quot;
+set recolor &quot;true&quot;
+set recolor-lightcolor &quot;#222D31&quot;
+set recolor-darkcolor &quot;#FFFFFF&quot;</code></pre>
+<p>这样Zathura打开白色的pdf文档的时候就会自动重新着色，完成了色调上的统一。</p>
+<p>Vimtex默认使用<code>latexmk</code>编译，<code>latexmk</code>默认调用<code>pdflatex</code>。因为要用中文我们希望它调用<code>xelatex</code>，于是在<code>~/.latexmkrc</code>里面加上</p>
+<pre class="line-numbers"><code class="language-none">$pdf_mode = 1;
+$pdflatex = &#39;xelatex --shell-escape %O %S&#39;;</code></pre>
+<p>现在随便打开一个tex文档，打出<code>\ll</code>，预览就冒出来了，非常方便。</p>
+<h1 id="配置snippets">配置Snippets</h1>
+<p>我基本上复制了作者原博客上的大部分snippets的定义。再加上了一些我觉得比较常用的：</p>
+<pre class="line-numbers"><code class="language-none">snippet exm &quot;example&quot; bA
+\begin&#123;example&#125;
+$1
+\end&#123;example&#125;
+$0
+endsnippet
+
+snippet sln &quot;solution&quot; bA
+\begin&#123;solution&#125;
+$1
+\end&#123;solution&#125;
+$0
+endsnippet
+
+snippet -&gt; &quot;arrow&quot; A
+\Rightarrow
+endsnippet
+
+snippet sc &quot;since&quot; wA
+\because
+endsnippet
+
+snippet tf &quot;therefore&quot; wA
+\therefore
+endsnippet
+
+snippet tx &quot;text&quot; wA
+\text&#123;$1&#125;$0
+endsnippet
+
+snippet par &quot;()&quot; wA
+\left($1\right)$0
+endsnippet
+
+snippet pbk &quot;[]&quot; wA
+\left[$1\right]$0
+endsnippet
+
+snippet pbr &quot;&#123;&#125;&quot; wA
+\left\\&#123;$1\right\\&#125;$0
+endsnippet
+
+snippet pabs &quot;||&quot; wA
+\left|$1\right|$0
+endsnippet
+
+snippet enum &quot;enumerate&quot; bwA
+\begin&#123;enumerate&#125;
+$1
+\end&#123;enumerate&#125;
+$0
+endsnippet
+
+snippet ml &quot;multiline math&quot; bwA
+\begin&#123;gather*&#125;
+$1
+\end&#123;gather*&#125;
+$0
+endsnippet</code></pre>
+<p>笔记源文件的preamable定义如下，使用<code>fleqn</code>选项对所有方程进行左对齐，并定义<code>example</code>和<code>solution</code>环境方便记例题和解答：</p>
+<pre class="line-numbers"><code class="language-latex">\documentclass[fleqn]&#123;ctexart&#125;
+
+\usepackage&#123;amsthm&#125;
+\usepackage&#123;amsmath&#125;
+\usepackage&#123;amssymb&#125;
+\usepackage&#123;tikz&#125;
+
+\newtheorem*&#123;solution&#125;&#123;解&#125;
+\newtheorem&#123;example&#125;&#123;例&#125;[subsection]
+
+\begin&#123;document&#125;
+    \maketitle
+    ...
+\end&#123;document&#125;</code></pre>
+<p>最后的效果如下：</p>
+<p><img src="https://s2.ax1x.com/2020/03/02/3RRrp6.png" alt="3RRrp6.png" /></p>
+<p>成果：</p>
+<p><img src="https://s2.ax1x.com/2020/03/02/3Rojqf.png" alt="3Rojqf.png" /></p>
+<p>对比手写版：</p>
+<p><img src="https://s2.ax1x.com/2020/03/02/3Ro6PJ.jpg" alt="3Ro6PJ.jpg" /></p>
+<p>是不是看起来还不错？</p>
+<h1 id="使用感受">使用感受</h1>
+<h2 id="优点">优点</h2>
+<ul>
+<li>格式内容分离，便于重新排版与整理</li>
+<li>字体统一美观（自己手写的字实在是太丑了哇）</li>
+<li>例题的自动编号很赞！</li>
+</ul>
+<h2 id="缺点">缺点</h2>
+<ul>
+<li><p>Vim原来就有两个常用的模式，输入法的使用又增加了一个模式。来回shift切换打断了编辑的流畅性，降低了效率。尤其是很多时候输入法还没切回英文就<code>jj</code>一下或者切片段，结果还要删掉，按shift，然后重新打，有的时候着实糟心。</p></li>
+<li><p>Snippets多固然增加了效率，但是也增加了记忆的负担。对于我这种新手来说，过多的snippets只是把打LaTeX的时间转换成回忆用哪个snippet比较好的时间，一下子增加太多snippets也会降低效率。</p></li>
+<li><p>错字的存在。搜狗输入法对于偶尔的打错具有自动修正的功能，但是无论是谷歌拼音还是sunpinyin在这方面都不行，加上很多时候这些输入法的选词并不智能，一个个看过来选词其实也是非常耗费时间的。</p></li>
+<li><p>还是错字，例如“已知”错打成“一直”，英文可以配置spell checker做实时的纠正，这在原文当中也有提到，但是中文目前在这方面还缺乏支持。我听说百度有这方面的接口，但是不知道对于数学笔记专业性这么强的语料效果怎么样。Vim插件我是肯定没找到。</p></li>
+<li><p>笔记的结构比较松散，在笔记本上我们可以拿箭头划来划去，有旁注也可以轻松插入，但是这在LaTeX当中绝非易事。很多时候数学笔记的格式很容易让人陷入纠结，比如说我乱打的一段</p>
 <blockquote>
-<p>这个枚举子集啊从<span class="math inline">\(\mathcal O(4^n)\)</span>到<span class="math inline">\(\mathcal O(3^n)\)</span>只优化了一半，最后的目标一定是<span class="math inline">\(\mathcal O(2^n)\)</span>！ ——MR</p>
+<p>设<span class="math inline">\(y=kx+b,\quad (k\neq 0)\)</span></p>
+<p><span class="math inline">\(\Rightarrow x=\frac{y-b}{k}\)</span>又因为已知<span class="math inline">\(k=\tan \alpha\)</span>...</p>
 </blockquote>
-<p>考虑加速在序列<span class="math inline">\(\{a\}, \{b\}\)</span>上的集合并卷积： <span class="math display">\[
-c_k = \sum_{i \cup j = k} a_ib_j
-\]</span> 利用和FFT类似的思想，考虑构造变换<span class="math inline">\(\operatorname{FMT}\{a\}\)</span>，使得： <span class="math display">\[
-\operatorname{FMT}\{a\}_i\times\operatorname{FMT}\{b\}_i = \operatorname{FMT}\{c\}_i
-\]</span> 观察到可以构造： <span class="math display">\[
-\operatorname{FMT}\{a\}_i = \sum_{j \subseteq i} a_j
-\]</span> 即前缀子集和。该变换成立的原因显然。</p>
-<p>然而朴素构造子集和的时间复杂度是<span class="math inline">\(O(3^n)\)</span>的，有没有办法优化呢?</p>
-<p>显然是有的，我们采用增量的方法，逐个考虑集合的每个元素<span class="math inline">\(x\)</span>，如果一个集合<span class="math inline">\(i\)</span>应该包含<span class="math inline">\(x\)</span>，则其子集可以包含也可以不包含<span class="math inline">\(x\)</span>，因此进行操作：<span class="math inline">\(a_i = a_i + a_{i\setminus x}\)</span></p>
-<p>代码是很短的：</p>
-<pre class="line-numbers"><code class="language-cpp">for (int i = 1; i &lt; (1 &lt;&lt; n); i &lt;&lt;= 1) // 枚举元素
-    for (int s = i &lt;&lt; 1, l = 0; l &lt; (1 &lt;&lt; n); l += s) // [l, l + s) 是一段区间
-        for (int k = 0; k &lt; i; k++) // 其中前半段没有i，后半段有i
-            a[l + i + k] += a[l + k]</code></pre>
-<p>逆向变换的代码也很简单：</p>
-<pre class="line-numbers"><code class="language-cpp">for (int i = 1; i &lt; (1 &lt;&lt; n); i &lt;&lt;= 1)
-    for (int s = i &lt;&lt; 1, l = 0; l &lt; (1 &lt;&lt; n); l += s)
-        for (int k = 0; k &lt; i; k++) 
-            a[l + i + k] -= a[l + k]</code></pre>
-<p>时间复杂度为 <span class="math display">\[
-\sum_{i = 0}^{n - 1} 2^{n - i - 1}\cdot 2^i = O(n2^n)
-\]</span></p>
+<p>这种格式要怎么排版呢？</p>
+<ol type="1">
+<li>是整个作为一个大的display style math，中文文字作为<code>\text&#123;&#125;</code>镶嵌其中？</li>
+<li>还是一行一个display-style math?</li>
+<li>还是有中文字的行用inline math，然后纯数学符号的行用display math?</li>
+<li>要不要用<code>gather*</code>这种环境？</li>
+</ol>
+<p>又比如说如下这段：</p>
+<blockquote>
+<p><span class="math inline">\(\begin{cases}x=1 \\y=2\end{cases}\)</span>或<span class="math inline">\(\begin{cases}x=2 \\y=1\end{cases}\)</span></p>
+</blockquote>
+<p>手写起来非常简单，但是LaTeX代码呢？</p>
+<pre class="line-numbers"><code class="language-latex">$\begin&#123;cases&#125; x=1 \\ y=2 \end&#123;cases&#125;$
+或
+$\begin&#123;cases&#125; x=2 \\ y=1 \end&#123;cases&#125;$</code></pre>
+<p>一下子复杂了不少，更别说为了中间的“或”字需要输入法切换。这是snippets也难以挽救的低效。</p></li>
+<li><p>我还没有试过画图。但是这一定是一个天坑。</p></li>
+<li><p>如果编译失败那几乎是当场去世（悲）</p></li>
+</ul>
+<h1 id="总结">总结</h1>
+<p>就我个人体验而言，用LaTeX记笔记虽然能够达到非常高的排版质量，但是并没有传说中的那么高效（尤其是在使用中文的背景之下）。用LaTeX整理笔记自然是极好的，但是用LaTeX在课堂上实时记笔记绝对属于一大作死行为（更别说你也不知道老师收不收LaTeX记得笔记对不？）</p>
 
       
     </div>
@@ -1665,7 +1632,7 @@ c_k = \sum_{i \cup j = k} a_ib_j
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/07/08/Double%20Dabble%E7%AE%97%E6%B3%95/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/LU/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -1678,7 +1645,7 @@ c_k = \sum_{i \cup j = k} a_ib_j
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/07/08/Double%20Dabble%E7%AE%97%E6%B3%95/" class="post-title-link" itemprop="url">Double Dabble算法笔记</a>
+          <a href="/2021/07/25/LU/" class="post-title-link" itemprop="url">LU分解笔记</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1689,14 +1656,14 @@ c_k = \sum_{i \cup j = k} a_ib_j
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2019-07-08 00:00:00" itemprop="dateCreated datePublished" datetime="2019-07-08T00:00:00+08:00">2019-07-08</time>
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-12-08 21:38:14" itemprop="dateModified" datetime="2019-12-08T21:38:14+08:00">2019-12-08</time>
+        <time title="修改时间：2019-12-21 01:19:16" itemprop="dateModified" datetime="2019-12-21T01:19:16-05:00">2019-12-21</time>
       </span>
 
   
@@ -1709,32 +1676,200 @@ c_k = \sum_{i \cup j = k} a_ib_j
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>本地笔记整理，原文写于2019/7/8，2019/12/8上传</p>
-<p>Double Dabble算法是二进制转BCD的常用算法。</p>
-<h1 id="整数double-dabble算法">整数Double Dabble算法</h1>
-<p>（下文当中，"BCD位"指一个十进制位对应的四位二进制）</p>
-<p>首先，如果我们要计算一个二进制数的十进制值，除了位权展开以外，可以从左往右如此迭代： <span class="math display">\[
-x_{n + 1} = 2x_n + \text{该二进制位}
-\]</span> 这是非常显然的。</p>
-<p>在Double Dabble的图示当中，左边一列存储的是BCD的结果：</p>
-<p><img src="https://i.stack.imgur.com/EQvTh.png" alt="Image result for double dabble algorithm" /></p>
-<p>Double Dabble算法本身其实就是在这BCD的结果列进行如上的迭代操作（乘<span class="math inline">\(2\)</span>加位）。</p>
-<p>为了这样做，直觉上来讲，我们可以按照二进制的方法将BCD列中的结果乘<span class="math inline">\(2\)</span>（左移），然后进行一定的矫正（之前的左移可能破坏了BCD的性质），然后在加上原数的一个二进制位（最右边移进）。</p>
-<p>左移是平凡的，加上一位也是平凡的（因为左移之后最右边一位永远是<span class="math inline">\(2\)</span>，不会产生进位），问题在乘<span class="math inline">\(2\)</span>后为了维护BCD性质所进行的矫正上。</p>
-<p>首先，我们应该注意到，忽略进位，如果一个BCD位大于<span class="math inline">\(10\)</span>，我们需要减<span class="math inline">\(10\)</span>来获得正确的位，而减<span class="math inline">\(10\)</span>在四位二进制意义下就等同于加<span class="math inline">\(6\)</span>，即<span class="math inline">\(110_2\)</span>。</p>
-<p>Double Double算法的首先高在它甚至在乘<span class="math inline">\(2\)</span><strong>之前</strong>就进行了矫正。我们考虑哪些BCD位乘<span class="math inline">\(2\)</span>之后会出现问题，答案非常平凡：满<span class="math inline">\(5\)</span>的。而因为是在左移之前，加上的<span class="math inline">\(110_2\)</span>也就变成<span class="math inline">\(11_2\)</span>，即加<span class="math inline">\(3\)</span>。</p>
-<p>这就是“满五加三”的由来。</p>
-<p>不仅如此，Double Dabble算法高在因为这是对于左移之前的四位进行的操作，因而加<span class="math inline">\(3\)</span>之后会进位到四位当中的最高位，其左移之后就到左边的BCD位上去了...相当于巧妙handle进位的问题。</p>
-<h1 id="小数double-dabble算法">小数Double Dabble算法</h1>
-<p>小数Double Dabble似乎没多少人提到……但是本质确实是和整数算法一致的。</p>
-<p>我们进行小数二进制-十进制转化可以利用如下的从右往左的迭代过程： <span class="math display">\[
-x_{n + 1} = \frac{x_n + \text{该二进制位}}{2}
-\]</span> 我们同样要对结果列进行这样的操作。</p>
-<p>首先是<span class="math inline">\(x_n + \text{该二进制位}\)</span>的部分，由于结果列现在表示小数部分，加上去的二进制列就在整个结果列的左侧（整数部分），这无疑是平凡的。</p>
-<p>接下来是除<span class="math inline">\(2\)</span>的部分。基于二进制的思想，我们通过右移来完成除<span class="math inline">\(2\)</span>的操作。同时我们需要进行一定的矫正来维护BCD的性质。</p>
-<p>我们观察到，出现问题的BCD位，一定是在右移之前是奇数的位，而奇数最低位上的<span class="math inline">\(1\)</span>，在右移之后，就到了右边的最高位上，也就是右边的哪一位右移之后会大于等于<span class="math inline">\(8\)</span>。</p>
-<p>而回到十进制，如果一个奇数位除以二，结果应该给右边的位加上<span class="math inline">\(5\)</span>，而我们之前算法中右移过来的<span class="math inline">\(1\)</span>让它加了<span class="math inline">\(8\)</span>，所以要减去<span class="math inline">\(3\)</span>。</p>
-<p>这就是“满八减三”的由来。</p>
+          <h1 id="矩阵向量相乘的意义">矩阵向量相乘的意义</h1>
+<p>这部分和LU分解没有多大关系，但是GS的书里一直强调这种理解，想必是极有用的。</p>
+<p>当矩阵左乘一个列向量，其结果等同于矩阵每一列以列向量为权的线性组合，例如 <span class="math display">\[
+\begin{pmatrix}
+    1&amp;2&amp;3\\
+    4&amp;5&amp;6\\
+    7&amp;8&amp;9\\
+\end{pmatrix}
+\begin{pmatrix}
+1\\
+2\\
+3
+\end{pmatrix}
+=
+1\begin{pmatrix}
+1\\4\\7
+\end{pmatrix}
++2\begin{pmatrix}
+2\\5\\8
+\end{pmatrix}
++3\begin{pmatrix}
+3\\6\\9
+\end{pmatrix}
+\]</span> 类似地，当矩阵右乘一个行向量，其结果等于矩阵每一行以行向量为权的线性组合，例如 <span class="math display">\[
+\begin{pmatrix}
+1&amp;2&amp;3
+\end{pmatrix}
+\begin{pmatrix}
+    1&amp;2&amp;3\\
+    4&amp;5&amp;6\\
+    7&amp;8&amp;9\\
+\end{pmatrix}
+=\begin{matrix}
+1\begin{pmatrix}
+1&amp;2&amp;3
+\end{pmatrix}\\
++\\
+2\begin{pmatrix}
+4&amp;5&amp;6
+\end{pmatrix}\\+\\
+3\begin{pmatrix}
+7&amp;8&amp;9
+\end{pmatrix}
+\end{matrix}
+\]</span> 多列，多行的情况也可以以此类推。</p>
+<h1 id="初等行变换的矩阵表示">初等行变换的矩阵表示</h1>
+<p>注意到初等行变换可以使用矩阵进行表示，例如在一个<span class="math inline">\(3\times 3\)</span>的矩阵当中把第<span class="math inline">\(1\)</span>行的<span class="math inline">\(3\)</span>倍加到第二行就可以表示为： <span class="math display">\[
+\begin{pmatrix}
+1&amp;0&amp;0 \\
+3&amp;1&amp;0 \\
+0&amp;0&amp;1
+\end{pmatrix}
+\begin{pmatrix}
+1&amp;2&amp;3 \\
+4&amp;5&amp;6 \\
+7&amp;8&amp;9
+\end{pmatrix}
+=\begin{pmatrix}
+1&amp;2&amp;3 \\
+7&amp;11&amp;15 \\
+7&amp;8&amp;9
+\end{pmatrix}
+\]</span> <strong>注意行变换的矩阵是左乘的，右乘就是列变换了！</strong></p>
+<p>具体来说，如果你把第<span class="math inline">\(i\)</span>行的<span class="math inline">\(k\)</span>倍加到第<span class="math inline">\(j\)</span>行上，那么这个变换对应的矩阵就是在以单位矩阵为基础上<span class="math inline">\(a_{j,i}=k\)</span>。</p>
+<p>初等行变换的矩阵常用符号<span class="math inline">\(E\)</span>表示。</p>
+<p>由于初等行变换的意义，很容易就可以看出其逆矩阵就是把对应的元素取反，加上的我们就减回去： <span class="math display">\[
+E=\begin{pmatrix}
+1&amp;0&amp;0 \\
+3&amp;1&amp;0 \\
+0&amp;0&amp;1
+\end{pmatrix}\Rightarrow 
+E^{-1}=\begin{pmatrix}
+1&amp;0&amp;0 \\
+-3&amp;1&amp;0 \\
+0&amp;0&amp;1
+\end{pmatrix}
+\]</span></p>
+<h1 id="矩阵的lu分解">矩阵的LU分解</h1>
+<p>在学习初等行变换的矩阵表示之后再回头考虑我们对着<span class="math inline">\(n\times n\)</span>矩阵<span class="math inline">\(A\)</span>做消元得到上三角阵<span class="math inline">\(U\)</span>的过程，我们就会发现，<strong>在消元过程不涉及交换两行的时候，</strong>消元过程可以表示为： <span class="math display">\[
+E_{n,n-1}\cdots E_{31}E_{21}A=U
+\]</span> 其中<span class="math inline">\(E_{21}\)</span>表示我们把<span class="math inline">\(a_{21}\)</span>消为<span class="math inline">\(0\)</span>所运用的行变换。</p>
+<p>注意到在消元的时候我们是按照<span class="math inline">\(E_{21}, E_{31},\cdots\)</span>这个顺序消过来的，但是因为行变换是左乘，因此上式当中从左到右序号是反的。</p>
+如果<span class="math inline">\(A\)</span>确实可以顺顺利利地消成<span class="math inline">\(U\)</span>，那说明<span class="math inline">\(E_{n,n-1}\cdots E_{31}E_{21}\)</span>是可逆的，即： $$
+<span class="math display">\[\begin{aligned}
+A&amp;=(E_{n,n-1}\cdots E_{31}E_{21})^{-1}U\\ 
+&amp;=E_{21}^{-1}E_{31}^{-1}\cdots E_{n,n-1}^{-1}U
+
+\end{aligned}\]</span>
+<p><span class="math display">\[
+不妨令$L=E_{21}^{-1}E_{31}^{-1}\cdots E_{n,n-1}^{-1}$，则矩阵$A$可以写作：
+\]</span> A=LU $$ 这就被称为矩阵<span class="math inline">\(A\)</span>的<span class="math inline">\(LU\)</span>分解。</p>
+<p>其中<span class="math inline">\(U\)</span>是上三角阵无疑，而<span class="math inline">\(L\)</span>，其字母暗示我们这是一个<strong>下三角阵</strong>。</p>
+<p>不仅如此，比如说对于<span class="math inline">\(3\)</span>阶方阵消元共三步： <span class="math display">\[
+E_{21}^{-1} = \begin{pmatrix}
+1&amp;0&amp;0\\
+a&amp;1&amp;0\\
+0&amp;0&amp;1
+\end{pmatrix}
+,
+E_{31}^{-1} = \begin{pmatrix}
+1&amp;0&amp;0\\
+0&amp;1&amp;0\\
+b&amp;0&amp;1
+\end{pmatrix}
+,
+E_{32}^{-1} = \begin{pmatrix}
+1&amp;0&amp;0\\
+0&amp;1&amp;0\\
+0&amp;c&amp;1
+\end{pmatrix}
+\]</span> 计算<span class="math inline">\(L\)</span>可得 <span class="math display">\[
+L=\begin{pmatrix}
+1&amp;0&amp;0\\
+a&amp;1&amp;0\\
+0&amp;0&amp;1
+\end{pmatrix}\begin{pmatrix}
+1&amp;0&amp;0\\
+0&amp;1&amp;0\\
+b&amp;0&amp;1
+\end{pmatrix}\begin{pmatrix}
+1&amp;0&amp;0\\
+0&amp;1&amp;0\\
+0&amp;c&amp;1
+\end{pmatrix}=\begin{pmatrix}
+1&amp;0&amp;0\\
+a&amp;1&amp;0\\
+b&amp;c&amp;1
+\end{pmatrix}
+\]</span> <span class="math inline">\(L\)</span>在形式上就是把<strong>所有行变换矩阵“拼起来“</strong>！矩阵乘法平常都会把矩阵里面的数字形式破坏掉，这次为什么那么奇妙呢？</p>
+<p><strong>从消元的角度，可以这么理解：</strong></p>
+<p>我们能够把两个行变换矩阵“拼”起来，当且仅当一个变换的结果不会改变另一个变换的源。</p>
+<p>什么意思？如果<span class="math inline">\(E_1\)</span>把第<span class="math inline">\(2\)</span>行的<span class="math inline">\(3\)</span>倍加到第<span class="math inline">\(2\)</span>行，<span class="math inline">\(E_2\)</span>把第<span class="math inline">\(1\)</span>行的<span class="math inline">\(2\)</span>倍加到第<span class="math inline">\(2\)</span>行。</p>
+<p>如果我们先做<span class="math inline">\(E_1\)</span>再做<span class="math inline">\(E_2\)</span>即<span class="math inline">\(E_2E_1\)</span>，那么这个时候我们是可以直接拼起来的。因为先做的<span class="math inline">\(E_1\)</span>没有改变<span class="math inline">\(E_2\)</span>所依赖的第<span class="math inline">\(2\)</span>行。但是先做<span class="math inline">\(E_2\)</span>再做<span class="math inline">\(E_1\)</span>即<span class="math inline">\(E_1E_2\)</span>就不能直接拼起来，因为先做的<span class="math inline">\(E_2\)</span>把<span class="math inline">\(E_1\)</span>所依赖的第<span class="math inline">\(2\)</span>行改掉了。</p>
+<p>然后我们发现在<span class="math inline">\(LU\)</span>分解里面我们是先改第<span class="math inline">\(n\)</span>行，再改第<span class="math inline">\(n-1\)</span>行这样从下到上地变换上去的。改变第<span class="math inline">\(n\)</span>行的变换只会依赖于前<span class="math inline">\(n-1\)</span>行，因此出不了问题。</p>
+<p><strong>从纯计算的角度，可以这么解释：</strong></p>
+<p>考虑矩阵乘法<span class="math inline">\(L=EL&#39;\)</span>，其中<span class="math inline">\(E\)</span>是一个行变换矩阵且假设其中<span class="math inline">\(E_{ik}=a\)</span>，<span class="math inline">\(L&#39;\)</span>是下三角阵。</p>
+则考虑<span class="math inline">\(L\)</span>第<span class="math inline">\(i\)</span>行第<span class="math inline">\(j\)</span>列的值<span class="math inline">\(L_{ij}\)</span>（除了第<span class="math inline">\(i\)</span>行，结果的其他行显然等于<span class="math inline">\(L&#39;\)</span>），必然是<span class="math inline">\(E\)</span>的行向量与<span class="math inline">\(L&#39;\)</span>列向量之点乘： $$ L_{ij}=
+<span class="math display">\[\begin{pmatrix}
+0 \\
+\vdots \\
+a\\
+\vdots \\
+\color{red}1\\
+\vdots\\
+0
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+0 \\
+\vdots \\
+
+\color{blue}1 \\
+\vdots \\
+b \\
+c \\
+\vdots \\
+\end{pmatrix}\]</span>
+<p>$$</p>
+<p>由于三角阵主对角线上都是<span class="math inline">\(1\)</span>，在上式中左边向量里面的<span class="math inline">\(\color{red}1\)</span>就是从上往下数第<span class="math inline">\(i\)</span>个，右边向量里面的<span class="math inline">\(\color{blue}1\)</span>就是从上往下数第<span class="math inline">\(j\)</span>个。因为是下三角阵<span class="math inline">\(\color{red}1\)</span>的下面都是<span class="math inline">\(0\)</span>，<span class="math inline">\(\color{blue}1\)</span>的上面也都是<span class="math inline">\(0\)</span>。接下来讨论<span class="math inline">\(\color{red}1\)</span>和<span class="math inline">\(\color{blue} 1\)</span>的位置关系。</p>
+<ul>
+<li><span class="math inline">\(i&lt;j\)</span>时，<span class="math inline">\(\color{red}1\)</span>在<span class="math inline">\(\color{blue}1\)</span>的上面。右侧<span class="math inline">\(\color{blue} 1\)</span>下面非零的元素对着左边的都是<span class="math inline">\(0\)</span>，左侧<span class="math inline">\(\color{red}1\)</span>上面的非零<span class="math inline">\(a\)</span>对到右边也是<span class="math inline">\(0\)</span>，因此<span class="math inline">\(L_{ij}=0\)</span>。</li>
+<li><span class="math inline">\(i=j\)</span>时，<span class="math inline">\(\color{red} 1\)</span>正对着<span class="math inline">\(\color{blue}1\)</span>，因此<span class="math inline">\(L_{ij}=1\times 1=1\)</span>。</li>
+<li><span class="math inline">\(i&gt;j\)</span>时，<span class="math inline">\(\color{red} 1\)</span>在<span class="math inline">\(\color{blue}1\)</span>的下面。<span class="math inline">\(a\)</span>是左侧从上往下数第<span class="math inline">\(k\)</span>个。
+<ul>
+<li><span class="math inline">\(j&gt;k\)</span>时，<span class="math inline">\(\color{blue}1\)</span>在<span class="math inline">\(a\)</span>下面，<span class="math inline">\(a\)</span>对着<span class="math inline">\(0\)</span>。<span class="math inline">\(L_{ij}=L&#39;_{ij}\)</span>。</li>
+<li><span class="math inline">\(j=k\)</span>时，<span class="math inline">\(a\)</span>对着<span class="math inline">\(\color{blue}1\)</span>，<span class="math inline">\(\color{red}1\)</span>对着<span class="math inline">\(L&#39;_{ij}，\)</span><span class="math inline">\(L_{ij}=a+L&#39;_{ij}\)</span>。</li>
+<li><span class="math inline">\(j&lt;k\)</span>时，<span class="math inline">\(a\)</span>对着<span class="math inline">\(L&#39;_{kj}\)</span>，<span class="math inline">\(\color{red}1\)</span>对着<span class="math inline">\(L&#39;_{ij}\)</span>。<span class="math inline">\(L_{ij}=aL&#39;_{kj}+L&#39;_{ij}\)</span>。</li>
+</ul></li>
+</ul>
+<p>显然，当我们向左边一个一个行变换矩阵乘过来的时候，<span class="math inline">\(L&#39;_{ij}=0\)</span>，且<span class="math inline">\(L&#39;_{kj}=0\quad \forall j&lt;k\)</span>。于是乎 <span class="math display">\[
+L_{ij} = \begin{cases}
+0, &amp; i&lt;j\\
+1, &amp; i=j\\
+L&#39;_{ij}, &amp;k&lt;j&lt;i \\
+a, &amp; j=k\\
+0, &amp; j&lt;k\\
+\end{cases}
+\]</span> 这就是把<span class="math inline">\(a\)</span>直接放到<span class="math inline">\(L&#39;\)</span>的对应位置里面。结合数学归纳法，可以导出<span class="math inline">\(LU\)</span>分解的结果确实就是几个行变换矩阵“拼起来”。</p>
+<h1 id="矩阵的ldu分解">矩阵的LDU分解</h1>
+<p>注意到在<span class="math inline">\(A=LU\)</span>当中，我们虽然保证了<span class="math inline">\(L\)</span>的主对角线是上<span class="math inline">\(1\)</span>，但是<span class="math inline">\(U\)</span>的主对角线上就未必了。</p>
+<p>假设<span class="math inline">\(U\)</span>的主对角线上的数是<span class="math inline">\(d_1,d_2,\cdots,d_n\)</span>，那么不妨令： <span class="math display">\[
+U=DU&#39;
+\]</span> 其中 <span class="math display">\[
+D=\begin{pmatrix}
+d_1&amp;0&amp;\cdots&amp;0\\
+0&amp;d_2&amp;\cdots&amp;0\\
+\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+0&amp;0&amp;\cdots&amp;d_n\\
+\end{pmatrix}
+\]</span> 而<span class="math inline">\(U&#39;\)</span>是<span class="math inline">\(U\)</span>每一行分别除以<span class="math inline">\(d_1,d_2,\cdots,d_n\)</span>的结果。</p>
+<p>这样一来分解就变成了 <span class="math display">\[
+A=LDU&#39;
+\]</span></p>
+<p>这种分解就被称作矩阵<span class="math inline">\(A\)</span>的<span class="math inline">\(LDU\)</span>分解。</p>
 
       
     </div>

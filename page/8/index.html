@@ -235,7 +235,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/17/%E7%82%B9%E5%88%86%E6%B2%BB/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/FFT/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -248,7 +248,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/17/%E7%82%B9%E5%88%86%E6%B2%BB/" class="post-title-link" itemprop="url">POJ 1741 / 点分治</a>
+          <a href="/2021/07/25/FFT/" class="post-title-link" itemprop="url">FFT笔记</a>
         </h2>
 
         <div class="post-meta-container">
@@ -258,10 +258,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2018-09-17 14:09:37 / 修改时间：14:09:27" itemprop="dateCreated datePublished" datetime="2018-09-17T14:09:37+08:00">2018-09-17</time>
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2019-02-03 03:09:34" itemprop="dateModified" datetime="2019-02-03T03:09:34-05:00">2019-02-03</time>
+      </span>
 
   
 </div>
@@ -273,597 +279,248 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="题面">题面</h1>
-<p><a target="_blank" rel="noopener" href="http://poj.org/problem?id=1741">题面</a>，给定一个<span class="math inline">\(n\)</span>个节点的无根树，边带权，求树上长度不超过<span class="math inline">\(k\)</span>的简单路径的数量。</p>
-<p><span class="math inline">\(n \le 10^5\)</span></p>
-<h1 id="解法">解法</h1>
-<p>这道题所使用到的思想是分治，假设我们现在要处理一颗根为<span class="math inline">\(u\)</span>的树，很明显这棵树的路径<span class="math inline">\(x \to y\)</span>有两种：</p>
+          <p><del>上次更新是在十月份？我到底摸了多久</del></p>
+<h1 id="卷积">卷积</h1>
+<p>对于两个序列<span class="math inline">\(\{x\}, \{y\}​\)</span>，定义它们的卷积<span class="math inline">\(\{x \ast y\}​\)</span>为： <span class="math display">\[
+(x \ast y)_k = \sum_{j = 0}^k x_jy_{k- j}
+\]</span></p>
+<h1 id="单位根">单位根</h1>
+<p>定义复平面单位圆上的<span class="math inline">\(n​\)</span>次单位根 <span class="math display">\[
+\omega_{n} = e^{\frac{2\pi i}{n}} = \cos\left(\frac{2\pi}{n}\right) + i\sin\left(\frac{2\pi}{n}\right)
+\]</span> 易证其有如下的性质：</p>
 <ol type="1">
-<li>如果<span class="math inline">\(x, y\)</span>在<span class="math inline">\(u\)</span>的同一棵子树里面，那么<span class="math inline">\(x \to y\)</span>一定不经过<span class="math inline">\(u\)</span>，只在某棵子树里面。</li>
-<li>如果<span class="math inline">\(x, y\)</span>在<span class="math inline">\(u\)</span>的不同子树里面，那么<span class="math inline">\(x \to y\)</span>一定经过<span class="math inline">\(u\)</span>。</li>
+<li><span class="math inline">\(\omega_{2n}^{2k} = \omega_n^k\)</span></li>
+<li><span class="math inline">\(\omega_n^k = \omega_n^{k +n}\)</span></li>
+<li><span class="math inline">\(\omega_n^k = - \omega_{n}^{k + n / 2}\)</span></li>
 </ol>
-<p>很明显第一种情况我们可以递归在子树里面做，因此我们主要处理第二种情况，准确来说，我们从<span class="math inline">\(u\)</span>开始DFS一波，求出<span class="math inline">\(d[x]\)</span>为<span class="math inline">\(x\)</span>到<span class="math inline">\(u\)</span>的距离（深度），那么我们要求的答案就变成了<span class="math inline">\(x, y\)</span>不属于<span class="math inline">\(u\)</span>的同一棵子树，且<span class="math inline">\(d[x] + d[y] \le k\)</span>的<span class="math inline">\((x, y)\)</span>的个数。</p>
-<p>我们先忽略“不属于同一棵子树”这个限制，考虑后面的条件，给定<span class="math inline">\(d​\)</span>，如何求<span class="math inline">\(d[x] + d[y] \le k​\)</span>的<span class="math inline">\((x, y)​\)</span>的个数？</p>
-<p>我们使用<strong>双指针</strong>的方法，把<span class="math inline">\(d\)</span>排序，然后维护两个指针<span class="math inline">\(i, j\)</span>，假设有<span class="math inline">\(cnt\)</span>个元素，初始化<span class="math inline">\(i = 1, j = cnt\)</span>。很明显随着<span class="math inline">\(i\)</span>的增加，<span class="math inline">\(j\)</span>必定单调不增！而对于任意时刻的满足<span class="math inline">\(d[i] + d[j] \le k\)</span>的<span class="math inline">\(i, j\)</span>，显然对于<span class="math inline">\(i &lt; x \le j\)</span>，都有<span class="math inline">\(d[i] + d[x] \le k\)</span>，因此我们把答案累加上<span class="math inline">\(j - i\)</span>。总体复杂度为<span class="math inline">\(O(cnt \log cnt)\)</span>，代码很短：</p>
-<pre class="line-numbers"><code class="language-cpp">sort(d + 1, d + 1 + cnt);
-int ret = 0;
-for (int i = 1, j = cnt; i &lt; j; ) &#123;
-    if (d[i] + d[j] &lt;= k) ret += j - i, i++;
-    else j--;
-&#125;</code></pre>
-<p>我们接下来考虑如何加上”不属于同一棵子树“的限制，假设我们递归计算的函数为<span class="math inline">\(calc(u)\)</span>，一开始初始化<span class="math inline">\(d[u] = 0\)</span>，然后统计了一波，假设我们多统计了都在子树<span class="math inline">\(v\)</span>里面的路径的数量，这是多少呢？很显然<strong>这些多统计的路径数等价于初始化<span class="math inline">\(d[v] = w_{uv}\)</span>之后<span class="math inline">\(calc(v)\)</span>的值</strong>，减去即可：</p>
-<pre class="line-numbers"><code class="language-cpp">...
-ans += calc(u);
-for (int e = fst[u]; e; e = nxt[e]) &#123;
-    int v = to[e];
-    if (vis[v]) continue;
-    dis[v] = len[e]; ans -= calc(v); // 减去多算的
-    ...
-&#125;</code></pre>
-<p>最后，还留下一个问题：<strong>从哪里开始分治呢？</strong>注意到如果我们出发点取得不好，选到了链的一端，那么复杂度就退化了，因此我们最好从<strong>无根树的重心开始分治</strong>，求重心是<span class="math inline">\(O(n)\)</span>的：</p>
-<pre class="line-numbers"><code class="language-cpp">void dfs_rt(int u, int p) &#123; // sz[0] 是总结点数，p是父节点
-    sz[u] = 1, f[u] = 0;
-    for (int e = fst[u]; e; e = nxt[e]) &#123;
-        int v = to[e];
-        if (vis[v] || v == p) continue;
-        dfs_rt(v, u);
-        sz[u] += sz[v];
-        f[u] = max(f[u], sz[v]);
-    &#125;
-    f[u] = max(f[u], sz[0] - sz[u]);
-    if (f[u] &lt; f[rt]) rt = u;
-&#125;</code></pre>
-<p>因此，最后算法的总框架就是：</p>
+<h1 id="dft">DFT</h1>
+<p>对于一长度为<span class="math inline">\(n\)</span>的序列<span class="math inline">\(\{x\}\)</span>，定义其离散傅里叶变换（DFT）<span class="math inline">\(\mathcal{F}\{x\} = \{X\}\)</span>为： <span class="math display">\[
+\mathcal{F}\{x\}_k = X_k = \sum_{j = 0}^{n - 1} x_i\omega_n^{jk}
+\]</span> 则有其离散傅里叶逆变换（IDFT）为： <span class="math display">\[
+x_k = \frac{1}{n}\sum_{j = 0}^{n - 1} X_i\omega_n^{-jk}
+\]</span> （标准定义里面<span class="math inline">\(\omega_n^{jk}​\)</span>和<span class="math inline">\(\omega_n^{-jk}​\)</span>应该互换，但是不影响）</p>
+<p><strong>暴力证明：</strong>考虑<span class="math inline">\(\mathcal{F}\{x_n\}\)</span>的计算式： <span class="math display">\[
+\begin{pmatrix}
+1 &amp;1 &amp;1 &amp;\cdots &amp;1 \\
+1 &amp;\omega_n &amp;\omega_n^2 &amp;\cdots &amp;\omega_n^{n - 1} \\
+1 &amp;\omega_n^2 &amp;\omega_n^4 &amp;\cdots &amp;\omega_n^{2(n-1)} \\
+\vdots &amp;\vdots &amp;\vdots &amp;\ddots &amp;\vdots \\
+1 &amp;\omega_n^{n - 1} &amp;\omega_{n}^{2(n-1)} &amp;\cdots &amp;\omega_n^{(n-1)^2}
+\end{pmatrix}
+\begin{pmatrix}
+x_1 \\x_2 \\x_3 \\ \vdots \\x_{n - 1}
+\end{pmatrix}
+=
+\begin{pmatrix}
+X_1 \\X_2 \\X_3 \\ \vdots \\X_{n - 1}
+\end{pmatrix}
+\]</span> 设左边矩阵为<span class="math inline">\(V​\)</span>，接下来从充分性上证明<span class="math inline">\(V^{-1}_{jk} = \frac{\omega_n^{-jk}}{n}​\)</span>： <span class="math display">\[
+\left(VV^{-1}\right)_{jk} = \sum_{l = 0}^{n - 1}\omega_n^{jl}\cdot\frac{\omega_n^{-lk}}{n}
+= \frac{1}{n}\sum_{l = 0}^{n - 1}\omega_n^{l(j - k)}
+\]</span> 显然当<span class="math inline">\(j = k​\)</span>时有<span class="math inline">\(\left(VV^{-1}\right)_{jk} = 1​\)</span>，而<span class="math inline">\(j \neq k​\)</span>时，由等比数列求和公式： <span class="math display">\[
+\begin{aligned}
+\frac{1}{n}\sum_{l = 0}^{n - 1}\omega_n^{l(j - k)} &amp;= \frac{1}{n} \cdot \frac{1 - \omega_n^{n(j - k)}}{1 - \omega_n^{j - k}} = 0
+\end{aligned}
+\]</span> 因此<span class="math inline">\(VV^{-1} = I​\)</span>，得证。</p>
+<p>上面的DFT有如下意义：</p>
 <ol type="1">
-<li>从重心<span class="math inline">\(u\)</span>开始分治</li>
-<li>处理完重心以后，删除<span class="math inline">\(u\)</span>，递归处理其他的无根树。</li>
+<li>将<span class="math inline">\(\{x_n\}​\)</span>作为一组正交基<span class="math inline">\(\{\omega_n^0, \omega_n^1, \cdots\}, \{\omega_n^0, \omega_n^{2}, \cdots\}​\)</span>的系数，计算和向量。（在此意义下逆变换就是将向量进行分解，因此逆变换的意义显然，无需上述证明）</li>
+<li>将<span class="math inline">\(\{x_n\}\)</span>作为以个多项式的系数，计算该多项式在<span class="math inline">\(\omega_n^0, \omega_n^1,\cdots\)</span>点上的取值。</li>
 </ol>
-<pre class="line-numbers"><code class="language-cpp">void dfs(int u) &#123;
-    vis[u] = 1; dis[u] = 0;
-    ans += calc(u);
-    for (int e = fst[u]; e; e = nxt[e]) &#123;
-        int v = to[e];
-        if (vis[v]) continue;
-        dis[v] = len[e]; ans -= calc(v);
-        rt = 0; sz[0] = sz[v];
-        dfs_rt(v, 0); dfs(rt);
-    &#125;
-&#125;</code></pre>
-<p>易证递归的深度不超过<span class="math inline">\(O(\log n)\)</span>，算上双指针中排序的时间，算法的总复杂度为<span class="math inline">\(O(n\log ^2 n)\)</span>。</p>
-<p>代码：</p>
+<p>DFT是线性的，即<strong>和的DFT等于DFT的和</strong>，且<strong>常数倍的DFT是DFT的常数倍。</strong></p>
+<p>同时DFT的另一个重要性质被称为卷积性，即 <span class="math display">\[
+\mathcal{F}\{x\}_k\mathcal{F}\{y\}_k = \mathcal{F}\{x \ast y\}_k
+\]</span> <strong>证明：</strong>把式子写出来： <span class="math display">\[
+\left(\sum_{j = 0}^{n - 1} x_j \omega_n^{jk}\right)\left(\sum_{j = 0}^{n - 1} y_j \omega_n^{jk}\right) \overset{?}{=} \sum_{j = 1}^{n - 1}\left(\sum_{l = 0}^jx_ly_{j - l}\right)\omega_n^{jk}
+\]</span> 显然左边式子展开对应的任意一项<span class="math inline">\(x_ay_b\omega_n^{(a + b)k}\)</span>都唯一地出现在右式<span class="math inline">\(j = a+b\)</span>内层求和的展开式中，因此两个式子总是等价的。</p>
+<p><strong>DFT将卷积<span class="math inline">\(O(n^2)\)</span>的操作转化为<span class="math inline">\(O(n)\)</span>的操作，因此可以用于加速卷积。</strong></p>
+<h1 id="fft">FFT</h1>
+<p>因为DFT对应点相乘这一操作本身是<span class="math inline">\(O(n)​\)</span>的，因此我们只要找到快速的DFT/IDFT算法，就可以避免<span class="math inline">\(O(n^2)​\)</span>地计算卷积。FFT就是这样一种基于分治的快速DFT算法，时间复杂度为<span class="math inline">\(O(n\log n)​\)</span>。</p>
+<p>首先假设我们需要计算一个序列<span class="math inline">\(\{x\}\)</span>的DFT（假设<span class="math inline">\(n\)</span>是<span class="math inline">\(2\)</span>的整数次幂），我们按照下标的奇偶性将这个序列分为<span class="math inline">\(\{a\}, \{b\}\)</span>两部分，其中<span class="math inline">\(a_j = x_{2j}\)</span>且<span class="math inline">\(b_j = x_{2j + 1}\)</span>。那我们有： <span class="math display">\[
+\begin{aligned}
+\mathcal{F}\{x\}_k &amp;= \sum_{j = 0}^{n - 1} x_j\omega_n^{jk} \\
+&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} \left[(x_{2j}\omega_n^{2jk} + x_{2j + 1}\omega_n^{(2j + 1)k}\right] \\
+&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} x_{2j}\omega_n^{2jk} + \omega_n^k \sum_{j = 0}^{\frac{n}{2} - 1} x_{2j + 1}\omega_n^{2jk} \\
+&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} a_j\omega_{n / 2}^{jk} + \omega_n^k \sum_{j = 0}^{\frac{n}{2} - 1} b_j\omega_{n / 2}^{jk} \\
+&amp;= \mathcal{F}\{a\}_k + \omega_{n}^k\mathcal{F}\{b\}_k
+\end{aligned}
+\]</span> <del>看起来好像没有问题？</del>我们最后一步推导其实是有一点小问题的，因为当<span class="math inline">\(\mathcal{F}\{a\}\)</span>依据我们的定义只有<span class="math inline">\(\frac{n}{2}\)</span>项，因此上面的推导只能让我们计算<span class="math inline">\(0 \le k &lt; \frac{n}{2}\)</span>的值。对于<span class="math inline">\(k \ge \frac{n}{2}\)</span>的情况要如何处理呢？</p>
+<p>首先，注意到： <span class="math display">\[
+\omega_n^{2jk} = \omega_n^{2jk - jn} = \omega{_n^{2j(k - n / 2)}}
+\]</span> 因此我们稍微变一下： <span class="math display">\[
+\begin{aligned}
+\mathcal{F}\{x\}_k &amp;= \sum_{j = 0}^{n - 1} x_j\omega_n^{jk} \\
+&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} \left[x_{2j}\omega_n^{2j(k - n /2)} + x_{2j + 1}\omega_n^{2j(k - n /2) + k}\right] \\
+&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} x_{2j}\omega_n^{2j(k - n /2)} + \omega_n^k \sum_{j = 0}^{\frac{n}{2} - 1} x_{2j + 1}\omega_n^{2j(k - n /2)} \\
+&amp;= \sum_{j = 0}^{\frac{n}{2} - 1} a_j\omega_{n / 2}^{j(k - n /2)} + \omega_n^k \sum_{j = 0}^{\frac{n}{2} - 1} b_j\omega_{n / 2}^{j(k - n /2)} \\
+&amp;= \mathcal{F}\{a\}_{k - n / 2} - \omega_{n}^{k - n / 2}\mathcal{F}\{b\}_{k - n / 2}
+\end{aligned}
+\]</span> （其实本质上就是DFT的序列其实是可以周期拓展的）</p>
+<p>这使得我们得以计算<span class="math inline">\(\frac{n}{2} \le k &lt; n\)</span>时DFT的值。因此，最为朴素的FFT实现就是基于递归不断将<span class="math inline">\(\{x_n\}\)</span>进行分治，并通过上式对于分治结果进行合并。时间复杂度自然就是<span class="math inline">\(O(n\log n)\)</span>。</p>
+<p>然而事实一定没有那么简单。递归写法的FFT常数很大，很大程度上是因为合并本身不是in-place的，需要额外申请空间。更快的in-place FFT实现，Cooley–Tukey算法，是基于这样一个思路的：</p>
+<p>假设每次分出来的<span class="math inline">\(\{a\}\)</span>向左走，<span class="math inline">\(\{b\}\)</span>向右走，那递归版的FFT就会画出一棵很漂亮的二叉树，其中叶子节点对应的下标和序列本身的下标顺序是有很大差别的。我们可以预先快速计算出叶子节点的顺序，然后直接从叶子开始就地一层一层地合并上去。</p>
+<p>那叶子节点的顺序遵循怎样的规律呢？其实我们依据奇偶分组本质上是在依据二进制的末位分组，在这样的思想下，我们<del>脑补一下</del>发现这就是叶子节点的下标把原来序列的下标的二进制翻转一下（低位变高位，高位变低位）（即<span class="math inline">\(\{00, 01,10, 11\}\)</span>到叶子节点变成<span class="math inline">\(\{00, 10, 01, 11\}\)</span>）（可以结合画图理解）。这样的话我们维护一个从高位到低位的二进制加法器就行了。</p>
+<p>代码如下：</p>
 <pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-#include &lt;algorithm&gt;
+#include &lt;complex&gt;
+#include &lt;cmath&gt;
 
 using namespace std;
-const int N = 10010;
-int n, k, fst[N], nxt[2 * N], to[2 * N], len[2 * N];
-int tot, cnt, vis[N], f[N], sz[N], dis[N], d[N], rt;
-int ans;
+typedef complex&lt;double&gt; cplx;
+const double PI = 3.1415926535897932384626;
 
-void link(int a, int b, int w) &#123;
-    nxt[++tot] = fst[a];
-    fst[a] = tot; to[tot] = b;
-    len[tot] = w;
-&#125;
-
-void dfs_rt(int u, int p) &#123;
-    sz[u] = 1, f[u] = 0;
-    for (int e = fst[u]; e; e = nxt[e]) &#123;
-        int v = to[e];
-        if (vis[v] || v == p) continue;
-        dfs_rt(v, u);
-        sz[u] += sz[v];
-        f[u] = max(f[u], sz[v]);
+void fft(int len, cplx *x, cplx *X, int dir = 1) &#123;
+    for (int i = 0, k = 0; i &lt; len; i++) &#123;
+        X[i] = x[k];
+        int y = len &gt;&gt; 1;
+        while (y &amp; k) k ^= y, y &gt;&gt;= 1; // 维护倒序加法器
+        k |= y; 
     &#125;
-    f[u] = max(f[u], sz[0] - sz[u]);
-    if (f[u] &lt; f[rt]) rt = u;
-&#125;
-
-void dfs_d(int u, int p) &#123;
-    d[++cnt] = dis[u];
-    for (int e = fst[u]; e; e = nxt[e]) &#123;
-        int v = to[e];
-        if (vis[v] || v == p) continue;
-        dis[v] = dis[u] + len[e];
-        dfs_d(v, u);
+    for (int s = 2; s &lt;= len; s &lt;&lt;= 1) &#123;
+        cplx w_(cos(2 * PI / s), dir * sin(2 * PI / s));
+        for (int l = 0; l &lt; len; l += s) &#123;
+            int mid = l + (s &gt;&gt; 1);
+            cplx w = 1;
+            for (int i = 0; i &lt; s &gt;&gt; 1; i++) &#123; // 逐层向上合并（一次蝴蝶操作）
+                cplx t = w * X[mid + i];
+                X[mid + i] = X[l + i] - t;
+                X[l + i] = X[l + i] + t;
+                w *= w_; 
+            &#125;
+        &#125;
     &#125;
+&#125;</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/ExCRT/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/07/25/ExCRT/" class="post-title-link" itemprop="url">ExCRT笔记</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2019-02-03 06:22:50" itemprop="dateModified" datetime="2019-02-03T06:22:50-05:00">2019-02-03</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="问题">问题</h1>
+<p>求满足： <span class="math display">\[
+\begin{aligned}
+x &amp;\equiv b_1 &amp;\pmod{a_1} \\
+x &amp;\equiv b_2 &amp;\pmod{a_2} \\
+x &amp;\equiv b_3 &amp;\pmod{a_3} \\
+&amp;\ \ \vdots &amp;\\
+x &amp;\equiv b_n &amp;\pmod{a_n}
+\end{aligned}
+\]</span> 的<span class="math inline">\(x\)</span>的值。</p>
+<h1 id="excrt">ExCRT</h1>
+<p>当<span class="math inline">\(a_1, a_2, \cdots, a_n\)</span>互素的时候显然可以使用中国剩余定理（CRT）解决，时间复杂度为<span class="math inline">\(O(n\log n)\)</span>。</p>
+<p>考虑不互素的情况，假设已经解决了前<span class="math inline">\(i - 1\)</span>个方程，得到的解为<span class="math inline">\(x_{i - 1}\)</span>，<span class="math inline">\(\operatorname{lcm}(a_1, \cdots, a_{i - 1}) = m\)</span>。</p>
+<p>那么我们考虑解决 <span class="math display">\[
+x_{i - 1} + tm \equiv b_i \pmod{a_i}
+\]</span> 易证得到的解<span class="math inline">\(x_i = x_{i - 1} + tm\)</span>不会再和前<span class="math inline">\(i\)</span>个解产生冲突。</p>
+<p>稍微移项一下： <span class="math display">\[
+tm \equiv b_i - x_{i - 1} \pmod{a_i}
+\]</span> 用ExGCD解出<span class="math inline">\(t\)</span>即可。</p>
+<p>这套方法称为ExCRT（拓展中国剩余定理），复杂度依旧是<span class="math inline">\(O(n\log n)\)</span>。<del>全面优于CRT。</del></p>
+<p>代码：</p>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
+
+using namespace std;
+typedef long long ll;
+const int N = 100010;
+int n;
+ll a[N], b[N];
+
+ll exgcd(ll a, ll b, ll &amp;x, ll &amp;y) &#123;
+    if (b == 0) return x = 1, y = 0, a;
+    ll d = exgcd(b, a % b, y, x);
+    return y -= a / b * x, d;
 &#125;
 
-int calc(int u) &#123;
-    cnt = 0; dfs_d(u, 0);
-    sort(d + 1, d + 1 + cnt);
-    int ret = 0;
-    for (int i = 1, j = cnt; i &lt; j; ) &#123;
-        if (d[i] + d[j] &lt;= k) ret += j - i, i++;
-        else j--;
+ll smul(ll x, ll y, ll mod) &#123;
+    if (y &lt; 0) return -qmul(x, -y, mod);
+    ll ret = 0;
+    for (; y; y &gt;&gt;= 1) &#123;
+        if (y &amp; 1) ret = (ret + x) % mod;
+        x = (x + x) % mod;
     &#125;
     return ret;
 &#125;
 
-void dfs(int u) &#123;
-    vis[u] = 1; dis[u] = 0;
-    ans += calc(u);
-    for (int e = fst[u]; e; e = nxt[e]) &#123;
-        int v = to[e];
-        if (vis[v]) continue;
-        dis[v] = len[e]; ans -= calc(v);
-        rt = 0; sz[0] = sz[v];
-        dfs_rt(v, 0); dfs(rt);
+ll excrt() &#123;
+    ll lcm = a[1], t = b[1], x, y;
+    for (int i = 2; i &lt;= n; i++) &#123;
+        ll d = exgcd(lcm, a[i], x, y);
+        x = smul(x, (b[i] - t) / d, a[i]);
+        t += x * lcm;
+        lcm = lcm / d * a[i];
+        t = (t % lcm + lcm) % lcm;
     &#125;
+    return t;
 &#125;
 
 int main() &#123;
-    f[0] = 0x3f3f3f3f;
-    while (scanf(&quot;%d%d&quot;, &amp;n, &amp;k), n) &#123;
-        tot = 1; ans = 0;
-        fill(vis + 1, vis + 1 + n, 0);
-        fill(fst + 1, fst + 1 + n, 0);
-        for (int i = 1; i &lt;= n - 1; i++) &#123;
-            int a, b, w;
-            scanf(&quot;%d%d%d&quot;, &amp;a, &amp;b, &amp;w);
-            link(a, b, w);
-            link(b, a, w);
-        &#125;
-        sz[0] = n; dfs_rt(1, 0);
-        dfs(rt);
-        printf(&quot;%d\n&quot;, ans);
-    &#125;
-    return 0;
-&#125; </code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/06/Nim%E6%B8%B8%E6%88%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/06/Nim%E6%B8%B8%E6%88%8F/" class="post-title-link" itemprop="url">Nim博弈与阶梯博弈</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2018-09-06 20:31:36 / 修改时间：20:52:09" itemprop="dateCreated datePublished" datetime="2018-09-06T20:31:36+08:00">2018-09-06</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>觉得博弈论这种东西，知道结论代码巨短无比，不知道结论当场去世……</p>
-<h1 id="nim-博弈">Nim 博弈</h1>
-<h2 id="问题表述">问题表述</h2>
-<p>有<span class="math inline">\(n\)</span>堆石子，第<span class="math inline">\(i\)</span>堆石子有<span class="math inline">\(a_i\)</span>个，两个玩家轮流操作，每个玩家每轮可以选择一堆石子，取走至少一个石子（也可以把一堆取光，但不能不取）。不能操作者判负。已知每方均采取最优策略，问先手还是后手必胜？</p>
-<h2 id="解法">解法</h2>
-<p><strong>定理：</strong>Nim博弈先手必胜当且仅当<span class="math inline">\(\bigoplus_{i = 1}^n a_i \neq 0\)</span>。</p>
-<p><strong>证明：</strong>设<span class="math inline">\(\bigoplus_{i = 1}^n a_i = x \neq 0\)</span>，且<span class="math inline">\(x\)</span>的最高位为<span class="math inline">\(j\)</span>，由异或的性质，显然存在一个<span class="math inline">\(a_i\)</span>的第<span class="math inline">\(j\)</span>位为<span class="math inline">\(1\)</span>，且<span class="math inline">\(a_i \oplus x &lt; a_i\)</span>，我们选择第<span class="math inline">\(i\)</span>堆，令<span class="math inline">\(a_i = a_i \oplus x\)</span>，由异或的相消性，此时<span class="math inline">\(\bigoplus_{i = 1}^n a_i = 0\)</span>，我们把这样一个局面留给了后手，而后手无论怎么操作异或和都会变成非零。而不能操作的局面，即全零的局面的异或和同样为<span class="math inline">\(0\)</span>，又因为我们每次都可以那样地把锅推给对方，因此先手必胜。</p>
-<h1 id="阶梯博弈">阶梯博弈</h1>
-<h2 id="问题表述-1">问题表述</h2>
-<p>有<span class="math inline">\(n\)</span>阶阶梯从左到右从低到高排开，记地面为第<span class="math inline">\(0\)</span>级，第<span class="math inline">\(i\)</span>个阶梯上有<span class="math inline">\(a_i\)</span>个石子，两个玩家轮流操作，每个玩家每轮可以选择一个阶梯，将其中的至少一个石子转移到左边的阶梯（或者地面）上。不能操作者判负。已知每方均采取最优策略，问先手还是后手必胜？</p>
-<h2 id="解法-1">解法</h2>
-<p><strong>定理：</strong>阶梯博弈等价于奇数阶的Nim博弈。</p>
-<p><strong>证明：</strong>如果上一步对方从一个偶数阶的阶梯移动若干个石子到奇数阶，那么我们就原封不动地在这一步把这些石子再移到左边的偶数阶上去，因此偶数阶的石子的移动不造成影响。而既然偶数阶不造成影响，那么从奇数阶转移到偶数阶的操作等价于从奇数阶取走了若干石子（如果我们不看偶数阶），这样最后偶数阶的石子会全部到地面上，而奇数阶无法操作者自然就输了，证毕。</p>
-<p><strong>例题：</strong>POJ 1704</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/05/%E7%BA%BF%E6%80%A7%E5%9F%BA%E7%AC%94%E8%AE%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/05/%E7%BA%BF%E6%80%A7%E5%9F%BA%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">异或 线性基</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2018-09-05 09:06:23 / 修改时间：09:43:00" itemprop="dateCreated datePublished" datetime="2018-09-05T09:06:23+08:00">2018-09-05</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="线性基">线性基</h1>
-<p><strong>定义：</strong>给定一组向量，构成一个线性空间，如果我们能够找到一组<strong>线性无关的向量</strong>，使得这些向量的线性组合能够构成整个线性空间，则这一组向量成为该向量空间的<strong>线性基</strong>。</p>
-<p><strong>算法：</strong>计算线性基我们可以把一组向量排成矩阵，然后在矩阵上跑高斯消元法，消出来的非零行向量即为线性基，非零行向量数目为矩阵的行秩。</p>
-<p>以下给出对于常规线性基的高斯消元代码：</p>
-<pre class="line-numbers"><code class="language-cpp">void gauss() &#123;
-    int dim = 0; // 行秩
-    for (int i = 1; i &lt;= n; i++) &#123;
-        int piv = dim + 1;
-        for (int j = dim + 1; j &lt;= m; j++)
-            if (abs(a[j][i]) &gt; abs(a[piv][i]))
-                piv = j;
-        if (abs(a[piv][i]) &lt; EPS) continue; // 自由元
-        dim++;
-        for (int j = 1; j &lt;= n; j++)
-            swap(a[dim][j], a[piv][j]);
-        for (int j = 1; j &lt;= m; j++) &#123;
-            if (j == dim) continue;
-            if (abs(a[j][i]) &lt; EPS) continue;
-            double r = a[j][i] / a[dim][i];
-            for (int k = 1; k &lt;= n; k++)
-                a[j][k] -= r * a[dim][k];
-        &#125;
-    &#125;
-&#125;</code></pre>
-<h1 id="异或">异或</h1>
-<p>简称XOR，数学记号为$$，C++中为<code>^</code>，<strong>异或本质上是在模<span class="math inline">\(2\)</span>意义下的加法运算。</strong>因此线性代数的很多算法也可以应用到异或这样的有限域上，异或的一个很重要的性质是<strong>相消性</strong>，即一个数异或两次等于没异或！（等同于乘<span class="math inline">\(2\)</span>，在模<span class="math inline">\(2\)</span>下就肯定没意义啦）。</p>
-<p>异或的相消性很重要的一个应用是在图上使用DFS计算环上边的异或，我们只需要计算从DFS树根节点出发各个点到根上路径的异或和（记作<span class="math inline">\(dis(u)\)</span>）。如果我们在DFS上找到返祖边<span class="math inline">\(e = (u, v)\)</span>，环的异或就是<span class="math inline">\(dis(u) \oplus dis(v) \oplus w(e)\)</span>。我们可以看到这个运算中<span class="math inline">\(u, v\)</span>LCA以上的部分都被抵消掉了，因此最后得到的就是整个环的异或和。<strong>如果求图上路径异或和的话我们可以用这样的方法搞出神奇的效果</strong>。</p>
-<h1 id="异或线性基">异或线性基</h1>
-<p>如何求出异或意义下的线性基呢？朴素的高斯消元肯定是可以的，但是对于异或我们首先可以压位减少常数，然后对于异或线性基我们还有一种求法，对于一个数<span class="math inline">\(x\)</span>，我们可以这样把<span class="math inline">\(x\)</span><strong>插入</strong>一组线性基：</p>
-<ol type="1">
-<li>找到<span class="math inline">\(x\)</span>的最高二进制位，记作<span class="math inline">\(i\)</span>。</li>
-<li>查看第<span class="math inline">\(i\)</span>位的线性基<span class="math inline">\(p[i]\)</span>是否被插入。</li>
-<li>如果没有被插入，插入第<span class="math inline">\(i\)</span>位的线性基，结束。</li>
-<li>如果已经被插入了，令<span class="math inline">\(x = x \oplus p[i]\)</span>。</li>
-</ol>
-<p><strong>正确性证明：</strong>如果当前位没被插入则插入操作显然正确，如果被插入，则<span class="math inline">\(x \oplus p[i]\)</span>不仅消除了第<span class="math inline">\(i\)</span>位，同时可以证明如果<span class="math inline">\(x \oplus p[i]\)</span>可以被线性基表出，则<span class="math inline">\(x\)</span>一定也可以被线性基表出。</p>
-<p>一个二进制数在被插入线性基的过程中如果失败了，那么它就会变成<span class="math inline">\(0\)</span>，暗示它可以由我们现有的线性基表出。</p>
-<p>代码：</p>
-<pre class="line-numbers"><code class="language-cpp">bool insert(int x) &#123;
-    for (int i = 30; i &gt;= 0; i--) &#123; // 最高位数
-        if ((x &gt;&gt; i) &amp; 1) &#123;
-            if (!p[i]) &#123;
-                p[i] = x;
-                return true;
-            &#125; else
-                x ^= p[i];
-        &#125;
-    &#125;
-    return false;
-&#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/04/%E5%88%9D%E6%8E%A2%E6%8B%9F%E9%98%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/04/%E5%88%9D%E6%8E%A2%E6%8B%9F%E9%98%B5/" class="post-title-link" itemprop="url">拟阵笔记</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-09-04 19:47:02" itemprop="dateCreated datePublished" datetime="2018-09-04T19:47:02+08:00">2018-09-04</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-10-07 16:12:09" itemprop="dateModified" datetime="2018-10-07T16:12:09+08:00">2018-10-07</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>拟阵是很多贪心算法的基础，也可以帮助我们验证自己的贪心算法的正确性，接下来是我从<del>抄</del>《算法导论》中整理出来的一些关于拟阵的性质：</p>
-<h1 id="定义">定义</h1>
-<p><strong>吐槽：</strong>虽然说拟阵叫拟阵，但是这个“阵”和矩阵的阵几乎一点关系都没有（名字的由来纯粹是历史遗留问题），拟阵和矩阵的关系就像JavaScript和Java，雷锋和雷峰塔一样……</p>
-<p><strong>拟阵：</strong>拟阵是一个二元组<span class="math inline">\(M = (S, I)\)</span>，其中<span class="math inline">\(S\)</span>为一个有限集，<span class="math inline">\(I\)</span>为<span class="math inline">\(S\)</span>的一个族（即子集的集合）并满足如下性质：</p>
-<ol type="1">
-<li><strong>遗传性：</strong>若<span class="math inline">\(B \in I\)</span>且<span class="math inline">\(A \subseteq B\)</span>，则<span class="math inline">\(A \in I\)</span>。</li>
-<li><strong>交换性：</strong>若<span class="math inline">\(A \in I, B \in I\)</span>且<span class="math inline">\(|A| &lt; |B|\)</span>，那么存在元素<span class="math inline">\(x \in B \setminus A\)</span>，使得<span class="math inline">\(A \cup \{x\} \in I\)</span>。（又是一个误导性的名字……）</li>
-</ol>
-<p><span class="math inline">\(I\)</span>中的集合成为<span class="math inline">\(S\)</span>的<strong>独立子集</strong>。</p>
-<p><strong>图拟阵：</strong>对于一个图<span class="math inline">\(G = (V, E)\)</span>，我们定义它的图拟阵为<span class="math inline">\(M_G = (S_G, I_G)\)</span>，当中<span class="math inline">\(S_G\)</span>为边集，而<span class="math inline">\(E\)</span>的子集<span class="math inline">\(A \in I_G\)</span>的当且仅当<span class="math inline">\(A\)</span>中无环（森林）。图拟阵与最小生成树有关（这也解释了为什么最小生成树的算法都是贪心）。由于森林的子图还是森林，因此该拟阵的遗传性显然。而该拟阵的交换性也在算法导论中有详细的证明，简单讲起来就是对于森林<span class="math inline">\(A, B\)</span>，<span class="math inline">\(|A| &lt; |B|\)</span>，我们知道<span class="math inline">\(A\)</span>中有<span class="math inline">\(|V| - |A|\)</span>棵树，<span class="math inline">\(B\)</span>中有<span class="math inline">\(|V| - |B|\)</span>棵树比<span class="math inline">\(A\)</span>少，因此一定存在一条边<span class="math inline">\((u, v)\)</span>使得<span class="math inline">\(u, v\)</span>在<span class="math inline">\(A\)</span>中分别属于两棵树，而在<span class="math inline">\(B\)</span>中却在一棵树上，显然<span class="math inline">\(A \cup \{(u, v)\} \in I_G\)</span>，证毕。</p>
-<p><strong>拓展：</strong>对于集合<span class="math inline">\(A\)</span>，若存在元素<span class="math inline">\(x\)</span>使得<span class="math inline">\(A \cup \{x\} \in I\)</span>，则称<span class="math inline">\(x\)</span>是<span class="math inline">\(A\)</span>的一个拓展。</p>
-<p><strong>最大独立子集：</strong>不存在拓展的独立子集。</p>
-<p><strong>定理：</strong>所有的最大独立子集等大小。</p>
-<p><strong>证明：</strong>反证， 假设存在最大独立子集<span class="math inline">\(A, B\)</span>使得<span class="math inline">\(|A| &lt; |B|\)</span>，由交换性，必然存在<span class="math inline">\(x \in B \setminus A\)</span>是<span class="math inline">\(A\)</span>的一个拓展，证毕。</p>
-<p><strong>加权拟阵：</strong>若存在一个权函数<span class="math inline">\(w\)</span>为所有<span class="math inline">\(S\)</span>的元素定义了严格正的权值，则称<span class="math inline">\(M\)</span>为加权拟阵，定义独立子集<span class="math inline">\(A\)</span>的权值为： <span class="math display">\[
-w(a) = \sum_{x \in A} w(x)
-\]</span></p>
-<h1 id="和贪心的关系">和贪心的关系</h1>
-<p>很多贪心问题可以转化为<strong>在拟阵上求最大权独立子集</strong>，或者称为拟阵的<strong>最优子集</strong>。</p>
-<p><strong>例：</strong>最小生成树算法当中我们可以对于边<span class="math inline">\(e\)</span>定义权重<span class="math inline">\(w(e) = l_{max} - l(e)\)</span>，其中<span class="math inline">\(l(e)\)</span>为边的长度，<span class="math inline">\(l_{max}\)</span>为一个极大的数。<em>在图拟阵上最大化独立子集权重必然等价于在图上最小化生成树边权</em>（因为生成树的边数总是固定的）。</p>
-<p><strong>求解最优子集的算法：</strong>将<span class="math inline">\(S\)</span>的所有元素<span class="math inline">\(x\)</span>按照<span class="math inline">\(w(x)\)</span>从大到小排序，初始化<span class="math inline">\(A = \emptyset\)</span>，然后依次从大到小考虑每个元素<span class="math inline">\(x\)</span>，并<strong>尽可能地</strong>用<span class="math inline">\(x\)</span>去拓展<span class="math inline">\(A\)</span>，最后得到的集合必定是最优子集。</p>
-<p>这个算法的贪心本质暴露无遗，接下来我们证明这个算法的正确性：</p>
-<p><strong>引理1（贪心选择）：</strong>若将<span class="math inline">\(S\)</span>的元素从大到小排序，令<span class="math inline">\(x\)</span>为排序后第一个使得<span class="math inline">\(\{x\} \in I\)</span>的元素，那么必然存在一个包含<span class="math inline">\(x\)</span>的最优子集。</p>
-<p><strong>证明：</strong>如果不存在<span class="math inline">\(x\)</span>，则最优子集为空，显然。</p>
-<p>否则，假设我们有一个不含<span class="math inline">\(x\)</span>的最优子集<span class="math inline">\(B\)</span>，显然由遗传性，对于<span class="math inline">\(y \in B\)</span>都有<span class="math inline">\(\{y\} \in I\)</span>，又因为我们选择<span class="math inline">\(x\)</span>的方式显然由<span class="math inline">\(w(x) \ge w(y)\)</span>。我们初始化<span class="math inline">\(A = \{x\}\)</span>，利用和<span class="math inline">\(B\)</span>交换性不断拓展<span class="math inline">\(A\)</span>直至<span class="math inline">\(|A| = |B|\)</span>，此时必定存在另一元素<span class="math inline">\(y\)</span>，使得<span class="math inline">\(A \setminus \{x\} = B \setminus \{y\}\)</span>，又因为<span class="math inline">\(w(x) \ge w(y)\)</span>，那么<span class="math inline">\(A\)</span>一定不会比<span class="math inline">\(B\)</span>差，得证。</p>
-<p><strong>引理2：</strong>若元素<span class="math inline">\(x\)</span>是<span class="math inline">\(A\)</span>的一个拓展，那么<span class="math inline">\(\{x\} \in I\)</span>，换而言之，<span class="math inline">\(x\)</span>是<span class="math inline">\(\emptyset\)</span>的拓展。</p>
-<p><strong>证明：</strong>由定义，<span class="math inline">\(A \cup \{x\} \in I\)</span>，由遗传性显然。</p>
-<p><strong>推论（逆否命题）：</strong>若<span class="math inline">\(x\)</span>不是<span class="math inline">\(\emptyset\)</span>的拓展，那它也一定不是其他非空独立子集的拓展。</p>
-<p><strong>引理3（最优子结构）：</strong>在如上算法中选择完<span class="math inline">\(x\)</span>之后，在<span class="math inline">\(M = (S, I)\)</span>中寻找最优子集等价于在<span class="math inline">\(M&#39;= (S&#39;, I&#39;)\)</span>中寻找最优子集，其中： <span class="math display">\[
-\begin{aligned}
-S&#39; &amp;= \{y \mid \{x, y\} \in S\} \\
-I&#39; &amp;= \{B \mid B \subseteq S \setminus \{x\}, B \cup \{x\} \in I\}
-\end{aligned}
-\]</span> 即<strong>我们可以忽略<span class="math inline">\(x\)</span>继续我们的算法。</strong></p>
-<p><strong>证明：</strong>如果我们在<span class="math inline">\(M&#39;\)</span>当中选出了最优子集<span class="math inline">\(A&#39;\)</span>，则显然<span class="math inline">\(A&#39; \cup \{x\}\)</span>是<span class="math inline">\(M\)</span>的独立子集，并且由<span class="math inline">\(x\)</span>的选择方式可知也是最优子集，证毕。</p>
-<p><strong>贪心正确性的证明：</strong>由引理2的推论，我们知道贪心算法没能一开始用来拓展的<span class="math inline">\(x\)</span>一定在后面也没有用。由引理3，选择完<span class="math inline">\(x\)</span>之后我们把问题缩小，还可以进一步贪心，此时贪心实质上是在<span class="math inline">\(M&#39;\)</span>上寻找最优子集。证毕。</p>
-<p>从以上讨论我们可以看出，对于一类问题，如果我们可以以某种方式把它规约为在拟阵上求取最优子集，那你一定可以使用贪心解决，这给很多贪心算法（例如Kruskal）提供了理论支持。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/03/HDU5015/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/03/HDU5015/" class="post-title-link" itemprop="url">HDU 5015 / 矩阵加速递推</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2018-09-03 19:32:18 / 修改时间：19:58:41" itemprop="dateCreated datePublished" datetime="2018-09-03T19:32:18+08:00">2018-09-03</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="题意">题意</h1>
-<p><a target="_blank" rel="noopener" href="http://acm.hdu.edu.cn/showproblem.php?pid=5015">题面</a>：假设有一个<span class="math inline">\(n+1\)</span>行<span class="math inline">\(m+1\)</span>列的矩阵<span class="math inline">\(A\)</span>，下标从<span class="math inline">\(0\)</span>开始，给定<span class="math inline">\(A_{1,0}, A_{2, 0}, \cdots A_{n, 0}\)</span>（即最左边一列的初始值），以及已知矩阵的第<span class="math inline">\(1\)</span>行第<span class="math inline">\(i\)</span>列为<span class="math inline">\(2\underbrace{333\cdots3}_{i + 1 个 3}\)</span>，如下所示： <span class="math display">\[
-\left(\begin{matrix}
-0 &amp;233 &amp;2333 &amp;23333 &amp;\cdots \\
-A_{1, 0} &amp;A_{1, 1} &amp;A_{1, 2} &amp;A_{1, 3} &amp;\cdots \\
-A_{2, 0} &amp;A_{2, 1} &amp;A_{2, 2} &amp;A_{2, 3} &amp;\cdots \\
-\vdots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots
-\end{matrix}\right)
-\]</span> 并且已知对于<span class="math inline">\(i, j \ge 1\)</span>，有<span class="math inline">\(A_{i, j} = A_{i - 1, j} + A_{i, j - 1}\)</span>。求<span class="math inline">\(A_{n, m}\)</span>。</p>
-<p><span class="math inline">\(n \le 10, m \le 10^9\)</span>。</p>
-<h1 id="解法">解法</h1>
-<p>从数据范围可以得知我们必须使用矩阵快速幂加速递推，我们定义第<span class="math inline">\(i\)</span>列的状态向量为一个<span class="math inline">\(n + 2\)</span>行的列向量，并<strong>手动展开递推式消除同一列的项</strong>（非常重要，因为不然的话没办法推）得到转移矩阵： <span class="math display">\[
-\left(\begin{matrix}
-1 \\
-A_{i, 0} \\
-A_{i, 1} \\
-A_{i, 2} \\
-A_{i, 3} \\
-\vdots
-\end{matrix}\right)
-=
-\left(\begin{matrix}
-1 &amp;0 &amp;0 &amp;0 &amp;0 &amp;\cdots\\
-3 &amp;10 &amp;0 &amp;0 &amp;0 &amp;\cdots\\
-3 &amp;10 &amp;1 &amp;0 &amp;0 &amp;\cdots\\
-3 &amp;10 &amp;1 &amp;1 &amp;0 &amp;\cdots\\
-3 &amp;10 &amp;1 &amp;1 &amp;1 &amp;\cdots\\
-\vdots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots
-\end{matrix}\right)
-\left(\begin{matrix}
-1 \\
-A_{i - 1, 0} \\
-A_{i - 1, 1} \\
-A_{i - 1, 2} \\
-A_{i - 1, 3} \\
-\vdots
-\end{matrix}\right)
-\]</span> 注意到我们怎么处理<span class="math inline">\(2\underbrace{333\cdots3}_{i + 1 个 3}\)</span>的，我们发现<span class="math inline">\(2\underbrace{3\cdots3}_{i + 1 个 3} = 2\underbrace{3\cdots3}_{i 个 3} \times 10 + 3\)</span>，为了凑出<span class="math inline">\(3\)</span>我们在矩阵当中引入<span class="math inline">\(1\)</span>这多余的一行（<strong>这是在矩阵加速递推时引入常数项的常用技巧</strong>）（其实在这里直接引入<span class="math inline">\(3\)</span>也可以啦，但是<span class="math inline">\(1\)</span>的话更通用），这就是系数<span class="math inline">\(3, 10\)</span>的由来。然后使用快速幂加速矩阵乘法即可，时间复杂度为<span class="math inline">\(O(n^3\log m)\)</span>：</p>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-
-using namespace std;
-typedef long long ll;
-typedef int mat[13][13];
-typedef int vec[13];
-const int MOD = 10000007;
-int n, m;
-vec a;
-mat b;
-
-void mul(mat &amp;x, vec &amp;y) &#123;
-    vec z;
-    for (int i = 1; i &lt;= n + 2; i++) &#123;
-        z[i] = 0;
-        for (int j = 1; j &lt;= n + 2; j++)
-            z[i] = (z[i] + 1LL * x[i][j] * y[j]) % MOD;
-    &#125;
-    for (int i = 1; i &lt;= n + 2; i++)
-        y[i] = z[i];
-&#125;
-
-void sqr(mat &amp;x) &#123;
-    mat y;
-    for (int i = 1; i &lt;= n + 2; i++) &#123;
-        for (int j = 1; j &lt;= n + 2; j++) &#123;
-            y[i][j] = 0;
-            for (int k = 1; k &lt;= n + 2; k++)
-                y[i][j] = (y[i][j] + 1LL * x[i][k] * x[k][j]) % MOD;
-        &#125;
-    &#125;
-    for (int i = 1; i &lt;= n + 2; i++)
-        for (int j = 1; j &lt;= n + 2; j++)
-            x[i][j] = y[i][j];
-&#125;
-
-int main() &#123;
-    while (scanf(&quot;%d%d&quot;, &amp;n, &amp;m) != EOF) &#123;
-        a[1] = 1, a[2] = 23;
-        for (int i = 3; i &lt;= n + 2; i++)
-            scanf(&quot;%d&quot;, &amp;a[i]);
-        b[1][1] = 1;
-        for (int i = 2; i &lt;= n + 2; i++) &#123;
-            b[i][1] = 3, b[i][2] = 10;
-            for (int j = 3; j &lt;= i; j++)
-                b[i][j] = 1;  
-        &#125;
-        for (; m; m &gt;&gt;= 1) &#123;
-            if (m &amp; 1) mul(b, a);
-            sqr(b);
-        &#125;
-        printf(&quot;%d\n&quot;, a[n + 2]);
-    &#125;
+    scanf(&quot;%d&quot;, &amp;n);
+    for (int i = 1; i &lt;= n; i++) scanf(&quot;%lld%lld&quot;, &amp;a[i], &amp;b[i]);
+    printf(&quot;%lld\n&quot;, excrt());
     return 0;
 &#125;</code></pre>
 
@@ -892,7 +549,7 @@ int main() &#123;
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/03/BSGS/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/Docleaner/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -905,7 +562,7 @@ int main() &#123;
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/03/BSGS/" class="post-title-link" itemprop="url">BSGS算法笔记</a>
+          <a href="/2021/07/25/Docleaner/" class="post-title-link" itemprop="url">科学白嫖“图档清洁专家”</a>
         </h2>
 
         <div class="post-meta-container">
@@ -915,10 +572,16 @@ int main() &#123;
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2018-09-03 16:52:44 / 修改时间：17:35:18" itemprop="dateCreated datePublished" datetime="2018-09-03T16:52:44+08:00">2018-09-03</time>
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-05-19 08:35:44" itemprop="dateModified" datetime="2021-05-19T08:35:44-04:00">2021-05-19</time>
+      </span>
 
   
 </div>
@@ -930,590 +593,893 @@ int main() &#123;
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="离散对数问题">离散对数问题</h1>
-<p>给定<span class="math inline">\(a, b\)</span>以及素数<span class="math inline">\(p\)</span>，求最小的<span class="math inline">\(x\)</span>，使得<span class="math inline">\(a^x \equiv b \pmod p\)</span>。</p>
-<h1 id="大步小步bsgs算法">大步小步(BSGS)算法</h1>
-<p>设<span class="math inline">\(x = ti - j\)</span>，其中<span class="math inline">\(t = \lceil \sqrt p\rceil, 0 \le j &lt; t\)</span>，则方程被转化为： <span class="math display">\[
-\begin{aligned}
-a^{ti - j} &amp;\equiv b &amp;\pmod p \\
-(a^t)^i &amp;\equiv ba^j &amp;\pmod p
-\end{aligned}
-\]</span> 我们首先对于所有的<span class="math inline">\(0 \le j &lt; t\)</span>的<span class="math inline">\(ba^j \bmod p\)</span>插入一个哈希表。接下来我们枚举<span class="math inline">\(i\)</span>的所有取值<span class="math inline">\(0, 1, 2, \cdots ,t\)</span>，计算<span class="math inline">\((a^t)^i \bmod p\)</span>，查询哈希表中是否存在相应的<span class="math inline">\(j\)</span>即可，复杂度变为<span class="math inline">\(O(\sqrt p)\)</span>。</p>
-<h1 id="板子">板子</h1>
-<p>其实哈希表换成<code>std::map</code>也行，但是常数会大很多（手写一个哈希表又不是特别麻烦）：</p>
-<pre class="line-numbers"><code class="language-cpp">const int HASH = 1000007;
-const int ELEM = 6000000;
-typedef long long ll;
-int tot, fst[HASH], nxt[ELEM];
-ll key[ELEM], val[ELEM];
+          <p><strong>代码仅作学习用途，请勿分享传播。</strong></p>
+<p>代码在<a target="_blank" rel="noopener" href="https://github.com/alan20210202/docleaner-web">这里</a>。</p>
+<h1 id="问题背景">问题背景</h1>
+<p>因为实体书购买麻烦、厚重、占地空间大（对于国外的一些原版教材来说，价格高昂），我一直是电子书的忠实拥趸。一般来说，市面上下载的到的电子书大致可以分为以下几类：</p>
+<ol type="1">
+<li>基于原内容的排版可变格式：一般为EPUB、MOBI或TXT格式，动态排版，在任何屏幕大小下都适合阅读。有索引，文字与图像本地渲染，清晰可辨。这是电子书的理想格式，但这种格式的书大多是以小说，我几乎没有见到过用这种格式排版的学术的教科书。</li>
+<li>基于原内容的PDF：基于书的源文件直接渲染得来，排版不可变，在没有重排软件的情况下需要大屏阅读器才能舒适阅读，并且需要适当对页边进行裁剪。大部分时候有索引，文字和图像本地渲染，清晰可辨。这种PDF可遇而不可求。有教授把这种格式的书放在官网上给学生们免费下载（比如说<a target="_blank" rel="noopener" href="https://www.designofapproxalgs.com/">这个</a>）——我愿称他们为大善人。</li>
+<li>精修的扫描PDF：是基于实体书扫描而来，文字部分经过OCR和轮廓平滑化变得更加清晰，公式可能经过重写也很清楚。良心一点的制作者会顺便把目录也做了。这种PDF（有的时候是DJVU）见到的概率比较高，libgen上十本里面能有六七本。我的Introduction to Linear Algebra就是这种类型。</li>
+<li><strong>三无的扫描PDF</strong>：PDF制作者只进行了基本的扫描。<strong>文字有倾斜，页面有阴影，页边缘出镜导致黑边</strong>，有些还会有铅笔的笔记。OCR是没有的，目录是不用指望的。这种是电子书里的下品，像我这样有一些轻微强迫症的会觉得很难受。</li>
+</ol>
+<p>最近自己要找的一本书搜遍了网上也只有三无版本，真的感觉头很大，体验极差。那么，有什么办法能把这种三无版本清理一下，使之朝精修PDF的方向上靠拢呢？</p>
+<p><strong><a target="_blank" rel="noopener" href="http://www.docleaner.cn/">图档清洁专家</a></strong>是我前几天在网上发现的。实测效果拔群。缺点是要付60块钱买正版。60元不是什么大钱，但是人是要有追求的：</p>
+<p><img src="/2021/07/25/Docleaner/%E7%99%BD%E5%AB%96.jpg" class=""></p>
+<p>正好，图档清理专家提供了<a target="_blank" rel="noopener" href="http://www.docleaner.cn/experience.html">在线体验</a>，这个在线体验提供的功能已经涵盖了我的需求了，但是为了防止我们白嫖地太爽，在线体验限制只能上传图片文件。对于我手里这本460页的教科书，一页页手工操作能把人折磨死。怎么办呢？</p>
+<p><img src="/2021/07/25/Docleaner/Python.jpg" class=""></p>
+<p>用Python自动化试试看？似乎能学到很多东西的样子。</p>
+<h1 id="代码实现">代码实现</h1>
+<p>我们的脚本需要实现以下功能：</p>
+<ol type="1">
+<li>将输入的PDF按页转换成高清图片。</li>
+<li>以某种方式程序化地调用在线体验的功能。</li>
+<li>将结果的图片下载下来重新拼合成为PDF。</li>
+<li>可以顺便使用<a target="_blank" rel="noopener" href="https://pypi.org/project/pytesseract/">pytesseract</a>实现OCR。</li>
+</ol>
+<h2 id="pdf光栅化">PDF光栅化</h2>
+<p>如果只考虑“将PDF转化为图片”的功能，最切题的库是<a target="_blank" rel="noopener" href="https://pypi.org/project/pdf2image/">pdf2image</a>，底层调用的工具是poppler。这也是我一开始的选择。</p>
+<p>但是后来转念一想，既然后面还有要将图片转PDF，PDF拼合的需求，寻找一款更为通用的PDF库是更明智的做法。</p>
+<p>经过一番搜索，跳过已经五年没有出过新版本的的PyPDF2，我选择了目前维护勤快的<a target="_blank" rel="noopener" href="https://pypi.org/project/PyMuPDF/">PyMuPDF</a>。PyMuPDF调用的是MuPDF这个用C写的成熟的PDF库，功能与性能都是有保障的。MuPDF的license上说明对于开源项目免费授权，因此我就大胆地用了。</p>
+<p>使用PyMuPDF进行PDF的光栅化，代码如下：</p>
+<pre class="line-numbers"><code class="language-python">import fitz
+from typing import Optional, Generator, Union
+from pathlib import Path
 
-inline void put(ll k, ll v) &#123;
-    key[++tot] = k;
-    val[tot] = v;
-    k %= HASH;
-    nxt[tot] = fst[k];
-    fst[k] = tot;
-&#125;
+StrPath = Union[str, os.PathLike]
 
-inline ll lookup(ll k) &#123;
-    for (int i = fst[k % HASH]; i; i = nxt[i])
-        if (key[i] == k) return val[i];
-    return -1;
-&#125;
+def convert_pdf_to_images(pdf: StrPath, fmt: str, dpi: int,
+                          output: Optional[StrPath] = None,
+                          first_page: Optional[int] = None,
+                          last_page: Optional[int] = None) \
+        -&gt; Generator[StrPath, None, None]:
+    &quot;&quot;&quot;
+    Converts a pdf file to images. This a necessary pre-processing step
+    because docleaner online only accepts images as inputs.
+    
+    :param pdf: The path to the pdf file.
+    :param fmt: Image file format. jpg is the fastest but not lossless; png is
+        lossless but slow; tiff is theoretically the best but occupies a lot of
+        disk space.
+    :param dpi: Pixel density of the output images.
+    :param output: The output directory of intermediate images.
+    :param first_page: First page to convert (starting from 1, inclusive).
+    :param last_page: Last page to convert (starting from 1, inclusive).
+    :return: A generator yielding the paths to the images.
+    &quot;&quot;&quot;
+    doc = fitz.Document(pdf)
 
-ll bsgs(ll a, ll b, ll p) &#123;
-    memset(fst, 0, sizeof(fst));
-    tot = 0;
-    int t = ceil(sqrt(p));
-    ll tmp = b;
-    for (int j = 0; j &lt; t; j++, tmp = tmp * a % p) // 计算b*a^j
-        put(tmp, j);
-    a = qpow(a, t, p); // a^t
-    if (a == 0) return b == 0 ? 1 : -1; // 特判
-    tmp = 1;
-    for (int i = 0; i &lt;= t; i++, tmp = tmp * a % p) &#123; // 计算(a^t)^i
-        ll j = lookup(tmp);
-        if (j &gt;= 0 &amp;&amp; i * t - j &gt;= 0) return i * t - j;
+    @contextmanager
+    def normal_dir(dir_path):
+        Path(dir_path).mkdir(parents=True, exist_ok=True)
+        yield dir_path
+
+    matrix = fitz.Matrix(dpi / 72, dpi / 72)
+    first_page = 0 if first_page is None else first_page - 1
+    last_page = doc.page_count if last_page is None else last_page
+    with tempfile.TemporaryDirectory() if output is None else normal_dir(
+            output) as path:
+        for i in range(first_page, last_page):
+            filename = os.path.join(path, f&quot;&#123;i&#125;.&#123;fmt&#125;&quot;)
+            # noinspection PyUnresolvedReferences
+            doc[i].get_pixmap(matrix=matrix).save(filename)
+            yield filename
+        if output is None:
+            # Yield an empty string if we are using a temporary directory,
+            # because without this, the temporary directory will be cleaned
+            # up the moment the last filename is yielded, when the caller
+            # hasn&#39;t done anything to the yielded temp file yet. Yielding an
+            # emtpy string keeps the TemporaryDirectory object in memory
+            # longer so the problem is solved.
+            yield &quot;&quot;</code></pre>
+<p>这个代码乍一看是比较复杂，有几个重点：</p>
+<ol type="1">
+<li>代码写成了生成器的形式，这样便于和后续的其他功能进行更好的耦合。个人认为生成器是一个很不错的语法糖。</li>
+<li>为了方便静态检查，我这里给方法签名标注了类型。</li>
+<li>为了同时处理输出图片到临时目录和正常目录（可以用于其他工具）的情形，这里定义了名为<code>normal_dir</code>的<a target="_blank" rel="noopener" href="https://docs.python.org/3/library/contextlib.html">context manager</a>以和<code>TemporaryDirectory</code>保持形式上的一致。这样代码可以更加简短。要使用<code>TemporaryDirectory()</code>而不是<code>mkdtemp()</code>的原因是前者确保了临时文件夹最终会被删除。</li>
+<li>但是<code>TemporaryDirectory()</code>在结束后删除临时文件夹会带来一个问题：在<code>yield</code>最后一页的图片的路径之后，临时文件夹马上就被删除了，刚返回的路径也就失效了。调用这个生成器的代码使用的时候就会产生找不到文件的错误。一个粗暴的解决方案就是让<code>with</code>块执行得再久一点——比如说在下次调用的时候再结束。这就是最后<code>yield ""</code>的意义。</li>
+<li>PyMyPDF默认的<code>get_pixmap</code>方法输出的图片分辨率等于当前页面的边界矩形大小（bound rectangle）。这个边界矩形尺寸是以点数（pts）为单位的，1英寸等于72点，因此如果需要达到指定的DPI，<code>get_pixmap</code>在执行的时候就需要放大<code>dpi / 72</code>倍。这就是<code>matrix = fitz.Matrix(dpi / 72, dpi / 72)</code>的含义。</li>
+</ol>
+<p>剩下的无非就是看文档写代码。</p>
+<h2 id="使用selenium自动化在线体验">使用Selenium自动化“在线体验”</h2>
+<p>人工一页一页上传手抽筋怎么办？一个很自然的思路就是让代码来直接操控浏览器。在这方面，因为网站开发自动化测试的需求，有人已经帮我们写好轮子了——Selenium。</p>
+<p><img src="/2021/07/25/Docleaner/image-20210511174658388.png" class=""></p>
+<p>根据官网上的描述，Selenium和我们的需求完美对接，而且Selenium提供了Python的接口。</p>
+<p>使用Selenium的第一步是打开浏览器并且访问目标网页：</p>
+<pre class="line-numbers"><code class="language-python">from selenium import webdriver
+
+browser = webdriver.Chrome()
+# browser = webdriver.Firefox()
+# browser = webdriver.Edge()
+# browser = webdriver.Safari()
+browser.get(&quot;http://www.docleaner.cn/experience.html&quot;)</code></pre>
+<p>打开哪个浏览器就取决于个人喜好了。在这里需要注意：除了在Python环境里安装selenium包以外，还需要自行安装对应浏览器的WebDriver。具体如何装，怎么装，请参阅Selenium的文档。就我个人体验而言，Chrome的WebDriver启动得很快，但是默认会把日志写入控制台导致进度条显示混乱；Firefox得WebDriver要花一两秒启动，但默认会写日志到geckodriver.log里面。</p>
+<p><img src="/2021/07/25/Docleaner/image-20210511180117997.png" class=""></p>
+<p>在执行以上代码之后要做两件事：</p>
+<ol type="1">
+<li>等待页面加载完毕（废话），以及</li>
+<li>打开去背景和自动纠斜这两个默认关闭但是很有用的开关。</li>
+</ol>
+<p>Selenium的API允许我们把两件事并在一起做，前提是我要知道两个开关的“路径”——CSS选择器或XPath都行。</p>
+<pre class="line-numbers"><code class="language-python">from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.ui import WebDriverWait
+
+WebDriverWait(browser, timeout).until(
+    expected_conditions.visibility_of_element_located(
+        (By.XPATH,
+        &quot;开关的XPath&quot;)
+    )
+).click()</code></pre>
+<p>以“自动纠斜”开关为例，其周围的HTML如下：</p>
+<pre class="line-numbers"><code class="language-html">&lt;div style=&quot;position: relative;&quot;&gt;
+    &lt;button type=&quot;button&quot; class=&quot;layui-btn layui-btn-primary buttoncss buttoncss0&quot; style=&quot;padding: 0 10px;&quot;&gt;
+        &lt;img src=&quot;http://www.docleaner.cn/templets/1/qwsoft//resource/images/jiuxie.png&quot;&gt;自动纠斜
+    &lt;/button&gt;
+    &lt;div class=&quot;buttoncheckbox&quot;&gt;
+        &lt;input type=&quot;checkbox&quot; name=&quot;exeConfig&quot; lay-filter=&quot;exeConfig&quot; value=&quot;自动纠斜&quot; lay-skin=&quot;primary&quot;&gt;
+        &lt;div class=&quot;layui-unselect layui-form-checkbox&quot; lay-skin=&quot;primary&quot;&gt;&lt;i class=&quot;layui-icon layui-icon-ok&quot;&gt;&lt;/i&gt;&lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<p>我们的目标是那个<code>&lt;button&gt;</code>元素，比较好找的是<code>&lt;input&gt;</code>元素，其XPath就是<code>//input[@value='自动纠斜']</code>。</p>
+<p>接下来我们要使用XPath的Axes语义间接地定位到<code>&lt;button&gt;</code>：</p>
+<p><code>//input[@value='自动纠斜']/parent::div/preceding-sibling::button</code></p>
+<p>语义很清楚，就不多解释了。完整的Axes列表可以看<a target="_blank" rel="noopener" href="https://www.w3schools.com/xml/xpath_axes.asp">这里</a>。</p>
+<p>类似地，我们可以定位上传按钮的位置：</p>
+<pre class="line-numbers"><code class="language-python">uploader = WebDriverWait(browser, timeout).until(
+    expected_conditions.presence_of_element_located(
+        (By.CLASS_NAME, &quot;layui-upload-file&quot;)))</code></pre>
+<p>注意到这里是<code>presence_of_element_located</code>，前面是<code>visibility_of_element_located</code>，区别在于后者必须要求元素在浏览器框里面可视，而前者只需要DOM里有就行了。我们之前需要点击开关，因此必须先看得见才行（而且可视是确保网页加载完毕的一个更靠谱的条件），而上传控件在网页里是一个隐藏起来的<code>&lt;input&gt;</code>，因此只要present in DOM就行了。</p>
+<p>往上传控件上传东西调用的是<code>send_keys</code>函数，很有意思：</p>
+<pre class="line-numbers"><code class="language-python">uploader.send_keys(file_path)</code></pre>
+<p>然后等一会网页右边就会出现处理后的图像。其实显示结果的<code>&lt;img&gt;</code>一直都在，只是直到处理完成之后才可见，我们借此找到这个控件并且作为处理完成的依据：</p>
+<pre class="line-numbers"><code class="language-python">result = WebDriverWait(browser, timeout).until(
+    expected_conditions.visibility_of_element_located(
+        (By.ID, &quot;dragImgRight&quot;)))</code></pre>
+<p>开发者很好心地（？）在结果图像控件的<code>src</code>字段直接使用base64编码图片，连额外下载的代码都免了，我们直接得到结果图像：</p>
+<pre class="line-numbers"><code class="language-python">import io
+import base64
+from PIL import Image
+
+result = result.get_attribute(&quot;src&quot;)
+result = base64.b64decode(
+    result.replace(&quot;data:image/jpg;base64,&quot;, &quot;&quot;))
+yield Image.open(io.BytesIO(result))</code></pre>
+<p>最后，注意把结果的<code>&lt;img&gt;</code>再藏起来，这样通过可见性来判断是否处理完成的逻辑在下一张图片传上去的时候才有效。经查，结果的可见性通过<code>&lt;img&gt;</code>父元素<code>class</code>列表里<code>layui-hide</code>的存在与否来判定。我们选择通过Selenium让浏览器执行JavaScript进行这种有点复杂度的操作：</p>
+<pre class="line-numbers"><code class="language-python">browser.execute_script(
+    &quot;arguments[0].parentNode.classList.add(&#39;layui-hide&#39;);&quot;, result)</code></pre>
+<p><code>arguments</code>自然就是后面传参的数组。</p>
+<p>完整的代码如下：</p>
+<pre class="line-numbers"><code class="language-python">def clean_doc_online(images: Generator[StrPath, None, None], browser: str) \
+        -&gt; Generator[Image.Image, None, None]:
+    &quot;&quot;&quot;
+    Cleans the scanned document pages using docleaner&#39;s online service.
+    
+    :param images: A generator yielding paths to document pages.
+    :param browser: Browser type, can be &quot;chrome&quot;, &quot;firefox&quot;, &quot;safari&quot;, or
+        &quot;edge&quot;. Requires the browser and its webdriver to be installed.
+    &quot;&quot;&quot;
+    if browser == &quot;chrome&quot;:
+        browser = webdriver.Chrome()
+    elif browser == &quot;firefox&quot;:
+        browser = webdriver.Firefox()
+    elif browser == &quot;safari&quot;:
+        browser = webdriver.Safari()
+    elif browser == &quot;edge&quot;:
+        browser = webdriver.Edge()
+    else:
+        raise RuntimeError(&quot;Unknown browser type&quot;)
+    # Timeout for web driver waits. 10s is a reasonable value unless you have
+    # a very high-res image / terrible network.
+    timeout = 10
+    browser.get(&quot;http://www.docleaner.cn/experience.html&quot;)
+
+    # Turn on background removal and automatic deskewing.
+    WebDriverWait(browser, timeout).until(
+        expected_conditions.visibility_of_element_located(
+            (By.XPATH,
+             &quot;//input[@value=&#39;去背景&#39;]/parent::div/preceding-sibling::button&quot;)
+        )
+    ).click()
+    WebDriverWait(browser, timeout).until(
+        expected_conditions.visibility_of_element_located(
+            (By.XPATH,
+             &quot;//input[@value=&#39;自动纠斜&#39;]/parent::div/preceding-sibling::button&quot;)
+        )
+    ).click()
+    # Wait for a while to ensure the changes take effect.
+    time.sleep(1)
+
+    uploader = WebDriverWait(browser, timeout).until(
+        expected_conditions.presence_of_element_located(
+            (By.CLASS_NAME, &quot;layui-upload-file&quot;)))
+
+    try:
+        uploader.send_keys(next(images))
+        while True:
+            # Write like this instead of a for loop enables us to fetch the
+            # next image while the browser &amp; remote server are processing the
+            # image just uploaded. Converting a pdf page to an image is slow,
+            # so we here save a lot of time :)
+            next_image = next(images)
+            # Wait for the result image to be visible.
+            result = WebDriverWait(browser, timeout).until(
+                expected_conditions.visibility_of_element_located(
+                    (By.ID, &quot;dragImgRight&quot;)))
+            # Hide the result image again so the wait condition above can be
+            # re-used.
+            browser.execute_script(
+                &quot;arguments[0].parentNode.classList.add(&#39;layui-hide&#39;);&quot;, result)
+            result = result.get_attribute(&quot;src&quot;)
+            result = base64.b64decode(
+                result.replace(&quot;data:image/jpg;base64,&quot;, &quot;&quot;))
+            yield Image.open(io.BytesIO(result))
+            if next_image == &quot;&quot;:
+                # See convert_pdf_to_images for the reason behind this weird
+                # branch.
+                break
+            uploader.send_keys(next_image)
+    except StopIteration:
+        pass
+
+    browser.quit()</code></pre>
+<p>注意三点：</p>
+<ol type="1">
+<li>之前在PDF转图片的设计中有返回空路径的奇技淫巧需要特判。</li>
+<li>在点击开关之后需要等一会来确保开关真的点下去了。</li>
+<li>循环的写法最好不要写成标准的<code>for</code>循环，因为这样的话文件图片上去之后代码就是干等。现在的写法确保了图片传上去之后立刻就获取下一张图片，之后再判断等待是否当前图片处理完成。再调用<code>next(images)</code>的过程中，浏览器也在独立于Python进程运行，因此我们毫无损失。将PDF的一页转化为一张高清图片需要1-2秒钟，而网站处理图片大概也是这么长时间，因此在这里循环写法的改变是一个很不错的优化。</li>
+</ol>
+<h2 id="将下载下来的图片拼合回pdf">将下载下来的图片拼合回PDF</h2>
+<p>这个功能的实现是相对简单，只要照着PyMuPDF的文档写就行了。</p>
+<p>同时，我注意到pytesseract里面有输入图片直接输出PDF的函数，因此可以一并在这里完成。</p>
+<p>顺便可以通过tqdm显示一个进度条，方便看清进度。</p>
+<p>最终代码如下：</p>
+<pre class="line-numbers"><code class="language-python">from tqdm import tqdm
+import pytesseract
+
+def convert_images_to_pdf(images: Generator[Image.Image, None, None],
+                          output: StrPath,
+                          ocr: bool = True, total: Optional[int] = None):
+    &quot;&quot;&quot;
+    Converts and merges images to a one-page pdf file, performing optional
+    OCR in the process.
+
+    :param images: A generator yielding PIL image objects.
+    :param output: Path to the result pdf.
+    :param ocr: Whether to perform OCR(Optical Character Recognition).
+    :param total: An optional integer hinting the total number of images given.
+        If supplied, a progress bar will be displayed during the conversion.
+    &quot;&quot;&quot;
+    doc = fitz.Document()
+    for image in images if total is None else tqdm(images, total=total):
+        if ocr:
+            pdf = pytesseract.image_to_pdf_or_hocr(image)
+            page = fitz.Document(stream=pdf, filetype=&quot;pdf&quot;)
+            doc.insert_pdf(page)
+        else:
+            # noinspection PyUnresolvedReferences
+            page = doc.new_page(width=image.width, height=image.height)
+            buffer = io.BytesIO()
+            image.save(buffer, format=&quot;jpeg&quot;)
+            page.insert_image(fitz.Rect(0, 0, image.width, image.height),
+                              stream=buffer)
+    doc.save(output)</code></pre>
+<h2 id="cli封装">CLI封装</h2>
+<p>在最后的最后，可以通过<a target="_blank" rel="noopener" href="https://click.palletsprojects.com/en/7.x/">Click</a>库，为脚本进行一个CLI的封装：</p>
+<pre class="line-numbers"><code class="language-python">import click
+
+@click.command()
+@click.argument(&quot;input&quot;, type=click.Path(exists=True))
+@click.argument(&quot;output&quot;, type=click.Path())
+@click.option(&quot;-f&quot;, &quot;--format&quot;, default=&quot;png&quot;,
+              help=&quot;Intermediate image format.&quot;)
+@click.option(&quot;-d&quot;, &quot;--dpi&quot;, default=300, help=&quot;DPI for rasterization.&quot;)
+@click.option(&quot;-b&quot;, &quot;--browser&quot;, default=&quot;chrome&quot;,
+              help=&quot;The browser selenium uses.&quot;)
+@click.option(&quot;--first-page&quot;, type=int, help=&quot;First page to convert/clean.&quot;)
+@click.option(&quot;--last-page&quot;, type=int, help=&quot;Last page to convert/clean.&quot;)
+@click.option(&quot;--ocr/--no-ocr&quot;, default=True,
+              help=&quot;Whether to perform OCR during the conversion.&quot;)
+@click.option(&quot;--clean/--dont-clean&quot;, default=True,
+              help=&quot;Whether to clean pdf using docleaner&#39;s online service.&quot;)
+def main(input: str, output: str, format: str, dpi: int, browser: str,
+         first_page: Optional[int], last_page: Optional[int], ocr: bool,
+         clean: bool):
+    images = convert_pdf_to_images(input, fmt=format, dpi=dpi,
+                                   first_page=first_page, last_page=last_page)
+    if clean:
+        images = clean_doc_online(images, browser)
+    doc = fitz.Document(input)
+    total = (doc.page_count if last_page is None else last_page) \
+        - (0 if first_page is None else first_page - 1)
+    convert_images_to_pdf(images, output, ocr=ocr, total=total)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()</code></pre>
+<p>大功告成！</p>
+<h1 id="测试">测试</h1>
+<p>我选取的测试书籍是津巴多的《态度改变与心理影响》。原文扫描版460页98.4MB，自动化脚本耗时半个小时左右处理完毕，结果大小为325MB。对比如下（典型页面）：</p>
+<p><img src="/2021/07/25/Docleaner/Comparison.jpg" class=""></p>
+<p>可以看到，脚本做出了显著的优化，但在脚本运行中也发现了一些可以改进的地方：</p>
+<ol type="1">
+<li>过于激进的光栅化分辨率使得结果文档的大小显著增加。</li>
+<li>基于Selenium的解决方案偶尔会出现开关没有开或者莫名其妙地关掉的情形。</li>
+<li>脚本的运行效率有待提升。</li>
+</ol>
+<p>对于这三点，我们将在以后的文章中进行改进。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/Dewarp3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/07/25/Dewarp3/" class="post-title-link" itemprop="url">卷曲页面复原 3 ——完工</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-01-10 07:14:32" itemprop="dateModified" datetime="2020-01-10T07:14:32-05:00">2020-01-10</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="进展">进展！</h1>
+<p>自己写的网页终于功能全部完成啦！</p>
+<p>现在已经把成品网页放到博客上来了，上面几个链接最右边那个PageDewarp就是，戳进去就行了。</p>
+<p>放几张成品：</p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/lhyM24"><img src="https://s2.ax1x.com/2020/01/10/lhyM24.jpg" alt="lhyM24.jpg" /></a></p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/lhyKGF"><img src="https://s2.ax1x.com/2020/01/10/lhyKGF.png" alt="lhyKGF.png" /></a></p>
+<p>效果还是相当不错的。如果有二值化就更好了。</p>
+<h1 id="卷曲复原">卷曲复原</h1>
+<p>在确定了曲面的各个参数之后，整个纸面的曲面就有了，剩下的就是把卷曲复原，输出结果。</p>
+<p>卷曲复原的过程是一个图像上<strong>坐标映射</strong>的过程。我们遍历结果图像上的每一个坐标，唯一地确立其在输入图像上的源坐标，把源坐标的像素复制进来（或许再使用一些采样的技巧），拼成最终的结果，就成了。</p>
+<p>更具体一点，如果输出图像是<span class="math inline">\(w\times h\)</span>，我们就需要把页面曲面水平分成<span class="math inline">\(w\)</span>等分，垂直分成<span class="math inline">\(h\)</span>等分，形成一个网格。结果图像上的<span class="math inline">\((i, j)\)</span>像素就是网格中<span class="math inline">\((i,j)\)</span>对应点的三维坐标在原始图像上投影点对应的像素。</p>
+<p>垂直等分是简单的，因为在最早的假设里面我就假设页面的垂直边沿是直线。</p>
+<p>但是水平边沿是一条曲线，或者更精确的说，可以被近似看为一条分段三次样条曲线。怎么等分这样一个曲线呢？</p>
+<p>这种事情用数学解决是最理想的，只要能够解析地计算出任意区间曲线的长度，配合二分这个问题就解决了。但是三次函数曲线长度的积分是非初等的且无比复杂的，所以数学方法行不通。</p>
+<p><img src="https://s2.ax1x.com/2020/01/10/lh4vlV.png" alt="lh4vlV.png" /></p>
+<p>（Well，好像Mathematica告诉我算还是可以算的……）</p>
+<p>于是只能使用不那么优雅的数值方法解决了。飞快地写了一个Simpson Integration，效果看起来还不错，嘛反正精度不够缩小步长就可以了，和后面的计算比这个又不是瓶颈。</p>
+<pre class="line-numbers"><code class="language-javascript">// spline: 两端为(0, 0)和(1, 0)的分段样条曲线
+// res: 等分的数量
+const step = 0.0001;
+let len = 0, t = [];
+for (let i = 0; i &lt;= this.nodeCount; i++) &#123;
+    let [a, b, c, d] = spline[i]; // a + bx + cx^2 + dx^3
+    let xLeft = i === 0 ? 0 : this.splineNodes[i - 1][0];
+    let xRight = i === this.nodeCount ? 1 : this.splineNodes[i][0];
+    let f = x =&gt; Math.hypot(1, ((3 * d * x + 2 * c) * x + b));
+    for (let x = xLeft; x &lt; xRight; x += step) &#123;
+        let h = Math.min(xRight - x, step);
+        len += (f(x) + 4 * f(x + h / 2) + f(x + h)) * h / 6;
+        t.push([x, len, ((d * x + c) * x + b) * x + a]);
     &#125;
-    return -1;
-&#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/02/%E8%8E%AB%E6%AF%94%E4%B9%8C%E6%96%AF%E5%8F%8D%E6%BC%94/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/02/%E8%8E%AB%E6%AF%94%E4%B9%8C%E6%96%AF%E5%8F%8D%E6%BC%94/" class="post-title-link" itemprop="url">莫比乌斯反演</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-09-02 16:59:23" itemprop="dateCreated datePublished" datetime="2018-09-02T16:59:23+08:00">2018-09-02</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-07-30 16:26:46" itemprop="dateModified" datetime="2020-07-30T16:26:46+08:00">2020-07-30</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>莫比乌斯反演是OI中应对数论问题的一大杀器，可以把很多以前需要脑子想的问题无脑化，把很多脑子想不通的问题机械化，非常方便。</p>
-<h1 id="狄利克雷卷积">狄利克雷卷积</h1>
-<p>对于函数<span class="math inline">\(f, g\)</span>，定义它们的狄利克雷卷积<span class="math inline">\(f \times g\)</span>为： <span class="math display">\[
-(f \times g)(n) = \sum_{d \mid n} f(d)g\left(\frac{n}{d}\right)
-\]</span></p>
-<h2 id="性质">性质</h2>
-<h3 id="积性">积性</h3>
-<p>若<span class="math inline">\(f, g\)</span>为积性函数，那么<span class="math inline">\(f \times g\)</span>继承它们的积性。</p>
-<p><strong>证明：</strong>令<span class="math inline">\(n, m\)</span>为互素正整数，则易证<span class="math inline">\(nm\)</span>的全体约数可以<em>不重不漏地</em>表示为<span class="math inline">\(\{d_nd_m \mid d_n \mid n, d_m \mid m\}\)</span>。</p>
-<p>因此： <span class="math display">\[
-\begin{aligned}
-(f \times g)(nm) &amp;= \sum_{d | n} f(d)g\left(\frac{nm}{d}\right) \\
-&amp;= \sum_{d_n\mid n} \sum_{d_m \mid m} f(d_nd_m)g\left(\frac{nm}{d_nd_m}\right)
-\end{aligned}
-\]</span> 由<span class="math inline">\(n, m\)</span>互素可知<span class="math inline">\(d_n, d_m\)</span>互素以及<span class="math inline">\(\frac{n}{d_n}, \frac{m}{d_m}\)</span>互素，结合<span class="math inline">\(f, g\)</span>的积性： <span class="math display">\[
-\begin{aligned}
-\begin{aligned}
-(f \times g)(nm) &amp;= \sum_{d_n\mid n} \sum_{d_m \mid m} f(d_n)f(d_m)g\left(\frac{n}{d_n}\right)g\left(\frac{m}{d_m}\right) \\
-&amp;= \sum_{d_n\mid n} f(d_n)g\left(\frac{n}{d_n}\right) \sum_{d_m \mid m} f(d_m)g\left(\frac{m}{d_m}\right) \\
-&amp;= (f \times g)(n) \cdot (f \times g)(m)
-\end{aligned}
-\end{aligned}
-\]</span> 证毕。</p>
-<h3 id="交换律">交换律</h3>
-<p><span class="math display">\[
-f \times g = g \times f
-\]</span></p>
-<p><strong>证明：</strong>由于约数是成对出现的，显然。</p>
-<h3 id="结合律">结合律</h3>
-<p><span class="math display">\[
-(f \times g) \times h = f \times (g \times h)
-\]</span></p>
-<p><strong>证明：</strong>我们需要稍微改变一下下标的写法，然后就非常清楚了： <span class="math display">\[
-\begin{aligned}
-\left[(f \times g) \times h \right](n) &amp;= \sum_{ab = n} (f \times g)(a) h(b) \\
-&amp;= \sum_{ab = n} \sum_{cd = a}f(c)g(d) h(b) \\
-&amp;= \sum_{bcd = n} f(c)g(d)h(b) \\
-&amp;= \sum_{ce = n} f(c) \sum_{bd = e} g(d)h(b) \\
-&amp;= \sum_{ce = n} f(c) (g \times h)(b) \\
-&amp;= \left[f \times (g \times h)\right](n)
-\end{aligned}
-\]</span></p>
-<p>得证。</p>
-<h3 id="单位元">单位元</h3>
-<p>定义 <span class="math display">\[
-\varepsilon(n) = [n = 1]
-\]</span> 易证<span class="math inline">\(\varepsilon\)</span>为狄利克雷卷积的单位元，<em>也是一个积性函数</em>，在之后的反演当中，我们也经常会把<span class="math inline">\(\varepsilon\)</span>作为艾弗森括号<span class="math inline">\([]\)</span>的替代品，因为它具有更优良的性质，简单来说： <span class="math display">\[
-[f(x) = y] = \varepsilon\left(\frac{f(x)}{y}\right)
-\]</span></p>
-<h2 id="推论">推论</h2>
-<p>关于狄利克雷卷积我们有两条非常重要的推论： <span class="math display">\[
-\begin{aligned}
-\mu \times 1 &amp;= \varepsilon \\
-\varphi \times 1 &amp;= I
-\end{aligned}
-\]</span> 当中<span class="math inline">\(1\)</span>为值恒为<span class="math inline">\(1\)</span>的常值函数，<span class="math inline">\(I(x) = x\)</span>为恒等函数，易证这两个都是完全积性函数。</p>
-<p><strong>证明：</strong>我们先证明第一条，假设<span class="math inline">\(n &gt; 1\)</span>有<span class="math inline">\(r\)</span>个素因子，从当中挑去若干个相乘组成<span class="math inline">\(n\)</span>的<strong>不含平方素因子</strong>的约数（如果约数含平方素因子则约数的<span class="math inline">\(\mu\)</span>为<span class="math inline">\(0\)</span>，可以直接忽略）则我们有： <span class="math display">\[
-\begin{aligned}
-(\mu \times 1)(n) &amp;= \sum_{i = 0}^r \binom{r}{i} (-1)^i \\
-&amp;= \sum_{i = 0}^r \binom{r}{i} (-1)^i\cdot 1^{r - i}
-\end{aligned}
-\]</span> 结合二项式定理，得到<span class="math inline">\((\mu \times 1)(n) = (1-1)^r=0\)</span>，而如果<span class="math inline">\(n = 1\)</span>，手动展开得到<span class="math inline">\((\mu \times 1)(1) = \mu(1) = 1\)</span>。两种情况结合起来得到<span class="math inline">\(\mu \times 1 = \varepsilon\)</span>，第一条推论得证。</p>
-<p>对于第二条推论，我们将其展开： <span class="math display">\[
-\sum_{d \mid n} \varphi(i) = n
-\]</span> 我们先考察<span class="math inline">\(n\)</span>为素数（或其幂次）的情况，设<span class="math inline">\(n = p^k\)</span>，则原式左边变为： <span class="math display">\[
-\begin{aligned}
-\sum_{i = 0}^k \varphi(p^i) &amp;= 1 +\sum_{i = 1} ^ k p^i\left(1 - {1 \over p}\right) \\
-&amp;= 1 + \left(1 - {1 \over p}\right)\sum_{i = 1} ^ k p^i \\
-&amp;= 1 + \frac{p - 1}{p} \cdot \frac{p^{k + 1} - p}{p - 1} \\
-&amp;= 1 + p^k - 1 \\
-&amp;= p^k
-\end{aligned}
-\]</span> 因此在<span class="math inline">\(n\)</span>为素数或其幂次时推论得证，而我们知道<span class="math inline">\(\varphi \times 1\)</span><strong>继承了积性</strong>，因此我们可以<strong>利用积性把推论推广到<span class="math inline">\(n\)</span>不为素数的情况</strong>（通过分解素因数即可），证毕。</p>
-<h1 id="莫比乌斯反演">莫比乌斯反演</h1>
-<p><strong>定理：</strong><span class="math inline">\(f \times 1 = g\)</span>当且仅当<span class="math inline">\(f = g \times \mu\)</span>。</p>
-<p><strong>证明：</strong>本质上是狄利克雷卷积的推论的推论，先正着来一轮，两边同时乘以<span class="math inline">\(\mu\)</span>： <span class="math display">\[
-\begin{aligned}
-f \times 1 &amp;= g \\
-\Rightarrow f \times 1 \times \mu &amp;= g \times \mu \\
-\Rightarrow f \times \varepsilon &amp;= g \times \mu \\
-\Rightarrow f &amp;= g \times \mu \\
-\end{aligned}
-\]</span> 我们再反着来一轮，两边同时乘上<span class="math inline">\(1\)</span>： <span class="math display">\[
-\begin{aligned}
-f &amp;= g \times \mu \\
-\Rightarrow f \times 1 &amp;= g \times \mu \times 1 \\
-\Rightarrow f \times 1 &amp;= g \times \varepsilon \\
-\Rightarrow f \times 1 &amp;= g
-\end{aligned}
-\]</span> （所以说不要迷行网上那种大力出奇迹几个<span class="math inline">\(\sum\)</span>展开来回套的证明，看这个多简单）</p>
-<p><strong>虽然存在这个莫比乌斯反演定理，但是我们更多的时候还是习惯逆用狄利克雷卷积的那两个推论。</strong></p>
-<h2 id="示例varphin">示例：<span class="math inline">\(\varphi(n)\)</span></h2>
-<p><span class="math display">\[
-\begin{aligned}
-\varphi(n) &amp;= \sum_{i = 1}^n [\gcd(i, n) = 1] \\
-&amp;= \sum_{i = 1}^n \varepsilon(\gcd(i, n)) \\
-\end{aligned}
-\]</span></p>
-<p>此时我们使用推论<span class="math inline">\(\varepsilon = \mu \times 1\)</span>： <span class="math display">\[
-\begin{aligned}
-\varphi(n) &amp;= \sum_{i = 1}^n \varepsilon(\gcd(i, n)) \\
-&amp;= \sum_{i = 1}^n \sum_{d \mid \gcd(i, n)} \mu(d) \\
-&amp;= \sum_{i = 1}^n \sum_{d \mid i, d \mid n} \mu(d) \\
-\end{aligned}
-\]</span> 接下来我们把<span class="math inline">\(d\)</span>的求和拖到前面去，本质上是从<strong>对约数求和变为对倍数算贡献</strong>： <span class="math display">\[
-\begin{aligned}
-\varphi(n) &amp;= \sum_{i = 1}^n \sum_{d \mid i, d \mid n} \mu(d) \\
-&amp;= \sum_{d \mid n} \mu(d) \sum_{i = 1, d \mid i}^n 1 \\
-&amp;= \sum_{d \mid n} \mu(d) \sum_{i = 1}^{n \over d} 1 \\
-&amp;= \sum_{d \mid n} \mu(d) \frac{n}{d} \\
-&amp;= \sum_{d \mid n} \mu(d) I\left(\frac{n}{d}\right) \\
-&amp;= (\mu \times id)(n)
-\end{aligned}
-\]</span> 因此我们证明了<span class="math inline">\(\varphi = \mu \times id\)</span>，虽然这个结论是可以直接从莫比乌斯反演定理推得的，但是呢，这个例子确实展示了莫比乌斯反演的很多常用套路：</p>
-<ol type="1">
-<li>把式子写下来</li>
-<li>用<span class="math inline">\(id\)</span>或者<span class="math inline">\(\varepsilon\)</span>修饰</li>
-<li>逆用狄利克雷卷积的推论，把求和式后面反演成卷积形式</li>
-<li>通过算贡献的方式设法把<span class="math inline">\(d\)</span>的求和项连带着只和<span class="math inline">\(d\)</span>有关的函数值一起拖到最前面</li>
-<li>化简后半部分</li>
-</ol>
-<p>这一路下来其实是非常套路的，但往往效果拔群。</p>
-<h2 id="示例sum_i-1n-varphii">示例：<span class="math inline">\(\sum_{i = 1}^n \varphi(i)\)</span></h2>
-<p><strong>以下为了方便起见，如果出现<span class="math inline">\(n, m\)</span>，皆假设<span class="math inline">\(n \le m\)</span>！</strong></p>
-<p>我们试试看刚刚学到的套路，来反演欧拉函数的前缀和： <span class="math display">\[
-\begin{aligned}
-\sum_{i = 1}^n \varphi(i) &amp;= \sum_{i = 1}^n \sum_{j = 1}^i [\gcd(i, j) = 1] \\
-&amp;= \sum_{i = 1}^n \sum_{j = 1}^i \varepsilon(\gcd(i, j) = 1) \\
-&amp;= \sum_{i = 1}^n \sum_{j = 1}^i \sum_{d \mid \gcd(i, j)} \mu(d) \\
-&amp;= \sum_{i = 1}^n \sum_{j = 1}^i \sum_{d \mid i, d \mid j} \mu(d) \\
-&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1, d \mid i}^n \sum_{j = 1, d \mid j}^i 1\\
-&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} \sum_{j = 1}^i 1\\
-&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} i\\
-&amp;= \sum_{d = 1}^n \mu(d) \frac{\left\lfloor \frac{n}{d} \right\rfloor \left(\left\lfloor \frac{n}{d} \right\rfloor + 1\right)}{2}\\
-&amp;= \frac{1}{2} \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \left(\left\lfloor \frac{n}{d} \right\rfloor + 1\right)
-\end{aligned}
-\]</span> 嗯，很好，很强大，但是这个有什么用呢？</p>
-<h2 id="示例sum_i-1n-sum_j-1n-gcdi-j-1">示例：<span class="math inline">\(\sum_{i = 1}^n \sum_{j = 1}^n [\gcd(i, j) = 1]\)</span></h2>
-<p>这个式子对应POJ3090，即有一个<span class="math inline">\(n \times n\)</span>个格点，问从最左下角能够看到几个格点，我们发现如果格点<span class="math inline">\((i, j)\)</span>不互素的话，它一定不会被看到，因此题目就被转化成了我们要求的式子，常规做法是通过把格点劈成三角形，进行转化得到答案为<span class="math inline">\(2\sum_{i = 1}^n \varphi(n) - 1\)</span>，但是这毕竟还需要一点智商，而如果你莫比乌斯反演熟练的话，这个东西推起来是非常机械化的： <span class="math display">\[
-\begin{aligned}
-\sum_{i = 1}^n \sum_{j = 1}^n [\gcd(i, j) = 1] &amp;= \sum_{i = 1}^n \sum_{j = 1}^n \varepsilon(\gcd(i, j) = 1)\\
-&amp;= \sum_{i = 1}^n \sum_{j = 1}^n \sum_{d \mid i, d \mid j} \mu(d)\\
-&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1, d \mid i}^n \sum_{j = 1, d \mid j}^n 1 \\
-&amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} \sum_{j = 1}^{\left\lfloor \frac{n}{d} \right\rfloor} 1 \\
-&amp;= \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor^2 \\
-&amp;= 2 \left( \frac{1}{2} \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \left(\left\lfloor \frac{n}{d} \right\rfloor + 1\right) \right) - \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \\
-&amp;= 2\sum_{i = 1}^n \varphi(i) - \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor
-\end{aligned}
-\]</span> 那么<span class="math inline">\(\sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor\)</span>又是什么呢？我们借着套路反着反演： <span class="math display">\[
-\begin{aligned}
-\sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor &amp;= \sum_{d = 1}^n \mu(d) \sum_{i = 1, d \mid i}^n 1 \\
-&amp;= \sum_{i = 1}^n \sum_{d \mid i} \mu(d) \\
-&amp;= \sum_{i = 1}^n (\mu \times 1)(d) \\
-&amp;= \sum_{i = 1}^n \varepsilon(i) \\
-&amp;= 1
-\end{aligned}
-\]</span> 原来这个是<span class="math inline">\(1\)</span>啊，那么带回去我们就得到了： <span class="math display">\[
-\sum_{i = 1}^n \sum_{j = 1}^n [\gcd(i, j) = 1] = 2\sum_{i = 1}^n \varphi(i) - 1
-\]</span> 以上推导中我们完全没有用到<span class="math inline">\(\varphi, \mu\)</span>的数学意义，而是顺着我们推导出的狄利克雷卷积的规则和推论进行着机械化的推导，最后也殊途同归，也许有些人会觉得这样没有卵用，那么试解： <span class="math display">\[
-\sum_{i = 1}^n \sum_{j = 1}^m [\gcd(i, j) = 1]
-\]</span> 借助图形和数学意义的人看到这个式子大概就去世了，但是如果我们利用反演的话，类似以上的过程可以推得： <span class="math display">\[
-\sum_{i = 1}^n \sum_{j = 1}^m [\gcd(i, j) = 1] = \sum_{d = 1}^n \mu(d) \left\lfloor \frac{n}{d} \right\rfloor \left\lfloor \frac{m}{d} \right\rfloor
-\]</span> 结合整除分块和<span class="math inline">\(O(n)\)</span>预处理莫比乌斯函数的前缀和我们就可以在<span class="math inline">\(O(\sqrt n)\)</span>的时间里回答每一个询问，这就是莫比乌斯反演的强大之处。</p>
-<h2 id="示例sum_i-1n-sum_j-1m-gcdi-j">示例：<span class="math inline">\(\sum_{i = 1}^n \sum_{j = 1}^m \gcd(i, j)\)</span></h2>
-<p>观察这个式子，我们发现和上面实例中式子的唯一不同就是我们把<span class="math inline">\(\varepsilon\)</span>换成了<span class="math inline">\(id\)</span>，对应下来就是<span class="math inline">\(\mu\)</span>换成了<span class="math inline">\(\varphi\)</span>，因此我们可以得到： <span class="math display">\[
-\sum_{i = 1}^n \sum_{j = 1}^m \gcd(i, j) = \sum_{d = 1}^n \varphi(d) \left\lfloor \frac{n}{d} \right\rfloor \left\lfloor \frac{m}{d} \right\rfloor
-\]</span> 依然是<span class="math inline">\(O(n)\)</span>预处理<span class="math inline">\(O(\sqrt n)\)</span>查询！</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/02/01%E5%88%86%E6%95%B0%E8%A7%84%E5%88%92/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/02/01%E5%88%86%E6%95%B0%E8%A7%84%E5%88%92/" class="post-title-link" itemprop="url">01分数规划</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-09-02 13:17:25" itemprop="dateCreated datePublished" datetime="2018-09-02T13:17:25+08:00">2018-09-02</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-11-03 10:37:43" itemprop="dateModified" datetime="2018-11-03T10:37:43+08:00">2018-11-03</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="题意">题意</h1>
-<p>给定<span class="math inline">\(a_1,a_2,\cdots a_n\)</span>以及<span class="math inline">\(b_1,b_2,\cdots b_n\)</span>，要求最大化： <span class="math display">\[
-\frac{\sum_{i = 1}^n a_ix_i}{\sum_{i = 1}^n b_ix_i}
-\]</span> 其中<span class="math inline">\(\forall 1\le i \le n, x_i \in \{0, 1\}\)</span>。</p>
-<h1 id="解法">解法</h1>
-<p>我们可以二分答案<span class="math inline">\(L​\)</span>，这样这个问题就转变为：能否求出一组解<span class="math inline">\(x​\)</span>，使得<span class="math inline">\(\frac{\sum_{i = 1}^n a_ix_i}{\sum_{i = 1}^n b_ix_i} \ge L​\)</span>？</p>
-<p>对不等式进行变形： <span class="math display">\[
-\begin{aligned}
-\frac{\sum_{i = 1}^n a_ix_i}{\sum_{i = 1}^n b_ix_i} &amp;\ge L \\
-\sum_{i = 1}^n a_ix_i &amp;\ge L\sum_{i = 1}^n b_ix_i \\
-\sum_{i = 1}^n a_ix_i - L\sum_{i = 1}^n b_ix_i &amp;\ge 0 \\
-\sum_{i = 1}^n (a_i - Lb_i)x_i &amp;\ge 0
-\end{aligned}
-\]</span> 我们计算<span class="math inline">\(\sum_{i = 1}^n (a_i - Lb_i)x_i\)</span>的最大值，即构造<span class="math inline">\(x\)</span>使<span class="math inline">\(x_i = 1\)</span>当且仅当<span class="math inline">\(a_i - Lb_i &gt; 0\)</span>，并判断最大值的正负性，在此基础上不断二分答案即可。时间复杂度为<span class="math inline">\(O(n\log L_{max})\)</span>。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/02/%E7%A7%AF%E6%80%A7%E5%87%BD%E6%95%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/02/%E7%A7%AF%E6%80%A7%E5%87%BD%E6%95%B0/" class="post-title-link" itemprop="url">蒟蒻的数论笔记——积性函数</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-09-02 11:17:54" itemprop="dateCreated datePublished" datetime="2018-09-02T11:17:54+08:00">2018-09-02</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-09-03 19:52:45" itemprop="dateModified" datetime="2018-09-03T19:52:45+08:00">2018-09-03</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="定义">定义</h1>
-<p>若数论函数<span class="math inline">\(f\)</span>满足如下性质，我们称<span class="math inline">\(f\)</span>为积性函数：</p>
-<ol type="1">
-<li><span class="math inline">\(f(1) = 1\)</span>。</li>
-<li>对于任意<strong>互素</strong>正整数<span class="math inline">\(n, m\)</span>有<span class="math inline">\(f(nm) = f(n)f(m)\)</span>。</li>
-<li>（可选项）如果对于任意正整数<span class="math inline">\(n, m\)</span>都有<span class="math inline">\(f(nm) = f(n)f(m)\)</span>，则称<span class="math inline">\(f\)</span>为完全积性函数（没卵用）。</li>
-</ol>
-<h1 id="欧拉函数varphin">欧拉函数<span class="math inline">\(\varphi(n)\)</span></h1>
-<h2 id="定义-1">定义</h2>
-<p><span class="math inline">\(\varphi(n)\)</span>为不大于<span class="math inline">\(n\)</span>的与<span class="math inline">\(n\)</span>互素的数的个数，即： <span class="math display">\[
-\varphi(n) = \sum_{i = 1}^n \left[\gcd(i, n) = 1\right]
-\]</span></p>
-<h2 id="积性证明">积性证明</h2>
-<p>我们证明对于任意正整数<span class="math inline">\(n, m\)</span>若<span class="math inline">\(\gcd(n, m) = 1\)</span>则<span class="math inline">\(\varphi(mn) = \varphi(m)\varphi(n)\)</span>：</p>
-<p>首先我们把不大于<span class="math inline">\(mn\)</span>的正整数排成<span class="math inline">\(m\)</span>行<span class="math inline">\(n\)</span>列的表： <span class="math display">\[
-\begin{matrix}
-1 &amp;m + 1 &amp;\cdots &amp;(n - 1)m + 1\\
-2 &amp;m + 2 &amp;\cdots &amp;(n - 1)m + 2\\
-\vdots &amp;\vdots &amp;\ddots &amp;\vdots\\
-m &amp;2m &amp;\cdots &amp;nm
-\end{matrix}
-\]</span> 由定义，<span class="math inline">\(\varphi(mn)\)</span>为这张表中与<span class="math inline">\(mn\)</span>互素的数的个数。</p>
-<p>因为表中的每一行模<span class="math inline">\(m\)</span>同余，因此共有<span class="math inline">\(\varphi(m)\)</span>行与<span class="math inline">\(m\)</span>互素。</p>
-<p>我们接下来证明：每一行的<span class="math inline">\(n\)</span>个数模<span class="math inline">\(n\)</span>两两不同余，因为假设在第<span class="math inline">\(r\)</span>行存在两个数<span class="math inline">\(am+r\)</span>和<span class="math inline">\(bm + r\)</span>，使得 <span class="math display">\[
-\begin{aligned}
-am + r &amp;\equiv bm + r &amp;\pmod n \\
-(a - b)m &amp;\equiv 0 &amp;\pmod n
-\end{aligned}
-\]</span> 因为<span class="math inline">\(m,n\)</span>互素，因此<span class="math inline">\(a - b \equiv 0 \pmod n\)</span>，又因为<span class="math inline">\(a, b &lt; n\)</span>，因此<span class="math inline">\(a = b\)</span>，矛盾。</p>
-<p>因为每一行的<span class="math inline">\(n\)</span>个数模<span class="math inline">\(n\)</span>两两不同余，所以说虽然我不知道它们每个数模<span class="math inline">\(n\)</span>是多少，但是我知道<strong>这些数模<span class="math inline">\(n\)</span>一定构成了<span class="math inline">\(0, 1, \cdots, n - 1\)</span>的一个排列</strong>。因此，因为<span class="math inline">\(0, 1, \cdots, n-1\)</span>中有<span class="math inline">\(\varphi(n)\)</span>个数与<span class="math inline">\(n\)</span>互素，因此每一行中也有<span class="math inline">\(\varphi(n)\)</span>个数与<span class="math inline">\(n\)</span>互素。因此这<span class="math inline">\(\varphi(m)\)</span>行与<span class="math inline">\(m\)</span>互素的数中总共有<span class="math inline">\(\varphi(m)\varphi(n)\)</span>个数与<span class="math inline">\(mn\)</span>互素，因此<span class="math inline">\(\varphi(mn) = \varphi(m)\varphi(n)\)</span>，证毕。</p>
-<p>在刚刚的证明中有一个非常重要的思想——<strong>原来有<span class="math inline">\(n\)</span>个数，对它们进行一定的变换，如果我们能够证明变换的结果两两不同，而且没变出其他的数，那么变换的结果一定是原来<span class="math inline">\(n\)</span>个数的一个排列！</strong></p>
-<h2 id="计算">计算</h2>
-<h3 id="单点计算">单点计算</h3>
-<p>要探究<span class="math inline">\(\varphi(n)\)</span>的计算公式，我们先探究<span class="math inline">\(n = p^k\)</span>，其中<span class="math inline">\(p\)</span>为素数时的特例。在前<span class="math inline">\(p^k\)</span>个正整数中共有<span class="math inline">\(\frac{p^k}{p} = p^{k -1}\)</span>个数是<span class="math inline">\(p\)</span>的倍数与<span class="math inline">\(p^k\)</span>不互素，因此： <span class="math display">\[
-\varphi(p^k) = p^k - p^{k - 1} = p^k \left( 1 - \frac{1}{p}\right)
-\]</span> 对于单个素数<span class="math inline">\(p\)</span>，有<span class="math inline">\(\varphi(p) = p - 1\)</span>。</p>
-<p>接下来，我们利用<span class="math inline">\(\varphi\)</span>的积性把上述公式拓展到一般情况，设<span class="math inline">\(n\)</span>可以被素因数分解成<span class="math inline">\(n = \prod_{i = 1}^r p_i^{c_i}\)</span>的形式，那么我们就有： <span class="math display">\[
-\begin{aligned}
-\varphi(n) &amp;= \prod_{i = 1}^r \varphi(p_i^{c_i}) \\
-&amp;= \prod_{i = 1}^r p_i^{c_i} \left(1 - \frac{1}{p_i}\right) \\
-&amp;= \prod_{i = 1}^r p_i^{c_i} \prod_{i = 1}^r \left(1 - \frac{1}{p_i}\right) \\
-&amp;= n \prod_{i = 1}^r \left(1 - \frac{1}{p_i}\right)
-\end{aligned}
-\]</span> 这就是欧拉函数的单点计算式，时间复杂度取决于素因数分解的时间复杂度，一般用试除法可以达到<span class="math inline">\(O(\sqrt n)\)</span>。</p>
-<h3 id="n计算"><span class="math inline">\([1, n]\)</span>计算</h3>
-<p>使用欧拉筛计算任何积性函数我们需要知道这个函数在以下三种点的取值：</p>
-<ol type="1">
-<li>在素数点的取值：<span class="math inline">\(\varphi(p) = p - 1\)</span></li>
-<li>对于合数<span class="math inline">\(n\)</span>和它的素因子<span class="math inline">\(p\)</span>在<span class="math inline">\(p \mid \frac{n}{p}\)</span>时的取值：由单点计算式，<span class="math inline">\(\varphi(n) = p\varphi(\frac{n}{p})\)</span></li>
-<li>对于合数<span class="math inline">\(n\)</span>和它的素因子<span class="math inline">\(p\)</span>在<span class="math inline">\(p \nmid \frac{n}{p}\)</span>时的取值：由积性，<span class="math inline">\(\varphi(n) = \varphi(p)\varphi(\frac{n}{p}) = (p - 1)\varphi(\frac{n}{p})\)</span></li>
-</ol>
-<p>知道这三点信息之后我们就可以用欧拉筛完成在<span class="math inline">\(O(n)\)</span>时间内计算<span class="math inline">\([1, n]\)</span>内所有欧拉函数（或其他积性函数）的值：</p>
-<pre class="line-numbers"><code class="language-cpp">bool v[N]; 
-int phi[N];
-int prime[P], tot = 0;
-for (int i = 2; i &lt;= n; i++) &#123;
-    if (!v[i]) &#123;
-        prime[++tot] = i;
-        phi[i] = i - 1; // 第一条
-    &#125;
-    for (int j = 1; i * prime[j] &lt;= n; j++) &#123;
-        v[i * prime[j]] = true;
-        if (i % prime[j] == 0) &#123;
-            phi[i * prime[j]] = phi[i] * prime[j]; // 第二条
-            break;
-        &#125; else
-            phi[i * prime[j]] = phi[i] * (prime[j] - 1); // 第三条
+&#125;
+let ret = [], p = 0;
+for (let i = 1; i &lt;= res; i++) &#123;
+    let l = i / res * len;
+    while (p + 1 &lt; t.length &amp;&amp; t[p + 1][1] &lt;= l) p++;
+    let lt = t[p], rt = p + 1 === t.length ? [1, len, 0] : t[p + 1];
+    ret.push(l - lt[1] &lt;= rt[1] - l ? [lt[0], lt[2]] : [rt[0], rt[2]]);
+&#125;
+// ret 就是曲线上的点了</code></pre>
+<p>anyway，反正积的函数也没有那么畸形，也没那么着急优化，代码写得乱一点也就凑活着过去了<del>（疯狂为自己的懒找借口）</del></p>
+<p>求出曲线一连串等分点之后就可以做复原了：</p>
+<pre class="line-numbers"><code class="language-javascript">// vadd, multiply: 向量和，数乘
+// criticalPoints: 曲线等分点
+for (let x = 0; x &lt; resultWidth; x++) &#123; // 遍历结果的每一列像素
+    const top = vadd(this.upperLeft3D,
+        multiply(this.baseVec, criticalPoints[x][0]), multiply(this.normalVec, criticalPoints[x][1])); 
+    for (let y = 0; y &lt; resultHeight; y++) &#123; 
+        let coord = multiply(this.toCanvasCoord(this.project(
+            vadd(top, multiply(vertical, y / resultHeight)))), width / this.canvasWidth); // (x, y)对应的图像的原坐标
+        let di = (y * resultWidth + x) * 4;
+        let si = (Math.round(coord[1]) * width + Math.round(coord[0])) * 4;
+        // R, G, B, alpha四通道
+        imageDataResult.data[di] = imageDataOriginal.data[si];
+        imageDataResult.data[di + 1] = imageDataOriginal.data[si + 1];
+        imageDataResult.data[di + 2] = imageDataOriginal.data[si + 2];
+        imageDataResult.data[di + 3] = imageDataOriginal.data[si + 3];
     &#125;
 &#125;</code></pre>
-<h3 id="前缀和计算">前缀和计算</h3>
-<p>我们可以使用名为杜教筛的大佬专用工具在<span class="math inline">\(O(n^{2 \over 3})\)</span>的时间复杂度计算出<span class="math inline">\(\sum_{i = 1}^n \varphi(i)\)</span>的值。</p>
-<h2 id="欧拉定理">欧拉定理</h2>
-<p>若正整数<span class="math inline">\(a, n\)</span>互素，则<span class="math inline">\(a^{\varphi(n)} \equiv 1 \pmod n\)</span>。</p>
-<p><strong>证明：</strong>考虑与不大于<span class="math inline">\(n\)</span>的与<span class="math inline">\(n\)</span>互素的<span class="math inline">\(\varphi(n)\)</span>个数： <span class="math display">\[
-x_1, x_2, \cdots, x_{\varphi(n)}
-\]</span> 将它们同时乘以<span class="math inline">\(a\)</span>： <span class="math display">\[
-ax_1, ax_2, \cdots, ax_{\varphi(n)}
-\]</span> 因为<span class="math inline">\(a\)</span>与<span class="math inline">\(n\)</span>互素，因此这些数依然和<span class="math inline">\(n\)</span>互素。</p>
-<p>接下来我们用证明欧拉函数积性时用到的方法，证明这些数模<span class="math inline">\(n\)</span>两两不同余，假设存在<span class="math inline">\(x_i,x_j\)</span>，使得<span class="math inline">\(ax_i \equiv ax_j \pmod n\)</span>，那么因为<span class="math inline">\(a, n\)</span>互素，<span class="math inline">\(x_i \equiv x_j \pmod n\)</span>，矛盾。</p>
-<p>因为这些数模<span class="math inline">\(n\)</span>还是那几个与<span class="math inline">\(n\)</span>互素的余数，而又两两不同余，这些数一定是<span class="math inline">\(x_1, x_2, \cdots, x_{\varphi(n)}\)</span>的一个排列，既然如此，我们有： <span class="math display">\[
+<p>大概是OI写惯了觉得<span class="math inline">\(10^3\times 10^3\)</span>级别的运算没啥，直觉告诉我这一段代码跑得会很快。然而现实是残酷的，这段代码要跑三十秒左右，也不知道是哪里出了问题，V8的JIT都拯救不了。</p>
+<p>目前只能先用这么慢的代码将就着了，回头有空用WebAssembly试图优化一下吧。接下来应该都是工程问题了。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/Docleaner-Optimization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/07/25/Docleaner-Optimization/" class="post-title-link" itemprop="url">科学白嫖“图档清洁专家”——优化篇</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-05-22 06:21:20" itemprop="dateModified" datetime="2021-05-22T06:21:20-04:00">2021-05-22</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>书接<a href="/2021/07/25/Docleaner/" title="上文">上文</a>，我们使用Python + Selenium白嫖了原来要收费的图档清理大师，效果极好。然而，我们的代码还有很多可以优化之处，这就是写本文的由来。</p>
+<h1 id="方法优化避免开启浏览器">方法优化：避免开启浏览器</h1>
+<p>在写完代码发完朋友圈之后我才开始认真思考一个问题：</p>
+<blockquote>
+<p><strong>为啥不直接逆向在线体验的API啊？</strong></p>
+</blockquote>
+<p></p>
+<p>我之前自己把自己给绕进去了。</p>
+<p>Selenium模拟的好处是实现思路自然，只需要知道人工使用的方法而不需要知道内部的代码实现与网络通信。但缺点也很明显，需要开浏览器带来了一个明显的开销。浏览器的内存占用使得并行操作也存在一定的难度。</p>
+<p>而直接模拟网络请求的好处就是确保没有资源浪费，存在并行化的潜质，而且相较于浏览器涉及到的不见耦合较少具有更高的稳定性（前提是API不变。Selenium则相较之下在内部API变化但界面不变的情况下具备跨版本的稳定性）。</p>
+<p>试一试？</p>
+<p><img src="/2021/07/25/Docleaner-Optimization/image-20210513174125304.png" class=""></p>
+<p>打开开发者界面，定位到上传图片的按钮，Firefox的调试器很贴心地告诉我这里有一个event，于是点进去。</p>
+<p><img src="/2021/07/25/Docleaner-Optimization/image-20210516112926163.png" class=""></p>
+<p>网站的开发者很贴心地没有做minify也没有做混淆，甚至还留了注释。</p>
+<p>我发现上传的主要逻辑其实在<code>$('.exeDaqw').click()</code>里，于是进一步在源码当中搜索<code>.exeDaqw</code>，发现如下片段：</p>
+<p><img src="/2021/07/25/Docleaner-Optimization/image-20210516113209489.png" class=""></p>
+<p>通过阅读片段可以发现，这个<code>.exeDaqw</code>元素是通过<code>layui.upload</code>渲染的。我孤陋寡闻，但Layui看起来是一个控件库，<a target="_blank" rel="noopener" href="https://www.layui.com/">事实</a>也是如此。通过<code>url</code>字段我得以确定上传图片的API地址。在随后的代码当中又可以发现图片清理的API地址。</p>
+<p><img src="/2021/07/25/Docleaner-Optimization/image-20210516113732940.png" class=""></p>
+<p>通过开发者窗口的网络监视器可以看到请求的实际情况：</p>
+<p><img src="/2021/07/25/Docleaner-Optimization/image-20210516114103508.png" class=""></p>
+<p>经过一波操作比对，摸索得到的API可以写成如下代码：</p>
+<pre class="line-numbers"><code class="language-python">import requests
+
+def clean_doc_requests(images: Generator[Tuple[bytes, str], None, None]) \
+        -&gt; Generator[Image.Image, None, None]:
+    &quot;&quot;&quot;
+    Cleans the scanned document pages using docleaner&#39;s online service.
+
+    :param images: A generator yielding (an image as raw bytes, its extension as string).
+    &quot;&quot;&quot;
+    for (image, ext) in images:
+        # noinspection HttpUrlsUsage
+        req = requests.post(&quot;http://service.docleaner.cn/attachCollect/upload&quot;,
+                            files=&#123;&quot;file&quot;: (f&quot;image.&#123;ext&#125;&quot;, image)&#125;)
+        data = &#123;
+            # Weird typo in the API.
+            &quot;paramers&quot;: &quot;降噪,去斑点,去黑边,去背景,自动纠斜&quot;,
+            &quot;type&quot;: &quot;image&quot;,
+            &quot;storePath&quot;: req.json()[&quot;data&quot;][&quot;storePath&quot;],
+            &quot;userId&quot;: &quot;&quot;
+        &#125;
+        # noinspection HttpUrlsUsage
+        req = requests.post(&quot;http://service.docleaner.cn/exe/daqw&quot;, data=data)
+        result = base64.b64decode(req.json()[&quot;data&quot;][&quot;outFileStr&quot;])
+        yield Image.open(io.BytesIO(result))</code></pre>
+<p>和之前上面的<code>clean_doc_online</code>代码对比，可以看到代码和逻辑确实都简洁了很多，这就是扒API直接用的优点了。我很幸运，这个站点的代码和注释都很清楚，所以逆向还原出API还是很容易的，对于更加复杂的一些站点，Selenium可能不失为一个更简单粗暴的好办法。</p>
+<p>但有意思的地方来了：上面的这串代码，跑的比Selenium要慢。原因在之前解释Selenium的时候大致讲过了。Selenium新开了一个浏览器进程，那里上传图片还是等待结果本质上不会阻塞Python的运行，所以通过优化循环的写法，可以上传图片和从PDF中获取下一页图片同时进行。而<code>requests</code>是Python库，在请求时是阻塞的，因此就慢了。</p>
+<p>失之东隅收之桑榆，虽然我们的“优化”让我们的代码反而变慢了，但是也为进一步的优化铺平了道路：在用Selenium的时候，因为同时开几十个浏览器不仅视觉上很离谱而且内存占用很高，所以并行处理很难；而同时开几十个并发的请求却是再容易不过的事情了。因此我们下一步的优化就是利用Python的多进程库进行加速。</p>
+<h1 id="速度优化多进程加速">速度优化：多进程加速</h1>
+<p>Python写并行的格局，是和别处不同的。究其原因，GIL的存在硬是让多线程的并行成了并发。而绕过GIL的唯一途径就是多进程，这又涉及到了进程之间通信，同步等一连串复杂的逻辑，令人望而生畏（至少我是这样的）。</p>
+<p>但Python有一个好——battery included。我去官方文档转了一圈，发现Python的标准库里有一个multiprocessing模块，应付我这里的需求已经完全够用。具体来说，multiprocessing提供了一个进程池<code>Pool</code>：对于一般的</p>
+<pre class="line-numbers"><code class="language-python">output_iterator = map(function, input_iterator)</code></pre>
+<p>只需要改写成</p>
+<pre class="line-numbers"><code class="language-python">from multiprocessing import Pool
+with Pool(process_count) as p:
+    output_iterator = p.imap(function, input_iterator)</code></pre>
+<p>就可以把map的函数分派到线程池的多个线程上进行运算，并在结果出来之后进行保序归并，最终得到和<code>map</code>一样的结果。</p>
+<p>为了让我们的代码可以套用这个模式，我们需要把之前生成器套生成器的逻辑重构成单个函数：</p>
+<pre class="line-numbers"><code class="language-python">def clean_single_page(args: Tuple[StrPath, int, int, bool, bool]) \
+        -&gt; Union[Image.Image, bytes]:
+    &quot;&quot;&quot;
+    Cleans a single page.
+
+    :param args: A tuple consisting of (in order):
+        1. Path to the page (pdf or image),
+        2. Index (image index or page index in PDF),
+        3. DPI (-1 if an image is direcly supplied),
+        4. Whether to perform OCR,
+        5. Whether to actually clean the page.
+    :return:  If OCR is enabled, an OCR-ed PDF in raw bytes, otherwise a PIL
+        Image object representing the cleaned page.
+    &quot;&quot;&quot;
+    page, idx, dpi, ocr, clean = args
+    ...</code></pre>
+<p>如上所示，从PDF中提取页面图像、上传图像到图档清理大师进行清理、对于结果的OCR都是可以单独进行的，故合并。</p>
+<p>逻辑的合并自然导致参数的合并，而<code>map</code>接受的函数应当是单入单出的，于是我们就需要把所有参数打包成一个tuple进行用，并在函数体内部解包，即上面代码的第15行。</p>
+<p>把所有页面重新归并成PDF的函数也要进行一定的简化与修改：</p>
+<pre class="line-numbers"><code class="language-python">def merge_to_pdf(pages: Iterable[Union[Image.Image, bytes]], output: StrPath):
+    &quot;&quot;&quot;
+    Converts and merges images to a one-page pdf file, performing optional
+    OCR in the process.
+
+    :param pages: A generator yielding PIL image objects.
+    :param output: Path to the result pdf.
+    &quot;&quot;&quot;
+    doc = fitz.Document()
+    for page in pages:
+        if isinstance(page, Image.Image):
+            # noinspection PyUnresolvedReferences
+            doc_page = doc.new_page(width=page.width, height=page.height)
+            buffer = io.BytesIO()
+            page.save(buffer, format=&quot;jpeg&quot;)
+            doc_page.insert_image(fitz.Rect(0, 0, page.width, page.height),
+                              stream=buffer)
+        else:
+            page = fitz.Document(stream=page, filetype=&quot;pdf&quot;)
+            doc.insert_pdf(page)
+    doc.save(output)</code></pre>
+<p>最后，从之前的代码应该可以看出，我在编写代码的时候一直把逻辑分得比较开，目的是在可能的情况下使脚本的使用能够更加灵活。例如，能不能以通配符的形式直接读取图片进行优化？能不能再输出的时候直接输出到文件夹中而跳过PDF归并从而便于其他软件？多进程的优化是一个重要的重构，因此趁这个重构的机会我也把之前提到的功能理了理和调用<code>Pool</code>的代码一起加在了CLI入口点：</p>
+<pre class="line-numbers"><code class="language-python">@click.command()
+@click.argument(&quot;input&quot;, type=click.Path())
+@click.argument(&quot;output&quot;, type=click.Path())
+@click.option(&quot;-d&quot;, &quot;--dpi&quot;, default=300, help=&quot;DPI for rasterization.&quot;)
+@click.option(&quot;--first-page&quot;, type=int, help=&quot;First page to convert/clean.&quot;)
+@click.option(&quot;--last-page&quot;, type=int, help=&quot;Last page to convert/clean.&quot;)
+@click.option(&quot;--ocr/--no-ocr&quot;, default=True,
+              help=&quot;Whether to perform OCR during the conversion.&quot;)
+@click.option(&quot;--clean/--dont-clean&quot;, default=True,
+              help=&quot;Whether to clean pdf using docleaner&#39;s online service.&quot;)
+def main(input: str, output: str, dpi: int,
+         first_page: Optional[int], last_page: Optional[int], ocr: bool,
+         clean: bool):
+    if os.path.splitext(input)[1].lower() == &quot;.pdf&quot;:
+        # PDF mode
+        assert os.path.exists(input)
+        page_count = fitz.Document(input).page_count
+        first_page = 0 if first_page is None else first_page - 1
+        last_page = page_count if last_page is None else last_page
+        args = zip(repeat(input), range(first_page, last_page),
+                   repeat(dpi), repeat(ocr), repeat(clean))
+    else:
+        # Glob mode
+        files = sorted(glob.glob(input, recursive=True))
+        first_page = 0 if first_page is None else first_page - 1
+        last_page = len(files) if last_page is None else last_page
+        args = zip(files[first_page:last_page], repeat(0), repeat(-1),
+                   repeat(ocr), repeat(clean))
+    total = last_page - first_page
+    with Pool() as p:
+        results = tqdm(p.imap(clean_single_page, args), total=total)
+        if os.path.splitext(output)[1].lower() == &quot;.pdf&quot;:
+            merge_to_pdf(results, output)
+        elif not os.path.exists(output) or os.path.isdir(output):
+            if ocr:
+                raise RuntimeError(&quot;the OCR flag is useless because we are &quot;
+                                   &quot;writing images (not PDF) to the output &quot;
+                                   &quot;directory.&quot;)
+            if not os.path.exists(output):
+                Path(output).mkdir(parents=True)
+            for (index, page) in enumerate(results):
+                file_path = os.path.join(output, f&quot;&#123;index&#125;.jpg&quot;)
+                assert isinstance(page, Image.Image)
+                page.save(file_path)
+        else:
+            raise RuntimeError(&quot;invalid output format.&quot;)</code></pre>
+<p>在多进程优化之后，脚本花了11分21秒就把测试用的《态度改变与社会影响》一书全文清理完毕。和原来30-40分钟的耗时对比，显然我们的优化是卓有成效的。</p>
+<h1 id="大小优化">大小优化</h1>
+<p><strong>未完待续</strong></p>
+<p>现在唯一一个比较明显的问题就是：清理之后的结果文件实在是太大了。</p>
+<p>究其原因，现在的脚本是将PDF按一定的分辨率光栅化之后获得图像进行清理，而不是直接从PDF中提取本来存在的图像。现在方法的好处是实现简洁，无需考虑PDF内图像的存储方式（测试中发现直接提取PDF中图像提取出来可能是横的，这就说明PDF其实再显示的时候额外标注了旋转的信息，这在直接提取中会丢失），但坏处就是结果图像的大小和原本嵌入的图像大小无关，而且提取的过程中可能产生误差(artifact，不知道怎么翻最为恰当)。</p>
+<p>因此，解决这个问题也有两种思路：</p>
+<ol type="1">
+<li>治本：使用更复杂一点的逻辑对PDF中内嵌的图片进行保真的提取。这样一来结果文件的大小就和原来的文件大致一致，可能还会更小一点（考虑到清理的时候很多区域都会整个变成白色）。</li>
+<li>治标：使用更加优秀的图像压缩算法。</li>
+</ol>
+<p>第一种思路还未实验。关于第二种思路，我不禁想到Google出品的无脑图像压缩应用<a target="_blank" rel="noopener" href="https://squoosh.app/">Squoosh</a>。Squoosh提供CLI，而且压缩率可以达到30%-40%，很有的吸引力。进一步探究，Squoosh默认使用的压缩工具是<a target="_blank" rel="noopener" href="https://mozjpeg.com/">MozJPEG</a>。这款Mozilla出品的压缩编码器似乎也是唯一靠谱的我们脚本里能用的（Squoosh里其他的压缩器的输出格式无法嵌入到PDF中，而且耗时太长）。但我在Windows上测试MozJPEG的CLI，发现无法输出合法的JPEG文件。还在尝试中。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/Dewarp1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/07/25/Dewarp1/" class="post-title-link" itemprop="url">卷曲页面复原 1 ——平面重建</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2019-12-26 07:51:32" itemprop="dateModified" datetime="2019-12-26T07:51:32-05:00">2019-12-26</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="问题">问题</h1>
+<p>自从Office Lens，扫描全能王等App问世以来，人们越来越习惯使用手机代替扫描仪的功能来拍摄文档，而这些App对于一般的<em>平面</em>文档也确实起到了很好的效果。但是对于比较厚重的书本，由于页面向书籍弯折，拍摄到的页面往往是弯曲的，不仅影响美观也影响阅读体验。这些App也均没有针对这一情形进行特殊的优化。</p>
+<p>例如：</p>
+<p><img src="/2021/07/25/Dewarp1/Original.jpg" class=""></p>
+<p>如何在算法层面解决这个问题呢？</p>
+<h1 id="先前研究">先前研究</h1>
+<p>这个问题的英文似乎是Page Dewarping。以这个为关键词Google了一番，确实有一些相关的研究，但是几乎都是通过判断字的走向以及表格中直线的走向判断来判断纸的弯曲方向的。</p>
+<p>除此以外，据我所知是有专门扫书的扫描仪的。原理是通过打一束激光，通过平直激光束在页面上的投影判断纸的弯曲方向。</p>
+<p>但是我的手机没有激光发射器。我也不想识别文字方向，因为这大概率在实现上是一项艰苦的体力劳动。</p>
+<p>能不能通过判断<strong>纸的边缘</strong>来计算纸的弯曲情况呢？</p>
+<p>事情要一步一步来。</p>
+<p>这一篇文章，我们就先探究如何<strong>从一副二维的图像重建纸面几个关键定点的三维坐标</strong>。</p>
+<h1 id="数学基础透视投影">数学基础：透视投影</h1>
+<p><strong>真的无论什么时候都是近大远小的吗？</strong></p>
+<p>众所周知，将三维空间当中的物体转变为二维空间中的像的过程被称作<strong>投影</strong>。</p>
+<p>拍照显然就是一个投影的过程，因此在开始解决问题之前，我们先要确定投影的方式。</p>
+<p>我们的眼睛，包括摄像头，获取到的画面之所以有着近大远小的特征，是因为无论是我们的眼睛，还是相机，采用的投影都是<strong>透视投影</strong>的缘故。透视投影的示意图如下：</p>
+<p><img src="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/24-21-45-11-Projection.png" alt="Projection.png" /></p>
+<p>如图所示，透视投影需要定义一个<strong>视点</strong>，即我们的眼睛或者相机感光元件所在的位置。然后所有远处物体反射到达视点的光线与一特定平面的交点，就是这一点所对应的投影点。</p>
+<p>透视投影虽然是最符合直觉，也是最自然的投影方式，但是这并不意味着这就是唯一的投影方式。另一个较为常见的投影被称作<strong>正交投影</strong>。可以想象为透视投影中视点在无限远处的情形。（在正交投影当中，远近等大。也正是因为这个原因，正交投影广泛地被CAD软件所采用）因此，在对问题下手之前确定投影的类型是十分重要的。</p>
+<p>OK，回到透视投影。之前的文字只给出了透视投影的定性叙述，这对于算法来说显然是不够的。透视投影可以在数学上可以如下定义：</p>
+<p>假设投影平面是平面<span class="math inline">\(z=0\)</span>，投影点是<span class="math inline">\((0,0,-d)\)</span>。</p>
+<p>那么，对于三维空间中的点<span class="math inline">\((x,y,z)\)</span>，透视投影将其唯一投影到二维平面中的<span class="math inline">\((x^{\ast},y^{\ast})\)</span>。其中</p>
+<p><span class="math display">\[
 \begin{aligned}
-\prod_{i = 1}^{\varphi(n)} x_i &amp;\equiv \prod_{i = 1}^{\varphi(n)} ax_i &amp;\pmod n \\
-(a^{\varphi(n)} - 1) \prod_{i = 1}^{\varphi(n)} x_i &amp;\equiv 0 &amp;\pmod n\\
+    x^{\ast}&amp;=\frac{x}{1+z/d} \\
+    y^{\ast}&amp;=\frac{y}{1+z/d}    
 \end{aligned}
-\]</span> 因为<span class="math inline">\(\prod_{i = 1}^{\varphi(n)} x_i\)</span>与<span class="math inline">\(n\)</span>互素，我们有： <span class="math display">\[
-\begin{aligned}
-a^{\varphi(n)} - 1 &amp;\equiv 0 &amp;\pmod n \\
-a^{\varphi(n)} &amp;\equiv 1 &amp;\pmod n
-\end{aligned}
-\]</span> 得证。</p>
-<p><strong>特例：</strong>当<span class="math inline">\(n\)</span>时素数时，<span class="math inline">\(\varphi(n) = n - 1\)</span>，因此我们有： <span class="math display">\[
-a^{n - 1} \equiv 1 \pmod n
-\]</span> 即<em>费马小定理</em>。</p>
-<h1 id="莫比乌斯函数mun">莫比乌斯函数<span class="math inline">\(\mu(n)\)</span></h1>
-<h2 id="定义-2">定义</h2>
-<p>设正整数<span class="math inline">\(n\)</span>可以被素因数分解成<span class="math inline">\(n = \prod_{i = 1}^r p_i^{c_i}\)</span>的形式，那么莫比乌斯函数的定义为： <span class="math display">\[
-\mu(n) = \begin{cases}
-    0 &amp; \exists 1 \le i \le r,  c_i &gt; 1 \\
-    (-1)^r &amp; \forall 1 \le i \le r, c_i \le 1
+\]</span></p>
+<p>在现实当中，投影平面的大小是有限的，如果投影平面的大小是<span class="math inline">\(w\times h\)</span>（且以<span class="math inline">\(z\)</span>轴为中心），那么<span class="math inline">\(\theta_w=2\arctan\frac{w}{2d}\)</span>被称作水平方向上的<strong>视场</strong>（FoV），垂直方向上的视场定义类似。对于一个相同的摄像头，其视场一般可以看做一个常数（不同的焦距可能会导致些许变化）。以像素为单位，我的手机画幅是<span class="math inline">\(3024\times 4032\)</span>，<span class="math inline">\(d\approx 3800\)</span>。那么水平视场大概就在<span class="math inline">\(45^{\circ}\)</span>左右。</p>
+<p>在清楚透视投影的定义之后，这一篇文章的任务就变成了：</p>
+<p><strong>寻找满足一定约束条件的若干顶点的三维坐标，使其作为书页的边缘，其透视投影点恰对应图片上的点。</strong></p>
+<h1 id="假设">假设</h1>
+<p>为了适当简化问题，在此做出以下的假设：</p>
+<ol type="1">
+<li><p>纸页竖直的两边<strong>等长</strong>。</p></li>
+<li><p>纸页竖直的两边<strong>平行</strong>。（<strong>注：</strong> 实际情况并不总是如此，但是让纸满足这个条件比把书压平总是容易得多了）</p></li>
+<li><p>用户已经人工以某种形式标记出了图上一些关键点的坐标。即暂时不考虑自动检测书页（这也是一个大坑）。</p></li>
+</ol>
+<h1 id="明确问题">明确问题</h1>
+<p>如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/26-18-45-20-Points1.png" /></p>
+<p>我们已经手动标记出页面四角<span class="math inline">\(A,B,C,D\)</span>的投影点<span class="math inline">\(A^{\ast}(x_1,y_1),B^{\ast}(x_2,y_2),C^{\ast}(x_3,y_3),D^{\ast}(x_4,y_4)\)</span>。在这篇文章当中我们的目标是反推出<span class="math inline">\(A,B,C,D\)</span>以及平面。</p>
+<p>假设<span class="math inline">\(O\)</span>是坐标原点，以后会一直用<span class="math inline">\(\vec{OP}\)</span>表示点<span class="math inline">\(P\)</span>的坐标向量。</p>
+<h1 id="解决问题">解决问题</h1>
+<h2 id="算法直觉乱搞流">算法直觉乱搞流</h2>
+<p>第一想法：啊？四个三维点？那就是12个参数咯？上启发式算法乱搞一波模拟退火遗传粒子群似乎就可以解决？<del>当场否决</del></p>
+<p>然后我们注意到<strong>投影点为定点的三维点的轨迹一定是一条过视点<span class="math inline">\(P\)</span>的直线。</strong> 所以其实只有4个参数——启发式算法成功可能性微存？</p>
+<p>启发式优化算法毕竟不靠谱，我们还是一步一步来，比如说我们假设已经确定了<span class="math inline">\(A\)</span>的<span class="math inline">\(z\)</span>坐标<span class="math inline">\(z_1\)</span>（显然<span class="math inline">\(A\)</span>的其他坐标也因此确定）。怎么确定我们暂且不管，反正最后大不了枚举。</p>
+<p>然后呢？似乎还是没有头绪？</p>
+<p>那我们继续假设已经确定了<span class="math inline">\(B\)</span>的<span class="math inline">\(z\)</span>坐标<span class="math inline">\(z_2\)</span>。怎么确定我们一样暂且不管。</p>
+<p>现在我们已经可以算出<span class="math inline">\(\vec{BA}\)</span>。显然<span class="math inline">\(\vec{CD}=\vec{BA}\)</span>，因此接下来只要我们知道<span class="math inline">\(C\)</span>的坐标，<span class="math inline">\(D\)</span>的坐标随之确定。我们可以通过计算<span class="math inline">\(D\)</span>投影点<span class="math inline">\({D^{\ast}}&#39;\)</span>和实际<span class="math inline">\(D^{\ast}\)</span>的距离，得到我们解的误差<span class="math inline">\(E\)</span>，即</p>
+<p><span class="math display">\[
+E={D^{\ast}}&#39;D^{\ast}
+\]</span></p>
+<p>那么怎么算出<span class="math inline">\(C\)</span>的坐标呢？</p>
+<p>这个时候直觉是一个好东西。我断定：<strong>误差<span class="math inline">\(E\)</span>关于<span class="math inline">\(C\)</span>的<span class="math inline">\(z\)</span>坐标<span class="math inline">\(z_3\)</span>单峰。</strong></p>
+<p>为什么？因为<span class="math inline">\(C\)</span>的轨迹不是过<span class="math inline">\(P\)</span>的直线吗，因此<span class="math inline">\(D\)</span>经过<span class="math inline">\(C\)</span>平移<span class="math inline">\(\vec{CD}=\vec{AB}\)</span>的轨迹也是一条直线。<strong>直线的投影还是直线。</strong> 因此，当<span class="math inline">\(z_3\)</span>增加，<span class="math inline">\(C\)</span>在直线上向后移动，<span class="math inline">\(D\)</span>也在直线上向后移动，其投影点<span class="math inline">\({D^{\ast}}&#39;\)</span>也在投影平面的直线上也一定沿某一特定方向移动。而二维平面内以个沿直线固定方向移动的点和直线外一定点<span class="math inline">\(D^{\ast}\)</span>的距离显然是单峰的。证毕。</p>
+<p>既然是单峰的，那么<span class="math inline">\(C\)</span>的坐标就可以直接三分查找了呢，不用枚举nice。</p>
+<p>那么<span class="math inline">\(B\)</span>的坐标呢？</p>
+<p>直觉还是一个好东西。我再次断定：<strong>在<span class="math inline">\(C\)</span>最优的情况下，误差<span class="math inline">\(E\)</span>关于<span class="math inline">\(B\)</span>的<span class="math inline">\(z\)</span>坐标<span class="math inline">\(z_2\)</span>单峰。</strong></p>
+<p>为什么？之前不是得到<span class="math inline">\(D\)</span>的轨迹也是直线吗？当<span class="math inline">\(B\)</span>前后移动时，<span class="math inline">\(\vec{BA}\)</span>也在变化。随着<span class="math inline">\(\vec{BA}\)</span>的变化，经过<span class="math inline">\(C\)</span>平移<span class="math inline">\(\vec{BA}\)</span>得到的<span class="math inline">\(D\)</span>的轨迹直线也在沿着某一方向平移（这个方向就是直线<span class="math inline">\(BP\)</span>的方向）。那么<span class="math inline">\({D^{\ast}}&#39;\)</span>在投影平面上的轨迹直线也在沿着某一方向平移。而二维平面内沿着一个特定方向移动的直线到一定点的<span class="math inline">\(D^{\ast}\)</span>的距离显然是单峰的。证毕。</p>
+<p>哦豁，那么<span class="math inline">\(B\)</span>的坐标也好三分了咯，又一次避免了枚举，nice。</p>
+<p>为了三分的快一点，可以把三分的定比分点设成<span class="math inline">\(\frac{3-\sqrt 5}{2}\)</span>，这样可以减少一半的计算次数（当然这就属于比较细节的优化了）。</p>
+<p>接下来只剩下<span class="math inline">\(A\)</span>了，<span class="math inline">\(A\)</span>需要枚举吗？</p>
+<p>需要，也不需要。</p>
+<p>直觉上来说<span class="math inline">\(A,B,C,D\)</span>的坐标应当存在某种线性的关系，如下所示：</p>
+<p><img src="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/24-21-45-38-Linear.png" alt="Linear.png" /></p>
+<p>即无论<span class="math inline">\(z_1\)</span>是多少，平面<span class="math inline">\(ABCD\)</span>的总是不会发生变化的，因此我们只要随便选取一个<span class="math inline">\(A\)</span>的坐标，通过二重三分把<span class="math inline">\(B,C,D\)</span>算出来就行了。</p>
+<p>看着不错，计算量也不高。但是……似乎依赖直觉的地方还是太多了。</p>
+<p>之前论证单调性的过程的insight似乎暗示这问题的解析解应该不难？于是……</p>
+<h2 id="数学">数学</h2>
+<p>设</p>
+<p><span class="math display">\[
+\vec{OA}=\begin{pmatrix}
+\lambda_1x_1\\
+\lambda_1y_1\\
+(\lambda_1-1)d
+\end{pmatrix},
+\vec{OB}=\begin{pmatrix}
+\lambda_2x_2\\
+\lambda_2y_2\\
+(\lambda_2-1)d
+\end{pmatrix},
+\vec{OC}=\begin{pmatrix}
+\lambda_3x_3\\
+\lambda_3y_3\\
+(\lambda_3-1)d
+\end{pmatrix}
+\]</span></p>
+<p>则有：</p>
+<p><span class="math display">\[
+\vec{BA}=\begin{pmatrix}
+\lambda_1x_1-\lambda_2x_2\\
+\lambda_1y_1-\lambda_2y_2\\
+(\lambda_1-\lambda_2)d
+\end{pmatrix}\Rightarrow\vec{OD}=\vec{OC}+\vec{BA}=\begin{pmatrix}
+\lambda_3x_3-\lambda_2x_2+\lambda_1x_1\\
+\lambda_3y_3-\lambda_2y_2+\lambda_1y_1\\
+(\lambda_3-\lambda_2+\lambda_1-1)d
+\end{pmatrix}
+\]</span></p>
+<p>那么其二维投影：</p>
+<p><span class="math display">\[
+\vec{OD^*}=\begin{pmatrix}
+\frac{\lambda_3x_3-\lambda_2x_2+\lambda_1x_1}{\lambda_3-\lambda_2+\lambda_1}\\
+\frac{\lambda_3y_3-\lambda_2y_2+\lambda_1y_1}{\lambda_3-\lambda_2+\lambda_1}
+\end{pmatrix}=\begin{pmatrix}
+x_4\\
+y_4
+\end{pmatrix}
+\]</span></p>
+<p>然后，就可以列方程：</p>
+<p><span class="math display">\[
+\begin{cases}
+\lambda_3x_3-\lambda_2x_2+\lambda_1x_1=(\lambda_3-\lambda_2+\lambda_1)x_4\\
+\lambda_3y_3-\lambda_2y_2+\lambda_1y_1=(\lambda_3-\lambda_2+\lambda_1)y_4
 \end{cases}
-\]</span> 即若<span class="math inline">\(n\)</span>包含<em>平方素因子</em>，则<span class="math inline">\(\mu(n) = 0\)</span>，反之为<span class="math inline">\(-1\)</span>的素因子个数次方。</p>
-<h2 id="积性证明-1">积性证明</h2>
-<p>设正整数<span class="math inline">\(m, n\)</span>互素，则：</p>
-<ol type="1">
-<li>若其中有一个包含平方素因子（一个的函数值为<span class="math inline">\(0\)</span>），则它们的积必定也包含这个平方素因子，函数值也为<span class="math inline">\(0\)</span>。</li>
-<li>若两个都不包含平方素因子，则由于<span class="math inline">\(m, n\)</span>互素（各自有不同的素因子），它们的积必定不包含平方素因子。不同素因子个数也一定为<span class="math inline">\(m, n\)</span>不同素因子个数的和。</li>
-</ol>
-<p>证毕。</p>
-<h2 id="计算-1">计算</h2>
-<h3 id="单点计算-1">单点计算</h3>
-<p>见定义。</p>
-<h3 id="n计算-1"><span class="math inline">\([1, n]\)</span>计算</h3>
-<p>我们依然可以用欧拉筛在<span class="math inline">\(O(n)\)</span>时间内计算出不大于<span class="math inline">\(n\)</span>的所有<span class="math inline">\(\mu\)</span>的值，代码如下：</p>
-<pre class="line-numbers"><code class="language-cpp">bool v[N]; 
-int mu[N];
-int prime[P], tot = 0;
-for (int i = 2; i &lt;= n; i++) &#123;
-    if (!v[i]) &#123;
-        prime[++tot] = i;
-        mu[i] = -1; // 素数有一个素因子 (-1)^1
-    &#125;
-    for (int j = 1; i * prime[j] &lt;= n; j++) &#123;
-        v[i * prime[j]] = true;
-        if (i % prime[j] == 0) &#123;
-            mu[i * prime[j]] = 0; // 平方素因子
-            break;
-        &#125; else
-            mu[i * prime[j]] = -mu[i]; // 多了一个素因子 
-    &#125;
-&#125;</code></pre>
-<h1 id="除数函数sigman">除数函数<span class="math inline">\(\sigma(n)\)</span></h1>
-<h2 id="定义-3">定义</h2>
-<p>除数函数特指一大类的函数，对于正整数<span class="math inline">\(n\)</span>： <span class="math display">\[
-\sigma_x(n) = \sum_{d \mid n} d^x
-\]</span> <span class="math inline">\(\sigma_0(n)\)</span>为<span class="math inline">\(n\)</span>的约数个数，<span class="math inline">\(\sigma_1(n)\)</span>为<span class="math inline">\(n\)</span>的约数和。</p>
-<p><strong>结论：</strong><span class="math inline">\(\sigma_0(n) \sim O(n^{1 \over \ln\ln n})\)</span></p>
-<h2 id="积性证明-2">积性证明</h2>
-<p>设<span class="math inline">\(n, m\)</span>互素，则有： <span class="math display">\[
-\begin{aligned}
-\sigma_x(mn) &amp;= \sum_{d_m \mid m}\sum_{d_n \mid n} (d_nd_m)^x \\
-&amp;= \sum_{d_m \mid m} d_m^x \sum_{d_n \mid n} d_n^x \\
-&amp;= \sigma_x(m)\sigma_x(n)
-\end{aligned}
-\]</span> 注意这里我们在展开<span class="math inline">\(\sigma_x(mn)​\)</span>的时候利用了<span class="math inline">\(m, n​\)</span>互素这一点，如果<span class="math inline">\(m, n​\)</span>不互素则在这种写法中<span class="math inline">\(mn​\)</span>的某些因子会被计算多次，假设<span class="math inline">\(m, n​\)</span>有非平凡公因子<span class="math inline">\(p​\)</span>，则<span class="math inline">\(d_m = 1, d_n= p​\)</span>和<span class="math inline">\(d_m = p, d_n = 1​\)</span>都可以令<span class="math inline">\(d_md_n = p​\)</span>，<span class="math inline">\(p​\)</span>就被计算了两次，结果就不对了。</p>
-<h2 id="计算-2">计算</h2>
-<p><span class="math inline">\(\sigma\)</span>这个东西在OI中存在感极低（说白了就是没卵用），因此对计算并不做要求。</p>
+\]</span></p>
+<p>整理一下：</p>
+<p><span class="math display">\[
+\begin{cases}
+(x_2-x_4)\lambda_2-(x_3-x_4)\lambda_3=(x_1-x_4)\lambda_1\\
+(y_2-y_4)\lambda_2-(y_3-y_4)\lambda_3=(y_1-y_4)\lambda_1
+\end{cases}
+\]</span></p>
+<p>也就是：</p>
+<p><span class="math display">\[
+\begin{pmatrix}
+\vec{OB}-\vec{OD} &amp;\vec{OD}-\vec{OC}
+\end{pmatrix}
+\begin{pmatrix}
+\lambda_2\\
+\lambda_3
+\end{pmatrix}=
+(\vec{OA}-\vec{OD})\lambda_1
+\]</span></p>
+<p>最后只要解一下这个二元线性方程就可以了。</p>
+<p>看来这个问题其实没有我想象的那样复杂啊。一开始直觉告诉我这东西解析解算起来很麻烦甚至不存在解析解，所以先从算法角度分析了一波。第二天开始想几个直觉结论的证明的时候才意识到似乎解析解不难算，后来发现正是如此。</p>
+<h1 id="结果">结果</h1>
+<p>最后的结果如下所示，加了法向量组成长方体证明确实这个建模没有问题。</p>
+<p><img src="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/26-20-20-02-Marked.jpg" alt="Marked.jpg" /></p>
+<p>下一篇文章大概会写如何基于这些信息计算纸面弯曲的参数方程吧……</p>
+<p>但是手动标点这种东西四个点一个一个画图上查然后输入还可以忍受，标定横向边缘好几个点实在是懒啊……或许会先写一个标点的工具吧……</p>
 
       
     </div>
@@ -1540,7 +1506,7 @@ for (int i = 2; i &lt;= n; i++) &#123;
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/01/%E6%95%B4%E9%99%A4%E5%88%86%E5%9D%97/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/Dewarp2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -1553,7 +1519,7 @@ for (int i = 2; i &lt;= n; i++) &#123;
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/01/%E6%95%B4%E9%99%A4%E5%88%86%E5%9D%97/" class="post-title-link" itemprop="url">整除分块</a>
+          <a href="/2021/07/25/Dewarp2/" class="post-title-link" itemprop="url">卷曲页面复原 2 ——曲线拟合</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1564,14 +1530,14 @@ for (int i = 2; i &lt;= n; i++) &#123;
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-09-01 20:38:47" itemprop="dateCreated datePublished" datetime="2018-09-01T20:38:47+08:00">2018-09-01</time>
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-09-02 09:03:55" itemprop="dateModified" datetime="2018-09-02T09:03:55+08:00">2018-09-02</time>
+        <time title="修改时间：2020-01-08 22:10:02" itemprop="dateModified" datetime="2020-01-08T22:10:02-05:00">2020-01-08</time>
       </span>
 
   
@@ -1584,40 +1550,574 @@ for (int i = 2; i &lt;= n; i++) &#123;
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="一维情况">一维情况</h1>
-<p>在莫比乌斯反演中，我们经常需要计算类似如下的和式： <span class="math display">\[
-\sum_{i = 1}^n \left\lfloor \frac{n}{i} \right\rfloor
-\]</span> 如果朴素计算的话时间复杂度是<span class="math inline">\(O(n)\)</span>的，这个代价对于很多多询问的题目来说是在是太高了，因此我们需要更快的方法。</p>
-<p><strong>结论：</strong><span class="math inline">\(\left\lfloor \frac{n}{i} \right\rfloor\)</span>总共只有<span class="math inline">\(O(\sqrt n)\)</span>种不同的取值。</p>
-<p><strong>证明</strong>：我们首先证明：对于所有的<span class="math inline">\(k \le \lfloor \sqrt n \rfloor\)</span>我们都可以找到一个<span class="math inline">\(i\)</span>使得<span class="math inline">\(\lfloor n / i \rfloor = k\)</span>：</p>
-<p>令<span class="math inline">\(i = \left\lfloor n / k\right\rfloor \ge k\)</span>： <span class="math display">\[
-ik \le n &lt; (i + 1)k = ik + k \le ik + i = i(k + 1) \\
-\Rightarrow k \le n / i &lt; k + 1 \\
-\Rightarrow \left\lfloor n / i \right\rfloor = k
-\]</span> 因此，通过适当地选择<span class="math inline">\(i\)</span>我们已经可以让<span class="math inline">\(\lfloor n / i \rfloor\)</span>取到<span class="math inline">\(\lfloor \sqrt n\rfloor\)</span>个值，因为这些<span class="math inline">\(i \ge \lfloor \sqrt n\rfloor\)</span>，因此我们进一步推得：对于所有<span class="math inline">\(i \ge \lfloor \sqrt n\rfloor\)</span>，<span class="math inline">\(\lfloor n / i \rfloor \le \lfloor \sqrt n\rfloor\)</span>共有<span class="math inline">\(\lfloor \sqrt n\rfloor\)</span>种取值。</p>
-<p>对于所有的<span class="math inline">\(i \le \lfloor \sqrt n \rfloor\)</span>，我们证明对于这些<span class="math inline">\(i\)</span>，<span class="math inline">\(\lfloor n / i \rfloor\)</span> 的值各不相同，因为假设存在一对相邻的<span class="math inline">\(i - 1, i\)</span>，使得<span class="math inline">\(\lfloor {n \over i - 1} \rfloor = \lfloor {n \over i} \rfloor = k\)</span>，则： <span class="math display">\[
-k \le {n \over i - 1} &lt; k + 1 \\
-k \le {n \over i} &lt; k + 1 \\
-\Rightarrow {n \over i - 1} - {n \over i} = {n \over i(i - 1)} &lt; 1
-\]</span> 而事实上因为<span class="math inline">\(i \le \lfloor \sqrt n\rfloor\)</span>，<span class="math inline">\(i(i - 1) &lt; n \Rightarrow {n \over i(i - 1)} &gt; 1\)</span>，矛盾。</p>
-<p>因此对于<span class="math inline">\(i \le \lfloor \sqrt n\rfloor\)</span>的<span class="math inline">\(\lfloor \sqrt n\rfloor\)</span>个<span class="math inline">\(i\)</span>，<span class="math inline">\(\lfloor n / i \rfloor \ge \lfloor \sqrt n\rfloor\)</span>此时也有<span class="math inline">\(\lfloor \sqrt n\rfloor\)</span>种取值。</p>
-<p>因此总共大约有<span class="math inline">\(2\lfloor \sqrt n \rfloor\)</span>种取值，证毕。</p>
-<p>这样子我们就可以一段一段地计算了，时间复杂度骤降为<span class="math inline">\(O(\sqrt n)\)</span>，但是一段到底到哪里结束呢？</p>
-<p><strong>结论：</strong>值为<span class="math inline">\(k\)</span>的一段结束于<span class="math inline">\(i = \lfloor n / k\rfloor\)</span>。</p>
-<p><strong>证明：</strong>随着<span class="math inline">\(i\)</span>的变大，<span class="math inline">\(n / i - \lfloor n / i\rfloor\)</span>的值必定单调递减，临界点就是<span class="math inline">\(n / i = \lfloor n / i\rfloor = k\)</span>，此时<span class="math inline">\(i = n / k\)</span>。考虑到此时<span class="math inline">\(i\)</span>可能不是整数，因此结束位置为<span class="math inline">\(\lfloor n / k\rfloor\)</span>。</p>
-<p><strong>推论：</strong><span class="math inline">\(i\)</span>所在的一段结束于<span class="math inline">\(\lfloor n / \lfloor n / i \rfloor \rfloor\)</span>。</p>
-<p>有这两条结论，我们就可以很快地计算一开头和式的值了：</p>
-<pre class="line-numbers"><code class="language-cpp">for (int l = 1, r; l &lt;= n; l = r + 1) &#123;
-    r = n / (n / l);
-    ans += (r - l + 1) * (n / l);
-&#125;</code></pre>
-<h1 id="二维情况">二维情况</h1>
-<p>假设<span class="math inline">\(n &lt; m\)</span>，我们有时候还会碰到类似如下的和式： <span class="math display">\[
-\sum_{i = 1}^n \left\lfloor \frac{n}{i} \right\rfloor \left\lfloor \frac{m}{i} \right\rfloor
-\]</span> <strong>结论：</strong><span class="math inline">\(\left\lfloor \frac{n}{i} \right\rfloor \left\lfloor \frac{m}{i} \right\rfloor\)</span>共有<span class="math inline">\(O(\sqrt n + \sqrt m)\)</span>种取值</p>
-<p><strong>证明：</strong>我们可以这样想象：假设有一根数轴表示<span class="math inline">\(i\)</span>的不同取值，<span class="math inline">\(\left\lfloor \frac{n}{i} \right\rfloor\)</span>用<span class="math inline">\(O(\sqrt n)\)</span>个分割点把数轴分成了<span class="math inline">\(O(\sqrt n)\)</span>段（姑且叫它们<span class="math inline">\(N\)</span>段），<span class="math inline">\(\left\lfloor \frac{m}{i} \right\rfloor\)</span>用<span class="math inline">\(O(\sqrt m)\)</span>个分割点在不同的位置把数轴也分成了<span class="math inline">\(O(\sqrt m)\)</span>段（姑且叫它们<span class="math inline">\(M\)</span>段），现在把这些段overlay一下，你会发现现在总共有<span class="math inline">\(O(\sqrt n + \sqrt m)\)</span>个分割点把数轴分成了<span class="math inline">\(O(\sqrt n + \sqrt m)\)</span>段，每一段的取值可能不同（想一下，两个点只有不完全在相同的<span class="math inline">\(N\)</span>段和<span class="math inline">\(M\)</span>段时计算出来的<span class="math inline">\(\left\lfloor \frac{n}{i} \right\rfloor \left\lfloor \frac{m}{i} \right\rfloor\)</span>才可能不一样！）</p>
-<p><strong>结论：</strong><span class="math inline">\(i\)</span>所在的一段结束于<span class="math inline">\(\min\{\lfloor n / \lfloor n / i \rfloor \rfloor, \lfloor m / \lfloor m / i \rfloor \rfloor\}\)</span>。</p>
-<p><strong>证明：</strong>类似一维情况。</p>
+          <p>在前几天用扫描全能王的时候发现它似乎有自动拍书功能的（悲），似乎还可以自动识别，连标定都不要了。官方看到这个小博客的可能性微存？</p>
+<p>但是那个是付费的会员功能！而且不管怎么样自己写一遍总归是有收获的。</p>
+<h1 id="进展">进展！</h1>
+<p>过去的一周一直在和各种工程问题作斗争。目前的进展如下：</p>
+<p><img src="https://raw.githubusercontent.com/alan20210202/images/master/2020/01/01-12-00-22-Snipaste_2020-01-01_12-00-03.jpg" alt="Snipaste_2020-01-01_12-00-03.jpg" /></p>
+<p>让这些探究只停留在Jupyter Notebook上我觉得太可惜了，加上我觉得自己经常会用，所以我准备撸一个App传到博客上去。</p>
+<p>然后某人悲催地发现自己Web开发的技艺约等于0。</p>
+<p>花了一个小时速成Vue和Vuetify，花了一个小时复习了一遍Node和JS，花了一个小时重装了Webstorm，Vue CLI开一个SPA直接开搞。</p>
+<p>在Stack Overflow和Google和MDN里面转悠了五天之后自己终于写出了还算像样的雏形。现在标定功能已经写完了！</p>
+<p>上图当中的黄框表示页面平面，绿框悬浮在黄框上面营造出一种透视立体的感觉（其实是调试完不想删掉了），上下两条蓝色的曲线表示书页的弯曲曲线。所有红色的点都是可以拖动的，拖动时还会在边角显示两倍放大后的特写便于精准定位，就像这样</p>
+<p><img src="https://raw.githubusercontent.com/alan20210202/images/master/2020/01/01-12-13-24-2020-01-01-12-12-46-image.png" alt="2020-01-01-12-12-46-image.png" /></p>
+<p>功能上其实比上一篇文章没有多出多少（虽然在工程方面取得了巨大的突破）除了——曲线，这一条曲线其实没有那么简单。</p>
+<h1 id="反向投影">反向投影</h1>
+<p>从上图可以看到，图中的曲线形状是由中间五个节点决定的，但是基于的是节点的三维坐标而不是所看到的二维坐标。这当中就牵涉到一个反向投影的问题——知道一个点在二维平面上投影点的坐标，如何在一定的约束条件下求取其三维坐标呢？</p>
+<p><img src="https://raw.githubusercontent.com/alan20210202/images/master/2019/12/26-18-45-20-Points1.png" /></p>
+<p>这个时候前一篇文章所做的页面平面重建的结果就变得重要了起来。这五个关键点都在书页的下边缘上，在数学上，五个小红点都在<em>平面<span class="math inline">\(ABCD\)</span>底边<span class="math inline">\(AD\)</span>所在的，且垂直于平面<span class="math inline">\(ABCD\)</span>的平面</em>上。首先我们要确定这个平面，不妨称之为平面<span class="math inline">\(P\)</span>。</p>
+<p>平面的方程式<span class="math inline">\(Ax+By+Cz=D\)</span>，<span class="math inline">\((A,B,C)\)</span>就是这个平面的法向量，我们已经知道了两个<span class="math inline">\(P\)</span>上的点（点<span class="math inline">\(A\)</span>和点<span class="math inline">\(D\)</span>），如果我们知道了平面的法向量，那么把<span class="math inline">\(A\)</span>点代入，方程当中的<span class="math inline">\(D\)</span>就出来了，平面就确定了。</p>
+<p>在理想情况下，法向量就是<span class="math inline">\(\vec{AB}\)</span>，因为理想情况下<span class="math inline">\(\vec{AD}\perp\vec{AB}\)</span>。</p>
+<p>但是现实比较残酷，由于计算的一点点小误差，算出来的<span class="math inline">\(\vec{AD}\)</span>并不总是垂直于<span class="math inline">\(\vec{AD}\)</span>，比如说夹角是<span class="math inline">\(89.94^{\circ}\)</span>。这个<span class="math inline">\(\vec{AB}\)</span>就不是法向量了，这是很坑的。我一开始偷懒把<span class="math inline">\(\vec{AB}\)</span>当法向量写到程序里面去，结果调试的时候一直有小误差，心态都快崩了。</p>
+<p>然后我才意识到果然不能偷懒，正确的法向量就是<span class="math inline">\(\vec{AD}\times(\vec{AD}\times\vec{AB})\)</span>。</p>
+<p>然后对于在平面<span class="math inline">\(P\)</span>上的任意一个点<span class="math inline">\(Q(x, y,z)\)</span>，已知其投影是<span class="math inline">\(Q^{\ast}(x^{\ast},y^{\ast})\)</span>。根据方程</p>
+<p><span class="math display">\[
+\begin{cases}
+    Ax+By+Cz=D\\
+    x=x^{\ast}(1+z/d)\\
+    y=y^{\ast}(1+z/d)
+\end{cases}
+\]</span></p>
+<p>就能把这个点的坐标算出来了。</p>
+<p>之后还需要再做一步，把<span class="math inline">\(\vec{AQ}\)</span>分解：</p>
+<p><span class="math display">\[
+\vec{AQ}=a\vec{AD}+b\frac{\vec{AD}\times\vec{AB}}{\left|\vec{AD}\times\vec{AB}\right|}\quad a\in[0,1] 
+\]</span></p>
+<p>之后得到的<span class="math inline">\((a,b)\)</span>才是一个相对归一化了的坐标。使用这个坐标进行插值的话，<span class="math inline">\(A,B,C,D\)</span>四个点小范围内的运动都不会改变曲线的形状，这相当于增加了我们算法的鲁棒性。</p>
+<h1 id="插值">插值</h1>
+<p>使用什么曲线插值比较好呢？</p>
+<p>如果在计算机的背景下最先想到的肯定是贝塞尔曲线，但是贝塞尔曲线不经过它控制点，这似乎在界面上就不是那么直观。</p>
+<p>如果采用高阶多项式的插值呢？那么Runge现象又会非常严重，可以预见效果会很差。</p>
+<p>于是乎我采用的是三次样条插值。对于三次样条插值：</p>
+<ol type="1">
+<li><p>假设有<span class="math inline">\(n\)</span>个节点，那么就有<span class="math inline">\(n-1\)</span>个区间，对应<span class="math inline">\(n-1\)</span>条曲线，<span class="math inline">\(4(n-1)\)</span>个参数。</p></li>
+<li><p>对于一条三次曲线，其两个端点的值是确定的，那么就有<span class="math inline">\(2(n-1)\)</span>个约束条件。</p></li>
+<li><p>中间的<span class="math inline">\(n-2\)</span>个节点上相邻的三次曲线必须一阶导连续且二阶导连续，那么就是<span class="math inline">\(2(n-2)\)</span>个约束条件。</p></li>
+<li><p>为了能够在大多数情况下求出所有参数的准确值，还需要<span class="math inline">\(2\)</span>个约束条件。</p></li>
+</ol>
+<p>似乎最常见的边界条件被称为<strong>自然边界条件</strong>。也就是样条曲线两端的二阶导为<span class="math inline">\(0\)</span>。<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Spline_%28mathematics%29#Algorithm_for_computing_natural_cubic_splines">Wiki</a>上介绍的算法也是针对这种边界条件设计的，但是在我们这个情境下自然边界似乎不适用，因为书页的一侧总是向下凹向书脊，书脊起了固定作用。我一开始照抄Wiki上的算法结果曲线对不上翻车了。</p>
+<p>这个情景应该用的似乎是<strong>夹持边界条件</strong>。也就是人为地给出曲线两端的一阶导。也就是我的界面右侧出现"Left Slope"和"Right Slope"两个slider的原因。这个边界条件试下来似乎和实际吻合得还是相当不错的。问题主要出现在算法这里，我虽然从矩阵的形式推断一定存在像Wiki上处理自然边界条件一样显式线性的算法，但是自己还是懒得去推了直接用mathjs的<code>lusolve</code>函数（Well 我相信mathjs这种大库的消元一定有优化……），速度还是非常令人满意的，但是代码可读性就是一个比较大的问题了：</p>
+<pre class="line-numbers"><code class="language-javascript">let n = nodes.length - 1; // nodes.length knots, so nodes.length - 1 ranges and piecewise curves
+
+let A = zeros(4 * n, 4 * n); // 4 parameters for each curve
+let b = zeros(4 * n);
+for (let i = 0; i &lt; n; i++) &#123;
+    // Equation 4i and 4i + 1 ensures continuity of the spline
+    b.set([4 * i], nodes[i][1]);
+    for (let j = 0; j &lt; 4; j++)
+        A.set([4 * i, 4 * i + j], pow(nodes[i][0], j));
+    b.set([4 * i + 1], nodes[i + 1][1]);
+    for (let j = 0; j &lt; 4; j++)
+        A.set([4 * i + 1, 4 * i + j], pow(nodes[i + 1][0], j));
+    if (i &lt; n - 1) &#123;
+        // Equation 4i + 2 and 4i + 3 ensures continuity of both the 1st and 2nd derivative
+        A.set([4 * i + 2, 4 * i + 1], 1);
+        A.set([4 * i + 2, 4 * i + 2], 2 * nodes[i + 1][0]);
+        A.set([4 * i + 2, 4 * i + 3], 3 * pow(nodes[i + 1][0], 2));
+        A.set([4 * i + 2, 4 * i + 5], -1);
+        A.set([4 * i + 2, 4 * i + 6], -2 * nodes[i + 1][0]);
+        A.set([4 * i + 2, 4 * i + 7], -3 * pow(nodes[i + 1][0], 2));
+        A.set([4 * i + 3, 4 * i + 2], 2);
+        A.set([4 * i + 3, 4 * i + 3], 6 * nodes[i + 1][0]);
+        A.set([4 * i + 3, 4 * i + 6], -2);
+        A.set([4 * i + 3, 4 * i + 7], -6 * nodes[i + 1][0]);
+    &#125;
+&#125;
+// Equation 4n - 2 and 4n - 1 set constraint on slope on both ends
+A.set([4 * n - 2, 1], 1);
+A.set([4 * n - 2, 2], 2 * nodes[0][0]);
+A.set([4 * n - 2, 3], 3 * pow(nodes[0][0], 2));
+b.set([4 * n - 2], this.leftSlope);
+A.set([4 * n - 1, 4 * n - 3], 1);
+A.set([4 * n - 1, 4 * n - 2], 2 * nodes[n][0]);
+A.set([4 * n - 1, 4 * n - 1], 3 * pow(nodes[n][0], 2));
+b.set([4 * n - 1], this.rightSlope);
+let sln = lusolve(A, b);</code></pre>
+<p>虽然加了注释但是代码只能用悲剧来形容了（悲）。</p>
+<p>全怪mathjs的API，我个人认为如果用Julia来写的的话一定没有那么多事情（确信）。</p>
+<p>最后的效果倒确实是极好的。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/Determinant/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/07/25/Determinant/" class="post-title-link" itemprop="url">行列式笔记</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-04-30 22:44:36" itemprop="dateModified" datetime="2021-04-30T22:44:36-04:00">2021-04-30</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>在看了<em>Introduction to Linear Algebra</em>之后我对于行列式真的是豁然开朗。</p>
+<h1 id="行列式的性质">行列式的性质</h1>
+<p>行列式被定义为具有一下三个核心性质的，关于一个方阵的值：</p>
+<ol type="1">
+<li><p><strong>单位阵的行列式为1。</strong></p></li>
+<li><p><strong>两行交换，行列式变号。</strong></p></li>
+<li><p><strong>行列式关于单行是线性的，即</strong></p>
+<p><span class="math display">\[
+\begin{vmatrix} \vdots \\ (\boldsymbol  a + \boldsymbol b)^{\mathrm T} \\ \vdots \end{vmatrix} = \begin{vmatrix} \vdots \\ \boldsymbol a^{\mathrm T} \\ \vdots \end{vmatrix} + \begin{vmatrix} \vdots \\ \boldsymbol b^{\mathrm T} \\ \vdots \end{vmatrix},\quad\quad
+\begin{vmatrix} \vdots \\ (t\boldsymbol a)^{\mathrm T} \\ \vdots \end{vmatrix} = t\begin{vmatrix} \vdots \\ \boldsymbol a^{\mathrm T} \\ \vdots \end{vmatrix}
+\]</span></p></li>
+</ol>
+<p>从这三个性质，可以导出行列式所有重要的性质：</p>
+<ol start="4" type="1">
+<li><p><strong>两行相等，行列式为<span class="math inline">\(0\)</span>。</strong>证明：交换相等两行，行列式不变，但又由性质2，行列式要变号，因此行列式只能是<span class="math inline">\(0\)</span>。</p></li>
+<li><p><strong>初等行变换不改变行列式的值。</strong>证明：由性质3、4得：、</p>
+<p><span class="math display">\[
+\begin{vmatrix}
+ \vdots \\
+ \boldsymbol b^{\mathrm T} \\
+ \vdots \\
+ (\boldsymbol a -l \boldsymbol b)^{\mathrm T} \\
+ \vdots
+\end{vmatrix}
+ = \begin{vmatrix}
+ \vdots \\
+ \boldsymbol b^{\mathrm T} \\
+ \vdots \\
+ \boldsymbol a^{\mathrm T} \\
+ \vdots
+\end{vmatrix}
+-
+l\begin{vmatrix}
+ \vdots \\
+ \boldsymbol b^{\mathrm T} \\
+ \vdots \\
+ \boldsymbol b^{\mathrm T} \\
+ \vdots
+\end{vmatrix}
+= \begin{vmatrix}
+ \vdots \\
+ \boldsymbol b^{\mathrm T} \\
+ \vdots \\
+ \boldsymbol a^{\mathrm T} \\
+ \vdots
+\end{vmatrix}
+-
+l\cdot 0
+= \begin{vmatrix}
+ \vdots \\
+ \boldsymbol b^{\mathrm T} \\
+ \vdots \\
+ \boldsymbol a^{\mathrm T} \\
+ \vdots
+\end{vmatrix}
+\]</span></p></li>
+<li><p><strong>有一行为<span class="math inline">\(\boldsymbol 0\)</span>，则行列式为<span class="math inline">\(0\)</span>。</strong>证明：将另一行加到零行上，出现相等的两行，由性质4，行列式的值为<span class="math inline">\(0\)</span>。又因为初等行变换不改变行列式的值，所以原来的行列式值也是<span class="math inline">\(0\)</span>。</p></li>
+<li><p><strong>三角阵的行列式为其主对角线元素之积。</strong>证明：无论是上三角阵还是下三角阵，都可以简单地利用行变换消去非对角线上的元素，此时由性质1和性质3，行列式的值就是主对角线元素之积。</p></li>
+<li><p><strong>矩阵可逆，则行列式非零。</strong>证明：考虑高斯消元，如果矩阵奇异则必然三角阵中有零行，行列式为<span class="math inline">\(0\)</span>。反之，则左右行都是主元行，三角阵的行列式非零。（高斯消元过程中的行变换不改变行列式，行交换只改变正负。）</p></li>
+<li><p><strong>积的行列式等于行列式的积。</strong>证明：对于矩阵<span class="math inline">\(A,B\)</span>，考虑关于<span class="math inline">\(A\)</span>的函数<span class="math inline">\(D(A) = |AB|/|B|\)</span>。其有三个性质：</p>
+<ol type="1">
+<li><span class="math inline">\(D(I) = |B|/|B| = 1\)</span>。</li>
+<li><span class="math inline">\(A\)</span>的两行交换，则<span class="math inline">\(AB\)</span>的两行交换，则<span class="math inline">\(|AB|\)</span>变号，则<span class="math inline">\(D(A)\)</span>变号。</li>
+<li><span class="math inline">\(A\)</span>的单行线性变换即<span class="math inline">\(AB\)</span>的单行线性变换，因此<span class="math inline">\(|AB|\)</span>关于<span class="math inline">\(A\)</span>的单行是线性的，即<span class="math inline">\(D(A)\)</span>关于<span class="math inline">\(A\)</span>单行是线性的。</li>
+</ol>
+<p>因此，<span class="math inline">\(D(A)\)</span>满足行列式的核心性质，由行列式之定义，<span class="math inline">\(D(A) = |A|\)</span>。</p></li>
+<li><p><strong>转置不改变行列式的值。</strong>若矩阵奇异，则其转置奇异，则二者行列式皆为<span class="math inline">\(0\)</span>。若矩阵可逆，则考虑LU分解<span class="math inline">\(PA=LU\)</span>。两边转置得<span class="math inline">\(A^{\mathrm T}P^{\mathrm T} = U^{\mathrm T}L^{\mathrm T}\)</span>。由性质9，有 <span class="math display">\[
+|P||A|=|L||U|,\quad \left|A^{\mathrm T}\right|\left|P^{\mathrm T}\right| = \left|U^{\mathrm T}\right|\left|L^{\mathrm T}\right|
+\]</span> 比较二式，<span class="math inline">\(L,U\)</span>为三角阵，因为转置不改变对角线，因而转置不改变二者行列式的值。<span class="math inline">\(P\)</span>为行交换的排列，行列式为<span class="math inline">\(\pm 1\)</span>，而<span class="math inline">\(P^{\mathrm T}P=I\)</span>，因此<span class="math inline">\(|P|\)</span>和<span class="math inline">\(\left|P^{\mathrm T}\right|\)</span>同正负，即相等。综上，由两等式，<span class="math inline">\(|A| = \left|A^{\mathrm T}\right|\)</span>。</p>
+<p><strong>推论：</strong>性质2、3、4、5、6对于列也适用。</p></li>
+</ol>
+<h1 id="行列式的计算">行列式的计算</h1>
+<h2 id="排列公式">排列公式</h2>
+<p>由行列式的单行线性，可以逐行将行列式进行拆分，例如： <span class="math display">\[
+\begin{aligned}
+    \begin{vmatrix}
+        a &amp;b\\
+        c &amp;d
+    \end{vmatrix} &amp;= \begin{vmatrix}
+        a &amp;0\\
+        c &amp;d
+    \end{vmatrix} + \begin{vmatrix}
+        0 &amp;b\\
+        c &amp;d
+    \end{vmatrix} \\
+    &amp;= \begin{vmatrix}
+        a &amp;0\\
+        c &amp;0
+    \end{vmatrix} + \begin{vmatrix}
+        a &amp;0\\
+        0 &amp;c
+    \end{vmatrix} + \begin{vmatrix}
+        0 &amp;b\\
+        c &amp;0
+    \end{vmatrix} + \begin{vmatrix}
+        0 &amp;b\\
+        0 &amp;d
+    \end{vmatrix}
+\end{aligned}
+\]</span> 照此态势，<span class="math inline">\(n\)</span>行的行列式可以被分拆为<span class="math inline">\(n^n\)</span>个每行至多只有一个非零元素的行列式之和。而注意到，这些行列式有一些存在零列，他们的值一定为<span class="math inline">\(0\)</span>可以省略。因此，可能非零的只有那些每行至多只有一个非零元素，且非零元素所在列两两不同的行列式。对于这些行列式，存在排列矩阵可以将其对角化，进而我们得出这些行列式的值为每一行可能的非零元素之积乘以排列矩阵的行列式，后者只可能是<span class="math inline">\(\pm 1\)</span>——不妨将这正负定义为排列的“奇偶性”。则行列式的排列公式呼之欲出：</p>
+<blockquote>
+<p><span class="math display">\[
+A_{n\times n} = \sum_{\pi \in S_n} (-1)^{\sigma(\pi)}\prod_{i=1}^na_{i, \pi(i)}
+\]</span></p>
+<p>其中<span class="math inline">\(S_n\)</span>表示所有<span class="math inline">\(n\)</span>排列的集合，<span class="math inline">\(\pi\)</span>表示一个排列，<span class="math inline">\(\sigma(\pi)\)</span>表示<span class="math inline">\(\pi\)</span>的逆序对数，即 <span class="math display">\[
+\sigma(\pi)=\sum_{i&lt;j}[\pi(i) &gt; \pi(j)]
+\]</span></p>
+</blockquote>
+<h2 id="行列展开">行列展开</h2>
+<p>同样由行列式的单行线性，可以将行列式的某一行进行拆分成<span class="math inline">\(n\)</span>个该行只有至多一个非零元素的行列式之和。对于每一个这样的行列式考虑排列公式：显然有效的排列是正好在那一行选中了非零元素的那一列的（其他的排列都选到了<span class="math inline">\(0\)</span>，就没有贡献了），去掉选中这个元素的部分，这些排列恰好全部转化为<span class="math inline">\(n-1\)</span>长度的全排列，覆盖了矩阵中所有不在非零元素所在行所在列的元素——那这些是不是可以看作是一个小一点的<span class="math inline">\(n-1\)</span>阶行列式呢？这就是行列式行列展开的原理。</p>
+<p>因为这个笔记主要是我复习自用，所以具体形式我就不多写了。</p>
+<p>我记得自己两年之前写过一篇<a href="/2021/07/25/%E8%A1%8C%E5%88%97%E5%BC%8F%E8%AE%A1%E7%AE%97/" title="行列式值的按行列展开定义与排列定义等价性证明">行列式值的按行列展开定义与排列定义等价性证明</a>，那个时候觉得自己写了一大堆很厉害，现在一看，虽然比较严谨，但是格局小了。</p>
+<h1 id="克拉默法则">克拉默法则</h1>
+<p>克拉默法则提供了一种在形式上求解线性方程的工具，其证明如下： <span class="math display">\[
+\left.
+\begin{aligned}
+A \boldsymbol x &amp;= \boldsymbol b \\
+A I &amp;= A
+\end{aligned}
+\right\}
+\Rightarrow 
+A \cdot \begin{bmatrix}
+1 &amp;0 &amp;\cdots &amp;0 &amp;x_1 &amp;0 &amp;\cdots &amp;0 \\
+0 &amp;1 &amp;\cdots &amp;0 &amp;x_2  &amp;0&amp;\cdots &amp;0 \\
+\vdots &amp;\vdots &amp;\ddots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots  &amp;\vdots \\
+0 &amp;0 &amp;\cdots &amp;1 &amp;x_{i-1} &amp;0 &amp;\cdots &amp;0 \\
+0 &amp;0 &amp;\cdots &amp;0 &amp;x_{i} &amp;0 &amp;\cdots &amp;0 \\
+0 &amp;0 &amp;\cdots &amp;0 &amp;x_{i+1} &amp;1 &amp;\cdots &amp;0 \\
+\vdots &amp;\vdots &amp;\ddots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots  &amp;\vdots \\
+0 &amp; 0 &amp;\cdots &amp;0 &amp;x_n &amp;0 &amp;\cdots &amp;1
+\end{bmatrix} = \begin{bmatrix}
+    \vert &amp;\vert &amp;\cdots &amp;\vert &amp;\vert &amp;\vert &amp;\cdots &amp;\vert\\
+    \boldsymbol{a_1} &amp;\boldsymbol{a_2} &amp;\cdots  &amp; \boldsymbol{a_{i - 1}} &amp;\boldsymbol b &amp; \boldsymbol{a_{i + 1}} &amp;\cdots &amp;\boldsymbol{a_n} \\
+    \vert &amp;\vert &amp;\cdots &amp;\vert &amp;\vert &amp;\vert &amp;\cdots &amp;\vert\\
+\end{bmatrix}
+\]</span> 因此，由积的行列式为行列式的积，就有 <span class="math display">\[
+|A| \cdot \begin{vmatrix}
+1 &amp;0 &amp;\cdots &amp;0 &amp;x_1 &amp;0 &amp;\cdots &amp;0 \\
+0 &amp;1 &amp;\cdots &amp;0 &amp;x_2  &amp;0&amp;\cdots &amp;0 \\
+\vdots &amp;\vdots &amp;\ddots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots  &amp;\vdots \\
+0 &amp;0 &amp;\cdots &amp;1 &amp;x_{i-1} &amp;0 &amp;\cdots &amp;0 \\
+0 &amp;0 &amp;\cdots &amp;0 &amp;x_{i} &amp;0 &amp;\cdots &amp;0 \\
+0 &amp;0 &amp;\cdots &amp;0 &amp;x_{i+1} &amp;1 &amp;\cdots &amp;0 \\
+\vdots &amp;\vdots &amp;\ddots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots  &amp;\vdots \\
+0 &amp; 0 &amp;\cdots &amp;0 &amp;x_n &amp;0 &amp;\cdots &amp;1
+\end{vmatrix} = \begin{vmatrix}
+    \vert &amp;\vert &amp;\cdots &amp;\vert &amp;\vert &amp;\vert &amp;\cdots &amp;\vert\\
+    \boldsymbol{a_1} &amp;\boldsymbol{a_2} &amp;\cdots  &amp; \boldsymbol{a_{i - 1}} &amp;\boldsymbol b &amp; \boldsymbol{a_{i + 1}} &amp;\cdots &amp;\boldsymbol{a_n} \\
+    \vert &amp;\vert &amp;\cdots &amp;\vert &amp;\vert &amp;\vert &amp;\cdots &amp;\vert\\
+\end{vmatrix}
+\]</span> 而注意到 <span class="math display">\[
+\begin{vmatrix}
+1 &amp;0 &amp;\cdots &amp;0 &amp;x_1 &amp;0 &amp;\cdots &amp;0 \\
+0 &amp;1 &amp;\cdots &amp;0 &amp;x_2  &amp;0&amp;\cdots &amp;0 \\
+\vdots &amp;\vdots &amp;\ddots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots  &amp;\vdots \\
+0 &amp;0 &amp;\cdots &amp;1 &amp;x_{i-1} &amp;0 &amp;\cdots &amp;0 \\
+0 &amp;0 &amp;\cdots &amp;0 &amp;x_{i} &amp;0 &amp;\cdots &amp;0 \\
+0 &amp;0 &amp;\cdots &amp;0 &amp;x_{i+1} &amp;1 &amp;\cdots &amp;0 \\
+\vdots &amp;\vdots &amp;\ddots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots  &amp;\vdots \\
+0 &amp; 0 &amp;\cdots &amp;0 &amp;x_n &amp;0 &amp;\cdots &amp;1
+\end{vmatrix} = x_i
+\]</span> 因此就有 <span class="math display">\[
+x_i = \frac{\begin{vmatrix}
+    \vert &amp;\vert &amp;\cdots &amp;\vert &amp;\vert &amp;\vert &amp;\cdots &amp;\vert\\
+    \boldsymbol{a_1} &amp;\boldsymbol{a_2} &amp;\cdots  &amp; \boldsymbol{a_{i - 1}} &amp;\boldsymbol b &amp; \boldsymbol{a_{i + 1}} &amp;\cdots &amp;\boldsymbol{a_n} \\
+    \vert &amp;\vert &amp;\cdots &amp;\vert &amp;\vert &amp;\vert &amp;\cdots &amp;\vert\\
+\end{vmatrix}}{|A|}
+\]</span> 即克拉默法则得证。</p>
+<h1 id="行列式体积">行列式体积</h1>
+<p>行列式的几何意义为：以行列式的行向量为边的高维盒体（box，不知道怎么翻最合适，就是矩形，平行六面体等）的“带号体积”。</p>
+<p>为什么？因为这个几何意义是满足行列式的三条根本性质的：</p>
+<ol type="1">
+<li>单位阵的行向量组成的盒体就是单位盒体，体积显然是一。</li>
+<li>交换行列式的行不会改变盒体的形状，所以带号体积的绝对值不变，但符号是改变的（这姑且是带号体积的“定义”吧，带号体积的绝对值就是常规意义下的体积，这是自然的）。</li>
+<li>对行列式一行的向量进行线性拉伸，对应盒体的体积显然也会线性拉伸。把行列式一行的行向量分拆成两个行向量之和……这个似乎有些复杂，在二维的情况下容易画图理解，在高维的情况下类似。</li>
+</ol>
+<p>因此，以原点为一个顶点，另外两个顶点为<span class="math inline">\((x_1, y_1), (x_2, y_2)\)</span>的三角形面积就是 <span class="math display">\[
+\frac{1}{2}\left|\begin{vmatrix}x_1 &amp;y_1 \\ x_2 &amp;y_2\end{vmatrix}\right|
+\]</span> 三个顶点为<span class="math inline">\((x_1,y_2),(x_2,y_2),(x_3, y_3)\)</span>的三角形面积就是 <span class="math display">\[
+\frac{1}{2}\left|\begin{vmatrix}x_1 &amp;y_1 &amp; 1\\ x_2 &amp;y_2 &amp;1 \\ x_3 &amp;y_3 &amp;1\end{vmatrix}\right|
+\]</span> 上面这个公式可以想象三个三维向量感性理解一波（脑补割补和祖暅原理），也可以通过对<span class="math inline">\(1\)</span>列的展开归约到上式。</p>
+<h1 id="三维向量的叉积">三维向量的叉积</h1>
+<p>两个三维向量的叉积<span class="math inline">\(\boldsymbol u \times \boldsymbol v\)</span>定义为另外一个三维向量，其模为<span class="math inline">\(|\boldsymbol u||\boldsymbol v||\sin \theta|\)</span>，其方向垂直<span class="math inline">\(\boldsymbol u, \boldsymbol v\)</span>。叉积的公式可以通过如下的伪·行列式进行记忆： <span class="math display">\[
+\boldsymbol u \times \boldsymbol v = \begin{vmatrix}
+    \boldsymbol i &amp;\boldsymbol j &amp;\boldsymbol k \\
+    \boldsymbol u_1 &amp;\boldsymbol u_2 &amp;\boldsymbol u_3 \\
+    \boldsymbol v_1 &amp;\boldsymbol v_2 &amp;\boldsymbol v_3 \\    
+\end{vmatrix}
+\]</span> 其中<span class="math inline">\(\boldsymbol i = (1, 0, 0), \boldsymbol j = (0, 1, 0), \boldsymbol k = (0, 0, 1)\)</span>。</p>
+<p>显然，从上面的行列式形式我们看出叉积具有反对称性：<span class="math inline">\(\boldsymbol u \times \boldsymbol v = -\boldsymbol v \times \boldsymbol u\)</span>。</p>
+<p>叉积在物理上具有比较重要的应用。</p>
+<p>最后，有一种有意思的写法：叉积再点积 <span class="math display">\[
+(\boldsymbol u \times \boldsymbol v)\cdot \boldsymbol w = \begin{vmatrix}
+    \boldsymbol w_1 &amp;\boldsymbol w_2 &amp;\boldsymbol w_3 \\
+    \boldsymbol u_1 &amp;\boldsymbol u_2 &amp;\boldsymbol u_3 \\
+    \boldsymbol v_1 &amp;\boldsymbol v_2 &amp;\boldsymbol v_3 \\    
+\end{vmatrix}
+\]</span></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/DDNS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/07/25/DDNS/" class="post-title-link" itemprop="url">自己写一个DDNS</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-12-18 06:51:54" itemprop="dateModified" datetime="2020-12-18T06:51:54-05:00">2020-12-18</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>前几天借着Github的学生优惠在name.com上嫖了一个域名，这个域名是带SSL的，而恰巧家里的主机因为443端口被封的缘故无法通过Let's Encrypt获得证书，所以把这个域名给家里的主机升级HTTPS再合适不过了。</p>
+<p>唯一的问题是name.com只提供静态DNS服务，而服务器放在家里自然是动态IP的。虽然IP不是经常换但是如果换了IP没有及时更新记录就会出问题，何况手动更新记录也有点烦。有两个方案：</p>
+<ol type="1">
+<li>我目前使用的是花生壳的DDNS，这个的记录是动态更新的。我可以在新域名下面新建一条CNAME记录指向动态域名。这样的好处是省事，坏处是可能会增加DNS解析的时间，我目前还不清楚HTTPS要不要求CNAME指向的域名也有证书，如果要求的话这个方法就更不行了。</li>
+<li>name.com作为一家比较大的域名商有自己的API以及<a target="_blank" rel="noopener" href="https://www.name.com/api-docs">完备的文档</a>，可以自己写一个定时更新脚本来实现类似DDNS的功能。</li>
+</ol>
+<p>经过考虑之后我选择后者。自己写的脚本如下：</p>
+<pre class="line-numbers"><code class="language-bash">#!/bin/sh
+
+domain=&#39;&lt;DOMAIN&gt;&#39;
+credential=&#39;&lt;ACCESS TOKEN&gt;&#39;
+ttl=300
+interval=10
+
+echo &#39;Querying type A record ID...&#39;
+rec_id=$(curl -su $credential &quot;https://api.name.com/v4/domains/$&#123;domain&#125;/records&quot; | jq &#39;.records|map(select(.type==&quot;A&quot;))|.[0].id&#39;)
+echo &#39;Found type A record ID:&#39; $rec_id
+
+while true; do
+    res_ip=$(host $domain | grep -ohP &#39;\b(?:\d&#123;1,3&#125;\.)&#123;3&#125;\d&#123;1,3&#125;\b&#39;)
+    real_ip=$(curl -s myip.ipip.net | grep -ohP &#39;\b(?:\d&#123;1,3&#125;\.)&#123;3&#125;\d&#123;1,3&#125;\b&#39;)
+    echo &#39;Resolution IP:&#39; $res_ip &#39;Real IP:&#39; $real_ip
+    if [[ $real_ip != $res_ip ]]; then
+        echo &quot;Resolution mismatch! Updating record...&quot;  
+        req_data=&quot;&#123;\&quot;type\&quot;:\&quot;A\&quot;,\&quot;fqdn\&quot;:\&quot;$&#123;domain&#125;.\&quot;,\&quot;answer\&quot;:\&quot;$&#123;real_ip&#125;\&quot;,\&quot;ttl\&quot;:$&#123;ttl&#125;&#125;&quot;
+        echo &quot;Request data:&quot; $(echo $req_data | jq &#39;.&#39;)
+        req_res=$(curl -m 30 -su $credential &quot;https://api.name.com/v4/domains/$&#123;domain&#125;/records/$&#123;rec_id&#125;&quot; \
+            -X PUT -H &#39;Content-Type: application/json&#39; --data $req_data | jq &#39;.&#39;)
+        echo &quot;Request result:&quot; $req_res 
+        sleep $ttl
+    fi
+    sleep $interval
+done</code></pre>
+<p>其实很简单，主要分为一下几个部分：</p>
+<ol type="1">
+<li>记录id的获取。name.com对每一个记录都分配了一个id以便于API操作，这个id在网站管理面板上是不可见的，因此需要在运行时查询，命令为<code>curl -su $credential "https://api.name.com/v4/domains/$&#123;domain&#125;/records"</code>。查询之后需要解析JSON，这里我使用的是<code>jq</code>这个第三方JSON parser。</li>
+<li>当前DNS解析的IP。这个使用<code>host</code>结合<code>grep</code>提取IP字符串即可。</li>
+<li>获取本机真实IP。这个接口就多了，我这里用的是<code>myip.ipip.net</code>的接口。据我所知还有接口是直接返回IP字符串的，还可以后处理的功夫。</li>
+<li>如果解析IP和真实IP不符，那就调用API更新记录。注意在更新完之后最好等待TTL的时间以避免更新生效前多次更新。</li>
+</ol>
+<p>写完这个脚本再写一个配套的systemd service file，然后<code>systemctl</code>挂在后台运行就好了。运行到现在效果非常好。如果有name.com的域名同时也有类似需求的或许可以参考一下。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/AlipayParanoia/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/07/25/AlipayParanoia/" class="post-title-link" itemprop="url">论支付宝对Xposed框架的被害妄想症</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-08-12 10:30:28" itemprop="dateModified" datetime="2020-08-12T10:30:28-04:00">2020-08-12</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>最近真的是被支付宝的操作恶心到了。</p>
+<p>跑到医院门口，要出示健康码了。打开支付宝选择随申码，登录授权时要刷脸，然后告诉我手机不支持刷脸？场面一度非常尴尬。</p>
+<p>“您的手机不支持刷脸”。为什么不支持？缺少硬件？缺少驱动？含糊其辞，搞得我一开始真以为XDA上下下来的ROM不贴合我国国情少预装了一套刷脸的库。</p>
+<p>查了好久才意识到原来是支付宝检测到Magisk和Xposed的缘故。</p>
+<p>好啊，这可以理解嘛，人脸验证和支付都是安全性极高的，关键步骤被hook是会出大事的。</p>
+<p>于是停用了Riru和EdXposed的模块。但是还是不支持。</p>
+<p>三清之后重装，又支持了。</p>
+<p>然后我遵循网友的经验，安装Magisk，然后开启随机包名重装和Magisk Hide。没有出问题。</p>
+<p>然后再安装EdXposed，即时模块打开，黑名单打开把支付宝加进去，然后开启强制SafetyNet检验。</p>
+<p>然后支付宝安全检查之后就又告诉我不支持了。</p>
+<p>唉，我啥模块都没装呢，拉黑之后就算装了也hook不到你支付宝紧张啥？</p>
+<p>网上逛了一圈，有不少遇到这个问题的，大家都没有好的解决办法，有的说双开，有的说双手机，有的说回退到play上的19年9月份的75版本。最后一条亲测确实有效，但是一直停留在老版本也不是个事啊。</p>
+<p>也看了CSDN上一些关于阿里系应用反hook机制的研究，大概是18年左右写的。当时的机制是通过反射检测有没有<code>XposedHelper</code>这个类，有这个类之后检测缓存里面有没有alipay等关键词。这个机制非常巧妙，而且我觉得强度也足够了。</p>
+<p>但是现在似乎已经不是这个机制了。通过有些解决方案当中关闭读取应用列表权限这一项我隐约可以猜出这支付宝大概是直接读取手机安装的所有应用，然后发现带Xposed就是不安全？</p>
+<p>这也太过了吧，我个人甚至觉得有些流氓之嫌。</p>
+<blockquote>
+<p>看到Xposed，立刻想到自己被hook，立刻想到这hook一定会让用户亏钱，立刻想到自己要赔钱，然后就紧张的要命。支付宝的想像惟在这一层能够如此跃进。<del>——鲁迅</del></p>
+</blockquote>
+<p>这个逻辑链有两处是有待商榷的。</p>
+<p>为什么所有Xposed插件一定要来hook你？我手机一般就装两模块，一个修改界面的locale让不够本地化的地方本地化，一个修改图标让系统更美观。这两个模块都不用hook进支付宝，而且还都是我自己一行一行写出来的。我脑子坏掉了去搞支付宝自己坑自己？</p>
+<p>为什么觉得因为用户因为hook造成的损失一定要支付宝负责？还真就社会责任心爆棚呗。服务条款里面加一行“由于用户使用第三方软件自行修改系统框架进而影响本应用的正常运行，导致财产损失的，责任自负，支付宝概不负责”有那么困难吗？Xposed必须是用户自己装的，模块一定是用户自己下载并且启用的，考虑到使用Xposed基本上都是安卓的发烧友，翻车了自己负责这条道理大家都认，也没有人来说是支付宝的不对。</p>
+<p>退一步，如果我真的要搞尽一切代价搞支付宝，支付宝检测有没有被hook的代码可不可能被hook呢？我能不能不用Xposed而用一些更底层的框架例如Riru来搞呢？支付宝作为一个正常权限的应用软件，面对因用户主动选择破坏承载其运行的，本来安全的安卓系统框架，而导致的可能来自底层的，高权限的修改与破坏一定是无能为力的。支付宝完全没有必要对一个受害者主动引发，且本质上自身无能为力的损失负责。</p>
+<p>进一步，今天支付宝可以读取应用看到Xposed就不让刷脸，明天如果腾讯和阿里干架，支付宝也可以读取应用列表看到有微信就不让用（3Q大战既视感）。现在看来“读取应用列表”不是安卓原生自带的权限实在是一个设计漏洞。支付宝这个行为也显然开了一个不好的先例。</p>
+<p>最后，我其实一直不理解的一点是，是什么让支付宝觉得原来合理的Xposed框架检测逻辑有问题，进而换上了这套长臂管辖似的一刀切呢？</p>
+<p>在不知道更多信息以前，我只能认为是支付宝自身在有些情境下不必要的责任感以及过度的被害妄想症在作祟。</p>
+<p>在此，向设计这个安全检查模块的所有阿里员工以及十八代亲属致以最诚挚的问候。</p>
+<p>最后的最后，讲一讲在保留Magisk和Xposed功能的情况下，可能的解决办法吧。</p>
+<ol type="1">
+<li>停留在老版本的支付宝。</li>
+<li>让EdXposed也有和Magisk类似的随机包名重装功能。</li>
+<li>让支付宝找一个更合理的办法检验自己有没有被hook。</li>
+<li>让支付宝目前这套方案失效，比如说禁止支付宝调用<code>getInstalledPackages</code>来获取已经安装的应用。这个我知道在一些国产的系统里面是有类似功能的。但是目前类原生的系统还没有。虽可以通过Xposed模块来实现，但是在这个背景下毫无意义。唯一的一个方案是把系统的源码clone一份下来，然后直接改代码。</li>
+</ol>
 
       
     </div>
