@@ -235,7 +235,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/%E6%95%B0%E8%AE%BA%E7%AC%94%E8%AE%B0/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/12/PACT0708/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -248,7 +248,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/%E6%95%B0%E8%AE%BA%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">蒟蒻的数论笔记——素数</a>
+          <a href="/2020/07/12/PACT0708/" class="post-title-link" itemprop="url">PACT 07/08 叒访顶点覆盖 & 单机任务调度</a>
         </h2>
 
         <div class="post-meta-container">
@@ -259,15 +259,8 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2021-07-25 03:11:41" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:41-04:00">2021-07-25</time>
+      <time title="创建时间：2020-07-12 05:11:44" itemprop="dateCreated datePublished" datetime="2020-07-12T05:11:44-04:00">2020-07-12</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-09-01 23:13:32" itemprop="dateModified" datetime="2018-09-01T23:13:32-04:00">2018-09-01</time>
-      </span>
 
   
 </div>
@@ -279,1411 +272,1380 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p><strong>定义</strong>：只能被<span class="math inline">\(1\)</span>和自身整除的数。</p>
-<h1 id="素数的判定">素数的判定</h1>
-<h2 id="试除法">试除法</h2>
-<p>如果<span class="math inline">\(n\)</span>不是素数那么它必定有一个不大于<span class="math inline">\(\sqrt n\)</span>的因子，因此我们枚举<span class="math inline">\([1, \sqrt n]\)</span>中的所有数挨个试除即可，时间复杂度<span class="math inline">\(O(\sqrt n)\)</span>，虽然慢但是保证正确。</p>
-<h2 id="费马判定法">费马判定法</h2>
-<p>逆用费马小定理，即若<span class="math inline">\(n\)</span>为素数则<span class="math inline">\(a^{n - 1} \equiv 1 \pmod n\)</span>，对于一个可能的<span class="math inline">\(n\)</span>我们尝试不同的<span class="math inline">\(a\)</span>并判断是否符合定理，如果不是那么<span class="math inline">\(n\)</span>一定不是素数，如果是，那么对于单个的<span class="math inline">\(a\)</span>我们正确的概率约为<span class="math inline">\(1 \over 4\)</span>，因此我们可以多试几次（比如<span class="math inline">\(20\)</span>次），这样基本上就可以保证正确性了。时间复杂度就是快速幂的复杂度<span class="math inline">\(O(\log n)\)</span>。</p>
-<p><strong>缺点：会被卡迈克尔数干死。</strong>如果合数<span class="math inline">\(n\)</span>是卡迈克尔数，那么对于所有和<span class="math inline">\(n\)</span>互素的<span class="math inline">\(a\)</span>，也有<span class="math inline">\(a^{n - 1} \equiv 1 \pmod n\)</span>，简而言之就是费马小定理逆定理的反例。最小的卡迈克尔数是<span class="math inline">\(561 = 3 \times 11 \times 17\)</span>。虽然这种数很稀少但是，在<span class="math inline">\([1, 1 \times 10^8]\)</span>之间总共有<span class="math inline">\(255\)</span>个卡迈克尔数，出题人想干死你还是很简单。</p>
-<h2 id="miller-rabin-判定法">Miller-Rabin 判定法</h2>
-<p><strong>引理</strong>：模素数<span class="math inline">\(n\)</span>意义下<span class="math inline">\(1\)</span>的平方根模<span class="math inline">\(n\)</span>为<span class="math inline">\(\pm 1\)</span>。</p>
-<p><strong>证明：</strong>设此时<span class="math inline">\(1\)</span>的平方根为<span class="math inline">\(x\)</span>： <span class="math display">\[
+          <h1 id="用对偶规划解顶点覆盖">用对偶规划解顶点覆盖</h1>
+<p>回顾一下，顶点覆盖问题的主线性规划（松弛后）是 <span class="math display">\[
 \begin{aligned}
-x^2 &amp;\equiv 1 &amp;\pmod n\\
-x^2 - 1 &amp;\equiv 0 &amp;\pmod n\\
-(x + 1)(x - 1) &amp;\equiv 0 &amp;\pmod n\\
+    \text{minimize}\quad &amp;\sum_{v\in V}w_vx_v \\
+    \text{subject to}\quad &amp;x_u+x_v\ge 1\quad \forall (u, v)\in E \\
+    &amp;x_v \in \{0,1\}\quad \forall v\in V
 \end{aligned}
-\]</span> 因此<span class="math inline">\(n\mid (x + 1)\)</span>或<span class="math inline">\(n\mid (x - 1)\)</span>，即<span class="math inline">\(x \equiv \pm1 \pmod n\)</span>，得证。</p>
-<p>对于一个奇素数<span class="math inline">\(n\)</span>，偶数<span class="math inline">\(n - 1\)</span>一定可以写成<span class="math inline">\(2^sd\)</span>的形式，其中<span class="math inline">\(d\)</span>是奇数。我们断言对于所有<span class="math inline">\(a\)</span>和某个<span class="math inline">\(r\)</span>以下两个不等式必有一个成立： <span class="math display">\[
+\]</span> 其对偶规划是 <span class="math display">\[
 \begin{aligned}
-a^d &amp;\equiv 1 &amp;\pmod n \\
-a^{2^rd} &amp;\equiv -1 &amp;\pmod n
+    \text{maximize}\quad &amp;\sum_{v\in E} y_e \\
+    \text{subject to}\quad &amp;\sum_{v\in e} y_e \le w_v \quad \forall v \in V\\
+    &amp;y_e \ge 0\quad \forall e\in E
 \end{aligned}
-\]</span> 其中<span class="math inline">\(0 &lt; a &lt; n, 0 \le r &lt; s\)</span>。</p>
-<p><strong>证明：</strong>由费马小定理可得<span class="math inline">\(a^{2^sd} \equiv 1 \pmod n\)</span>，我们不断地对这个式子两边开根，由引理，如果开出<span class="math inline">\(-1\)</span>，那么下式成立，如果开了<span class="math inline">\(s\)</span>次没开出<span class="math inline">\(-1\)</span>，则上式成立。</p>
-<p>Miller-Rabin 判别法基于以上命题的逆否命题，即如果存在一个<span class="math inline">\(a\)</span>，使得<span class="math inline">\(a^d \not \equiv 1 \pmod n\)</span>且对于所有的<span class="math inline">\(0 \le r &lt; s\)</span>都有<span class="math inline">\(a^{2^rd} \not\equiv -1 \pmod n\)</span>，那<span class="math inline">\(n\)</span>一定不是素数。反之，<span class="math inline">\(n\)</span>就<em>很有可能</em>是素数。</p>
-<p>因此，Miller Rabin的工作流程如下：</p>
-<pre class="line-numbers"><code class="language-cpp">bool millerRabin(int n) &#123; // n &gt; 3
-    int s = 0, d = n - 1;
-    while (!(d &amp; 1)) s++, d &gt;&gt;= 1; // 分解s, d
-    for (int i = 1; i &lt;= K; i++) &#123; // K 越大越准
-        int a = rand() % (n - 3) + 2; // 随机一个[2, n - 2]的a
-        int x = qpow(a, d, n); // a^d mod n, qpow快速幂
-        if (x == 1 || x == n - 1) continue; // 不满足逆否命题, n - 1是r = 0时的下式
-        bool flag = false;
-        for (int j = 1; j &lt;= s - 1; j++) &#123;
-            x = x * x % n;
-            if (x == n - 1) &#123;
-                flag = true; // 不满足逆否命题
-                break;
-            &#125;
-        &#125;
-        if (flag) continue;
-        return false;
-    &#125;
-    return true;
-&#125;</code></pre>
-<p>要我说还是蛮复杂的，但是这个测试就已经不会被卡迈克尔数干死了。而且在<span class="math inline">\(K = 1\)</span>时就已经很准了。</p>
-<p>时间复杂度为<span class="math inline">\(O(n\log n)\)</span>。</p>
-<h2 id="自己的判定法">自己的判定法？</h2>
-<p>可以通过研究素数的更多性质，例如高次剩余的特性等等发明自己的判别法，如果在复杂度允许的情况下能够在<code>int</code>范围内没问题也可以用。</p>
-<h1 id="计算1-n的所有素数">计算<span class="math inline">\([1, n]\)</span>的所有素数</h1>
-<p>如何快速获得<span class="math inline">\([1, n]\)</span>的所有素数呢？如果对于<span class="math inline">\(n\)</span>个数都进行以上的素数判定肯定是非常慢的，因此我们需要筛法，顾名思义，就是把不是素数的全部筛掉，那么剩下的就都是素数了。</p>
-<h2 id="埃拉托色尼筛法">埃拉托色尼筛法</h2>
-<p>最朴素的筛法，基于的思想是如果我把每一个素数的倍数都标记成合数的话那么剩下没有标记的就是素数了，代码非常简洁，如下：</p>
-<pre class="line-numbers"><code class="language-cpp">bool v[N]; // 不是质数
-int prime[P], tot = 0;
-for (int i = 2; i &lt;= n; i++) &#123;
-    if (v[i]) continue;
-    prime[++tot] = i;
-    for (int j = 2; j &lt;= n / i; j++)
-        v[i * j] = true;
-&#125;</code></pre>
-<p>其复杂度应该为<span class="math inline">\(\sum_{素数p \le n} \left\lfloor \frac{n}{p} \right\rfloor\)</span>。由麦腾斯定理，这个式子在<span class="math inline">\(n \to \infty\)</span>时逼近<span class="math inline">\(n\ln\ln n\)</span>，因此埃拉托色尼筛法的时间复杂度为<span class="math inline">\(O(n\ln\ln n)\)</span>，一般<span class="math inline">\(n\)</span>可以达到<span class="math inline">\(10^7\)</span>。这个筛法有一个小优化我也在<a href="https://alan20210202.github.io/2018/08/21/筛法/">之前的笔记</a>中有提到。</p>
-<p>埃拉托色尼筛法的精髓在于它利用了<strong>约数和倍数的关系是成对的</strong>这一点，将素数判断这一个枚举约数的问题转化为了枚举倍数的问题并加快了速度，这一思想十分重要，在计算狄利克雷卷积和反演的时候也会用到（把对因数求和转化为对倍数算贡献）。</p>
-<h2 id="欧拉筛">欧拉筛</h2>
-<p>虽然<span class="math inline">\(\ln\ln n\)</span>这个因子已经很小了，但是面对<span class="math inline">\(n = 10^8\)</span>的时候还是会跪掉。因此我们需要一种筛法能够在<span class="math inline">\(O(n)\)</span>的时间内筛出所有的素数。</p>
-<p>我们发现埃氏筛效率欠佳的一点是：<em>一个合数会被每一个它的素因数筛掉共计好几次</em>。我们能不能让一个合数只被筛一次呢？</p>
-<pre class="line-numbers"><code class="language-cpp">bool v[N]; // 不是质数
-int prime[P], tot = 0;
-for (int i = 2; i &lt;= n; i++) &#123;
-    if (!v[i]) prime[++tot] = i;
-    for (int j = 1; i * prime[j] &lt;= n; j++) &#123;
-        v[i * prime[j]] = true;
-        if (i % prime[j] == 0) break;
-    &#125;
-&#125;</code></pre>
-<p>欧拉筛的精髓在于那句<code>if (i % prime[j] == 0) break;</code>。</p>
-<p><strong>结论：</strong>在欧拉筛中每个合数<em>会且仅会</em>被它的最小素因子筛去。</p>
-<p><strong>证明：</strong>设合数<span class="math inline">\(N\)</span>的最小素因子为<span class="math inline">\(p_o\)</span>，因为<span class="math inline">\(\frac{N}{p_0}\)</span>不可能被<span class="math inline">\(p_0\)</span>更小的素数所整除，因此在循环到<span class="math inline">\(i = \frac{N}{p_0}\)</span>时，内循环一定会在<code>break</code>之前筛到<span class="math inline">\(\frac{N}{p_0} \cdot p_0 = N\)</span>。而假设有<span class="math inline">\(N\)</span>有另外一个素因子<span class="math inline">\(p_1 &gt; p_0\)</span>，则显然<span class="math inline">\(p_0 \mid \frac{N}{p_1}\)</span>，因此在循环到<span class="math inline">\(i = \frac{N}{p_1}\)</span>时，内循环一定会在筛到（<code>prime[j]</code>为）<span class="math inline">\(p_0\)</span>之后就立刻<code>break</code>，因此一定不会再筛到<span class="math inline">\(\frac{N}{p_1} \cdot p_1\)</span>。</p>
-<p><strong>推论：</strong>因为合数的数量少于<span class="math inline">\(n\)</span>，因此欧拉筛的复杂度为<span class="math inline">\(O(n)\)</span>。</p>
-<p>欧拉筛原名线性筛，冠以欧拉之名纯粹是因为我们不仅用它筛素数，还可以顺便计算以欧拉函数为首的一票积性函数。</p>
-<h1 id="素因数分解">素因数分解</h1>
-<h2 id="试除法-1">试除法</h2>
-<p>如果<span class="math inline">\(n\)</span>为合数那么<span class="math inline">\(n\)</span>一定有一个不大于<span class="math inline">\(\sqrt n\)</span>的素因子，因此我们枚举<span class="math inline">\([1, \sqrt n]\)</span>中的所有数挨个试除即可，时间复杂度<span class="math inline">\(O(\sqrt n)\)</span>，是最常用的方法。</p>
-<h2 id="pollards-rho方法">Pollard's-Rho方法</h2>
-<p><strong>引理（生日悖论）：</strong>在<span class="math inline">\([1, N]\)</span>当中随机选出若干个数，平均需要抽出<span class="math inline">\(O(\sqrt N)\)</span>个数才会抽到两个相同的数。</p>
-<p><strong>简介：</strong>抽前<span class="math inline">\(k - 1\)</span>个数两两不同的概率为： <span class="math display">\[
-\frac{P(N, k - 1)}{N^{k - 1}} = \frac{N!}{(N - k+1)!N^{k-1}}
-\]</span> 如果你抽第<span class="math inline">\(k\)</span>个数，与之前<span class="math inline">\(k - 1\)</span>个数相同的概率为<span class="math inline">\(\frac{k - 1}{N}\)</span>，因此你恰巧在刚刚抽完第<span class="math inline">\(k\)</span>个数后得到两个相同的数的概率为： <span class="math display">\[
-\frac{N!}{(N - k+1)!N^{k-1}} \cdot \frac{k - 1}{N} = \frac{(k - 1)N}{(N - k +1)!N^k}
-\]</span> 因此为了得到两个相同的数你需要抽出的数的期望是： <span class="math display">\[
-\sum_{k = 2}^{N+1} \frac{k(k - 1)N}{(N - k +1)!N^k}
-\]</span> 它也<a target="_blank" rel="noopener" href="https://math.stackexchange.com/questions/693996/average-number-of-people-required-to-find-a-pair-with-same-birthday">等价</a>于TAOCP中的： <span class="math display">\[
-1 + \sum_{k = 1}^N \frac{N!}{(N-k)!N^k}
-\]</span> 神奇的数学家拉马努金曾对该函数进行过研究，并指出它渐进逼近<span class="math inline">\(\sqrt {\frac{\pi N}{2}}\)</span>。</p>
-<p>好的，现在假设我们需要分解出<span class="math inline">\(n = pq\)</span>的一个非平凡因子<span class="math inline">\(p\)</span>，假设我们有一个多项式同余函数<span class="math inline">\(g\)</span>（例如<span class="math inline">\(g(x) = (x^2 + 1) \bmod n\)</span>）。我们使用<span class="math inline">\(g\)</span>来迭代生成一个<em>伪随机</em>序列<span class="math inline">\(\{x_n\}\)</span>，它和其模<span class="math inline">\(p\)</span>的序列<span class="math inline">\(\{x_n \bmod p\}\)</span>相关联。由之前的生日悖论引理，前者平均在<span class="math inline">\(O(\sqrt n)\)</span>次迭代后产生循环，而后者只需要<span class="math inline">\(O(\sqrt p) &lt; O(\sqrt n)\)</span>次。我们可以在迭代中检测这个循环，从而完成对于素因数的分解。</p>
-<p>我们知道<span class="math inline">\(\{x_n \bmod p\}\)</span>产生循环当且仅当存在<span class="math inline">\(x_i, x_j\)</span>，有<span class="math inline">\(x_i \equiv x_j \pmod p\)</span>，此时<span class="math inline">\(x_i\)</span>和<span class="math inline">\(x_j\)</span>之间就是这个序列的一个循环节，但是我们预先是不知道<span class="math inline">\(p\)</span>的，那怎么判断以上条件是否成立呢？我们发现以上条件等价于<span class="math inline">\(p \mid |x_i - x_j|\)</span>，因为同时<span class="math inline">\(p \mid n\)</span>，所以此时<span class="math inline">\(p\)</span>最大可以为<span class="math inline">\(\gcd(n, |x_i - x_j|)\)</span>，因此如果我们发现<span class="math inline">\(\gcd(n, |x_i - x_j|) \neq 1\)</span>我们就已经找到了一个<span class="math inline">\(p = \gcd(n, |x_i - x_j|)\)</span>，非常巧妙！</p>
-<p>在算法实现中，我们使用弗洛伊德判圈算法，其精髓就是环上的追及问题，我们维护两个指针<span class="math inline">\(x_i, x_j\)</span>，从出发点开始<span class="math inline">\(x_i\)</span>一个一个地跳，<span class="math inline">\(x_j\)</span>两个两个地跳，他们的速度差为<span class="math inline">\(1\)</span>，只要出现了了一个环那么在某一时刻<span class="math inline">\(x_j\)</span>总是可以套<span class="math inline">\(x_i\)</span>一圈！每一轮过后我们检测$(n, |x_i - x_j|) $，如果不为<span class="math inline">\(1\)</span>那说明我们找到一个因子，但是如果为<span class="math inline">\(n\)</span>的话就是<span class="math inline">\(\{x_n\}\)</span>和<span class="math inline">\(\{x_n \bmod p\}\)</span>一起循环了，我们的算法就GG了，需要重新选定一个出发点（给<span class="math inline">\(g\)</span>的种子）。</p>
-<p>这个启发式算法的复杂度取决于<span class="math inline">\(O(\sqrt p)\)</span>，但是因为一般来说<span class="math inline">\(p \le \sqrt n\)</span>，因此算法的复杂度平均下来是<span class="math inline">\(O(n^{1 \over 4})\)</span>的，实测在<code>int</code>范围内快得飞起。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/%E5%AF%86%E7%A0%81%E9%94%81/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/%E5%AF%86%E7%A0%81%E9%94%81/" class="post-title-link" itemprop="url">NOIP模拟赛 密码锁</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-25 03:11:41" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:41-04:00">2021-07-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-09-01 04:42:34" itemprop="dateModified" datetime="2018-09-01T04:42:34-04:00">2018-09-01</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="题意">题意</h1>
-<p>有<span class="math inline">\(n\)</span>把串级连接的锁（前一把的输入连接到后一把的输出），每一把锁将输入和一个操作数进行<em>与</em>，<em>或</em>，<em>异或</em>之一的二元位运算的结果作为输出，给定初始时每把锁的参数和运算类型。接下来<span class="math inline">\(m\)</span>个操作共两种：</p>
-<ol type="1">
-<li>查询某个数通过这一串锁的结果</li>
-<li>修改某个锁的操作数和运算</li>
-</ol>
-<p>$n  ^5, m ^5 $，保证查询的数和操作数不超过<span class="math inline">\(1000\)</span>。</p>
-<h1 id="解法">解法</h1>
-<p>从数据范围可知正解的复杂度是<span class="math inline">\(O(n\log n)\)</span>级别的，考虑其操作中又有查询又有修改，直觉上我们断定这是一道数据结构题。</p>
-<p>那维护什么呢？位运算？肯定是不行的，原因就是<strong>位运算是不结合的</strong>，比如说<code>(a | b) &amp; c</code>就不一定等于<code>a | (b &amp; c)</code>，而无论是线段树还是树状数组都只能维护有结合律的代数结构，因此直接维护位运算是行不通的。</p>
-<p>但是<strong>因为二元位运算的一个操作数已经给出，而且每个位的运算有互不干扰，我们可以把给定的一个二元位运算转化为若干个依赖于输入某一位的一元位运算或函数</strong>。</p>
-<p>那么这样做有什么好处呢？我们看看这样的一元函数有哪些：</p>
-<ol type="1">
-<li><span class="math inline">\(e\)</span>：将输入位直接输出。</li>
-<li><span class="math inline">\(n\)</span>：将输入位取反输出。</li>
-<li><span class="math inline">\(0\)</span>：输出恒为0。</li>
-<li><span class="math inline">\(1\)</span>：输出恒为1。</li>
-</ol>
-<p>定义它们之间的二元运算为串联：<span class="math inline">\((f \cdot g)(x)=g(f(x))\)</span>，则有如下性质：</p>
-<ol type="1">
-<li>结合律：<span class="math inline">\((f \cdot g) \cdot h = f \cdot (g \cdot h)\)</span></li>
-<li>单位元：<span class="math inline">\(e\)</span></li>
-<li>封闭性：任意两个运算的复合都是这四个运算之一（自己列张表）</li>
-</ol>
-<p>可以看到这构成了一个<strong>幺半群</strong>，因此可以用线段树进行维护。接下来就很简单了，开<span class="math inline">\(10\)</span>棵线段树分别维护每一位，然后单点修改全局查询即可。</p>
-<p>代码：</p>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-#include &lt;cstdlib&gt;
-#include &lt;cstring&gt;
-#include &lt;cctype&gt;
-#include &lt;algorithm&gt;
-#include &lt;queue&gt;
-#define rg register
-
-using namespace std;
-typedef long long ll;
-typedef unsigned int u32;
-#define lch (rt &lt;&lt; 1)
-#define rch (lch | 1)
-#define larg lch, l, mid
-#define rarg rch, mid + 1, r
-#define bit(a, b) (((a) &gt;&gt; (b)) &amp; 1)
-const int INF = 0x3f3f3f3f;
-const int BITS = 10;
-const int N = 200010;
-const int T = N * 4;
-const int r[4][4] = &#123;
-    &#123; 0, 1, 1, 0 &#125;, // 0
-    &#123; 0, 1, 0, 1 &#125;, // 1
-    &#123; 0, 1, 3, 2 &#125;, // N
-    &#123; 0, 1, 2, 3 &#125; // E 
-&#125;;
-const int p[4][2] = &#123;
-    &#123; 0, 0 &#125;,
-    &#123; 1, 1 &#125;,
-    &#123; 1, 0 &#125;,
-    &#123; 0, 1 &#125;
-&#125;;
-const int x[3][2] = &#123;
-    &#123; 0, 3 &#125;, // AND
-    &#123; 3, 1 &#125;, // OR
-    &#123; 3, 2 &#125; // XOR
-&#125;;
-
-char t[BITS][T], a[BITS][N];
-char s[5];
-int n, m;
-
-inline int read() &#123;
-    char ch = getchar(), s = 1;
-    while (!isdigit(ch)) &#123;
-        if (ch == &#39;-&#39;) s = -1;
-        ch = getchar();
-    &#125;
-    int ans = 0;
-    while (isdigit(ch)) &#123;
-        ans = ans * 10 + ch - 48;
-        ch = getchar();
-    &#125;
-    return ans * s;
-&#125;
-
-inline void pushup(int z, int rt) &#123;
-    t[z][rt] = r[t[z][lch]][t[z][rch]];
-&#125;
-
-void build(int z, int rt, int l, int r) &#123;
-    if (l == r) &#123;
-        t[z][rt] = a[z][l];
-        return;
-    &#125;
-    int mid = (l + r) &gt;&gt; 1;
-    build(z, larg);
-    build(z, rarg);
-    pushup(z, rt);
-&#125;
-
-void update(int z, int rt, int l, int r, int pos, int d) &#123;
-    if (l == r) &#123;
-        t[z][rt] = d;
-        return;
-    &#125;
-    int mid = (l + r) &gt;&gt; 1;
-    if (pos &lt;= mid) update(z, larg, pos, d);
-    else update(z, rarg, pos, d);
-    pushup(z, rt);
-&#125;
-
-int main() &#123;
-    freopen(&quot;cipher.in&quot;, &quot;r&quot;, stdin);
-    freopen(&quot;cipher.out&quot;, &quot;w&quot;, stdout);
-    scanf(&quot;%d%d&quot;, &amp;n, &amp;m);
-    for (rg int i = 1; i &lt;= n; ++i) &#123;
-        int tmp, op;
-        scanf(&quot;%s%d&quot;, s, &amp;tmp);
-        if (s[0] == &#39;A&#39;) op = 0;
-        else if (s[0] == &#39;O&#39;) op = 1;
-        else op = 2;
-        for (rg int j = 0; j &lt; BITS; ++j)
-            a[j][i] = x[op][bit(tmp, j)];
-    &#125;
-    for (rg int i = 0; i &lt; BITS; ++i)
-        build(i, 1, 1, n);
-    while (m--) &#123;
-        int op; scanf(&quot;%d&quot;, &amp;op);
-        if (op == 1) &#123;
-            int tmp; scanf(&quot;%d&quot;, &amp;tmp);
-            int res = 0;
-            for (rg int i = 0; i &lt; BITS; ++i)
-                res |= p[t[i][1]][bit(tmp, i)] &lt;&lt; i;
-            printf(&quot;%d\n&quot;, res);
-        &#125; else &#123;
-            int pos, tmp;
-            scanf(&quot;%d%s%d&quot;, &amp;pos, s, &amp;tmp);
-            if (s[0] == &#39;A&#39;) op = 0;
-            else if (s[0] == &#39;O&#39;) op = 1;
-            else op = 2;
-            for (rg int i = 0; i &lt; BITS; ++i)
-                update(i, 1, 1, n, pos, x[op][bit(tmp, i)]);
-        &#125;
-    &#125;
-    fclose(stdin);
-    fclose(stdout);
-    return 0;
-&#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/%E5%BF%AB%E9%80%9F%E6%9E%9A%E4%B8%BE%E5%AD%90%E9%9B%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/%E5%BF%AB%E9%80%9F%E6%9E%9A%E4%B8%BE%E5%AD%90%E9%9B%86/" class="post-title-link" itemprop="url">快速枚举二进制子集的方法</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-25 03:11:41" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:41-04:00">2021-07-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-10-07 04:30:22" itemprop="dateModified" datetime="2018-10-07T04:30:22-04:00">2018-10-07</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="简介">简介</h1>
-<p>目标：对于一个<span class="math inline">\(n\)</span>位二进制表示的子集<code>x</code>，我们希望枚举其子集。</p>
-<p>朴素枚举其子集的代码，复杂度<span class="math inline">\(O(2^{n})\)</span>：</p>
-<pre class="line-numbers"><code class="language-cpp">for (int s = 0; s &lt;= x; s++)
-    if (s | x == x)
-        // s 表示的二进制是x的子集</code></pre>
-<p>快速枚举其子集的代码，复杂度<span class="math inline">\(O(2^{|X|})\)</span>，其中<span class="math inline">\(X\)</span>是<code>x</code>表示的集合：</p>
-<pre class="line-numbers"><code class="language-cpp">for (int s = x; s &gt; 0; s = (s - 1) &amp; x)
-    // s表示的二进制是x的子集
-// 以上算法不！会！处！理！空！集！，额外处理！</code></pre>
-<p><strong>正确性证明：</strong></p>
-<p>代码中的<code>&amp; x</code>保证<code>s</code>一定是<code>s</code>的子集，而<code>(s - 1)</code>保证枚举出来的<code>s</code>递减至0，详细证明不在此赘述<del>脑补即可</del>.</p>
-<h1 id="拓展">拓展</h1>
-<p>在很多的状压DP当中，我们不仅要枚举一个集合的子集，而是要枚举<span class="math inline">\([0, 2^n)\)</span>的所有二进制数表示的集合的子集，如果使用朴素地暴力做法，那么复杂度显然是<span class="math inline">\(O(4^n)\)</span>，可以过<span class="math inline">\(n \le 10\)</span>的数据。</p>
-<p><strong>那么如果我们使用刚刚介绍的优化方法，复杂度会变成多少呢？</strong></p>
-<p><strong>分析：</strong>总体复杂度为： <span class="math display">\[
-\sum_{i = 0}^n \binom{n}{i}2^i = \sum_{i = 0}^n \binom{n}{i}2^i1^{n - i}
-\]</span> 逆用二项式定理： <span class="math display">\[
-\sum_{i = 0}^n \binom{n}{i}2^n = (2 + 1)^n = 3^n
-\]</span> 因此，算法的复杂度为<span class="math inline">\(O(3^n)\)</span>（而且是最优的），可以通过<span class="math inline">\(n \le 15\)</span>的数据。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/%E5%9F%BA%E7%AB%99%E9%80%89%E5%9D%80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/%E5%9F%BA%E7%AB%99%E9%80%89%E5%9D%80/" class="post-title-link" itemprop="url">NOIP模拟赛 基站选址</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-09-01 05:28:26" itemprop="dateModified" datetime="2018-09-01T05:28:26-04:00">2018-09-01</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="题意">题意</h1>
-<p>给定一个<span class="math inline">\(n\)</span>个顶点<span class="math inline">\(m\)</span>条边的无向图，第<span class="math inline">\(i\)</span>个节点有可靠度<span class="math inline">\(r_i\)</span>，要求在节点中选取四个节点建设基站，其中有两个主基站，两个副基站。要求两个主基站必须和分别剩下的三个基站相连边，而两个副基站必须分别和两个主基站相连边。一个由两个主基站<span class="math inline">\(a, b\)</span>和两个副基站<span class="math inline">\(c, d\)</span>组成的基站的总可靠度定义为<span class="math inline">\((r_a + 1)(r_b + b) + r_cr_d\)</span>，求最大总可靠度。</p>
-<p><span class="math inline">\(n \le 5 \times 10^4, m \le 2 \times 10^5\)</span>。</p>
-<h1 id="解法">解法</h1>
-<p>题目要求我们寻找的四个点其实是<strong>三元环的并</strong>，主基站就是公共边的两个端点，而副基站就是公共边两侧的另外两个节点，因此，如果我们能够找出所有的三元环，并且对于每一条边维护他所在三元环相对顶点可靠度的最大和次大值，我们就可以通过枚举每一条边的方式完成最大总可靠度的计算。</p>
-<p>因此，这个题目的核心就是寻找三元环，朴素的算法是<span class="math inline">\(O(n^3)\)</span>的，明显不足以通过此题，因此我们要寻找复杂度更优的做法。</p>
-<p><strong>我们把顶点分为两类——大点和小点</strong>，分类的依据是点的度数，如果一个顶点的度数大于<span class="math inline">\(\sqrt m\)</span>就分在大点里，反之就落在小点里。我们对大点和小点分别处理。</p>
-<p><strong>对于大点，我们暴力枚举每个点</strong>：</p>
-<p>因为对于无向图来说，有 <span class="math display">\[
-\sum_{i = 1}^n \deg(i) = 2m
-\]</span> 因此我们可以断言：大点的数量是<span class="math inline">\(O(\sqrt m)\)</span>的，因此枚举大点的时间复杂度是<span class="math inline">\(O((\sqrt m)^3) = O(m\sqrt m)\)</span>。</p>
-<p>在这里我们处理了全部由大点构成的三元环。</p>
-<p><strong>对于小点，我们暴力枚举它的两条出边并判断对面两个点是否相连</strong>：</p>
-<p>因为我们在枚举一个顶点<span class="math inline">\(u\)</span>的出边的时候，显然每条边都被枚举了<span class="math inline">\(\deg(u) - 1\)</span>次，所以图中小点发出的每一条边都被枚举了<span class="math inline">\(O(\sqrt m)\)</span>次，总共有<span class="math inline">\(O(m)\)</span>条边，因此处理小点的时间复杂度还是<span class="math inline">\(O(m \sqrt m)\)</span>。</p>
-<p>在这里我们处理了至少包含一个小点的三元环。</p>
-<p><strong>合并在一起，这个算法可以找到所有的三元环，总的时间复杂度为<span class="math inline">\(O(m \sqrt m)\)</span></strong>，虽然对于稠密图而言因为<span class="math inline">\(m = O(n^2)\)</span>因此算法的复杂度还是接近<span class="math inline">\(O(n^3)\)</span>，但对于题目中的图大小还是非常优秀的。</p>
-<p>代码实现也不是非常复杂，使用链式前向星存图，然后额外维护数组<code>grt</code>和<code>snd</code>表示一条边所在三元环中所对点可靠值最大和次大的点的编号，再首先一个哈希表用于快速查询点和点之间的相连关系就可以了，注意常数。</p>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-#include &lt;cmath&gt;
-
-using namespace std;
-typedef long long ll;
-const int N = 50100;
-const int M = 500100;
-const int HASH = 1000007;
-const int INF = 0x3f3f3f3f;
-int n, m;
-int r[N];
-int tot, fst[N], nxt[M], to[M];
-int deg[N], bc, sc;
-int big[N], small[N];
-int grt[M], snd[M];
-
-#define max(a, b) ((a) &gt; (b) ? (a) : (b))
-#define hashEdge(a, b) (((a) &lt;&lt; 12) | (b))
-
-int hfst[HASH], hnxt[M], hval[M], htot;
-int hl[M], hr[M];
-
-void link(int a, int b) &#123;
-    deg[a]++;
-    nxt[++tot] = fst[a];
-    fst[a] = tot; to[tot] = b;
-    hl[++htot] = a; hr[htot] = b;
-    hval[htot] = tot;
-    int ent = hashEdge(a, b) % HASH;
-    hnxt[htot] = hfst[ent];
-    hfst[ent] = htot;
-&#125; 
-
-inline int findEdge(int a, int b) &#123; 
-    int ent = hashEdge(a, b) % HASH;
-    for (int i = hfst[ent]; i; i = hnxt[i])
-        if (hl[i] == a &amp;&amp; hr[i] == b) return hval[i];
-    return -1; 
-&#125;
-
-inline void updateEdge(int e, int c) &#123;
-    if (c == grt[e] || c == snd[e]) return;
-    if (r[c] &gt;= r[grt[e]]) snd[e] = grt[e], grt[e] = c;
-    else if (r[c] &gt;= r[snd[e]]) snd[e] = c;
-&#125;
-
-inline void updateTriplet(int a, int b, int c, int ab, int ac, int bc) &#123;
-    updateEdge(ab, c);
-    updateEdge(ab ^ 1, c);
-    updateEdge(ac, b);
-    updateEdge(ac ^ 1, b);
-    updateEdge(bc, a);
-    updateEdge(bc ^ 1, a);
-&#125;
-
-int main() &#123;    
-    scanf(&quot;%d%d&quot;, &amp;n, &amp;m); tot = htot = 1; r[0] = -INF;
-    for (int i = 1; i &lt;= n; i++) scanf(&quot;%d&quot;, &amp;r[i]);
-    for (int i = 1; i &lt;= m; i++) &#123;
-        int a, b;
-        scanf(&quot;%d%d&quot;, &amp;a, &amp;b);
-        link(a, b);
-        link(b, a);
-    &#125;
-    int s = sqrt(m);
-    sc = bc = 0;
-    for (int i = 1; i &lt;= n; i++) &#123;
-        if (deg[i] &lt; s) small[++sc] = i;
-        else big[++bc] = i;
-    &#125;
-    for (int i = 1; i &lt;= sc; i++) &#123;
-        int w = small[i];
-        for (int wu = fst[w]; wu; wu = nxt[wu]) &#123;
-            int u = to[wu];
-            for (int wv = fst[w]; wv != wu; wv = nxt[wv]) &#123;
-                int v = to[wv];
-                int uv = findEdge(u, v);
-                if (uv &gt; 0) updateTriplet(w, u, v, wu, wv, uv);
-            &#125;
-        &#125;
-    &#125;
-    for (int i = 1; i &lt;= bc; i++) &#123;
-        int w = big[i];
-        for (int j = 1; j &lt; i; j++) &#123;
-            int u = big[j];
-            int wu = findEdge(w, u);
-            if (wu &lt; 0) continue;
-            for (int k = 1; k &lt; j; k++) &#123;
-                int v = big[k];
-                int wv = findEdge(w, v), uv = findEdge(u, v);
-                if (wv &gt; 0 &amp;&amp; uv &gt; 0)
-                    updateTriplet(w, u, v, wu, wv, uv);
-            &#125;
-        &#125;
-    &#125;
-    int ans = 0; 
-    for (int i = 2; i &lt;= tot; i++) &#123;
-        int a = to[i], b = to[i ^ 1];
-        int c = grt[i], d = snd[i];
-        if (c == 0 || d == 0) continue;
-        ans = max(ans, (r[a] + 1) * (r[b] + 1) + r[c] * r[d]);
-    &#125;
-    printf(&quot;%d\n&quot;, ans);
-    return 0;
-&#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/%E5%A4%9A%E9%87%8D%E9%9B%86%E7%BB%84%E5%90%88/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/%E5%A4%9A%E9%87%8D%E9%9B%86%E7%BB%84%E5%90%88/" class="post-title-link" itemprop="url">多重集组合</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-09-01 04:09:36" itemprop="dateModified" datetime="2018-09-01T04:09:36-04:00">2018-09-01</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="无限元素多重集组合">无限元素多重集组合</h1>
-<p>对于一个含有<span class="math inline">\(k\)</span>种元素的多重集<span class="math inline">\(S = \{a_1 \cdot \infty, a_2 \cdot \infty, \cdots, a_k \cdot \infty \}\)</span>，从当中取出<span class="math inline">\(r\)</span>个元素进行组合，共有 <span class="math display">\[
-\binom{r + k - 1}{k - 1} = \binom{r + k - 1}{r}
-\]</span></p>
-<p>种取法，这个结论用隔板法易证：</p>
-<p><span class="math display">\[
-\overbrace{\underbrace{\times \cdots \times \times | \times \times \cdots | \times \times}_{r个元素\times}}^{k -1个隔板|}
-\]</span></p>
-<h1 id="有限元素多重集组合">有限元素多重集组合</h1>
-<p>对于一个含有<span class="math inline">\(k\)</span>种元素共计<span class="math inline">\(n\)</span>个的多重集<span class="math inline">\(S = \{a_1 \cdot n_1, a_2 \cdot n_2, \cdots, a_k \cdot n_k \}\)</span>，从当中取出<span class="math inline">\(r\)</span> 个元素进行组合，方案数为： <span class="math display">\[
-\sum_{X \subseteq \{1, 2, 3, \cdots, k\}} (-1)^{|X|} \binom{r - \sum_{i \in X}(n_i + 1) + k - 1}{k - 1}
-\]</span> <strong>证明：</strong></p>
-<p>如果没有数量限制那么答案显然是<span class="math inline">\(\binom{r + k - 1}{k - 1}\)</span>，但是由于数量有限，我们要排除<span class="math inline">\(a_i\)</span>多于<span class="math inline">\(n_i\)</span>的方案，令<span class="math inline">\(P_i\)</span>表示第<span class="math inline">\(i\)</span>种元素选了至少<span class="math inline">\(n_i + 1\)</span>个的方案集合。要构造这样的方案，我们只需要先选出<span class="math inline">\(n_i + 1\)</span>个该种元素，再在剩下的集合中选出<span class="math inline">\(r - n_i - 1\)</span>个即可，于是我们有 <span class="math display">\[
-|P_i| = \binom{r - (n_i + 1) + k - 1}{k - 1}
-\]</span> 所有所有不合法的方案可以表示为</p>
-<p><span class="math display">\[
-\bigcup_{1 \le i \le k} P_i
-\]</span> 接下来结合容斥原理易证。</p>
-<h1 id="例子cf451e">例子：CF451E</h1>
-<p>就是以上公式的应用，对于容斥原理使用递归的写法，求取组合数时使用了Lucas定理加以优化，代码很短：</p>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-
-using namespace std;
-typedef long long ll;
-const ll P = 1000000007;
-const int N = 22;
-ll n, m, inv[N], a[N];
-
-ll binom(ll a, ll b) &#123;
-    if (a &lt; 0 || b &lt; 0 || a &lt; b) return 0;
-    a %= P;
-    if (a == 0 || b == 0) return 1;
-    ll ret = 1;
-    for (ll i = a; i &gt; a - b; i--)
-        ret = ret * i % P;
-    for (ll i = 1; i &lt;= b; i++)
-        ret = ret * inv[i] % P;
-    return ret;
-&#125;
-
-ll calc(int d, ll x) &#123;
-    if (d == 0) return x == 0 ? 0 : binom(n + m - 1 - x, n - 1);
-    else return (calc(d - 1, x) - calc(d - 1, x + a[d] + 1)) % P;
-&#125;
-
-void setup() &#123;
-    inv[1] = 1;
-    for (int i = 2; i &lt;= n; i++)
-        inv[i] = (-(P / i) * inv[P % i] % P + P) % P;
-&#125;
-
-int main() &#123;
-    scanf(&quot;%lld%lld&quot;, &amp;n, &amp;m);
-    setup();
-    for (int i = 1; i &lt;= n; i++)
-        scanf(&quot;%lld&quot;, &amp;a[i]);
-    ll ans = binom(n + m - 1, n - 1) + calc(n, 0);
-    printf(&quot;%lld\n&quot;, (ans % P + P) % P);
-    return 0;
-&#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/%E5%9F%8E%E5%B8%82%E8%A7%84%E5%88%92/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/%E5%9F%8E%E5%B8%82%E8%A7%84%E5%88%92/" class="post-title-link" itemprop="url">NOIP模拟赛 城市规划</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-09-01 04:42:04" itemprop="dateModified" datetime="2018-09-01T04:42:04-04:00">2018-09-01</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="题意">题意</h1>
-<p>有<span class="math inline">\(n\)</span>座高度为正整数的建筑物，定义不美观度为相邻建筑物高度差绝对值的最大值，你可以任意改动至多<span class="math inline">\(k\)</span>座建筑物的高度，求能够达到的最小不美观度。</p>
-<p><span class="math inline">\(k \le n \le 2000, h \le 2 \times 10^9\)</span></p>
-<h1 id="解法">解法</h1>
-<p>从数据范围看出这应该是一道DP题，所以很容易陷入的一条歪路就是，定义<span class="math inline">\(f[i, j]\)</span>为前<span class="math inline">\(i\)</span>座建筑物修改了<span class="math inline">\(j\)</span>次的最小不美观度，然后会发现没办法消除后效性<del>当场去世</del>。</p>
-<p>但是如果我们把题目paraphrase一下，变成：在修改至多<span class="math inline">\(k\)</span>座建筑物高度的情况下，<em>最大</em>的相邻高度差<em>最小</em>是多少？首先我们发现<strong>随着修改数增加，不美观度肯定是可以单调递减的</strong>，其次我们从这熟悉的句型就发现这其实是一道二分答案的题目，问题就变成了如何判定一个不美观度能不能达到了，我们还是需要使用DP来完成。</p>
-<p>定义<span class="math inline">\(f[i]\)</span>为修改前<span class="math inline">\(i - 1\)</span>座建筑物但是不修改<span class="math inline">\(i\)</span>的情况下为了达到我们二分的答案所需要的最小修改数，我们把它们全部初始化为<span class="math inline">\(i - 1\)</span>，即最坏情况下前面的我们都需要修改。</p>
-<p>接下来我们思考状态转移，设我们此时二分的答案为<span class="math inline">\(x\)</span>，我们发现如果对于<span class="math inline">\(j &lt; i\)</span>，如果<span class="math inline">\(|h_j - h_i| \le (i - j)x\)</span>，那么就说明我们总可以通过调整<span class="math inline">\(i\)</span>和<span class="math inline">\(j\)</span>之间（不包括<span class="math inline">\(i, j\)</span>）的<span class="math inline">\(i - j - 1\)</span>座建筑物达到我们需要二分的答案。因此状态转移方程为： <span class="math display">\[
-f[i] = \min_{1 \le j &lt; i, |h_j - h_i| \le (i - j)x} \{ f[j] + i - j - 1\}
-\]</span> 那么最后总体上为了达到二分的答案所需要的最小修改数是多少呢？是<span class="math inline">\(\min_{1 \le i \le n} \{f[i]\}\)</span>吗？其实并不是，因为对于<span class="math inline">\(f[i]\)</span>，最坏情况下我们还需要修改<span class="math inline">\(i\)</span>后面的<span class="math inline">\(n - i\)</span>座建筑物，因此总的最小修改数为： <span class="math display">\[
-\min_{1 \le i \le n} \{f[i] + n - i\}
-\]</span> 接下来就可以愉快的二分答案了，总的复杂度为<span class="math inline">\(O(n^2\log h_{max})\)</span>，还有要注意的是如果你采用<code>int mid = (l + r) / 2</code>的话是会爆<code>int</code>的，解决方法是使用<code>int mid = l + (r - l) / 2</code>：</p>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-
-using namespace std;
-const int INF = 0x7fffffff;
-const int N = 2010;
-int f[N], h[N];
-int n, k;
-
-#define abs(a) ((a) &gt; 0 ? (a) : -(a))
-#define min(a, b) ((a) &lt; (b) ? (a) : (b))
-
-int valid(int x) &#123;
-    for (int i = 1; i &lt;= n; i++)
-        f[i] = i - 1;
-    for (int i = 2; i &lt;= n; i++) &#123;
-        for (int j = 1; j &lt; i; j++)
-            if (abs(h[i] - h[j]) &lt;= 1ll * x * (i - j))
-                f[i] = min(f[i], f[j] + i - j - 1);
-    &#125;
-    int ans = INF;
-    for (int i = 1; i &lt;= n; i++)
-        ans = min(ans, f[i] + n - i);
-    return ans;
-&#125; 
-
-int main() &#123;
-    scanf(&quot;%d%d&quot;, &amp;n, &amp;k);
-    for (int i = 1; i &lt;= n; i++) scanf(&quot;%d&quot;, &amp;h[i]);
-    int l = 0, r = INF;
-    while (l &lt; r) &#123;
-        int mid = l + (r - l) / 2;
-        if (valid(mid) &lt;= k) r = mid;
-        else l = mid + 1;
-    &#125;
-    printf(&quot;%d\n&quot;, l);
-    return 0;
-&#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/%E5%90%8E%E7%BC%80%E8%87%AA%E5%8A%A8%E6%9C%BA/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/%E5%90%8E%E7%BC%80%E8%87%AA%E5%8A%A8%E6%9C%BA/" class="post-title-link" itemprop="url">后缀自动机笔记</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-03-23 23:01:30" itemprop="dateModified" datetime="2019-03-23T23:01:30-04:00">2019-03-23</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>后缀自动机（Suffix Automaton）本质上就是接受字符串集合等于一个给定字符串<span class="math inline">\(S\)</span>后缀集合的最小化DFA。SAM可以在<span class="math inline">\(O(|S|)\)</span>的时间内构造出来。</p>
-<h1 id="等价关系">等价关系</h1>
-<p>在下文中统一设母串为<span class="math inline">\(S\)</span>。</p>
-<p><strong>定义1：</strong>令<span class="math inline">\(\operatorname{endpos}(s)\)</span>表示子串<span class="math inline">\(s\)</span>在<span class="math inline">\(S\)</span>中的<strong>结束位置集合</strong>。如<span class="math inline">\(S = abcababc, s = ab\)</span>，则<span class="math inline">\(\operatorname{endpos}(s) = \{2, 5, 7\}\)</span>。特别地，<span class="math inline">\(\operatorname{endpos}(\emptyset) = \{1,2,3, \cdots, |S|\}\)</span>。</p>
-<p><strong>引理1：</strong>两个子串<span class="math inline">\(u, w\)</span>是<span class="math inline">\(\operatorname{endpos}\)</span>等价的，且假设<span class="math inline">\(|u| &lt; |w|\)</span>，则<span class="math inline">\(u\)</span>是<span class="math inline">\(w\)</span>的一个后缀。</p>
-<p><strong>证明：</strong>脑补一下，不证自明。</p>
-<p><strong>引理2：</strong>考虑两个子串<span class="math inline">\(u, w\)</span>，假设<span class="math inline">\(|u| &lt; |w|\)</span>则<span class="math inline">\(\operatorname{endpos}(u)\)</span>与<span class="math inline">\(\operatorname{endpos}(v)\)</span>有且仅有以下两种关系：</p>
-<ol type="1">
-<li><span class="math inline">\(\operatorname{endpos}(w) \subseteq \operatorname{endpos}(u)\)</span>：此时<span class="math inline">\(u\)</span>一定是<span class="math inline">\(w\)</span>的后缀。</li>
-<li><span class="math inline">\(\operatorname{endpos}(w) \cap \operatorname{endpos}(u) = \emptyset\)</span>：其他。</li>
-</ol>
-<p><strong>证明：</strong>如果<span class="math inline">\(\operatorname{endpos}(w) \cap \operatorname{endpos}(u) \neq \emptyset\)</span>，那么它们至少都会在原串的某一点结束，结合<span class="math inline">\(|u| &lt; |w|\)</span>，<span class="math inline">\(u\)</span>一定就是<span class="math inline">\(w\)</span>的后缀，如此一来<span class="math inline">\(w\)</span>结束的地方<span class="math inline">\(u\)</span>也一定结束，因此<span class="math inline">\(\operatorname{endpos}(w) \subseteq \operatorname{endpos}(u)\)</span>。</p>
-<p><strong>引理3：</strong>考虑一个<span class="math inline">\(\operatorname{endpos}\)</span>等价类，如果将其中的串按照长度从小到大排序，则后一个串的长度一定比前一个串的长度严格大<span class="math inline">\(1\)</span>，或者说，这个等价类的字符串取遍了某一区间内的所有长度。</p>
-<p><strong>证明：</strong>记这个等价类当中最短的串为<span class="math inline">\(u\)</span>，最长的串为<span class="math inline">\(w\)</span>。首先由引理1，一个等价类必定由<span class="math inline">\(w\)</span>和它的一系列后缀组成。考虑长度在<span class="math inline">\(u, w\)</span>之间的<span class="math inline">\(w\)</span>的任意后缀<span class="math inline">\(x\)</span>，因为<span class="math inline">\(x\)</span>是<span class="math inline">\(w\)</span>的后缀，由引理2，<span class="math inline">\(\operatorname{endpos}(w) \subseteq \operatorname{endpos}(x)\)</span>，同时又因为<span class="math inline">\(u\)</span>是<span class="math inline">\(x\)</span>的后缀，<span class="math inline">\(\operatorname{endpos}(x) \subseteq \operatorname{endpos}(u)\)</span>，结合<span class="math inline">\(\operatorname{endpos}(w) = \operatorname{endpos}(u)\)</span>，则<span class="math inline">\(x\)</span>与<span class="math inline">\(u, w\)</span>也<span class="math inline">\(\operatorname{endpos}\)</span>等价。</p>
-<h1 id="后缀链接">后缀链接</h1>
-<p><span class="math inline">\(\operatorname{endpos}\)</span>集合描述了一个串在母串当中的出现情况。我们希望构建出来的DFA要最小化，因此我们自然希望一个节点表示一整个<span class="math inline">\(\operatorname{endpos}\)</span>的<strong>等价类</strong>。<strong>即SAM当中每个节点的<span class="math inline">\(\operatorname{endpos}\)</span>互不相同。</strong></p>
-<p><strong>定义2：</strong>对于一个节点<span class="math inline">\(v\)</span>，令<span class="math inline">\(\operatorname{endpos}(v)\)</span>表示其表示的<span class="math inline">\(\operatorname{endpos}\)</span>等价类。</p>
-<p>我们又知道一个节点表示的字符串是<span class="math inline">\(S\)</span>的某一个前缀的前几个后缀（引理3）（假设把后缀长度从大到小排序）。</p>
-<p><strong>定义3：</strong>既然某个节点<span class="math inline">\(v​\)</span>表示某前缀的前几个后缀，令<span class="math inline">\(\operatorname{link}(v)​\)</span>表示第一个不在等价类<span class="math inline">\(v​\)</span>中的后缀所在的等价类节点，称为<span class="math inline">\(v​\)</span>的<strong>后缀链接</strong>。</p>
-<p><strong>定义4：</strong>令<span class="math inline">\(\min(v)\)</span>表示节点<span class="math inline">\(v\)</span>表示的最短子串，<span class="math inline">\(\max(v)\)</span>表示节点<span class="math inline">\(v\)</span>表示的最长子串。</p>
-<p><strong>观察1：</strong>结合定义3，显然<span class="math inline">\(\left|\min(v)\right| = \left|\max(\operatorname{link}(v))\right| + 1\)</span>。</p>
-<p><strong>定义4：</strong>设SAM初始节点为<span class="math inline">\(v_0\)</span>，令<span class="math inline">\(\operatorname{link}(v_0) = \emptyset, \min(v_0) = \max(v_0) = \emptyset\)</span>。</p>
-<p><strong>引理4：</strong>节点与后缀链接构成一棵以初始节点<span class="math inline">\(v_0​\)</span>为根的树。</p>
-<p><strong>证明：</strong>后缀链接<span class="math inline">\(\operatorname{link}(v)\)</span>的表示的子串长度是严格小于<span class="math inline">\(v\)</span>。顺着后缀链接总可以退回到表示子串长度为<span class="math inline">\(0\)</span>的<span class="math inline">\(v_0\)</span>。</p>
-<p><strong>观察2：</strong>由引理2，定义3，<span class="math inline">\(\operatorname{endpos}(v) \subsetneq \operatorname{endpos}(\operatorname{link}(v))\)</span>。</p>
-<p><strong>观察3：</strong>因此，后缀链接组成的树也完全对应<span class="math inline">\(\operatorname{endpos}​\)</span>等价类的子集关系。</p>
-<h1 id="构建算法">构建算法</h1>
-<p>我们采用增量式的方法构建后缀自动机，即考虑在<span class="math inline">\(S\)</span>的SAM的基础上构建<span class="math inline">\(S|c\)</span>的后缀自动机：</p>
-<p>在算法中，我们对于一个节点<span class="math inline">\(v\)</span>只存储以下信息：</p>
-<ol type="1">
-<li><span class="math inline">\(\operatorname{link}(v)\)</span>：后缀链接</li>
-<li><span class="math inline">\(\operatorname{len}(v) = |\max(v)|​\)</span></li>
-<li>转移边</li>
-</ol>
-<p>算法流程如下：</p>
-<ol type="1">
-<li>令<span class="math inline">\(v_{\text{last}}\)</span>表示原来表示整个<span class="math inline">\(S\)</span>串的节点。</li>
-<li>创建新节点<span class="math inline">\(v_{\text{cur}}\)</span>用于表示串<span class="math inline">\(S|c\)</span>，令<span class="math inline">\(\operatorname{len}(v_{\text{cur}}) = \operatorname{len}(v_{\text{last}}) + 1\)</span>。</li>
-<li>从<span class="math inline">\(v_{\text{last}}​\)</span>开始顺着后缀链接一路向上，对于没有<span class="math inline">\(c​\)</span>转移边的节点添加到<span class="math inline">\(v_{\text{cur}}​\)</span>的后缀转移。如果一路到了<span class="math inline">\(v_0​\)</span>，那么令<span class="math inline">\(\operatorname{link}(v_{\text{cur}}) = v_0​\)</span>，否则在第一个存在<span class="math inline">\(c​\)</span>转移边的节点<span class="math inline">\(p​\)</span>出停住。记<span class="math inline">\(p​\)</span>顺<span class="math inline">\(c​\)</span>转移到<span class="math inline">\(q​\)</span>。</li>
-<li>判断：
-<ol type="1">
-<li>如果<span class="math inline">\(\operatorname{len}(q) = \operatorname{len}(p) + 1​\)</span>，则令<span class="math inline">\(\operatorname{link}(v_{\text{cur}}) = q​\)</span>。</li>
-<li>否则，将<span class="math inline">\(q\)</span>复制一份得到<span class="math inline">\(q&#39;\)</span>，令<span class="math inline">\(\operatorname{len}(q&#39;) = \operatorname{len}(p) + 1\)</span>。令<span class="math inline">\(\operatorname{link}(q) = q&#39;\)</span>且<span class="math inline">\(\operatorname{link}(v_{\text{cur}}) = q&#39;\)</span>。同时再顺着<span class="math inline">\(p\)</span>的后缀链接向上，把所有指向<span class="math inline">\(q\)</span>的<span class="math inline">\(c\)</span>转移边重定向到<span class="math inline">\(q&#39;\)</span>，直到到达初始节点或者遇到一个非<span class="math inline">\(q\)</span>的转移为止。</li>
-</ol></li>
-</ol>
-<h1 id="正确性证明">正确性证明</h1>
-<p>首先，算法从创建一个新状态<span class="math inline">\(v_{\text{cur}}​\)</span>开始，这个节点表示的字符串是<span class="math inline">\(S|c​\)</span>，同时也开辟一个新的等价类。</p>
-<p>接下来对于之前的后缀我们都要做相应的更新（加上<span class="math inline">\(c\)</span>才算新的后缀），最简单的方法就是给这些节点加上往<span class="math inline">\(v_{\text{cur}}\)</span>的字符<span class="math inline">\(c\)</span>转移边，但是这些转移边必须不与之前的转移冲突才行，因此我们到节点<span class="math inline">\(p\)</span>就停止了，再加就冲突了。（注意我们在这里每给一个节点<span class="math inline">\(v\)</span>（设表示串为<span class="math inline">\(S_v\)</span>）加一条<span class="math inline">\(c\)</span>转移边，我们就把<span class="math inline">\(S_v|c\)</span>加到了<span class="math inline">\(v_{\text{cur}}\)</span>表示的串集合当中。这决定了<span class="math inline">\(v_{\text{cur}}\)</span>的后缀链接应该链接到哪里。）</p>
-<p>首先如果我们找不到节点<span class="math inline">\(p\)</span>，也就是我们一路到了初始节点，那说明这个<span class="math inline">\(c\)</span>就根本没有<span class="math inline">\(S\)</span>中出现过，也说明<span class="math inline">\(v_{\text{cur}}\)</span>一下子表示了<span class="math inline">\(S|c\)</span>的所有非空后缀了，因此由后缀链接的定义<span class="math inline">\(\operatorname{link}(v_{\text{cur}}) = v_0\)</span>。</p>
-<p>如果我们确实在<span class="math inline">\(p\)</span>节点停下了，令<span class="math inline">\(p\)</span>代表的串集为<span class="math inline">\(S_p\)</span>，那<span class="math inline">\(q\)</span>的串集<span class="math inline">\(S_q\)</span>至少包含<span class="math inline">\(S_p|c\)</span>，而此时<span class="math inline">\(S_p|c\)</span>的<span class="math inline">\(\operatorname{endpos}\)</span>集合是被拓展的（因为现在<span class="math inline">\(S_p|c\)</span>也会在<span class="math inline">\(S|c\)</span>的末尾结束），因此：</p>
-<ol type="1">
-<li>如果<span class="math inline">\(S_q\)</span>只包含<span class="math inline">\(S_p|c\)</span>，也就是<span class="math inline">\(\operatorname{len}(q) = \operatorname{len}(p)+1\)</span>那么我们可以直接拓展<span class="math inline">\(q\)</span>的等价类。此时<span class="math inline">\(\operatorname{link}(v_{\text{cur}}) = q\)</span>。</li>
-<li>如果<span class="math inline">\(S_q\)</span>不只包含<span class="math inline">\(S_p|c\)</span>，也就是<span class="math inline">\(\operatorname{len}(q) &gt; \operatorname{len}(p) + 1\)</span>的话，那么<span class="math inline">\(S_q\)</span>中只有一部分串的<span class="math inline">\(\operatorname{endpos}\)</span>集合被拓展了，此时我们有必要重新开一个节点来表示拓展得到的新等价类。那些比<span class="math inline">\(S_p|c\)</span>长的，没有拓展的串仍然保留在<span class="math inline">\(q\)</span>，<span class="math inline">\(S_p|c\)</span>被单独移到了<span class="math inline">\(q&#39;\)</span>，由定义那么<span class="math inline">\(\operatorname{link}(q) = q&#39;\)</span>。最后我们需要做一些收尾工作，也就是把一些节点从转移到<span class="math inline">\(q\)</span>变成转移到<span class="math inline">\(q&#39;\)</span>，我们发现这些节点代表的串一定是<span class="math inline">\(S_p\)</span>的后缀，因此只要一路<span class="math inline">\(p\)</span>的后缀链接向上就行了。</li>
-</ol>
-<p>关于时空复杂度，首先这个算法本身的保证了状态数的上界是<span class="math inline">\(2|S| - 1 = O(|S|)​\)</span>的。</p>
-<p>其次这个算法的转移数也是线性的，这两个性质一起确保了整个算法的均摊复杂度是线性的。具体证明可以看<a target="_blank" rel="noopener" href="https://oi-wiki.org/string/sam/">这里</a>。</p>
-<h1 id="代码实现">代码实现</h1>
-<p>个人认为SAM的代码实现只要理解了SAM的原理其实是比SA简单的：</p>
-<pre class="line-numbers"><code class="language-cpp">namespace sam &#123;
-    int cnt = 1, last = 1;
-    const int EPSILON = 26;
-    int len[N], link[N], nxt[N][EPSILON];
-    
-    void extend(int c) &#123;
-        int cur = ++cnt, p = last;
-        len[cur] = len[last] + 1;
-        for (; p &amp;&amp; !nxt[p][c]; p = link[p]) nxt[p][c] = cur;
-        if (!p) link[cur] = 1;
-        else &#123;
-            int q = nxt[p][c];
-            if (len[q] == len[p] + 1) link[cur] = q;
-            else &#123;
-                int nq = ++cnt;
-                len[nq] = len[p] + 1;
-                link[nq] = link[q];
-                copy(nxt[q], nxt[q] + EPSILON, nxt[nq]);
-                for (; nxt[p][c] == q; p = link[p]) nxt[p][c] = nq;
-                link[q] = link[cur] = nq;
-            &#125;
-        &#125;
-        last = cur;
-    &#125;
-&#125;</code></pre>
-<p>SAM绝对是代码中“微言精义”的典范233。</p>
-<p>其次在DFS遍历SAM的后缀链接树的时候其实有一个小技巧，就是把节点按照<span class="math inline">\(\operatorname{len}\)</span>从大到小的顺序进行访问（这一步可以桶排），这样可以确保儿子节点一定在父亲节点之前访问到。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/%E5%92%95%E5%92%95%E5%92%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/%E5%92%95%E5%92%95%E5%92%95/" class="post-title-link" itemprop="url">咕咕咕！以及穿越时空的新笔记（无误）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-12-08 08:29:40" itemprop="dateModified" datetime="2019-12-08T08:29:40-05:00">2019-12-08</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>自从上一次2月6日写关于SAM的笔记之后似乎这个博客就停更了好久~</p>
-<p>(**为什么在归档里有许多本篇之前SAM之后的？因为出于以下的原因某人把本地的笔记整理传了上来，通过改变<code>date</code>属性穿越时空把一些笔记送回了时间线的前端（即本地笔记的创建日期），如果看修改日期还是2019/12/8，因为是今天传的=_=**)</p>
-<p>在这大半年里还是发生了很多事情。</p>
-<p>比如说省选粗心失掉100分导致没进队。</p>
-<p>比如说CSP再心态爆炸导致分数不是最理想。</p>
-<p>比如自己的探究课题结题了</p>
-<p>比如自己暑假里参加实习去GIX之类的</p>
-<p>比如自己SAT也非常翻车的样子</p>
-<p>比如说自己仍然在纠结~</p>
-<p>回忆起来记得自己当初创设这个博客，很大程度上是觉得别人大佬的博客都很酷！</p>
-<p>然后传了一些文章。</p>
-<p>之后立flag发奋要搞OI，刚开始肯定是非常兴奋的，于是遇到很多题都会写文章，处于一个兴奋期吧。</p>
-<p>当时也把去年在狗社搞得一些机器人的成果传了上去。</p>
-<p>之后频率慢慢就往下降了。</p>
-<p>一方面自己去年NOIP没考好，所以后半学期就偏向于划水了<del>在咸鱼学校不脱产的高中生是这个样子的。</del></p>
-<p>另一方面有时候也觉得维护博客有点烦，因为是公网上的总想着自己写得要尽善尽美一些，久而久之写一篇文章的时间甚至超过了做题目本身的时间。“啊刷题要紧反正做过的题目我大致都有印象博客这种浪费时间的东西还是停一停吧”有很长一段时间都这么想过<del>对自己记忆的谜之自信</del>，<del>然而最后也没有刷特别多的题，真是一个悲伤的故事，我们学校的事情实在是太多了。</del></p>
-<p>自己倒是在本地维护了零零散散的一些做题心得。但是因为写得比较散，并没有上传。</p>
-<p>导致一路咕到现在的这种状况。</p>
-<p>最近才意识到博客不就是分享自己心得的吗……其实不必要过于正式。</p>
-<p>感觉自己朋友圈里面的很多东西都可以发到博客里来的样子。（反正朋友圈里看懂的人似乎也不多233）</p>
-<p>发现的很多好玩的也可以发的样子。</p>
-<p>脑洞也可以发的样子。</p>
-<p>这样想来维护博客似乎也没那么累，对于就是在本地写好<code>Markdown</code>，然后<code>git</code>同步一下，可能也就图片传图床可能会比较烦的样子。</p>
-<p>果然还是自己比较懒啊</p>
-<p>这个样子怎么行呢！？</p>
-<p>果然这个博客还是要有点生气啊！</p>
-<p>恢复更新！（Flag预定）</p>
-<p>先整理一下本地的一些零零碎碎的做题笔记，然后之后再看看有啥好玩的以后也发在这上面吧！</p>
-<p><sub>然而深知自己尿性，但愿这不要又是一次短暂的心血来潮吧！</sub></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/%E5%90%8E%E7%BC%80%E6%95%B0%E7%BB%84/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/%E5%90%8E%E7%BC%80%E6%95%B0%E7%BB%84/" class="post-title-link" itemprop="url">后缀数组笔记</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-02-04 02:33:30" itemprop="dateModified" datetime="2019-02-04T02:33:30-05:00">2019-02-04</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="简介">简介</h1>
-<p>后缀数组是字符串当中常见的一种数据结构，它将一个字符串<span class="math inline">\(S\)</span>的所有<strong>后缀</strong>进行排序，得到以下三个数组：</p>
-<ol type="1">
-<li><span class="math inline">\(\operatorname{sa}[i]\)</span>：排序后排名为<span class="math inline">\(i\)</span>的后缀的起始位置</li>
-<li><span class="math inline">\(\operatorname{rank}[i]\)</span>：起始位置为<span class="math inline">\(i\)</span>的后缀的排名</li>
-<li><span class="math inline">\(\operatorname{height}[i]\)</span>：起始位置<span class="math inline">\(\operatorname{sa}[i]\)</span>的后缀和起始位置<span class="math inline">\(\operatorname{sa}[i - 1]\)</span>的后缀的<em>最长公共前缀</em>长度</li>
-</ol>
-<p>利用这三个数组我们可以有力地解决字符串当中的大部分问题。</p>
-<h1 id="构造">构造</h1>
-<p>显然如果我们朴素地去构造长度为<span class="math inline">\(n\)</span>的字符串的后缀树组的话，时间复杂度为<span class="math inline">\(O(n^2\log n)\)</span>。这对于长字符串来说是完全无法接受的。然而利用倍增的思想我们可以在<span class="math inline">\(O(n\log n)\)</span>之内快速构造后缀树组，虽然像DC3，SAIS之类的<span class="math inline">\(O(n)\)</span>算法也存在，但是倍增的编码难度更低，也足以通过大部分的题目（毕竟可能很多时候瓶颈不在于构造）。</p>
-<p><span class="math inline">\(O(n\log n)\)</span>的构造代码如下：</p>
-<pre class="line-numbers"><code class="language-cpp">void build_sa() &#123;
-    static int a[N], b[N], d[N], tmp[N], buc[N];
-    copy(s + 1, s + 1 + n, d + 1);
-    sort(d + 1, d + 1 + n);
-    int *end = unique(d + 1, d + 1 + n);
-    for (int i = 1; i &lt;= n; i++) a[i] = lower_bound(d + 1, end, s[i]) - d;
-    for (int i = 1; i &lt;= n; i++) buc[a[i]]++;
-    for (int i = 1; i &lt;= n; i++) buc[i] += buc[i - 1];
-    for (int i = 1; i &lt;= n; i++) rk[i] = buc[a[i] - 1] + 1;
-    for (int t = 1; t &lt;= n; t *= 2) &#123;
-        copy(rk + 1, rk + 1 + n, a + 1);
-        for (int i = 1; i &lt;= n; i++) b[i] = i + t &gt; n ? 0 : rk[i + t];
-        
-        fill(buc, buc + n + 1, 0);
-        for (int i = 1; i &lt;= n; i++) buc[b[i]]++;
-        for (int i = 1; i &lt;= n; i++) buc[i] += buc[i - 1];
-        for (int i = n; i; i--) tmp[buc[b[i]]--] = i;
-
-        fill(buc, buc + n + 1, 0);
-        for (int i = 1; i &lt;= n; i++) buc[a[i]]++;
-        for (int i = 1; i &lt;= n; i++) buc[i] += buc[i - 1];
-        for (int i = n; i; i--) sa[buc[a[tmp[i]]]--] = tmp[i];
-
-        bool flag = true;
-        for (int i = 1, last = 0; i &lt;= n; i++) &#123;
-            int p = sa[i];
-            if (!last) rk[p] = 1;
-            else if (a[p] == a[last] &amp;&amp; b[p] == b[last])
-                flag = false, rk[p] = rk[last];
-            else rk[p] = rk[last] + 1;
-            last = p;
-        &#125;
-        if (flag) break;
-    &#125; 
-&#125;</code></pre>
-<p>其思想如下：如果我们先把所有后缀按照它们前<span class="math inline">\(2^{i - 1}\)</span>个字符进行排序，那基于排完序的结果我们就可以使用<strong>双关键字排序</strong>对所有后缀按照前<span class="math inline">\(2^{i}\)</span>个字符进行排序（原因是后缀的后缀还是后缀）,当然在实践过程中我们常使用桶排来加速这一个过程。</p>
-<p>代码的最后一段是在<span class="math inline">\(\operatorname{rank}\)</span>互异的时候直接跳出，这是一个小优化。</p>
-<h1 id="计算operatornameheight">计算<span class="math inline">\(\operatorname{height}[]\)</span></h1>
-<p>除了朴素比较之外，<span class="math inline">\(\operatorname{height}\)</span>数组的计算可以在<span class="math inline">\(O(n)\)</span>时间内完成。</p>
-<p><strong>观察：</strong>设<span class="math inline">\(h[i] = \operatorname{height}[\operatorname{rank}[i]]\)</span>，则我们有： <span class="math display">\[
-h[i] \ge h[i - 1] - 1
-\]</span> <strong>证明：</strong></p>
-<ol type="1">
-<li><span class="math inline">\(h[i - 1] = 0\)</span>：Trivial</li>
-<li><span class="math inline">\(h[i - 1] &gt; 0\)</span>：设<span class="math inline">\(k = \operatorname{sa}[\operatorname{rank}[i - 1]-1]\)</span>表示<span class="math inline">\(\operatorname{sa}\)</span>数组当中排在以<span class="math inline">\(i - 1\)</span>为起始的后缀前的后缀的起始位置，以<span class="math inline">\(k\)</span>开始的后缀与以<span class="math inline">\(i - 1\)</span>开始的后缀的LCP为<span class="math inline">\(h[i - 1]\)</span>。考虑统一截掉开头的一个字符，得到起始位置为<span class="math inline">\(k + 1\)</span>与<span class="math inline">\(i\)</span>的两个后缀，其LCP为<span class="math inline">\(h[i - 1] - 1\)</span>，<span class="math inline">\(k +1\)</span>在<span class="math inline">\(\operatorname{sa}[]\)</span>里面肯定排在<span class="math inline">\(i\)</span>前面，又因为后缀数组的性质，<span class="math inline">\(i\)</span>与<span class="math inline">\(\operatorname{sa}[\operatorname{rank}[i] - 1]\)</span>的LCP一定不会小于<span class="math inline">\(i\)</span>和<span class="math inline">\(k + 1\)</span>的LCP，因此不等式成立。</li>
-</ol>
-<p>基于以上的观察，计算<span class="math inline">\(\operatorname{height}[]\)</span>的代码如下：</p>
-<pre class="line-numbers"><code class="language-cpp">for (int i = 1, k = 0; i &lt;= n; i++) &#123;
-    if (rk[i] == 1) k = 0;
-    else &#123;
-        if (k &gt; 0) k--;
-        int j = sa[rk[i] - 1];
-        while (i + k &lt;= n &amp;&amp; j + k &lt;= n &amp;&amp; s[i + k] == s[j + k]) k++;
-    &#125;
-    ht[rk[i]] = k;
-&#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/%E4%B8%AD%E6%96%87%E7%BC%96%E7%A8%8B%E8%BF%B7%E6%80%9D/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/%E4%B8%AD%E6%96%87%E7%BC%96%E7%A8%8B%E8%BF%B7%E6%80%9D/" class="post-title-link" itemprop="url">中文编程迷思</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-26 23:43:58" itemprop="dateModified" datetime="2021-04-26T23:43:58-04:00">2021-04-26</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>又一次在网上看到中文编程的日经贴后，我觉得这似乎会是一个不错的博文题目。</p>
-<p>这篇文章我计划讲的内容在标题里写得很明白——“迷思”。</p>
-<p>迷思，经常被用作英文myth的音译，衍生出“神话”、“传言”的意项。在这个定义下，“中文编程”或许可以称得上是一个迷思了，初学编程的萌新和温饱思扯淡的键盘程序语言设计家（我或许可以忝列后者）一天到晚在讲，Github上偶尔有个小项目也会有不少的曝光率，但是也就止步于笑谈中了，现实的应用几乎没有（唯一勉强成气候的易语言常年处于鄙视链的最低端）。这样一种现状，似乎和动漫当中的“都市传说”颇有共同点。可是动漫的“都市传说”最后都是真的，“中文编程”则未必然。</p>
-<p>若纯粹地拆字组词，“迷思”又有一种“胡思乱想”的意项在，这是我对于我想法的总结——胡思乱想。这篇文章就是胡思乱想，想着想着觉得有暴论出现可以写一下，仅此而已。我会尽力组织自己的逻辑，但是要这篇文章变成如同高考作文一般逻辑严密，既非我愿，也非我力所能及。</p>
-<p>对中文编程我一直保有比较浓厚的兴趣，记得小学刚毕业的时候简短地用过所谓易语言。后来自己以前闲着无聊的时候写过自己脚本语言的解释器所以对于语言设计实现大约还算有一点点心得。恰好最近手痒又想写parser，我就想：为什么不试试看写一个中文的脚本语言呢？</p>
-<p>然而思前想后，哪怕只是纸上谈兵的幻想，结果都不算乐观。</p>
-<p>做个暴论吧：<strong>目前的所谓中文编程语言不过花瓶，真正实用的中文编程（如果真的有必要的话）任重而道远。</strong></p>
-<hr />
-<p>我一直认为，要大致把握一个编程语言的特征，写一段快速排序的代码是一个非常好的选择。快排是一个不简单且不平凡的算法，在传统命令式语言的理论框架内，顺序，分支和循环结构都用到了；如果更特殊的特性，快排的复杂度也勉强允许一些语言施展一下其特殊的语言构造。例如Haskell经典的四行快排我觉得就是对函数式语言哲学的一种不错的体现，C++或许也可以炫一波模板元编程和新出的concept。与此同时快速排序也不是特别复杂，让人能够多花心思在语言的特征而不是辨认算法本身上。最后的最后，它还能让我复习一下快排咋写，何乐而不为？</p>
-<p>先放一段快排的C代码，代码是我从网上随手拉来的，显然还有很大的优化空间，但这并不重要：</p>
-<pre class="line-numbers"><code class="language-c">void quick_sort(int *arr, int left, int right) &#123;
-    if (left &gt;= right) return; 
-    int p = arr[left];
-    int i = left, j = right;
-    while (i &lt; j) &#123;
-        while (arr[j] &gt;= p &amp;&amp; i &lt; j) j--;         
-        while (arr[i] &lt;= p &amp;&amp; i &lt; j) i++;
-        int temp = arr[j];
-        arr[j] = arr[i];
-        arr[i] = temp;
-    &#125;
-    arr[left] = arr[i]; 
-    arr[i] = p;
-    quick_sort(arr, left, j - 1);
-    quick_sort(arr, j + 1, right);
-&#125;</code></pre>
-<p>那么问题来了：<strong>人们心目中与上面这一段C对应的“中文代码”应该是什么个样子呢？</strong></p>
-<p>是这样吗？</p>
-<pre class="line-numbers"><code class="language-none">定义 函数 快速排序（输入：整数 数组，左边界：整数，右边界：整数）：
-    如果（左边界 &gt;= 右边界）：返回
-    令 基准 为 输入【左边界】
-    令 甲 为 左边界
-    令 乙 为 左边界
-    当（甲 &lt; 乙）时循环：
-        当（输入【乙】 &gt;= 基准 且 甲 &lt; 乙）时循环：
-            乙 自减
-        当（输入【甲】 &lt;= 基准 且 甲 &lt; 乙）时循环：
-            甲 自增
-        交换（输入【甲】，输入【乙】）
-    令 输入【左边界】 为 输入【甲】
-    令 输入【甲】 为 基准
-    快速排序（输入，左边界，乙 - 1）
-    快速排序（输入，乙 + 1，右边界）</code></pre>
-<p><strong>中文编程是为了接地气，不是接地府</strong></p>
-<p>以上文法的所谓“中文编程语言”在现实开发中是极为不便的。</p>
-<p>但很遗憾，这就是现在网络上通行的“中文编程”的现状。</p>
-<p>有错吗？乍一看似乎是没有的，在某种意义上这还是“要素完全”的：</p>
-<ol type="1">
-<li>上面的代码一个拉丁字母都没有用到——“完全汉化”</li>
-<li>尽量使用全角字符——“贴合国人使用习惯”</li>
-<li>可读性勉强令人满意。</li>
-</ol>
-<p>然而上面这坨东西我写的时候血压直线飙升。是哪里出了问题？</p>
-<p>不妨再看看下一种可能的情况：</p>
-<pre class="line-numbers"><code class="language-none">定义快排（整数组输入，整数左界，整数右界）：
-    若左界&gt;=右界：返回
-    基准赋输入于左界
-    甲赋左界；乙赋右界
-    当甲&lt;乙：
-        当输入于乙&gt;=基准且甲&lt;乙：
-            乙自减
-        当输入于甲&lt;=基准且甲&lt;乙：
-            甲自增
-        交换（输入于甲，输入于乙）
-    输入于左界赋输入于甲
-    输入于甲赋基准
-    快排（输入，左界，乙-1）
-    快排（输入，乙+1，右界）</code></pre>
-<p>看起来似乎比最上面一个例子要好一点是不是？</p>
-<p>如果在这个基础上进行一定的代码高亮，那感觉就更上一个台阶：</p>
-<p><img src="/2021/07/25/%E4%B8%AD%E6%96%87%E7%BC%96%E7%A8%8B%E8%BF%B7%E6%80%9D/%E4%B8%AD%E6%96%87%E7%BC%96%E7%A8%8B%E6%BC%94%E7%A4%BA.svg" class=""></p>
-<p>虽然一开始的那一版“中文编程”也可以通过适当的代码高亮在效果上进行优化，但各位试一试就知道，效果应当还是不如上图的。那么，两种文法，都是“中文编程”，是什么导致了舒适度上的巨大差异？</p>
-<hr />
-<p>回顾编程语言的历史，我们发现，编程语言正逐渐以语言本身的定位为基础，探寻如下三者的最优平衡：</p>
-<ol type="1">
-<li>对于机器来说好读：文法无二义性，且运行效率高</li>
-<li>对于人类来说好读：文法大致贴合阅读习惯，或者说，在训练之后可以快速阅读</li>
-<li>对于人类来说好写：文法“废话少”，开发效率高。</li>
-</ol>
-<p>在文法解析技术、编译器优化技术、以及硬件技术如此发达的当下，第一点的重要性正在逐渐被弱化。那么剩下的，就只有对人好读好写的要求了。既然是“对人”，就自然需要考虑编程语言所依附的自然语言的语言特性。所有人都知道英语和中文无论是在直觉上还是在语言学意义上都有着巨大的差异，因此基于中文的编程语言，又怎么可以生搬硬套基于英语的编程语言的结构呢？以上示例中的两门语言之所以在观感上具有差距，就是因为前者是可以通过直接的单词替换预处理还原为另一门语言的“套皮”，而后者则做了一定程度上的“本地化”。</p>
-<p>我们首先注意到，<strong>中文当中是没有空格分词的</strong>。在输入大段中文的时候，空格键往往只作为输入法选词的快捷键而本身不进入文本。这是很多中文编程语言所忽视的。例如</p>
+\]</span> 我们在此设计一个通过解对偶规划来求得原问题解的近似算法。依赖于对偶规划的好处是：在分析过程中我们必须给<span class="math inline">\(\mathrm{OPT}\)</span>一个下界，而由对偶规划的定义，对偶规划的目标函数值就是一个非常好的下界，因此基于对偶规划的近似算法在分析上是比较便利的。</p>
+<p>假设我们已经求得了对偶规划的最优解，如何以此确定原规划的变量取值呢？回忆我们在学对偶时学到的互补松弛条件</p>
 <blockquote>
-<p>每 个 中文 词 之间 都有 空格， 写 起来 很 别扭， 读 起来 也 不 习惯。</p>
+<p>若主线性规划最优解中一变量非零，则其对偶规划中对应约束收紧。</p>
+</blockquote>
+<p>其逆命题为</p>
+<blockquote>
+<p>若对偶规划中对应约束收紧，则主规划中对应变量非零。</p>
+</blockquote>
+<p>虽该命题未必正确，但给我们设计算法提供了思路。我们的算法就是：</p>
+<ol type="1">
+<li>求取对偶规划的最优解。</li>
+<li>对于最优解中每一个紧约束，将其在主规划中对应的顶点加入顶点覆盖。</li>
+</ol>
+<p>接下来我们分析一下这个算法：</p>
+<p><strong>引理：</strong>我们给出的顶点覆盖是可行的。</p>
+<p><strong>证明：</strong>不妨假设我们给出的顶点覆盖不合法，即有一条边<span class="math inline">\(e=(u,v)\)</span>没有被覆盖到。那么由我们的算法可知<span class="math inline">\(u,v\)</span>对应的对偶约束在对偶最优解中是松的，而既然如此为什么不增加<span class="math inline">\(y_e\)</span>使其一收紧，同时增加目标函数的值呢？显然这和“我们求得对偶规划的最优解”是矛盾的。</p>
+<p><strong>定理：</strong>我们的算法是一个<span class="math inline">\(2\)</span>倍近似算法。</p>
+<p><strong>证明：</strong>假设我们算法给出的覆盖集为<span class="math inline">\(C\)</span>，则我们顶点覆盖的总代价就是<span class="math inline">\(\sum_{v\in C}w_v\)</span>，而由我们算法选取顶点的条件，有 <span class="math display">\[
+\begin{aligned}
+    \sum_{v\in C}w_v &amp;= \sum_{v \in C}\sum_{v\in e\in E} y_e \\
+    &amp;= \sum_{e\in E} y_e |C\cap e| \\
+    &amp;\le \sum_{e\in E} y_e \cdot 2 \\
+    &amp;= 2 \cdot \mathrm{OPT}_{\text{dual}} \\
+    &amp;\le 2 \cdot \mathrm{OPT}
+\end{aligned}
+\]</span> （正如之前所说，对偶规划的目标函数给我们提供了<span class="math inline">\(\mathrm{OPT}\)</span>的一个极佳的下界）</p>
+<p>得证。</p>
+<p>（后记：其实对偶解的最优性在这里并没有用到，是不是每一组对偶规划的极大解都可以呢？）</p>
+<h1 id="单机任务调度">单机任务调度</h1>
+<h2 id="定义">定义</h2>
+<p><strong>输入：</strong>一台机器<span class="math inline">\(n\)</span>个任务，第<span class="math inline">\(i\)</span>个任务的发布时间是<span class="math inline">\(r_i\)</span>，耗时<span class="math inline">\(p_i\)</span>。</p>
+<p><strong>目标：</strong>设第<span class="math inline">\(i\)</span>个任务的完成时刻为<span class="math inline">\(C_i\)</span>，要求制定一个非竞争性（non-preemptive）的任务调度方案，使得<span class="math inline">\(\sum_{i=1}^nC_i\)</span>最小。所谓非竞争性，是指一个任务一旦开始就不能被其他任务所打断，不能够一个任务做一会暂停再去做另一个任务，与其相对的成为竞争性调度。</p>
+<h2 id="思路与算法">思路与算法</h2>
+<p>我们不妨先考虑如果允许竞争性调度，我们应该怎么办呢？</p>
+<p>一个显然的策略是<strong>不断选取剩余耗时最短的任务优先完成</strong>，这样其他任务等待的时间最少。</p>
+<p>注意到，一个非竞争性的调度方案可以在允许竞争的情况下应用，而反之未必然。因此，若设<span class="math inline">\(C_i^{\text P}\)</span>为在最优竞争性调度中任务<span class="math inline">\(i\)</span>的结束时刻，那么就有 <span class="math display">\[
+\sum_{i=1}^n C^{\text P}_i \le \mathrm{OPT}
+\]</span> 一个竞争性的方案可以被转化为一个非竞争性的方案吗？这就是我们的算法：</p>
+<ol type="1">
+<li>求解在允许竞争的情况下的最优调度方案。</li>
+<li>按照任务在竞争性最优调度中结束的顺序确定我们解当中各任务的执行顺序，并基于这个顺序给出我们非竞争性的调度方案。</li>
+</ol>
+<h2 id="分析">分析</h2>
+<p>设<span class="math inline">\(C_i^{\text N}\)</span>为我们的非竞争性调度中任务<span class="math inline">\(i\)</span>的结束时刻，那我们方案的代价就是<span class="math inline">\(\sum_{i=1}^n C^{\text N}_i\)</span>。</p>
+<p>接下来假设我们已经按照任务在竞争性最优调度当中结束的顺序给任务排了序。</p>
+<p>注意到 <span class="math display">\[
+C^{\text N}_i \le \max_{1 \le k \le i} \{r_k\}+ \sum_{k=1}^i p_k
+\]</span> 这是显然的，因为不等式的右边描述了一种可行的调度方案：等前<span class="math inline">\(i\)</span>个任务全部发布后再连续把它们做完，而我们的方案不会比这个可行方案差。</p>
+<p>令任务<span class="math inline">\(l\)</span>为前<span class="math inline">\(i\)</span>个任务当中最晚发布的那个任务，即<span class="math inline">\(r_l = \max_{1\le k \le i}\{r_k\}\)</span>。因为我们是按照竞争性最优方案中任务结束的顺序调度的，因此<span class="math inline">\(C_i^{\text P} \ge C_l^{\text P}\)</span>。常识告诉我们<span class="math inline">\(C_l^{\text P} \ge r_l\)</span>，因此<span class="math inline">\(C_i^{\text P} \ge r_l\)</span>。而显然又有<span class="math inline">\(C_i^{\text P} \ge \sum_{k=1}^i p_k\)</span>，因此 <span class="math display">\[
+C^{\text N}_i \le \max_{1 \le k \le i} \{r_k\}+ \sum_{k=1}^i p_k \le C_i^{\text P} + C_i ^{\text P} = 2C_i^{\text P}
+\]</span> 因此 <span class="math display">\[
+\sum_{i=1}^n C^{\text N}_i \le 2\sum_{i=1}^n C^{\text P}_i \le 2\cdot \mathrm{OPT}
+\]</span> 所以我们的算法是一个<span class="math inline">\(2\)</span>倍近似算法。</p>
+<h2 id="拓展任务带权">拓展：任务带权</h2>
+<p>我们现在对于这个问题进行拓展，每个任务都有一个权重<span class="math inline">\(w_i\)</span>，我们要最小化<span class="math inline">\(\sum_{i=1}^nw_iC_i\)</span>。</p>
+<p>对于这个问题，我们上面的思路就行不通了：我们上面的算法建立在可以最优求解竞争性调度的基础上，而可以证明，即使允许竞争，求解带权任务调度也是一个NP hard问题。</p>
+<p>因此我们必须换一个思路，考虑给我们的问题放宽一下条件，再以这个松弛的问题为基础建立一个线性规划（LP-relaxation）。很容易就能想到如下的线性规划： <span class="math display">\[
+\begin{aligned}
+    \text{minimize}\quad &amp;\sum_{i=1}^n w_iC_i \\
+    \text{subject to}\quad &amp;C_i \ge r_i + p_i\quad \forall i=1,2,\cdots,n \\
+    &amp;C_i \ge 0\quad \forall i=1,2,\cdots,n
+\end{aligned}
+\]</span> 可是这个线性规划一看就松到了一个扯淡的地步。是个人就知道这个规划的最优解就是<span class="math inline">\(C_i=r_i+p_i\)</span>，我们完全不能够指望这个破规划给我们任何有意义的结果或指引我们进行算法设计。我们还要加点条件——多多少少要体现出任务的非竞争性吧？</p>
+<p>于是就有了这个加强版的线性规划： <span class="math display">\[
+\begin{aligned}
+    \text{minimize}\quad &amp;\sum_{i=1}^n w_iC_i \\
+    \text{subject to}\quad &amp;C_i \ge r_i + p_i\quad \forall i=1,2,\cdots,n \\
+    &amp; \sum_{i\in S}p_iC_i \le \frac{1}{2}p(S)^2 \quad \forall S\subseteq \{1,2,\cdots. m\}\\
+    &amp;C_i \ge 0\quad \forall i=1,2,\cdots,n
+\end{aligned}
+\]</span> 其中<span class="math inline">\(p(S) = \sum_{i \in S} p_i\)</span>。</p>
+<p>这个第二个约束是怎么一回事呢？考虑所有任务都在一开始就发布，然后任务时间无缝衔接的情况。此时一个任务的完成时间就等于之前所有任务耗时之和。为方便起见，不妨令<span class="math inline">\(S=\{p_1,p_2,p_3,\cdots,p_{|S|}\}\)</span>，于是有 <span class="math display">\[
+\begin{aligned}
+    \sum_{i = 1}^{|S|} p_iC_i &amp;=  \sum_{i = 1}^{|S|} p_i\sum_{j=1}^i p_j \\
+    &amp;= \sum_{i = 1}^{|S|} p_i^2 +\sum_{i = 1}^{|S|} p_i\sum_{j=1}^{i-1} p_j \\
+    &amp;= \frac{1}{2}\left(\sum_{i = 1}^{|S|} p_i^2 + 2\sum_{i = 1}^{|S|} p_i\sum_{j=1}^{i-1} p_j\right) + \frac{1}{2}\sum_{i = 1}^{|S|} p_i^2 \\
+    &amp;= \frac{1}{2}\left(\sum_{i = 1}^{|S|} p_i\right)^2+ \frac{1}{2}\sum_{i = 1}^{|S|} p_i^2 \\
+    &amp;\ge \frac{1}{2}p(S)^2
+\end{aligned}
+\]</span></p>
+<p>若嫌代数证明太不直观，则下图在几何上说明了这一点：</p>
+<p><img src="/2020/07/12/PACT0708/C1.svg" class=""></p>
+<p>在实际的调度当中，几个任务未必无缝衔接，因此<span class="math inline">\(C_i \ge \sum_{j=1}^i p_j\)</span>，而我们的证明依然成立。因此对于可行的非竞争性调度，以上约束总是成立。虽反之不然，却也比一开始那个过于简陋的线性规划更多地刻画了“非竞争性”的特点。对于我们的算法来说，这个线性规划已经足够。我们的算法为：</p>
+<ol type="1">
+<li>求解以上线性规划。</li>
+<li>假设给出的解为<span class="math inline">\(C_i^*\)</span>，我们按照<span class="math inline">\(C_i^*\)</span>从小到大来确定各任务在我们调度方案中的顺序。</li>
+</ol>
+<p>接下来我们分析一下这个算法。因为我们的线性规划对原问题进行松弛，原问题的解一定是线性规划的一组可行解，因此 <span class="math display">\[
+\sum_{i=1}^n w_iC_i^* \le \mathrm{OPT}
+\]</span> 回顾我们在不带权情形的算法分析中用到的 <span class="math display">\[
+C^{\text N}_i \le \max_{1 \le k \le i} \{r_k\}+ \sum_{k=1}^i p_k
+\]</span> 若令<span class="math inline">\(S=\{1,2,3,\cdots,i\}\)</span>，则上式可以写作 <span class="math display">\[
+C^{\text N}_i \le \max_{1 \le k \le i} \{r_k\}+ p(S)
+\]</span> 结合线性规划的第一个约束： <span class="math display">\[
+C^{\text N}_i \le C_i^*+ p(S)
+\]</span> 线性规划的第二个约束告诉我们 <span class="math display">\[
+p(S)^2 \le 2\sum_{j=1}^i w_jC_j^*
+\]</span> 因为<span class="math inline">\(i\)</span>是前<span class="math inline">\(i\)</span>个任务当中最后完成的，因此<span class="math inline">\(C_i^*\ge C_j^*,\forall j&lt;i\)</span>，于是 <span class="math display">\[
+\begin{aligned}
+    p(S) &amp;\le 2\sum_{j=1}^i w_jC_j^* \\
+    &amp;\le 2\sum_{j=1}^i w_jC_i^* \\
+    &amp;\le 2C_i^* p(S) \\
+    \Rightarrow p(S) &amp;\le  2C_i^*
+\end{aligned}
+\]</span> 因此 <span class="math display">\[
+C_i^{\text N} \le 3C_i^* \Rightarrow \sum_{i=1}^nC_i^{\text N} \le 3\sum_{i=1}^nC_i^* \le 3\cdot\mathrm{OPT}
+\]</span> 我们便证明了我们的算法是一个<span class="math inline">\(3\)</span>倍近似算法。</p>
+<p>整个算法唯一剩下的一个小问题便是：我们要解的这个线性规划的约束数量是指数级的，我们解线性规划所需要的时间难道不会变成指数级吗？事实上，有一类椭圆形法可以在多项式时间内解线性规划的同时处理这些子集约束，所以这个问题我们并不用担心。（具体的内容大概会在明天讲到吧）</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/11/PACT0707/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/11/PACT0707/" class="post-title-link" itemprop="url">PACT 07/07 装箱问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-11 23:18:24" itemprop="dateCreated datePublished" datetime="2020-07-11T23:18:24-04:00">2020-07-11</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="定义">定义</h1>
+<p><strong>输入：</strong><span class="math inline">\(n\)</span>件物品，第<span class="math inline">\(i\)</span>件物品的大小为<span class="math inline">\(a_i\in(0,1]\)</span>。</p>
+<p><strong>目标：</strong>将所有物品装进若干个大小为<span class="math inline">\(1\)</span>的箱内，并使所用的箱最少。</p>
+<h1 id="见缝插针算法first-fit">见缝插针算法（First-fit）</h1>
+<p>（总觉得自己的这个翻译有些问题……又似乎觉得没有问题……还是觉得有些问题？“首次适应”看起来太傻了，“先到先得”看起来又不大对劲……）</p>
+<p>我们可以很暴力地设计一个算法：</p>
+<ol type="1">
+<li>将所有物品任意排列。</li>
+<li>依次处理每一个物品，如果已经用的箱子里有一个还装得下就装进去，否则就新开一个箱子装进去。</li>
+</ol>
+<p>这个算法被称为first-fit algorithm，我将其翻译为见缝插针算法。</p>
+<p>这个算法是不是太粗暴了一点？其实可以证明，这个算法是一个<span class="math inline">\(2\)</span>倍近似算法。</p>
+<p><strong>引理：</strong>我们最终的打包方案当中，至多只有一个箱子是最多半满的（即在里面物品的体积<span class="math inline">\(\le \frac{1}{2}\)</span>）。</p>
+<p><strong>证明：</strong>考虑反证：如果有两个箱子都是最多半满，显然后开的那个箱子里的东西在算法运行的时候可以被塞进另外一个箱子里，就产生了矛盾。</p>
+<p>假设我们的算法用了<span class="math inline">\(B\)</span>个箱子，因为忽略可能有的一个半满的箱子，剩下的箱子里物品的大小都<span class="math inline">\(&gt;\frac{1}{2}\)</span>，显然有 <span class="math display">\[
+\frac{B-1}{2} &lt; \sum_{i=1}^n a_i
+\]</span> 因此 <span class="math display">\[
+B &lt; 2\sum_{i=1}^na_i + 1 \Rightarrow B\le 2\sum_{i=1}^na_i
+\]</span> 又因为最优方案所用箱子的总大小一定不小于物品的大小之和， <span class="math display">\[
+\sum_{i=1}^n a_i \le \mathrm{OPT} \Rightarrow B\le 2\cdot \mathrm{OPT}
+\]</span></p>
+<h1 id="ptas设计">PTAS设计</h1>
+<p><strong>定理：</strong>对于任意的<span class="math inline">\(\varepsilon \in \left(0,\frac{1}{2}\right]\)</span>，我们都能设计一个<span class="math inline">\((1+2\varepsilon)\)</span>倍的近似算法。</p>
+<p>在证明这个定理之前，我们不妨思考一下：什么时候暴力搜索是可以接受的？</p>
+<p>如果我们知道每个箱子最多装<span class="math inline">\(m\)</span>件物品，物品的大小只有<span class="math inline">\(k\)</span>种，那么对于一个箱子至多有几种装箱（装到放不下任何其他物品）的方案？运用一点组合数学的知识，不难得出答案是 <span class="math display">\[
+\binom{m + k-1}{m}
+\]</span> 不妨这个方案数为<span class="math inline">\(R\)</span>，假设我们有<span class="math inline">\(n\)</span>个箱子，最多有几种装箱的方案呢？ <span class="math display">\[
+\binom{n+R-1}{R-1} = \mathcal{O}\left(n^{R-1}\right)
+\]</span> 如果<span class="math inline">\(R\)</span>不是常数，那么显然暴力枚举算法的复杂度是指数级的。</p>
+<p>而如果<span class="math inline">\(R\)</span>是一个比较小的常数，也就是说<span class="math inline">\(m, k\)</span>都是比较小的常数的话，暴力搜索的时间复杂度就是多项式级别的。</p>
+<p>如何确保<span class="math inline">\(m\)</span>比较小？只要每件物品足够大就行了，于是我们把输入的物品分为</p>
+<ol type="1">
+<li><span class="math inline">\(a_i&lt;\varepsilon\)</span>的小物品，</li>
+<li>和<span class="math inline">\(a_i\ge \varepsilon\)</span>的大物品。</li>
+</ol>
+<p>我们暂时先不管小物品。如何设计一个放大物品的<span class="math inline">\((1+\varepsilon)\)</span>倍近似算法呢？</p>
+<p>由定义，每件大物品大小<span class="math inline">\(&gt;\varepsilon\)</span>，因此每个箱子能够放的大物品数目<span class="math inline">\(m&lt;\frac{1}{\varepsilon}\)</span>，如果我们想要用暴力，只要再把<span class="math inline">\(k\)</span>限制住就行了。</p>
+<p>为此，我们将所有物品按大小升序（或者说不降）排序，然后将排完的物品分成<span class="math inline">\(k\)</span>组，除了最后一组，每一组都有<span class="math inline">\(\lceil n/k \rceil\)</span>个物品。</p>
+<p>假设我们现在的要处理的问题实例为<span class="math inline">\(I\)</span>，我们创建一个新实例<span class="math inline">\(J\)</span>，其中每一个物品的大小被高估为它所在组最大物品的大小：</p>
+<p><img src="/2020/07/11/PACT0707/IJ.svg" class=""></p>
+<p>很显然，因为做<span class="math inline">\(J\)</span>的时候我们高估了物品的大小，也就是让问题更难了，每个<span class="math inline">\(J\)</span>的解都是<span class="math inline">\(I\)</span>的可行解。而<span class="math inline">\(J\)</span>当中物品的大小只有<span class="math inline">\(k\)</span>种，加上<span class="math inline">\(m\)</span>的限制，是可以暴力解决的。我们可以暴力把<span class="math inline">\(J\)</span>解出来，然后套到<span class="math inline">\(I\)</span>上面作为我们算法的解。但是如何分析呢？或者说，如何用<span class="math inline">\(I\)</span>的最优解来给我们<span class="math inline">\(J\)</span>的最优解一个上界呢？</p>
+<p>出于分析的目的，我们再考虑另一个问题实例<span class="math inline">\(J&#39;\)</span>，其中每一个物品的大小被低估为它所在组最小物品的大小：</p>
+<p><img src="/2020/07/11/PACT0707/IJ_.svg" class=""></p>
+<p>类似地，我们可以得出：每一个<span class="math inline">\(I\)</span>的可行解一定是<span class="math inline">\(J&#39;\)</span>的一个可行解，反之未必然，即 <span class="math display">\[
+\mathrm{OPT}_{J&#39;} \le \mathrm{OPT}_{I}
+\]</span> 现在思考一个问题：如果我们有一组<span class="math inline">\(J&#39;\)</span>的最优解，如何把它尽可能地转换成一组<span class="math inline">\(J\)</span>的可行解呢？</p>
+<p>一个方案是让<span class="math inline">\(J\)</span>的每个物品对应<span class="math inline">\(J&#39;\)</span>当中更大一组中的物品，然后就按照<span class="math inline">\(J’\)</span>最优解的方式装箱，这样除了最大的一组以外<span class="math inline">\(J\)</span>中的所有物品都有办法装箱了。令最大的那一组不知道怎么装箱的物品集合为<span class="math inline">\(Q\)</span>。</p>
+<p><img src="/2020/07/11/PACT0707/JJ.svg" class=""></p>
+<p>因为对于<span class="math inline">\(Q\)</span>里面的物品我们大不了一个箱子装一个，因此我们得到 <span class="math display">\[
+\mathrm{OPT}_{J} \le \mathrm{OPT}_{J&#39;}+|Q| \le \mathrm{OPT}_{I} + \left\lceil\frac{n}{k}\right\rceil
+\]</span> 注意因为我们是暴力解<span class="math inline">\(J\)</span>的，现在不等式的左边<span class="math inline">\(\mathrm{OPT}_J\)</span>就是我们算法的代价。为了证明近似比，我们希望上面不等式的右边变成一个<span class="math inline">\((1+\varepsilon)\mathrm{OPT}_I\)</span>。</p>
+<p>注意到在这个只有大物品的问题当中，<span class="math inline">\(\mathrm{OPT}_I \ge \lceil n\cdot \varepsilon \rceil\)</span>，因此，若令<span class="math inline">\(k=\left\lceil\frac{1}{\varepsilon^2}\right\rceil\)</span>。上面的分析就变成了 <span class="math display">\[
+\begin{aligned}
+    \mathrm{OPT}_{J} &amp;\le \mathrm{OPT}_{I} + \left\lceil\frac{n}{k}\right\rceil \\
+    &amp;\le \mathrm{OPT}_{I} + \left\lceil n \cdot \varepsilon^2\right\rceil \\
+        &amp;\le \mathrm{OPT}_{I} + \varepsilon\left\lfloor n \cdot \varepsilon\right\rfloor + 1 \\
+    &amp;\le \mathrm{OPT}_{I} + \varepsilon\mathrm{OPT}_{I}+1 \\
+    &amp;= (1+\varepsilon)\mathrm{OPT}_{I} +1
+\end{aligned}
+\]</span> 我们就证明了我们装大物品的近似比是<span class="math inline">\((1+\varepsilon)\)</span>。注意到这个多出来的<span class="math inline">\(+1\)</span>虽然让人不爽，但是在渐进意义下是可以忽略的。但是因为毕竟是在渐渐意义下，我们刚刚的算法不能被称为PTAS了，而是APTAS（Asymptotic PTAS）。（这个<span class="math inline">\(+1\)</span>也不是没有办法去掉，只是如果要去掉那<span class="math inline">\(k\)</span>的表达式可能要复杂一点）</p>
+<p>接下来再处理小物品：我们现在对于大物品已经有了一个渐进近似比为<span class="math inline">\((1+\varepsilon)\)</span>的算法，我们如何在这个算法的解的基础上尽可能优地把小物品加进去呢？我们不妨使用见缝插针的策略。我们分析一下这样的效果：</p>
+<ol type="1">
+<li>如果我们使用见缝插针算法装小物品不需要开新的箱子，那么箱子数不变，我们的算法总体来说渐进近似比还是<span class="math inline">\((1+\varepsilon)\)</span>。</li>
+<li>如果我们开了新的箱子。我们可以证明：在我们方案中，至多有一个箱子，其里面物品的大小总和不大于<span class="math inline">\((1-\varepsilon)\)</span>，且这个箱子一定是在装小物品的时候新开的。证明方式和之前分析见缝插针算法的时候是类似的：如果有两个<span class="math inline">\((1-\varepsilon)\)</span>满的箱子，那么后开的那个箱子里面装的小物品一定可以塞进另外一个先前开的箱子里面，于是便产生了矛盾。我们分析一下这个情况下我们算法的近似比。假设我们的算法开了<span class="math inline">\(B\)</span>个箱子：</li>
+</ol>
+<p><span class="math display">\[
+\left.\begin{aligned}
+    (B-1)(1-\varepsilon) &lt; \sum_{i=1}^na_i \le \mathrm{OPT} \Rightarrow B\le \frac{\mathrm{OPT}}{1-\varepsilon} \\
+    \varepsilon \in \left(0,\frac{1}{2}\right] \Rightarrow \frac{1}{1-\varepsilon} = 1+2\varepsilon
++\frac{\varepsilon(2\varepsilon-1)}{1-\varepsilon} \le 1+2\varepsilon
+\end{aligned} \right\}
+\Rightarrow B\le (1+2\varepsilon) \mathrm{OPT}
+\]</span></p>
+<p>综上，我们算法的渐进近似比是<span class="math inline">\((1+2\varepsilon)\)</span>。</p>
+<p>最后回顾一下我们的APTAS：</p>
+<ol type="1">
+<li>暂时忽略小物品。</li>
+<li>设<span class="math inline">\(k=\left\lceil\frac{1}{\varepsilon^2}\right\rceil\)</span>并以此创建新实例<span class="math inline">\(J\)</span>。</li>
+<li>暴力搜索求得<span class="math inline">\(J\)</span>的最优解。</li>
+<li>把我们的最优解直接套到<span class="math inline">\(I\)</span>上面，得到大物品的装箱方案。</li>
+<li>使用见缝插针法将小物品装箱。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/11/Sublinear/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/11/Sublinear/" class="post-title-link" itemprop="url">次线性算法与有序判定问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-11 23:17:56" itemprop="dateCreated datePublished" datetime="2020-07-11T23:17:56-04:00">2020-07-11</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="什么是次线性算法">什么是次线性算法？</h1>
+<p>如何衡量算法的效率？一般来说，问题（以及对应的算法）可以分为以下几类：</p>
+<ol type="1">
+<li>不可判定问题。这种问题不存在算法。</li>
+<li>指数时间可解。这种问题虽然存在算法但是就目前我们的技术水平，对于大输入，它们没办法在可接受的时间内返回结果。</li>
+<li>多项式时间可解。这些算法可以在现在的电脑上较为高效地运行。</li>
+<li>线性时间可解。这是大多数人认为的最高效算法，一般来说不会有比这更高效的了（读取输入就是线性的，不读完输入怎么计算输出？）</li>
+<li><strong>次线性时间算法</strong>。“次线性”(sublinear)即“线性以下”，指在利用低于与输入线性的资源（可以是时间也可以是空间）的情况下解决问题的一类算法。这类算法有着非常不可思议的特性：它甚至都不会看完完整的输入！</li>
+</ol>
+<p>为什么我们需要次线性算法？</p>
+<p>大数据时代我们要处理的数据是在是太多了，光是谷歌一天就会产生20PB的数据，我们根本没有足够的时空资源来哪怕运行线性的算法或者把它们全部过一遍！但是我们又希望从这些数据中挖掘有价值的结论，就只能求助于次线性算法了。</p>
+<p>因为次线性算法没法看到完整的输入，给出错误的结果自然是情有可原的（在精确解没法在次线性时间内算出的情况下）。因此，次线性算法多是<strong>近似算法</strong>。同时，因为如果一个算法是确定性的，对手就可以预判这个算法会看那部分输入，并针对这个造出会让算法100%翻车的数据，因此<strong>随机化</strong>在次线性算法的设计也经常出现。</p>
+<h1 id="查询模型">查询模型</h1>
+<p>好，既然次线性算法不能把输入完整地读一遍，那么要怎么样才能获取输入的信息呢？我们将次线性算法获取输入信息的方式称为<strong>查询</strong>（query）。而算法的难易自然和可以进行的查询方式有着很大的关系，因此我们还需要一组规则定义在一个问题中可以进行何种方式的查询，这种规则称一个问题的<strong>查询模型</strong>（query model）。例如，在以数组为输入的问题当中，常见的查询方式是按照一个下标询问对应的值，在以图为输入的问题当中，查询可以是按照两点查询边权……可以看到，查询模型是因问题而异的。</p>
+<h1 id="有序判定问题sortedness-problem">有序判定问题（Sortedness Problem）</h1>
+<h2 id="定义">定义</h2>
+<p><strong>输入：</strong>一个<span class="math inline">\(n\)</span>个元素的数组<span class="math inline">\(A\)</span>。</p>
+<p><strong>查询模型：</strong>对于一个整数<span class="math inline">\(1\le i \le n\)</span>，查询<span class="math inline">\(A_i\)</span>的值。</p>
+<p><strong>目标：</strong>在尽量少的时间内（假设一次查询时<span class="math inline">\(\mathcal{O}(1)\)</span>的）<strong>判断这个数组是否是有序</strong>（此处单指<strong>升序</strong>）的。</p>
+<p>很显然，任何一个确定性的算法都必须进行<span class="math inline">\(\Omega(n)\)</span>次查询才能解决这个问题（不然肯定会有漏看的）。</p>
+<p>因此我们退而求其次：如果运用随机化的话，我们能不能在<span class="math inline">\(o(n)\)</span>次查询之内给出正确概率至少为<span class="math inline">\(\frac{1}{2}+\epsilon\ (\epsilon &gt;0)\)</span>的答案呢？</p>
+<p>（正确概率在这里只要大于<span class="math inline">\(\frac{1}{2}\)</span>就行，精确的值没有意义，因为我们总是可以重复运行不靠谱的算法提高正确率）</p>
+<p>答案还是不行（证明课上似乎没讲？）</p>
+<p>那我们怎么办？只好稍微把题目修改一下，再退而求其次看看能不能有高效的<strong>近似算法</strong>了。</p>
+<h2 id="修改后的定义">修改后的定义</h2>
+<p>我们不妨寻找这么一个算法，它</p>
+<ol type="1">
+<li>在数组有序的时候输出是</li>
+<li>在数组“非常无序”的时候输出否</li>
+<li>而对于那种非常接近有序的数组，我们干脆不管。</li>
+</ol>
+<p>设计这样的算法显然比设计能够精确解决这个问题的算法要容易多了。</p>
+<p>那么怎么样算是“非常无序”，怎么样算是“接近有序”呢？显然，我们需要在数学上给予这些描述严谨的定义。</p>
+<p><strong>定义：</strong>对于<span class="math inline">\(\epsilon\in(0,1)\)</span>，如果需要至少修改<span class="math inline">\(\epsilon n\)</span>个数才能让数组<span class="math inline">\(A\)</span>变为有序，那么称数组<span class="math inline">\(A\)</span>是<span class="math inline">\(\epsilon\)</span>无序（<span class="math inline">\(\epsilon\)</span>-far from sorted）的。</p>
+<p>那么我们就可以进一步精炼我们上面的问题了：我们需要设计一个算法，使其</p>
+<ol type="1">
+<li>在<span class="math inline">\(A\)</span>有序的时候输出是</li>
+<li>在<span class="math inline">\(A\)</span> <span class="math inline">\(\epsilon\)</span>无序的时候输出否</li>
+</ol>
+<p>（<span class="math inline">\(\epsilon\)</span>是算法的一个参数）</p>
+<p>从这里其实可以看到对于近似算法的一种设计思路：对于数值型的问题，我们通过对于最优解的放缩定义了近似比<span class="math inline">\(\alpha\)</span>，而对于判定型的问题，我们试图放宽需要判定的条件。在上面的问题当中我们相当于变相假设，或者说承诺了<span class="math inline">\(A\)</span>要么是有序要么是<span class="math inline">\(\epsilon\)</span>无序的，因此这种问题被称作promise problem。</p>
+<h2 id="二元数组">二元数组</h2>
+<p>我们先从最简单的情形开始分析：如果数组只有<span class="math inline">\(0\)</span>和<span class="math inline">\(1\)</span>两种元素呢？</p>
+<h3 id="初步分析">初步分析</h3>
+<p>显然此时数组有序等价于所有的<span class="math inline">\(0\)</span>都在<span class="math inline">\(1\)</span>前面。</p>
+<p>我们不妨定义两个集合，<span class="math inline">\(L_1\)</span>和<span class="math inline">\(R_0\)</span>。如果将数组里的元素从左到右排列，<span class="math inline">\(L_1\)</span>表示最靠左的<span class="math inline">\(\frac{\epsilon n}{2}\)</span>个<span class="math inline">\(1\)</span>的下标集合，<span class="math inline">\(R_0\)</span>表示最靠右的<span class="math inline">\(\frac{\epsilon n}{2}\)</span>个<span class="math inline">\(0\)</span>的下标集合。</p>
+<p>显然在数组有序时，<span class="math inline">\(L_1\)</span>整体都在<span class="math inline">\(R_0\)</span>右边。而当数组不有序时，有可能：</p>
+<ol type="1">
+<li><span class="math inline">\(L_1\)</span>和<span class="math inline">\(R_0\)</span>的区间重叠。</li>
+<li><span class="math inline">\(L_1\)</span>在<span class="math inline">\(R_0\)</span>的左边。</li>
+</ol>
+<p>接下来我们证明：</p>
+<p><strong>引理：</strong>如果<span class="math inline">\(A\)</span>是<span class="math inline">\(\epsilon\)</span>无序的，那么<span class="math inline">\(L_1\)</span>必定在<span class="math inline">\(R_0\)</span>左边且不重叠。</p>
+<p><strong>证明：</strong>我们使用反证法，不妨假设<span class="math inline">\(L_1\)</span>和<span class="math inline">\(R_0\)</span>有重叠的部分： <span class="math display">\[
+0,0,\cdots,\rlap{\overbrace{1,\cdots,1,0,1}^{L_1} }1,\cdots,1,\underbrace{ {\color{blue}{0} },{\color{red}{1} },0,\cdots,0}_{R_0},\cdots1,1
+\]</span></p>
+<p><span class="math inline">\(\color{red}1\)</span>是<span class="math inline">\(L_1\)</span>中最右边的<span class="math inline">\(1\)</span>，<span class="math inline">\(\color{blue}0\)</span>是<span class="math inline">\(R_0\)</span>中最左边的<span class="math inline">\(0\)</span>。</p>
+<p>由<span class="math inline">\(L_1,R_0\)</span>的定义可知，<span class="math inline">\(\color{red}1\)</span>左侧的<span class="math inline">\(1\)</span>的数量严格小于<span class="math inline">\(\frac{\epsilon n}{2}\)</span>，<span class="math inline">\(\color{blue}0\)</span>右侧的<span class="math inline">\(0\)</span>的数量也严格小于<span class="math inline">\(\frac{\epsilon n}{2}\)</span>。而注意到如果把<span class="math inline">\(\color{red}1\)</span>的左侧<span class="math inline">\(1\)</span>改成<span class="math inline">\(0\)</span>，把<span class="math inline">\(\color{blue}0\)</span>右侧的<span class="math inline">\(0\)</span>的改成<span class="math inline">\(1\)</span>，那么数组就变得有序了，而此时我们修改的元素数量严格小于<span class="math inline">\(\epsilon n\)</span>，这和数组是<span class="math inline">\(\epsilon\)</span>无序的前提是矛盾的。</p>
+<h3 id="算法">算法</h3>
+<p>接下来我们给出能够以<span class="math inline">\(1-\delta\)</span>的成功率判定二元数组有序性的算法：</p>
+<ol type="1">
+<li>从数组当中随机选取<span class="math inline">\(t=\frac{2}{\epsilon}\ln\frac{2}{\delta}\)</span>个下标<span class="math inline">\(i_1,\cdots,i_t\)</span>（为了简化分析，允许下标重复）。</li>
+<li>查询<span class="math inline">\(A_{i_1},\cdots, A_{i_t}\)</span>的值。</li>
+<li>如果在<span class="math inline">\(\left\{A_{i_1},\cdots, A_{i_t}\right\}\)</span>当中发现了逆序对，输出否，否则输出是。</li>
+</ol>
+<h3 id="分析">分析</h3>
+<p>很显然，如果数组是有序的，那么我们的算法一定会输出是，成功率<span class="math inline">\(1&gt;1-\delta\)</span>。</p>
+<p>而如果数组是<span class="math inline">\(\epsilon\)</span>-无序的，为了证明此时的成功率至少为<span class="math inline">\(1-\delta\)</span>，我们只需要证明 <span class="math display">\[
+\operatorname{Pr}[\text{wrong answer}] \le \delta
+\]</span> 即错误（输出了是）概率不大于<span class="math inline">\(\delta\)</span>。</p>
+<p>设随机事件<span class="math inline">\(E_L\)</span>表示在随机选取的<span class="math inline">\(t\)</span>个下标中，至少有一个下标来自<span class="math inline">\(L_1\)</span>，<span class="math inline">\(E_R\)</span>表示至少有一个下标来自<span class="math inline">\(R_0\)</span>。</p>
+<p>那么由之前的引理，如果<span class="math inline">\(E_L\cap E_R\)</span>，我们一定找得到逆序对。</p>
+<p>因此只有可能在<span class="math inline">\(\overline{E_L\cap E_R}\)</span>才有可能出错： <span class="math display">\[
+\begin{aligned}
+    \operatorname{Pr}[\text{wrong answer}] \le \operatorname{Pr}\left[\overline{E_L}\cup\overline{E_R} \right] \le \operatorname{Pr}\left[\overline{E_L}\right] +  \operatorname{Pr}\left[\overline{E_R}\right]
+\end{aligned}
+\]</span> 而 <span class="math display">\[
+\begin{aligned}
+    \operatorname{Pr}\left[\overline{E_L}\right] &amp;= \left(1-\frac{\left|L_1\right|}{n}\right) ^ t \\
+    &amp;= \left(1-\frac{\epsilon}{2}\right)^{\frac{2}{\epsilon}\ln\frac{2}{\delta}} \\
+    &amp;\le \left(e^{-\frac{\epsilon}{2}}\right)^{\frac{2}{\epsilon}\ln\frac{2}{\delta}} \\
+    &amp;= \frac{\delta}{2}
+\end{aligned}
+\]</span> 倒数第二步我们运用了不等式<span class="math inline">\(1+x\le e^x\)</span>。</p>
+<p>同理可证<span class="math inline">\(\operatorname{Pr}\left[\overline{E_R}\right] \le \frac{\delta}{2}\)</span>，因此 <span class="math display">\[
+\operatorname{Pr}[\text{wrong answer}] \le \operatorname{Pr}\left[\overline{E_L}\right] +  \operatorname{Pr}\left[\overline{E_R}\right] \le \frac{\delta}{2} + \frac{\delta}{2} = \delta
+\]</span> 证毕。</p>
+<h3 id="时间复杂度">时间复杂度</h3>
+<p>随机采样花费的时间复杂度为<span class="math inline">\(\mathcal{O}(t)\)</span>。</p>
+<p>查询子数组花费的时间复杂度也是<span class="math inline">\(\mathcal{O}(t)\)</span>。</p>
+<p>而在子数组当中查找逆序对也可以被优化成<span class="math inline">\(\mathcal{O}(t)\)</span>，实现的方法有很多，例如可以计算<span class="math inline">\(1\)</span>的下标的最小值和<span class="math inline">\(0\)</span>的下标的最大值进行比较等。</p>
+<p>因此这个算法的时间复杂度就是<span class="math inline">\(\mathcal O(t) = \mathcal O\left(\frac{1}{\epsilon}\ln\frac{1}{\delta}\right)\)</span>，和<span class="math inline">\(n\)</span>无关。</p>
+<h2 id="一般情况">一般情况</h2>
+<p>接下来我们来看数组元素可以是任意数字的情况。</p>
+<p>我们之前随机采样的想法还能继续沿用吗？</p>
+<p>考虑如下情况： <span class="math display">\[
+3,2,1{\color{red}|}6,5,4{\color{red}|}9,8,7
+\]</span> 虽然这个数组是<span class="math inline">\(\frac{2}{3}\)</span>无序的，但是如果我的随机采样在每个段中只挑了一个元素，那采样出来的子序列却一定是有序的，我们的算法就被糊弄过去了。</p>
+<p>这就是问题所在：如果我们把一个数组分成若干段“总体有序，但局部无序”的连续段，显然这样的段最多可以有<span class="math inline">\(\mathcal O(n)\)</span>个。而为了能够在子序列当中找到逆序对，就必须从同一个段当中至少选两个数。而由生日悖论可知，为了大概率确保能从一个段中选两个数，我们必须至少随机选<span class="math inline">\(\mathcal O\left(\sqrt n\right)\)</span>个数——这让我们之前的分析几乎废掉。</p>
+<p>那怎么办呢？</p>
+<p>考虑一个有序的数组所具有的性质。在算法层面，一个熟悉的性质便是：<strong>可以进行二分查找</strong>。</p>
+<p>这给我们一个思路：如果我们不管三七二十一在给定的数组上跑二分，如果二分翻车了，那么数组一定是无序的，如果二分没翻车，数组或许就是有序的。</p>
+<p>如何定义二分有没有“翻车”？或者说，如何定义一次正常的二分？</p>
+<p>引入<em>一致二分查找</em>（Consistent Binary Search）的概念，如果对于一次二分查找，</p>
+<ol type="1">
+<li>我最后找到了我要找的那个数（也就是说，如果我要找的是<span class="math inline">\(A_i\)</span>，而我的二分最后终止于下标<span class="math inline">\(i\)</span>），</li>
+<li>假设二分的左右端点和终点分别为<span class="math inline">\(l,r,m\)</span>，二分的过程中<span class="math inline">\(A_l &lt; A_m &lt; A_r\)</span>始终成立，</li>
+</ol>
+<p>那么我们称这次二分查找是“一致的”或“相容的”（我觉得翻译成哪个似乎都不大合适）。</p>
+<h3 id="算法-1">算法</h3>
+<p>在二分思想的指引下我们提出如下的算法：</p>
+<ol type="1">
+<li>随机选择一个下标<span class="math inline">\(i\)</span>并查询<span class="math inline">\(A_i\)</span>的值。</li>
+<li>二分查找<span class="math inline">\(A_i\)</span>。</li>
+<li>如果这次二分查找是一致的，那么输出是，反之输出否。</li>
+</ol>
+<h3 id="分析-1">分析</h3>
+<p><strong>引理：</strong>如果对于<span class="math inline">\(A_i\)</span>和<span class="math inline">\(A_j\)</span>的二分查找都是一致的，而且<span class="math inline">\(i&lt;j\)</span>，一定有<span class="math inline">\(A_i&lt;A_j\)</span>。</p>
+<p><strong>证明：</strong>虽然两次二分查找中前几层的搜索区间可能相同，但由于<span class="math inline">\(i &lt; j\)</span>，到了某一层一定会出现<span class="math inline">\(A_i\)</span>往左边，<span class="math inline">\(A_j\)</span>往右边的分歧。假设该层搜索区间的中点是<span class="math inline">\(A_m\)</span>，显然对<span class="math inline">\(A_i\)</span>的二分搜索之所以在这层之后往左走是因为<span class="math inline">\(A_i &lt; A_m\)</span>，同理可知<span class="math inline">\(A_j&gt;A_m\)</span>，将二式组合引理便得证。</p>
+<p>假设<span class="math inline">\(C\)</span>表示所有对下标对应的数进行的二分搜索是一致的下标的集合。则由刚刚的引理，由<span class="math inline">\(C\)</span>中下标组成的原数组的子序列一定是有序的。因为原数组是<span class="math inline">\(\epsilon\)</span>无序的，因此必然有<span class="math inline">\(|C|&lt;(1-\epsilon) n\)</span>（可以通过反证法证明）。</p>
+<p>这个结论有什么意义呢？要知道我们的算法在原数组有序的时候一定输出正确的结果，而在原数组无序时，我们算法只有在抽到<span class="math inline">\(C\)</span>中的下标时才会做出误判。因此我们算法的错误率的上界为<span class="math inline">\(1-\epsilon\)</span>。</p>
+<p>在得出这个上界之后，我们就可以改进我们的算法了：</p>
+<ol type="1">
+<li>将之前的算法运行<span class="math inline">\(k=\frac{1}{\epsilon}\ln\frac{1}{\delta}\)</span>遍。</li>
+<li>如果<span class="math inline">\(k\)</span>次运行的结果都为是，则输出是，反之则输出否。</li>
+</ol>
+<p>这样的错误率是多少呢？ <span class="math display">\[
+\begin{aligned}
+    \operatorname{Pr}[\text{wrong answer}] &amp;\le \left(1-\epsilon\right)^k \\
+    &amp;= \left(1-\epsilon\right)^{\frac{1}{\epsilon}\ln\frac{1}{\delta}} \\
+    &amp;\le \left(e^{-\epsilon}\right)^{\frac{1}{\epsilon}\ln\frac{1}{\delta}} \\
+    &amp; = \delta
+\end{aligned}
+\]</span> 因此正确率至少为<span class="math inline">\(1-\delta\)</span>，符合我们的要求。而这个算法的时间复杂度是<span class="math inline">\(\mathcal O\left(\frac{1}{\epsilon}\ln\frac{1}{\delta}\log n\right)\)</span>，也是相当优秀的。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/11/PACT0630/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/11/PACT0630/" class="post-title-link" itemprop="url">PACT 06/30 $k$中心问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-11 23:17:28" itemprop="dateCreated datePublished" datetime="2020-07-11T23:17:28-04:00">2020-07-11</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="定义">定义</h1>
+<p>定义所谓<span class="math inline">\(k\)</span>中心问题为：</p>
+<p><strong>输入：</strong>完全图<span class="math inline">\(G=(V,E)\)</span>，边带正权，且满足三角不等式<span class="math inline">\(w_{uv} \le w_{uk} + w_{kv}\)</span>，以及一个正整数<span class="math inline">\(k\)</span>。</p>
+<p><strong>目标：</strong>求一个点集<span class="math inline">\(|S|=k\)</span>（称为<span class="math inline">\(k\)</span>个中心），定义一个点到一个点集的距离 <span class="math display">\[
+d(u,S) = \min_{v\in S} w_{uv}
+\]</span> （显然，如果满足三角不等式，那么任意两点之间的最短距离就是直接连接两点的边权）</p>
+<p>要求最小化<span class="math inline">\(\max_{u\in V} d(u,S)\)</span>。即所有顶点到这<span class="math inline">\(k\)</span>个中心的<strong>最短路程的最大值</strong>（不妨称之为这个这个<span class="math inline">\(k\)</span>中心的<strong>代价</strong>）最小。</p>
+<h1 id="近似算法1gonzalez">近似算法1（Gonzalez）</h1>
+<h2 id="算法">算法</h2>
+<ol type="1">
+<li>任意选取一个顶点并将其加入<span class="math inline">\(S\)</span>。</li>
+<li>选取离当前<span class="math inline">\(S\)</span>最远的顶点加入<span class="math inline">\(S\)</span>。</li>
+<li>重复步骤2直至<span class="math inline">\(|S|=k\)</span>。</li>
+</ol>
+<p>第2步的操作是非常合乎直觉的：如果不把离<span class="math inline">\(S\)</span>最远的顶点加入<span class="math inline">\(S\)</span>的话，这条最远的边权就可能会被计入答案当中，这显然是不合算的，而如果将这个最远点作为新的中心，那么这条最远边就必定不会被计入答案。</p>
+<h2 id="分析">分析</h2>
+<p>这个算法给出方案的代价是什么？在这个算法的背景下，我们不妨说：<em>这个算法结果的代价是如果不跳出循环，下一个选取的中心到当前<span class="math inline">\(S\)</span>的距离</em>（依据第2步）。假设这个中心为<span class="math inline">\(x\)</span>，我们不妨画图：</p>
+<p><img src="/2020/07/11/PACT0630/Analysis1.jpg" class=""></p>
+<p>其中左边的<span class="math inline">\(S\)</span>是我们的解，右边是最优解（我们这里把他们化成了不重叠的形式，事实上有重叠对于我们的论证也不造成影响）。</p>
+<p>我们的解加上<span class="math inline">\(x\)</span>总共有<span class="math inline">\(k+1\)</span>个点，最优解有<span class="math inline">\(k\)</span>个点，因此由抽屉原理，至少左边有两个点，它们在最优解中的最近点是相同的（即图中的两条横叉边），且由于是最优解，两条边的长度都<span class="math inline">\(\le \mathrm{OPT}\)</span>。</p>
+<p>不妨设这两个点为<span class="math inline">\(u,v\)</span>，由三角不等式，可以得出<span class="math inline">\(w_{uv}\le2\cdot\mathrm{OPT}\)</span>。</p>
+<p>接下来不妨假设<span class="math inline">\(u,v\)</span>中的后来者为<span class="math inline">\(v\)</span>，为什么当时我们选择<span class="math inline">\(v\)</span>而不是<span class="math inline">\(x\)</span>加入<span class="math inline">\(S\)</span>呢？肯定是因为当时<span class="math inline">\(d(v,S)\ge d(x,S)\)</span>。而由<span class="math inline">\(d(v,S)\)</span>的定义可知，<span class="math inline">\(d(v,S)\le w_{uv}\)</span>，且由于随着<span class="math inline">\(S\)</span>的变大，<span class="math inline">\(d(x,S)\)</span>不增，因此我们解的代价（即现在的<span class="math inline">\(d(x,S)\)</span>）一定也是不大于当时的<span class="math inline">\(d(v,S)\)</span>。将这些不等式串联起来，便得到： <span class="math display">\[
+d(x,S) \le w_{uv} \le 2\cdot \mathrm{OPT}
+\]</span> 也就是说这个算法的近似比为<span class="math inline">\(2\)</span>。</p>
+<h1 id="近似算法2hochbaum-shmoys">近似算法2（Hochbaum &amp; Shmoys）</h1>
+<h2 id="算法-1">算法</h2>
+<p>我们不妨<strong>假设我们已经知道了最优解的代价</strong><span class="math inline">\(\mathrm{OPT}\)</span>，那么我们要怎么做呢？</p>
+<ol type="1">
+<li>我们选取任意顶点<span class="math inline">\(u_1\)</span>加入中心，并以为中心画一个半径为的球，钦定球内的所有点归<span class="math inline">\(u_1\)</span>。</li>
+<li>我们接着选取一个在这个球以外的一个顶点<span class="math inline">\(u_2\)</span>加入中心，并以<span class="math inline">\(u_2\)</span>为中心画一个半径为<span class="math inline">\(2\cdot \mathrm{OPT}\)</span>的球，钦定球里面的点归<span class="math inline">\(u_2\)</span>。</li>
+<li>我们接着选取一个在<span class="math inline">\(u_1\)</span>和<span class="math inline">\(u_2\)</span>的球外的点<span class="math inline">\(u_3\)</span>作为中心……</li>
+<li>重复上述步骤，直至图上的所有点都归一个至多<span class="math inline">\(2\cdot \mathrm{OPT}\)</span>远处的中心管。</li>
+</ol>
+<p>画在图上大概是这样的：</p>
+<p><img src="/2020/07/11/PACT0630/HS.jpg" class=""></p>
+<p>可以看到，可能会有点同时处在多个中心的“势力范围”之内，但这并不重要，我们只需要确保每个点离最近的一个中心至多<span class="math inline">\(2\cdot \mathrm{OPT}\)</span>那么远就行了。</p>
+<h2 id="分析-1">分析</h2>
+<p>我们接下来证明这是一个<span class="math inline">\(2\)</span>近似算法。算法本身的流程确保了<span class="math inline">\(2\)</span>的近似比，因此唯一需要证明的就是这个算法产生的中心不超过要求的<span class="math inline">\(k\)</span>个。</p>
+<p>不妨反证：如果产生了超过<span class="math inline">\(k\)</span>个中心呢？</p>
+<p><img src="/2020/07/11/PACT0630/Analysis2.jpg" class=""></p>
+<p>那么根据抽屉原理，至少有两个中心在最优解中的最近点是相同的（这和我们分析第一个算法时的逻辑是完全相同的），由三角不等式，这两个中心之间的距离<span class="math inline">\(\le 2\cdot \mathrm{OPT}\)</span>。但是根据算法，中心之间两两距离应该大于<span class="math inline">\(2\cdot \mathrm{OPT}\)</span>，这就产生了矛盾。</p>
+<p>因此必定不会有超过<span class="math inline">\(k\)</span>个中心，证毕。</p>
+<p>还剩下来一个问题：这个算法假定我们知道<span class="math inline">\(\mathrm{OPT}\)</span>，但是实际上我们不知道啊！</p>
+<p>但是我们知道<span class="math inline">\(\mathrm{OPT}\)</span><em>一定是某一条边的边权</em>，因此我们只需要按边权从小到大<strong>枚举每一条边，把边权当做<span class="math inline">\(\mathrm{OPT}\)</span>试试看</strong>，如果产生超过<span class="math inline">\(k\)</span>个中心那必然不是<span class="math inline">\(\mathrm{OPT}\)</span>（这是我们推论的逆否），而反之则可能就是<span class="math inline">\(\mathrm{OPT}\)</span>（但无论如何，事实上是<span class="math inline">\(\mathrm{OPT}\)</span>的那条边一定是没有问题的）。因为我们在这里只在意是否是多项式时间复杂度而不在意复杂度本身，而枚举边自然是多项式时间的，因此没有任何问题（当然，在实现过程中可以考虑使用二分，但这就是后话了）。</p>
+<h1 id="近似比可以更好吗">近似比可以更好吗？</h1>
+<p><strong>定理：</strong>如果存在一个多项式时间的，近似比<span class="math inline">\(&lt;2\)</span>的<span class="math inline">\(k\)</span>中心问题的近似算法，那么<span class="math inline">\(\mathsf{P}=\mathsf{NP}\)</span>。</p>
+<p><strong>证明：</strong>考虑<em>最小支配集问题</em>的判定形式：</p>
+<p><strong>输入：</strong>无向图<span class="math inline">\(G=(V,E)\)</span>以及正整数<span class="math inline">\(k\)</span>。</p>
+<p><strong>判定：</strong>是否存在一个大小为<span class="math inline">\(k\)</span>的支配集？支配集定义为一个点集<span class="math inline">\(S\subseteq V\)</span>，使得<span class="math inline">\(\forall u\in V\)</span>，要么<span class="math inline">\(u\in S\)</span>或者<span class="math inline">\(u\)</span>的邻居<span class="math inline">\(\in S\)</span>。</p>
+<p>最小支配集问题是NPC的。我们接下来将其规约到<span class="math inline">\(k\)</span>中心问题（也是判定形式）：</p>
+<p><strong>输入：</strong>完全图<span class="math inline">\(G&#39;\)</span>，正整数<span class="math inline">\(k,b\)</span>。</p>
+<p><strong>判定：</strong>是否存在一个代价<span class="math inline">\(\le b\)</span>的<span class="math inline">\(k\)</span>中心的方案？</p>
+<p>如何规约？不难想到，我们可以让<span class="math inline">\(G\)</span>与<span class="math inline">\(G&#39;\)</span>用相同的点集，而对于所有在<span class="math inline">\(G\)</span>中的边，其在<span class="math inline">\(G&#39;\)</span>中的边权为<span class="math inline">\(1\)</span>。而对于所有不在<span class="math inline">\(G\)</span>中的边，其在<span class="math inline">\(G&#39;\)</span>中的边权为<span class="math inline">\(2\)</span>（为什么是<span class="math inline">\(2\)</span>？直觉上我们会首先想到<span class="math inline">\(\infty\)</span>，但是这样就不满足三角不等式了，因此改成<span class="math inline">\(2\)</span>）。令两个问题当中的<span class="math inline">\(k\)</span>相等，且<span class="math inline">\(b=1\)</span>，我们就完成了规约。</p>
+<p>为什么？</p>
+<p>在这样的规约下，一个在<span class="math inline">\(G\)</span>中的支配集必然对应一个<span class="math inline">\(G&#39;\)</span>当中代价为<span class="math inline">\(1\)</span>的相同大小的<span class="math inline">\(k\)</span>中心，反之亦然。</p>
+<p>也就是说，如果我们可以解决这个规约后的<span class="math inline">\(k\)</span>中心问题，那么我们就能解决原来的最小支配集问题了。</p>
+<p>这个时候就可以看出为什么近似比<span class="math inline">\(&lt;2\)</span>的近似算法牛逼了：</p>
+<ol type="1">
+<li>如果<span class="math inline">\(G\)</span>当中有符合要求的支配集，那么<span class="math inline">\(k\)</span>中心的<span class="math inline">\(\mathrm{OPT}=1\)</span>，而由于近似比<span class="math inline">\(&lt;2\)</span>且边权只有<span class="math inline">\(1,2\)</span>，因此即使是近似算法也会次次给出<span class="math inline">\(1\)</span>。</li>
+<li>如果<span class="math inline">\(G\)</span>当中没有符合要求的支配集，那么<span class="math inline">\(k\)</span>中心的<span class="math inline">\(\mathrm{OPT} = 2\)</span>，而由于近似比<span class="math inline">\(&lt;2\)</span>且边权只有<span class="math inline">\(1,2\)</span>，因此即使是近似算法也只能给出<span class="math inline">\(2\)</span>。</li>
+</ol>
+<p>如此说来，即使是近似算法，通过判断输出代价是<span class="math inline">\(1\)</span>还是<span class="math inline">\(2\)</span>我们就能判断<span class="math inline">\(G\)</span>中有没有大小<span class="math inline">\(k\)</span>的支配集。而这个近似算法是多项式时间的，因此我们可以用多项式时间解决支配集问题这么一个NPC问题，即<span class="math inline">\(P=NP\)</span>。</p>
+<p>刚刚用到的这个技巧被称为“gap reduction”。</p>
+<p>整个定理的言下之意就是如果你也相信<span class="math inline">\(\mathsf{P}\neq \mathsf{NP}\)</span>，那么就可以洗洗睡了~</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/11/PACT0629/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/11/PACT0629/" class="post-title-link" itemprop="url">PACT 06/29 三大概率不等式以及近似算法初步</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-11 23:17:10" itemprop="dateCreated datePublished" datetime="2020-07-11T23:17:10-04:00">2020-07-11</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="概率论初步">概率论初步</h1>
+<h2 id="期望的线性性">期望的线性性</h2>
+<p><span class="math display">\[
+\mathbb{E}[X+Y] = \mathbb E [X] + \mathbb E[Y]
+\]</span></p>
+<h2 id="随机变量的方差">随机变量的方差</h2>
+<p><span class="math display">\[
+\begin{aligned}
+    \operatorname{Var}[X] &amp;:= \mathbb{E}\left[\left(X-\mathbb{E}[X]\right)^2\right] \\
+    &amp;= \mathbb{E} \left[X^2 - 2\mathbb{E}[X]X+\mathbb{E}[X]^2\right] \\
+    &amp;= \mathbb{E} \left[X^2\right] - 2\mathbb{E}[X]^2 + \mathbb{E}[X]^2 \\
+    &amp;= \mathbb{E} \left[X^2\right] - \mathbb{E}[X]^2
+\end{aligned}
+\]</span></p>
+<p><strong>推论：</strong>若随机变量<span class="math inline">\(X,Y\)</span>互相独立，则有：</p>
+<ol type="1">
+<li><span class="math inline">\(\operatorname{Var}[X+Y] = \operatorname{Var}[X] + \operatorname{Var}[Y]\)</span></li>
+<li><span class="math inline">\(\mathbb{E}[XY] = \mathbb{E}[X]\mathbb{E}[Y]\)</span></li>
+</ol>
+<p>（互相独立的定义：<span class="math inline">\(\forall x, y, \operatorname{Pr}[X=x\cap Y=y]=\operatorname{Pr}[X=x]\operatorname{Pr}[Y=y]\)</span>）</p>
+<h2 id="马尔科夫不等式">马尔科夫不等式</h2>
+<p>设<span class="math inline">\(X\)</span>为<strong>非负</strong>随机变量，则<span class="math inline">\(\forall a &gt;0\)</span>： <span class="math display">\[
+\operatorname{Pr}[X\ge a] \le \frac{\mathbb{E}[X]}{a}
+\]</span> <strong>证明：</strong> <span class="math display">\[
+\begin{aligned}
+    \mathbb{E}[X] &amp;= \sum_{x}x\operatorname{Pr}[X=x] \\
+    &amp;= \sum_{x&lt;a}x\operatorname{Pr}[X=x] + \sum_{x\ge a}x\operatorname{Pr}[X=x] \\
+    &amp;\ge \sum_{x\ge a}x\operatorname{Pr}[X=x] \\
+    &amp;\ge \sum_{x\ge a}a\operatorname{Pr}[X=x] \\
+    &amp;= a \sum_{x\ge a}\operatorname{Pr}[X=x] \\
+    &amp;= a \operatorname{Pr}[X\ge x]
+\end{aligned}
+\]</span> （离散形式，连续形式的证明方法类似）</p>
+<p>其中第一个<span class="math inline">\(\ge\)</span>依赖于<span class="math inline">\(X\)</span>非负的特性，因此非负是必须的！</p>
+<p>马尔科夫不等式让我们可以在只知道随机变量期望的情况下对于其分布概率进行粗略定界。</p>
+<h2 id="切比雪夫不等式">切比雪夫不等式</h2>
+<p>设<span class="math inline">\(X\)</span>为随机变量，则<span class="math inline">\(\forall a &gt; 0\)</span>： <span class="math display">\[
+\operatorname{Pr}\left[|X-\mathbb{E}[X]| \ge a\right] \le \frac{\operatorname{Var}[X]}{a^2}
+\]</span> <strong>证明：</strong> <span class="math display">\[
+\begin{aligned}
+    \operatorname{Pr}\left[|X-\mathbb{E}[X]| \ge a\right] &amp;= \operatorname{Pr}\left[(X-\mathbb{E}[X])^2 \ge a^2\right] \\
+    &amp;\le \frac{\mathbb{E}\left[(X-\mathbb{E}[X])^2\right]}{a^2} \\
+    &amp;= \frac{\operatorname{Var}[X]}{a^2}
+\end{aligned}
+\]</span> 注意到<span class="math inline">\(a^2&gt;0\)</span>且<span class="math inline">\((X-\mathbb{E}[X])^2\)</span>非负，因此我们可以在第二步使用马尔科夫不等式。</p>
+<p>如果我们不仅知道随机变量的期望（一阶矩），还知道其方差（二阶矩），那么切比雪夫不等式可以给出比马尔科夫不等式更为精确的上界。</p>
+<h2 id="切尔诺夫上界chernoff-bound">切尔诺夫上界（Chernoff Bound）</h2>
+<p>设随机变量<span class="math inline">\(X=\sum_{i=1}^n X_i\)</span>，其中<span class="math inline">\(X_1,\cdots,X_n\)</span>为<span class="math inline">\([0,1]\)</span>上互相独立的随机变量，则<span class="math inline">\(\forall t&gt;1\)</span>： <span class="math display">\[
+\operatorname{Pr}\left[|X - \mathbb{E}[X]| \ge t\mathbb{E}[X]\right] \le 2\exp\left(-\frac{t\mathbb{E}[X]}{3}\right)
+\]</span> 且<span class="math inline">\(\forall \epsilon \in (0,1]\)</span>： <span class="math display">\[
+\operatorname{Pr}\left[|X - \mathbb{E}[X]| \ge \epsilon\mathbb{E}[X]\right] \le 2\exp\left(-\frac{\epsilon^2\mathbb{E}[X]}{3}\right)
+\]</span> <em>加性切尔诺夫不等式（Additive Chernoff Bound）</em>：<span class="math inline">\(\forall b &gt;1\)</span>： <span class="math display">\[
+\operatorname{Pr}\left[|X - \mathbb{E}[X]| \ge b\right] \le 2\exp\left(-\frac{2b^2}{n}\right)
+\]</span></p>
+<h2 id="三个不等式给出上界的比较">三个不等式给出上界的比较</h2>
+<p>考虑如下问题：投<span class="math inline">\(n\)</span>次均质硬币，设随机变量<span class="math inline">\(X\)</span>表示头朝上的次数。估计<span class="math inline">\(\operatorname{Pr}\left[X\ge \frac{3n}{4}\right]\)</span>？</p>
+<p><strong>马尔科夫不等式：</strong></p>
+<p>显然，<span class="math inline">\(\mathbb{E}[X]=\frac{n}{2}\)</span>，且<span class="math inline">\(X\)</span>非负： <span class="math display">\[
+\operatorname{Pr}\left[X\ge \frac{3n}{4}\right] \le \frac{\frac{n}{2}}{\frac{3n}{4}} = \frac{2}{3}
+\]</span> 这个上界是很松的。</p>
+<p><strong>切比雪夫不等式：</strong></p>
+<p>设随机二元变量<span class="math inline">\(X_i\)</span>表示第<span class="math inline">\(i\)</span>次投是否头朝上，则显然<span class="math inline">\(X=\sum_{i=1}^nX_i\)</span>，且易得<span class="math inline">\(\operatorname{Var}[X_i]=\frac{1}{4}\)</span>，由于<span class="math inline">\(X_i\)</span>两两独立，则<span class="math inline">\(\operatorname{Var}[X]=\frac{n}{4}\)</span>，运用切比雪夫不等式： <span class="math display">\[
+\begin{aligned}
+    \operatorname{Pr}\left[X\ge \frac{3n}{4}\right] &amp;= \operatorname{Pr}\left[X - \frac{n}{2}\ge \frac{n}{4}\right] \\
+    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \frac{n}{2}\right|\ge \frac{n}{4}\right] \\
+    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \mathbb{E}[X]\right|\ge \frac{n}{4}\right] \\
+    &amp;\le \frac{1}{2} \frac{\frac{n}{4}}{\left(\frac{n}{4}\right)^2} \\
+    &amp;= \frac{2}{n}
+\end{aligned}
+\]</span> <strong>切尔诺夫上界：</strong></p>
+<p>显然，取<span class="math inline">\(\epsilon = \frac{1}{2}\)</span>： <span class="math display">\[
+\begin{aligned}
+    \operatorname{Pr}\left[X\ge \frac{3n}{4}\right] &amp;= \operatorname{Pr}\left[X - \frac{n}{2}\ge \frac{n}{4}\right] \\
+    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \frac{n}{2}\right|\ge \frac{n}{4}\right] \\
+    &amp;= \frac{1}{2}\operatorname{Pr}\left[\left|X - \mathbb{E}[X]\right|\ge \frac{1}{2}\mathbb{E}[X]\right] \\
+    &amp;\le \exp\left(-\frac{1}{12}\cdot \frac{n}{2}\right)\\
+    &amp;= \exp\left(-\frac{n}{24}\right)
+\end{aligned}
+\]</span> 各上界的效果：</p>
+<p><img src="/2020/07/11/PACT0629/Bounds.png" class=""></p>
+<p>看来这个例子里面还是切比雪夫不等式给出的上界最好——是不是切尔诺夫上界我学到的形式本身太loose了？</p>
+<h1 id="近似算法初步">近似算法初步</h1>
+<h2 id="定义">定义</h2>
+<p>若算法<span class="math inline">\(A\)</span>满足以下条件，则称算法<span class="math inline">\(A\)</span>是某个问题（不妨假设是最小化问题）的<span class="math inline">\(\alpha\)</span>近似比的近似算法：</p>
+<ol type="1">
+<li><span class="math inline">\(A\)</span>是多项式时间的。</li>
+<li>对于所有输入，<span class="math inline">\(A\)</span>的输出<span class="math inline">\(\operatorname{soln}(A) \le \alpha \cdot\mathrm{OPT}\)</span>，其中<span class="math inline">\(\mathrm{OPT}\)</span>是该输入的最优解。</li>
+</ol>
+<p><em>对于最大化问题，第二个条件为<span class="math inline">\(\operatorname{soln}(A) \ge \frac{1}{\alpha} \cdot\mathrm{OPT}\)</span></em>。</p>
+<p>（继续假设是最小化问题）</p>
+<p>显然，为了精确计算<span class="math inline">\(\alpha\)</span>我们必须知道<span class="math inline">\(\mathrm{OPT}\)</span>，而这显然是不现实的（如果可以我还要近似算法干嘛？），因此我们退而求其次寻找<span class="math inline">\(\mathrm{OPT}\)</span>的一个比较紧的<strong>下界</strong>，我们的解与该下界之比自然就是<span class="math inline">\(\alpha\)</span>的上界了。</p>
+<h2 id="例最小顶点覆盖问题">例：最小顶点覆盖问题</h2>
+<p><strong>输入：</strong><span class="math inline">\(G=(V,E)\)</span></p>
+<p><strong>目标：</strong>最小化点集<span class="math inline">\(S\subseteq V\)</span>，同时满足<span class="math inline">\(\forall (u,v) \in E\)</span>，<span class="math inline">\(u\in S\)</span>或<span class="math inline">\(v \in S\)</span>。</p>
+<p>这是一个知名的NP Complete问题。在这里我们设计一个简单的<span class="math inline">\(2\)</span>近似算法。然而令人吃惊地是，<span class="math inline">\(2\)</span>的近似比已经是我们目前能够做到的最好结果！</p>
+<p><strong>思路：</strong>考虑<span class="math inline">\(G\)</span>的一个<strong>极大匹配</strong>，显然极大匹配是可以在多项式时间内求出的。</p>
+<p>同时注意到，任意无向图极大匹配的大小必定是其点覆盖集大小的下界，因为点覆盖必须取极大匹配当中每一条边的至少一个端点才能完成覆盖！</p>
+<p><strong>算法：</strong></p>
+<ol type="1">
+<li>计算<span class="math inline">\(G\)</span>的一个极大匹配<span class="math inline">\(M\)</span>。</li>
+<li>取极大匹配所有边的所有端点为<span class="math inline">\(S\)</span>。</li>
+</ol>
+<p><strong>为什么正确？</strong>考虑反证：若<span class="math inline">\(\exists (u,v) \in E\)</span>，使<span class="math inline">\(u\not\in S\)</span>且<span class="math inline">\(v \not \in S\)</span>，那显然边<span class="math inline">\((u, v)\)</span>还可以加入<span class="math inline">\(M\)</span>，这和<span class="math inline">\(M\)</span>的极大性是矛盾的。</p>
+<p>近似比证明： <span class="math display">\[
+\begin{aligned}
+    |S| = 2|M| \le 2\cdot \mathrm{OPT}
+\end{aligned}
+\]</span> 得证。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/11/PACT0706/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/11/PACT0706/" class="post-title-link" itemprop="url">PACT 07/06 线规舍入 + 背包问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-11 23:15:34" itemprop="dateCreated datePublished" datetime="2020-07-11T23:15:34-04:00">2020-07-11</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="线性规划舍入lp-rounding">线性规划舍入（LP Rounding）</h1>
+<p>对于很多的<span class="math inline">\(\mathsf{NP}\)</span>问题，我们都可以写出一个对应的整数规划（IP），然而写成整数规划本身没有啥用，因为整数规划也是<span class="math inline">\(\mathsf{NP}\)</span>的。但是整数规划可以通过<strong>松弛</strong>转变为线性规划，后者是可以在多项式时间内求解的，这就给近似算法的设计提供了一个思路。</p>
+<p>唯一的问题是，线性规划给出的解未必就是整数了（在例如网络流问题等特殊的问题下还是有可能的），因此我们需要在确保解的可行性的前提下对于线性规划的解进行舍入，这个技巧便成为LP rounding。</p>
+<p>以带权顶点覆盖问题为例，其整数规划为 <span class="math display">\[
+\begin{aligned}
+    \text{minimize}\quad &amp;\sum_{v\in V}c_vx_v \\
+    \text{subject to}\quad &amp;x_u+x_v\ge 1\quad \forall (u, v)\in E \\
+    &amp;x_v \in \{0,1\}\quad \forall v\in V
+\end{aligned}
+\]</span> <span class="math inline">\(x_v\)</span>表示<span class="math inline">\(v\)</span>是否被选入覆盖集当中。</p>
+<p>其松弛后的线性规划为 <span class="math display">\[
+\begin{aligned}
+    \text{minimize}\quad &amp;\sum_{v\in V}c_vx_v \\
+    \text{subject to}\quad &amp;x_u+x_v\ge 1\quad \forall (u, v)\in E \\
+    &amp;x_v \ge 0\quad \forall v\in V
+\end{aligned}
+\]</span> 显然这个线性规划在有的时候不会给出整数解，例如对于一个三角形，整数规划会给两个顶点的<span class="math inline">\(x\)</span>赋<span class="math inline">\(1\)</span>，而线性规划会给三个顶点赋<span class="math inline">\(\frac{1}{2}\)</span>。</p>
+<p>于是就需要舍入。如何舍入？设线性规划最优解<span class="math inline">\(x_v^*\ge \frac{1}{2}\)</span>时，整数规划的解<span class="math inline">\(\hat x_v\)</span>，则 <span class="math display">\[
+\hat x_v = \begin{cases}
+    1,&amp;x_v^*\ge \frac{1}{2} \\
+    0,&amp;x_v^*&lt; \frac{1}{2}
+\end{cases}
+\]</span> 由于我们的约束<span class="math inline">\(x_u+x_v\ge 1\)</span>，<span class="math inline">\(x_u,x_v\)</span>当中至少有一个<span class="math inline">\(\ge \frac{1}{2}\)</span>，因此这么<strong>舍入后的解依然是可行解</strong>。</p>
+<p>注意到如果按照这么舍入，<span class="math inline">\(\hat x_v \le 2x_v^*\)</span>，又注意到线性规划的最优解一定不大于原整数规划的最优解，即<span class="math inline">\(\mathrm{OPT}\)</span>： <span class="math display">\[
+\sum_{v\in V}c_v\hat x_v \le \sum_{v\in V}2c_vx_v^* = 2\sum_{v\in V}c_vx_v^* \le 2\cdot\mathrm{OPT}
+\]</span> 因此我们的算法就是一个<span class="math inline">\(2\)</span>倍近似算法。这个算法较之前极大匹配算法的优势在于其可以很好地处理点带权的情况。</p>
+<h1 id="背包问题">背包问题</h1>
+<h2 id="定义">定义</h2>
+<p><strong>输入：</strong><span class="math inline">\(n\)</span>件物品，每一件物品有重量<span class="math inline">\(w_i\)</span>和价值<span class="math inline">\(p_i\)</span>，以及背包容量<span class="math inline">\(W\)</span>。</p>
+<p><strong>目标：</strong>在物品总重不超过背包容量的前提下使得打包的物品价值总和最大。</p>
+<h2 id="贪心算法">贪心算法</h2>
+<p>一个非常简单直接的想法是按照价重比（<span class="math inline">\(\frac{p_i}{w_i}\)</span>）贪心，但是这个贪心非常容易被卡掉，比如说有两个物品，第一件物品的重量为<span class="math inline">\(1\)</span>，价值为<span class="math inline">\(1+\varepsilon\)</span>，第二件物品的重量和价值都是<span class="math inline">\(W\)</span>，那按照价重比贪心我会先选第一件，然后之后就不能选第二件了，这个方案就很糟糕，而且和最优解的差距可以任意大。</p>
+<p>但是有一个简单的小优化：假设物品<span class="math inline">\(i\)</span>是我们第一个因为放不下不选的物品，我们最后在贪心的方案和物品<span class="math inline">\(i\)</span>单件中择优输出，这个算法一下子就会好上很多——事实上这就是一个<span class="math inline">\(2\)</span>倍近似算法了。</p>
+<p><strong>证明：</strong>分两种情况。</p>
+<ol type="1">
+<li>贪心方案的总重<span class="math inline">\(&gt; \frac{W}{2}\)</span>。因为我们是按照价重比贪心的，因此最优解的总价重比不会大于我们贪心方案的价重比，而贪心方案的重量至多是<span class="math inline">\(B\)</span>，因此此时我们贪心方案的总价值至少为最优方案的<span class="math inline">\(\frac{1}{2}\)</span>。</li>
+<li>贪心方案的总重<span class="math inline">\(\le\frac{W}{2}\)</span>。装不下下一个，说明接下来的物品是重量<span class="math inline">\(&gt;\frac{W}{2}\)</span>的大块头，令这个物品为<span class="math inline">\(i\)</span>。这样的大块头在任何打包方案当中都至多塞一个。此时最优解总价值不大于当前贪心解价值与<span class="math inline">\(w_i\)</span>之和（这个论断可以通过画图的方式进行证明，目前似乎还没有找到更有说服力的纯文字证明）。因为我们最后择优输出，因此我们最终方案的总价值至少是最优方案的<span class="math inline">\(\frac{1}{2}\)</span>。</li>
+</ol>
+<h2 id="动态规划">动态规划</h2>
+<p>背包问题的动态规划是老生常谈的问题了，时间复杂度是<span class="math inline">\(\mathcal O(nW)\)</span>，看起来是多项式？其实不然，因为<span class="math inline">\(W\)</span>有关的信息只需要<span class="math inline">\(\mathcal O(\log W)\)</span>个比特存储，因此这个时间复杂度实际上是和输入长度成指数级的。</p>
+<h2 id="多项式时间近似方案ptas">多项式时间近似方案（PTAS）</h2>
+<p>接下来我们提供背包问题的一个多项式时间近似方案（PTAS）。什么是PTAS？一个PTAS可以认为是一类基于参数<span class="math inline">\(\varepsilon\)</span>的算法，且参数为<span class="math inline">\(\varepsilon\)</span>的算法构成问题的<span class="math inline">\((1+\varepsilon)\)</span>倍近似（对于最大化问题则可以是<span class="math inline">\((1-\varepsilon)\)</span>倍近似）。算法的运行时间可以和<span class="math inline">\(\frac{1}{\varepsilon}\)</span>成指数级（因为在每一个算法当中，<span class="math inline">\(\varepsilon\)</span>被视作常数），如果算法的运行时间和<span class="math inline">\(1 \over \varepsilon\)</span>成多项式级，则这个PTAS被称为完全多项式时间近似方案（FPTAS或FPAS）。</p>
+<p>要设计这个算法，我们先从DP入手。考虑背包问题的如下DP：设<span class="math inline">\(A(i, p)\)</span>是考虑前<span class="math inline">\(i\)</span>个物品，总价值为<span class="math inline">\(p\)</span>时的最小总重，则有如下转移： <span class="math display">\[
+A(i, p) = \begin{cases}
+    0, &amp;i=0 \text{ or }p=0 \\
+    A(i-1, p), &amp;p&lt;p_i \\
+    \min \{A(i-1,p),w_i+A(i-1,p-p_i)\}, &amp;\text{otherwise}
+\end{cases}
+\]</span> 如果设所有物品的最大价值是<span class="math inline">\(P\)</span>，那么显然总价值最多便是<span class="math inline">\(nP\)</span>，DP的时间复杂度就是<span class="math inline">\(\mathcal O(n^2P)\)</span>。我们主要担心的问题是<span class="math inline">\(P\)</span>太大，要解决这个问题，我们把<span class="math inline">\(P\)</span>缩小就行了。</p>
+<p>因此我们的PTAS是：<strong>对于每件物品，对其价格等比例缩小舍入，新的价格为<span class="math inline">\(p_i&#39;=\lfloor p_i / k\rfloor\)</span>。随后进行DP，并输出DP的最优解。</strong>设最优解为<span class="math inline">\(S\)</span>。</p>
+<p>这样一来我们的总价格是多少呢？（定义<span class="math inline">\(p(\cdot)\)</span>表示集合的价格）。 <span class="math display">\[
+\begin{aligned}
+    p(S) &amp;= \sum_{i \in S} p_i \\
+    &amp;\ge \sum_{i \in S} p_i&#39;k \\
+    &amp;= k\sum_{i \in S} p_i&#39; \\
+    &amp;\ge k\sum_{i \in \mathrm{OPT}} p_i&#39; \\
+    &amp;\ge k\sum_{i \in \mathrm{OPT}} \left(\frac{p_i}{k} - 1\right) \\
+    &amp;= \sum_{i \in \mathrm{OPT}} p_i- k|\mathrm{OPT}| \\
+    &amp;\ge \sum_{i \in \mathrm{OPT}} p_i - kn
+\end{aligned}
+\]</span> 第二个不等号处用到了DP的最优性。</p>
+<p>若令<span class="math inline">\(k=\frac{\varepsilon P}{n}\)</span>，则有 <span class="math display">\[
+\begin{aligned}
+    p(S) &amp;\ge \sum_{i \in \mathrm{OPT}} p_i - kn \\
+    &amp;= \sum_{i \in \mathrm{OPT}} p_i - \varepsilon P \\
+    &amp;\ge p(\mathrm{OPT}) - \varepsilon p(\mathrm{OPT}) \\
+    &amp;= (1-\varepsilon) p(\mathrm{OPT})
+\end{aligned}
+\]</span> 第二个不等号处用到了<span class="math inline">\(p(\mathrm{OPT}) \ge P\)</span>。（此处我们忽略不可能装得下的物品）</p>
+<p>因此这个算法确实是一个PTAS。这个算法的运行时间是多少呢？ <span class="math display">\[
+\mathcal{O} (n^2P) = \mathcal O \left(n^2 \frac{P}{k}\right) = \mathcal O\left(\frac{n^3}{\varepsilon}\right)
+\]</span> 可见这个算法其实不仅是一个PTAS，还是一个FPTAS。这个时间复杂度可以说是很优秀的了。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/11/PACT0705/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/11/PACT0705/" class="post-title-link" itemprop="url">PACT 07/05 我终于明白线性规划对偶是怎么回事了！</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-11 23:14:38" itemprop="dateCreated datePublished" datetime="2020-07-11T23:14:38-04:00">2020-07-11</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="什么是线性规划">什么是线性规划？</h1>
+<p>线性规划，简单地来说就是在一系列线性约束下最优化一个线性函数的过程。</p>
+<p>例如如下就是一个线性规划问题： <span class="math display">\[
+\begin{aligned}
+    \text{minimize}\quad &amp;7x_1+4x_2+3x_3\\
+    \text{subject to}\quad &amp;4x_1+2x_2-x_3\ge 50 \\
+    &amp;2x_1+x_2+3x_3\ge 20 \\
+    &amp;x_1,x_2,x_3 \ge 0
+\end{aligned}
+\]</span> 这部分自己很早以前就会了。</p>
+<p>在近似算法设计当中关于线性规划重要的一点是：<strong>它是可以在多项式时间内求得最优解的</strong>。具体的方法对于我们不重要，可以使椭圆形法或者其他内点法，反正只要知道可以就行了——我们就指望着它来帮助我们设计近似算法呢。</p>
+<h1 id="为什么要对偶">为什么要对偶？</h1>
+<p>对于一个最小化（最大化类似）的线性规划，我们问一个问题：</p>
+<blockquote>
+<p>目标函数是否可以<span class="math inline">\(\le \alpha\)</span>？</p>
+</blockquote>
+<p>答案如果是肯定的，这个问题有没有<strong>一个简短的肯定证明</strong>（Yes Certificate）？显然是有的：我们只要把一组目标函数是<span class="math inline">\(\alpha\)</span>的变量取值写出来，对方很快就可以验证我们的正确性。（“简短”与“很快”均指多项式空间与时间内，有简短肯定证明的问题被称为<span class="math inline">\(\mathsf{NP}\)</span>问题）</p>
+<p>那答案如果是否定的呢？这个问题有没有<strong>一个简短的否定证明</strong>（No Certificate）？直觉上这就难了。（有简短否定证明的问题被称为<span class="math inline">\(\textsf{co-NP}\)</span>问题，它和<span class="math inline">\(\mathsf{NP}\)</span>的关系是至今计算机界悬而未决的）</p>
+<p>幸好我们知道线性规划<span class="math inline">\(\in \mathsf{P}\)</span>，而<span class="math inline">\(\mathsf{P}\subseteq \textsf{NP} \cap \textsf{co-NP}\)</span>。也就是说确实是有否定回答的——是什么呢？（嘛，其实对于多项式时间算法，把算法的过程作为否定证明也可以算是“简短”的，因为一样的算法可以在多项式时间内验证它）</p>
+<p>如果我们可以给目标函数一个<span class="math inline">\(&gt;\alpha\)</span>的下界，不就证明目标函数不可能<span class="math inline">\(\le \alpha\)</span>了吗？</p>
+<p>目标函数的下界是什么？</p>
+<p><span class="math inline">\(0\)</span>？这个下界太平凡了。</p>
+<p>观察系数，因为<span class="math inline">\(x_1,x_2,x_3\ge 0\)</span>，而约束二式的各项系数都不大于目标函数的各项系数，因此 <span class="math display">\[
+\begin{aligned}
+    7x_1+4x_2+3x_3 \ge 4x_1+2x_2-x_3 \ge 50 \\
+    7x_1+4x_2+3x_3 \ge 2x_1+x_2+3x_3 \ge 20 \\
+\end{aligned}
+\]</span> 这个下界可以更好： <span class="math display">\[
+7x_1+4x_2+3x_3 \ge (4x_1+2x_2-x_3)+(2x_1+x_2+3x_3) \ge 70
+\]</span> 或者更好？ <span class="math display">\[
+7x_1+4x_2+3x_3 \ge (4x_1+2x_2-x_3)+\frac{4}{3}(2x_1+x_2+3x_3) \ge \frac{230}{3}
+\]</span> 这样下去会不会没完没了？不妨设两个约束的系数是<span class="math inline">\(y_1,y_2\ge0\)</span>，那我们的下界就是<span class="math inline">\(50y_1+20y_2\)</span>。 <span class="math display">\[
+\begin{aligned}
+    7x_1+4x_2+3x_3 &amp;\ge y_1(4x_1+2x_2-x_3)+y_2(2x_1+x_2+3x_3) \\
+        &amp;=(4y_1+2y_2)x_1+(2y_1+y_2)x_2+(-y_1+3y_2)x_3 \\
+        &amp;\ge 50y_1+20y_2 
+\end{aligned}
+\]</span> 为了确保我们上面的推理没有问题，约束和的各项系数不应大于目标函数的各项系数，因此又有<span class="math inline">\(4y_1+2y_2\le 7\)</span>，<span class="math inline">\(2y_1+y_2\le 4\)</span>，<span class="math inline">\(-y_1+3y_2\le 3\)</span>。我们希望下界越紧越好，所以<span class="math inline">\(50y_1+20y_2\)</span>要越大越好——我们想到了什么？另一个线性规划！ <span class="math display">\[
+\begin{aligned}
+    \text{maximize}\quad &amp;50y_1+20y_2\\
+    \text{subject to}\quad &amp;4y_1+2y_2\le 7 \\
+    &amp;2y_1+y_2\le 4 \\
+    &amp;-y_1+3y_2\le 3 \\
+    &amp;y_1,y_2\ge 0
+\end{aligned}
+\]</span> 这就是所谓的“对偶线性规划”。如果我们给出一组<span class="math inline">\(y_1,y_2\)</span>使得这个的目标函数<span class="math inline">\(&gt;\alpha\)</span>，那么我们原来规划的目标函数就不可能<span class="math inline">\(\le \alpha\)</span>，即这就是我们所寻找的简短否定证明。</p>
+<p>如果我们要求这个对偶规划的目标上界（也就是再对偶），不难发现我们又回到了最初的线性规划。</p>
+<p>而由我们构造对偶规划的过程，不难明白为什么所有变量都要非负，为什么对偶问题的变量数等于原问题的约束数，约束数等于原问题的变量数，为什么最小化问题的约数要转化成<span class="math inline">\(\ge\)</span>的形式，最大化问题的约数要转化成<span class="math inline">\(\le\)</span>的形式，为什么对偶前后不等号方向会变化等问题。</p>
+<p>一旦知道对偶的目的，这些步骤豁然开朗，而这些在大多教科书里是略过不讲的，或者先抛给你对偶的方式，再把这个目的冠以“弱对偶定理”的名号塞给你（此处点名《算法导论》），或许我们在阅读证明的时候能够明白这些步骤的用处，但是不免还是有些云里雾里。</p>
+<p>但是严谨地走一遍还是必要的，此处给出线性规划对偶的定义：对于线性规划 <span class="math display">\[
+\begin{aligned}
+    \text{minimize}\quad &amp;\sum_{j=1}^nc_jx_j\\
+    \text{subject to}\quad &amp;\sum_{j=1}^na_{ij}x_j\ge b_i \quad \forall i =1,2,\cdots,m \\
+    &amp;x_1, x_2, \cdots, x_n\ge0 
+\end{aligned}
+\]</span> 其对偶线性规划（Dual）为 <span class="math display">\[
+\begin{aligned}
+    \text{maximize}\quad &amp;\sum_{i=1}^mb_iy_i\\
+    \text{subject to}\quad &amp;\sum_{i=1}^ma_{ij}y_i\le c_j \quad \forall j =1,2,\cdots,n \\
+    &amp;y_1, y_2, \cdots, y_m\ge0 
+\end{aligned}
+\]</span> 此时一开始的线性规划被称为主线性规划（Primal）。反之亦然。</p>
+<p>所谓<strong>弱对偶原理</strong> <span class="math display">\[
+\sum_{j=1}^nc_jx_j \ge\sum_{i=1}^mb_iy_i
+\]</span> 的证明： <span class="math display">\[
+\begin{aligned}
+    \sum_{j=1}^nc_jx_j &amp;\ge \sum_{j=1}^n\left(\sum_{i=1}^ma_{ij}y_i\right)x_j \\
+    &amp;= \sum_{i=1}^m\left(\sum_{j=1}^na_{ij}x_j\right)y_i \\
+    &amp;\ge \sum_{i=1}^m b_iy_i
+\end{aligned}
+\]</span> 这其实就是我们之前例子中论述的严谨版本，注意到两个不等号之所以成立，不仅仅是因为<span class="math inline">\(\sum_{i=1}^ma_{ij}y_i \le c_j\)</span>以及<span class="math inline">\(\sum_{j=1}^na_{ij}x_j\ge b_i\)</span>，还有<span class="math inline">\(x_j\ge 0\)</span>和<span class="math inline">\(y_i\ge 0\)</span>，因此变量必须是非负的。</p>
+<p>除此以外，更强的一个结论被称为<strong>强对偶原理</strong>：对偶规划与主规划的最优解相等。证明参见《算法导论》，在近似算法设计中，弱对偶原理才是最重要的。</p>
+<h1 id="互补松弛条件">互补松弛条件</h1>
+<p>令<span class="math inline">\((x_1^*,x_2^*,\cdots,x_n^*)\)</span>与<span class="math inline">\((y_1^*,y_2^*,\cdots,y_m^*)\)</span>为主线性规划和对偶线性规划的最优解，强对偶原理表明 <span class="math display">\[
+\sum_{j=1}^nc_jx_j^*=\sum_{i=1}^mb_iy_i^*
+\]</span> 回过头看我们弱对偶原理的证明过程，两个不等号必须同时取等，于是便得到两个条件，成为所谓的互补松弛条件（Complementary Slackness Condition）：</p>
+<p><strong>主互补松弛条件：</strong><span class="math inline">\(x_j^*=0\)</span>或者<span class="math inline">\(\sum_{i=1}^ma_{ij}y_i = c_j\)</span>，即要么变量为<span class="math inline">\(0\)</span>，要么对偶规划里面的对应约束取等。</p>
+<p><strong>对偶互补松弛条件：</strong><span class="math inline">\(y_i^*=0\)</span>或者<span class="math inline">\(\sum_{j=1}^na_{ij}x_j = b_i\)</span>，即要么变量为<span class="math inline">\(0\)</span>，要么主规划里面的对应约束取等。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/09/%E8%AF%84%E8%AE%BA%E6%B5%8B%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/09/%E8%AF%84%E8%AE%BA%E6%B5%8B%E8%AF%95/" class="post-title-link" itemprop="url">评论测试</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-09 23:51:32" itemprop="dateCreated datePublished" datetime="2020-07-09T23:51:32-04:00">2020-07-09</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>刚刚启用了博客的评论功能，基于Valine。本帖用于测试（如果后续更换评论系统，则依然使用本帖进行测试）</p>
+<p>（真的会有人评论吗？）</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/06/PACT0704/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/06/PACT0704/" class="post-title-link" itemprop="url">PACT 07/04 浮账最大化（次模优化）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-06 10:52:20" itemprop="dateCreated datePublished" datetime="2020-07-06T10:52:20-04:00">2020-07-06</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="定义">定义</h1>
+<p>在电子转账还未普及的年代，从付款人开出支票到钱从付款人账户里扣走之间是有一段等待的时间的，这段时间被称为浮账期（float time，网上似乎没有找到特别靠谱的翻译）。因为在浮账期这些付出去的钱还是能够产生利息的，人们自然希望这个浮账期越长越好。于是人们就抽象出了这么一个浮账最大化的问题。</p>
+<p><strong>输入：</strong>带权二分图<span class="math inline">\(G=(V,E)\)</span>，其中<span class="math inline">\(V=B\cup P\)</span>，一侧是所有银行的集合<span class="math inline">\(B\)</span>，另一侧是所有交易的集合<span class="math inline">\(P\)</span>，第<span class="math inline">\(i\)</span>个银行到第<span class="math inline">\(j\)</span>个交易的边权为<span class="math inline">\(v_{ij}\)</span>，表示第<span class="math inline">\(i\)</span>个银行处理这笔交易所需的浮账时间。整数<span class="math inline">\(k\)</span>。</p>
+<p><strong>目标：</strong>选择<span class="math inline">\(k\)</span>家银行的集合<span class="math inline">\(S\subseteq B\)</span>，使得 <span class="math display">\[
+v(S) = \sum_{j\in P} \max_{i\in S}\{v_{ij}\}
+\]</span> 最大。</p>
+<h1 id="贪心算法">贪心算法</h1>
+<p>我们很容易想到如下的贪心算法：</p>
+<ol type="1">
+<li>一开始<span class="math inline">\(S=\emptyset\)</span>。</li>
+<li>然后进行<span class="math inline">\(k\)</span>次循环，每次循环寻找能使目标函数增幅最大的银行<span class="math inline">\(i\)</span>加入<span class="math inline">\(S\)</span>。</li>
+</ol>
+<p>简单，粗暴，好理解。</p>
+<h1 id="分析">分析</h1>
+<p><strong>引理1：</strong>令<span class="math inline">\(S\)</span>是第<span class="math inline">\(h\)</span>次循环开始时我们的银行集合，第<span class="math inline">\(h\)</span>次循环我们所选的新银行是<span class="math inline">\(i_h\)</span>，那么有 <span class="math display">\[
+v(S\cup \{i_h\}) - v(S)\ge \frac{v(\mathrm{OPT})-v(S)}{k}
+\]</span> 即反映了一种“优于平均”的思想。（感觉类似的引理在贪心算法的分析当中经常会碰到）</p>
+<p>要证明这个引理，我们需要引入第二个引理，或者说发掘<span class="math inline">\(v(\cdot)\)</span>的一个重要性质：</p>
+<p><strong>引理2（次模性）：</strong>对于任何<span class="math inline">\(X\subseteq Y\subset B\)</span>以及<span class="math inline">\(l\in B\setminus Y\)</span>，都有： <span class="math display">\[
+v(X\cup \{l\}) - v(X) \ge v(Y\cup \{l\}) - v(Y)
+\]</span> 直观理解：随着集合变大，加入新元素的边际效应递减。</p>
+<p><strong>证明：</strong></p>
+<p>考虑对于固定的交易<span class="math inline">\(j\)</span>，<span class="math inline">\(j\)</span>在<span class="math inline">\(v(X)\)</span>当中的贡献是<span class="math inline">\(\max_{i\in X}\{v_{ij}\}\)</span>，在<span class="math inline">\(v(Y)\)</span>当中的贡献是<span class="math inline">\(\max_{i\in Y}\{v_{ij}\}\)</span>，而因为<span class="math inline">\(X\subseteq Y\)</span>，显然有 <span class="math display">\[
+\max_{i\in X}\{v_{ij}\} \le \max_{i\in Y}\{v_{ij}\}
+\]</span> 将<span class="math inline">\(l\)</span>加入集合之后，<span class="math inline">\(v_{lj}\)</span>加入了比较，有三种情况：</p>
+<ol type="1">
+<li><span class="math inline">\(v_{lj} \le \max_{i\in X}\{v_{ij}\}\)</span>，那么<span class="math inline">\(X\)</span>还是<span class="math inline">\(Y\)</span>都不会增加。</li>
+<li><span class="math inline">\(\max_{i\in X}\{v_{ij}\} &lt; v_{lj} \le \max_{i\in Y}\{v_{ij}\}\)</span>，那么<span class="math inline">\(X\)</span>这边增加了，而<span class="math inline">\(Y\)</span>这边不增加。</li>
+<li><span class="math inline">\(v_{lj} &gt; \max_{i\in Y}\{v_{ij}\}\)</span>，两边的最大值都增加了，但是增加幅度<span class="math inline">\(X\)</span>这边要大于<span class="math inline">\(Y\)</span>。</li>
+</ol>
+<p>由此可见，对于一个固定的交易<span class="math inline">\(j\)</span>，新银行<span class="math inline">\(l\)</span>加入后，<span class="math inline">\(X\)</span>这一侧的增加量一定不少于<span class="math inline">\(Y\)</span>这一侧的增加量。因此对于所有交易求和之后，必有 <span class="math display">\[
+v(X\cup \{l\}) - v(X) \ge v(Y\cup \{l\}) - v(Y)
+\]</span> 得证。</p>
+<p>这个“边际效应递减”的性质有一个高端的名字：<strong>次模性</strong>（Submodularity）。</p>
+<p><strong>引理1的证明：</strong>令<span class="math inline">\(\mathrm{OPT}\setminus S = \{i_1,i_2,\cdots,i_p\}\)</span>。注意到显然有<span class="math inline">\(p\le |\mathrm{OPT}|=k\)</span>。 <span class="math display">\[
+\begin{aligned}
+    v(\mathrm{OPT}) &amp;\le v(\mathrm{OPT} \cup S) \\
+    &amp;= v(S) + v(\mathrm{OPT} \cup S) - v(S) \\
+    &amp;= v(S) + \sum_{j=1}^p \left(v\left(S\cup \{i_1,i_2,\cdots,i_j\}\right) - v\left(S\cup \{i_1,i_2,\cdots,i_{j-1}\}\right)\right)
+\end{aligned}
+\]</span> 那个求和式是一个非常精巧的叠缩。接下来我们运用引理2，令<span class="math inline">\(X=S,Y=S\cup \{i_1,i_2,\cdots,i_{j-1}\}\)</span>： <span class="math display">\[
+\begin{aligned}
+    v(\mathrm{OPT}) &amp;\le  v(S) + \sum_{j=1}^p \left(v\left(S\cup \{i_1,i_2,\cdots,i_j\}\right) - v\left(S\cup \{i_1,i_2,\cdots,i_{j-1}\}\right)\right) \\
+    &amp;\le v(S) + \sum_{j=1}^p (v(S\cup\{i_j\}) - v(S)) \\
+    &amp;\le v(S) + \sum_{j=1}^p (v(S\cup\{i_h\}) - v(S)) \\
+    &amp;= v(S) + p(v(S\cup\{i_h\}) - v(S)) \\
+    &amp;\le v(S) + k(v(S\cup\{i_h\}) - v(S))
+\end{aligned}
+\]</span> 倒数第三步运用到了我们算法的贪心性质，即<span class="math inline">\(v(S\cup\{i_h\}) - v(S) \ge v(S\cup\{i_j\}) - v(S), \forall j\)</span>。接下来我们马上就可以得到引理： <span class="math display">\[
+\begin{aligned}
+    v(\mathrm{OPT}) &amp;\le v(S) + k(v(S\cup\{i_h\}) - v(S)) \\
+    v(\mathrm{OPT}) - v(S) &amp;\le k(v(S\cup\{i_h\}) - v(S)) \\
+    v(S\cup\{i_h\}) - v(S) &amp;\ge \frac{v(\mathrm{OPT}) - v(S)}{k}
+\end{aligned}
+\]</span> 证毕。</p>
+<p>接下来我们可以开始证明我们算法的近似比了：</p>
+<p><strong>定理：</strong>我们的算法是一个<span class="math inline">\(\left(1 - \frac{1}{e}\right)\)</span>倍近似算法。</p>
+<p><strong>证明：</strong>令<span class="math inline">\(S_t\)</span>表示第<span class="math inline">\(t\)</span>次循环后我们所选的银行集合。</p>
+<p>由引理可得 <span class="math display">\[
+v(S_k) - v(S_{k-1}) \ge \frac{v(\mathrm{OPT}) - v(S_{k-1})}{k} \Rightarrow v(S_k) \ge \frac{v(\mathrm{OPT})}{k} + \left(1-\frac{1}{k}\right)v(S_{k-1})
+\]</span> 因此 <span class="math display">\[
+\begin{aligned}
+    v(S_k) &amp;\ge \frac{v(\mathrm{OPT})}{k} + \left(1-\frac{1}{k}\right)v(S_{k-1}) \\
+        &amp;\ge  \frac{v(\mathrm{OPT})}{k} + \left(1-\frac{1}{k}\right) \left(\frac{v(\mathrm{OPT})}{k} + \left(1-\frac{1}{k}\right)v(S_{k-2})\right)\\
+        &amp;\cdots \\
+        &amp;\ge \frac{v(\mathrm{OPT})}{k}\left(1+\left(1-\frac{1}{k}\right)+\cdots+\left(1-\frac{1}{k}\right)^{k-1}\right) + \left(1-\frac{1}{k}\right)^kv(S_0) \\
+        &amp;= \frac{v(\mathrm{OPT})}{k}\left(1+\left(1-\frac{1}{k}\right)+\cdots+\left(1-\frac{1}{k}\right)^{k-1}\right) \\
+        &amp;= \frac{v(\mathrm{OPT})}{k}\frac{1-\left(1-\frac{1}{k}\right)^k}{1\over k} \\
+        &amp;= v(\mathrm{OPT})\left(1-\left(1-\frac{1}{k}\right)^k \right) \\
+        &amp;\le \left(1-\left(e^{-\frac{1}{k}}\right)^k \right) v(\mathrm{OPT}) \\
+        &amp;= \left(1 - \frac{1}{e}\right)v(\mathrm{OPT})
+\end{aligned}
+\]</span> 证毕。</p>
+<p>其实分析我们的贪心算法，我们发现我们其实只利用了<span class="math inline">\(v(\cdot)\)</span>的次模性，而没有利用<span class="math inline">\(v(\cdot)\)</span>的具体形式或者题目的具体要求。而次模性足以证明引理1，引理1足以证明近似比。也就是说，我们这个贪心算法及其分析是可以被推广到其他的次模优化问题上的。因此，这个看起来很简单粗暴的贪心算法，其实真的是非常有意思！</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/04/%E8%AE%A8%E5%88%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/04/%E8%AE%A8%E5%88%86/" class="post-title-link" itemprop="url">计一次讨分失败</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-04 10:38:36" itemprop="dateCreated datePublished" datetime="2020-07-04T10:38:36-04:00">2020-07-04</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>数学出分了，我最后一题分数被扣光。</p>
+<p><img src="/2020/07/04/%E8%AE%A8%E5%88%86/prob.jpg" class=""></p>
+<p>我的答案是</p>
+<p><img src="/2020/07/04/%E8%AE%A8%E5%88%86/mine.jpg" class=""></p>
+<p>而很显然参考答案是</p>
+<p><img src="/2020/07/04/%E8%AE%A8%E5%88%86/chen.jpg" class=""></p>
+<p>嘛确实是不一样的。但是我的答案和参考答案是等价的啊！</p>
+<p><img src="/2020/07/04/%E8%AE%A8%E5%88%86/proof.png" class=""></p>
+<p>最多形式不优美，怎落得如此下场？</p>
+<p>大概是老师批high了没注意到吧，我想，然后加了老师微信，自信满满地去讨回我失去的6分。</p>
+<p>事实证明我还是太天真了。</p>
+<blockquote>
+<p>你期末分数多少啊？</p>
 </blockquote>
 <blockquote>
-<p>每个中文词之间没有空格读写起来会更为自然。</p>
+<p>哦，那是好学生啊，好学生看不出来？</p>
 </blockquote>
-<p>这是很多中文编程语言所忽视的一点。然而也必须承认，空格的存在给词法分析提供了极大的便利。联系到当下对于大段中文的分词往往采用，也只能采用启发式的算法的现状，可以说<strong>在一门中文编程语言当中删去空格，虽然可以让读写更为顺畅，但对文法的设计与解析提出了更大的挑战</strong>。（同时，空格的去除让代码开起来更为紧凑，在汉字本身就结构相对复杂的情况下就更会对可读性产生一定的影响，因此在这种情况下，<strong>代码高亮是必要的</strong>）</p>
-<p>我们还发现，当下的编程语言在英语的基础上对于关键词进行大量的<strong>简化</strong>。例如，define在Python中被简化为<code>def</code>；function在Go中被简化为<code>func</code>，在Kotlin中被简化为<code>fun</code>，在Rust中更是被简化到<code>fn</code>；integer在很多语言当中都被简化到<code>int</code>，structure被简化到<code>struct</code>……对于英语等拼音文字，这种简化往往是通过去除辅音，删去末音节等完成的，较为简单。但是对于中文象形文字，这种简化就很难了，因为一个词往往就双音节两个字，去了哪个都不行，而仿照去除辅音搞去除笔画之类的毫无意义：<code>结构</code>变成<code>吉勾</code>？还是两个汉字不说，词本身的辨识性已经被破坏殆尽。</p>
-<p>然而，我们关注的是目的而不是手段，抛开如此简单粗暴的类比，事情就豁然开朗了。编程语言简化关键词拼写的目的何在？一方面是<strong>让代码更加简洁，阅读效率更高</strong>。另一方面则是<strong>提升输入效率</strong>。中文或许在阅读效率方面已经无可挑剔，但是在输入效率上一直差强人意——我不是说中文本身的输入效率，而是写代码本身的效率。二者有何区别？</p>
-<p>如今不用代码补全写代码的人已经不多了。代码补全的本质，是在用户敲击键盘进行原始输入的同时，结合上下文，给出符合编程语言语法以及（理想情况下）代码语义的代码建议。仔细想想，这和中文的输入法何其相似！然而现在并没有专为写代码而生的输入法。要写中文代码，就必须先敲键盘，再输入法选词，等到中文字实实在在地落到了编辑器里，代码补全才会出现，然后用户就要再次选词，如图</p>
-<p><img src="/2021/07/25/%E4%B8%AD%E6%96%87%E7%BC%96%E7%A8%8B%E8%BF%B7%E6%80%9D/Completion.svg" class=""></p>
-<p>显然，在上例中，如果能把输入法整合进自动补全（或者反过来），使得在键入<code>ks</code>时就自动跳出<code>快速排序</code>的提示项，对于开发效率和流畅性会有可观的提升（在没有空格分词的中文编程语言中，这样的融合自动补全可以综合考虑到关键词以及文法结构，这种流畅性提升会更为显著）。否则，对于针对自然语言输入而设计的输入法而言，编程的上下文不免会让提词非常别扭；对于代码补全而言，变量名一般就三四个字个字，在输入法打完两个字后再补全一般似乎也如同鸡肋。两者没有沟通各自为战，折磨的就是开发者。理想情况下，<strong>中文编程中的输入法和代码补全不说是合二为一也应当是互相合作的</strong>。相比于独立地弹出一个下拉框，代码补全应当使用一个输入法提供的接口访问用户在键盘上的原始输入并给出建议，这样用户在输入法的选词界面就可以直接看到代码提示，效率何止提升了两倍。然而，现实中的各输入法都热衷于闭门造车，即使是以开源闻名的Rime都不提供这种动态提词接口。因此，如果要实现前文的创想，倒是IDE的开发者自己从零写一个兼容自动补全的输入法更现实一点。而后者可就造轮子造大了去了。</p>
-<p>简单的总结一下，如果要实现我心目中理想的中文编程语言，应当有这两个特点：</p>
-<ol type="1">
-<li><strong>本土化的语言文法：</strong>在不引入二义性的前提下，降低空格分词的必要性，或更多地从中文本身借鉴一部分文法结构，使得汉字的输入和阅读更符合自然语言的习惯。不满足这一点，则不免对于阅读的流畅性产生影响，产生生硬之观感，被好事者讥为“套皮”。</li>
-<li><strong>高效率的开发环境：</strong>在开发环境上完成输入法和自动补全的整合，提升写代码的流畅性，同时提供靠谱的代码高亮方案以辅助阅读。不满足这一点，则读起来再赏心悦目的编程语言写起来都有不便，难免花瓶一个，华而不实。</li>
-</ol>
-<p>这两点的难度不是一般的大，因此我觉得实用的中文编程任重而道远。当然，考虑到中文编程除了看着一乐以外未必有其他特殊的吸引力，实际上这种编程语言大概是遥遥无期了。</p>
-<p>迷思迷思，思到这大概也就结束了。整篇文章想到哪里写到哪里，估计很乱吧（笑），如果有人读着这个觉得摸不着头脑，实在是抱歉。</p>
+<p>哦豁？！</p>
+<blockquote>
+<p>如果我没写“用《点到直线距离》一节里的知识”你还可以是对的？</p>
+</blockquote>
+<p>承认了？</p>
+<blockquote>
+<p>我说了用《点到直线距离》一节里的知识啊？你是不是没看题？</p>
+</blockquote>
+<p>不老师，我的条件也是基于点到直线距离的思想的，只是有一个额外的条件罢了。</p>
+<blockquote>
+<p>你这个额外的条件就是牵 强 附 会！</p>
+</blockquote>
+<p>我的额外条件和你的<span class="math inline">\(\delta\)</span>的功能是一样的啊……都是用于修正反例的特殊状况，何况我的主条件还是基于距离的。</p>
+<blockquote>
+<p>你这个充要条件根本没办法用！</p>
+</blockquote>
+<p>这就说不过去了， 我觉得用这个条件虽卖相不佳，但是真论应用起来不会复杂多少。</p>
+<blockquote>
+<p><span class="math inline">\(\delta\)</span>书里有你看到没有啊？你没有用<span class="math inline">\(\delta\)</span>就说明你的认知也就这个水平。如果你再坚持，你这方面的数学认知就到顶了，不会再有进步了！</p>
+</blockquote>
+<p>好，没想到<span class="math inline">\(\delta\)</span>是我的疏忽，但是我很好奇就凭寥寥数语和一道试题如何可以评判认知水平的？</p>
+<p>先入为主的自信与居高临下的傲慢。</p>
+<blockquote>
+<p>你是个好学生，数学追求完美的，因此你要学会去仔细品味正确答案……</p>
+</blockquote>
+<p>又是好学生，我就不理解了你用这个先入为主的标签作甚？反衬？</p>
+<p>数学追求完美还用你教？我承认我的答案形式上没有正解优雅，但是这无损其正确性！</p>
+<p>我究竟是被高看了还是低看了？</p>
+<blockquote>
+<p>分我是不会给的。还有问题吗？</p>
+</blockquote>
+<p>我明白了。参考答案的简洁确实令人惊叹，谢谢老师。</p>
+<p>诶，我究竟是讨分的还是去挨骂的？</p>
+<p>老师你要是就事论事说我的答案和预设的方向不对我也就算了，毕竟应试考试难免这样。</p>
+<p>你还点评起我的认知和能力来了？</p>
+<p>你要是教了我两年就算了，还是在你我只说了几句话的情况下？</p>
+<p>是不是每一个眼高手低的教师都有这种自认为见得多了的那种倨傲？我还真是见识了！</p>
+<p>附加条件就是有问题，啊？</p>
+<p>“追求完美”哈？</p>
+<p>你倒是仔细数数从初中到高中有哪些判断的附加条件要加上一句<span class="math inline">\(\Delta &gt; 0\)</span>？那个时候不加附加条件算错，现在加了你又不高兴了？或者说没把附加条件并到<span class="math inline">\(d_1d_2\)</span>变成<span class="math inline">\(\delta_1\delta_2\)</span>你就不高兴了？</p>
+<p>解析几何里面很多结论<span class="math inline">\(k\)</span>要存在算不算附加条件？算不算不完美？与之相比是不是向量要好得多，倾斜角要好得多，极坐标要好得多？我们是不是要全员追求完美抛弃有缺陷的斜率？</p>
+<p>“用到点到直线距离这一节”哈？</p>
+<p><span class="math inline">\(\delta\)</span>是这一节的内容，点到直线的距离就不是了吗？</p>
+<p>都写了“试写出”了还整唯一标准答案？</p>
+<p>我的答案和你的完全等价诶！</p>
+<p>证明的思路也和你的大同小异诶！</p>
+<p>就这样把所有分扣光？</p>
+<p>我的结论好歹是对的，是不是应该和那些结论都是错的做一点区分？</p>
+<p>就这样把一个90分以上黜落到90分一下？</p>
+<p>很遗憾，虽然我理解了老师的理论（这无疑是一种可悲），但是从老师对我的态度我只能读出一种面对完全不认识的学生，一种不知何起的居高临下的自负与倨傲。</p>
+<p>题目和答案都不错，我回去会好好欣赏的。</p>
+<p>但这个老师就算了，我很庆幸高中前两年不是他教。</p>
+<p>诶，自己真蠢，刚做题的时候天真地想期末大考能出出开放性探究题，讨分的时候天真地想老师或许只是疏忽而已。</p>
+<p>到最后自讨没趣，只能在一个网络上无人问津的角落，乱发一通牢骚。</p>
 
       
     </div>

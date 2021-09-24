@@ -235,7 +235,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/BSGS/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/04/%E7%BA%BF%E6%80%A7%E5%9F%BA%E7%AC%94%E8%AE%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -248,7 +248,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/BSGS/" class="post-title-link" itemprop="url">BSGS算法笔记</a>
+          <a href="/2018/09/04/%E7%BA%BF%E6%80%A7%E5%9F%BA%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">异或 线性基</a>
         </h2>
 
         <div class="post-meta-container">
@@ -259,15 +259,486 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
+      <time title="创建时间：2018-09-04 21:43:02" itemprop="dateCreated datePublished" datetime="2018-09-04T21:43:02-04:00">2018-09-04</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-09-03 05:35:20" itemprop="dateModified" datetime="2018-09-03T05:35:20-04:00">2018-09-03</time>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="线性基">线性基</h1>
+<p><strong>定义：</strong>给定一组向量，构成一个线性空间，如果我们能够找到一组<strong>线性无关的向量</strong>，使得这些向量的线性组合能够构成整个线性空间，则这一组向量成为该向量空间的<strong>线性基</strong>。</p>
+<p><strong>算法：</strong>计算线性基我们可以把一组向量排成矩阵，然后在矩阵上跑高斯消元法，消出来的非零行向量即为线性基，非零行向量数目为矩阵的行秩。</p>
+<p>以下给出对于常规线性基的高斯消元代码：</p>
+<pre class="line-numbers"><code class="language-cpp">void gauss() &#123;
+    int dim = 0; // 行秩
+    for (int i = 1; i &lt;= n; i++) &#123;
+        int piv = dim + 1;
+        for (int j = dim + 1; j &lt;= m; j++)
+            if (abs(a[j][i]) &gt; abs(a[piv][i]))
+                piv = j;
+        if (abs(a[piv][i]) &lt; EPS) continue; // 自由元
+        dim++;
+        for (int j = 1; j &lt;= n; j++)
+            swap(a[dim][j], a[piv][j]);
+        for (int j = 1; j &lt;= m; j++) &#123;
+            if (j == dim) continue;
+            if (abs(a[j][i]) &lt; EPS) continue;
+            double r = a[j][i] / a[dim][i];
+            for (int k = 1; k &lt;= n; k++)
+                a[j][k] -= r * a[dim][k];
+        &#125;
+    &#125;
+&#125;</code></pre>
+<h1 id="异或">异或</h1>
+<p>简称XOR，数学记号为$$，C++中为<code>^</code>，<strong>异或本质上是在模<span class="math inline">\(2\)</span>意义下的加法运算。</strong>因此线性代数的很多算法也可以应用到异或这样的有限域上，异或的一个很重要的性质是<strong>相消性</strong>，即一个数异或两次等于没异或！（等同于乘<span class="math inline">\(2\)</span>，在模<span class="math inline">\(2\)</span>下就肯定没意义啦）。</p>
+<p>异或的相消性很重要的一个应用是在图上使用DFS计算环上边的异或，我们只需要计算从DFS树根节点出发各个点到根上路径的异或和（记作<span class="math inline">\(dis(u)\)</span>）。如果我们在DFS上找到返祖边<span class="math inline">\(e = (u, v)\)</span>，环的异或就是<span class="math inline">\(dis(u) \oplus dis(v) \oplus w(e)\)</span>。我们可以看到这个运算中<span class="math inline">\(u, v\)</span>LCA以上的部分都被抵消掉了，因此最后得到的就是整个环的异或和。<strong>如果求图上路径异或和的话我们可以用这样的方法搞出神奇的效果</strong>。</p>
+<h1 id="异或线性基">异或线性基</h1>
+<p>如何求出异或意义下的线性基呢？朴素的高斯消元肯定是可以的，但是对于异或我们首先可以压位减少常数，然后对于异或线性基我们还有一种求法，对于一个数<span class="math inline">\(x\)</span>，我们可以这样把<span class="math inline">\(x\)</span><strong>插入</strong>一组线性基：</p>
+<ol type="1">
+<li>找到<span class="math inline">\(x\)</span>的最高二进制位，记作<span class="math inline">\(i\)</span>。</li>
+<li>查看第<span class="math inline">\(i\)</span>位的线性基<span class="math inline">\(p[i]\)</span>是否被插入。</li>
+<li>如果没有被插入，插入第<span class="math inline">\(i\)</span>位的线性基，结束。</li>
+<li>如果已经被插入了，令<span class="math inline">\(x = x \oplus p[i]\)</span>。</li>
+</ol>
+<p><strong>正确性证明：</strong>如果当前位没被插入则插入操作显然正确，如果被插入，则<span class="math inline">\(x \oplus p[i]\)</span>不仅消除了第<span class="math inline">\(i\)</span>位，同时可以证明如果<span class="math inline">\(x \oplus p[i]\)</span>可以被线性基表出，则<span class="math inline">\(x\)</span>一定也可以被线性基表出。</p>
+<p>一个二进制数在被插入线性基的过程中如果失败了，那么它就会变成<span class="math inline">\(0\)</span>，暗示它可以由我们现有的线性基表出。</p>
+<p>代码：</p>
+<pre class="line-numbers"><code class="language-cpp">bool insert(int x) &#123;
+    for (int i = 30; i &gt;= 0; i--) &#123; // 最高位数
+        if ((x &gt;&gt; i) &amp; 1) &#123;
+            if (!p[i]) &#123;
+                p[i] = x;
+                return true;
+            &#125; else
+                x ^= p[i];
+        &#125;
+    &#125;
+    return false;
+&#125;</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/03/HDU5015/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/09/03/HDU5015/" class="post-title-link" itemprop="url">HDU 5015 / 矩阵加速递推</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
       </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-09-03 07:58:42" itemprop="dateCreated datePublished" datetime="2018-09-03T07:58:42-04:00">2018-09-03</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="题意">题意</h1>
+<p><a target="_blank" rel="noopener" href="http://acm.hdu.edu.cn/showproblem.php?pid=5015">题面</a>：假设有一个<span class="math inline">\(n+1\)</span>行<span class="math inline">\(m+1\)</span>列的矩阵<span class="math inline">\(A\)</span>，下标从<span class="math inline">\(0\)</span>开始，给定<span class="math inline">\(A_{1,0}, A_{2, 0}, \cdots A_{n, 0}\)</span>（即最左边一列的初始值），以及已知矩阵的第<span class="math inline">\(1\)</span>行第<span class="math inline">\(i\)</span>列为<span class="math inline">\(2\underbrace{333\cdots3}_{i + 1 个 3}\)</span>，如下所示： <span class="math display">\[
+\left(\begin{matrix}
+0 &amp;233 &amp;2333 &amp;23333 &amp;\cdots \\
+A_{1, 0} &amp;A_{1, 1} &amp;A_{1, 2} &amp;A_{1, 3} &amp;\cdots \\
+A_{2, 0} &amp;A_{2, 1} &amp;A_{2, 2} &amp;A_{2, 3} &amp;\cdots \\
+\vdots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots
+\end{matrix}\right)
+\]</span> 并且已知对于<span class="math inline">\(i, j \ge 1\)</span>，有<span class="math inline">\(A_{i, j} = A_{i - 1, j} + A_{i, j - 1}\)</span>。求<span class="math inline">\(A_{n, m}\)</span>。</p>
+<p><span class="math inline">\(n \le 10, m \le 10^9\)</span>。</p>
+<h1 id="解法">解法</h1>
+<p>从数据范围可以得知我们必须使用矩阵快速幂加速递推，我们定义第<span class="math inline">\(i\)</span>列的状态向量为一个<span class="math inline">\(n + 2\)</span>行的列向量，并<strong>手动展开递推式消除同一列的项</strong>（非常重要，因为不然的话没办法推）得到转移矩阵： <span class="math display">\[
+\left(\begin{matrix}
+1 \\
+A_{i, 0} \\
+A_{i, 1} \\
+A_{i, 2} \\
+A_{i, 3} \\
+\vdots
+\end{matrix}\right)
+=
+\left(\begin{matrix}
+1 &amp;0 &amp;0 &amp;0 &amp;0 &amp;\cdots\\
+3 &amp;10 &amp;0 &amp;0 &amp;0 &amp;\cdots\\
+3 &amp;10 &amp;1 &amp;0 &amp;0 &amp;\cdots\\
+3 &amp;10 &amp;1 &amp;1 &amp;0 &amp;\cdots\\
+3 &amp;10 &amp;1 &amp;1 &amp;1 &amp;\cdots\\
+\vdots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots
+\end{matrix}\right)
+\left(\begin{matrix}
+1 \\
+A_{i - 1, 0} \\
+A_{i - 1, 1} \\
+A_{i - 1, 2} \\
+A_{i - 1, 3} \\
+\vdots
+\end{matrix}\right)
+\]</span> 注意到我们怎么处理<span class="math inline">\(2\underbrace{333\cdots3}_{i + 1 个 3}\)</span>的，我们发现<span class="math inline">\(2\underbrace{3\cdots3}_{i + 1 个 3} = 2\underbrace{3\cdots3}_{i 个 3} \times 10 + 3\)</span>，为了凑出<span class="math inline">\(3\)</span>我们在矩阵当中引入<span class="math inline">\(1\)</span>这多余的一行（<strong>这是在矩阵加速递推时引入常数项的常用技巧</strong>）（其实在这里直接引入<span class="math inline">\(3\)</span>也可以啦，但是<span class="math inline">\(1\)</span>的话更通用），这就是系数<span class="math inline">\(3, 10\)</span>的由来。然后使用快速幂加速矩阵乘法即可，时间复杂度为<span class="math inline">\(O(n^3\log m)\)</span>：</p>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
+
+using namespace std;
+typedef long long ll;
+typedef int mat[13][13];
+typedef int vec[13];
+const int MOD = 10000007;
+int n, m;
+vec a;
+mat b;
+
+void mul(mat &amp;x, vec &amp;y) &#123;
+    vec z;
+    for (int i = 1; i &lt;= n + 2; i++) &#123;
+        z[i] = 0;
+        for (int j = 1; j &lt;= n + 2; j++)
+            z[i] = (z[i] + 1LL * x[i][j] * y[j]) % MOD;
+    &#125;
+    for (int i = 1; i &lt;= n + 2; i++)
+        y[i] = z[i];
+&#125;
+
+void sqr(mat &amp;x) &#123;
+    mat y;
+    for (int i = 1; i &lt;= n + 2; i++) &#123;
+        for (int j = 1; j &lt;= n + 2; j++) &#123;
+            y[i][j] = 0;
+            for (int k = 1; k &lt;= n + 2; k++)
+                y[i][j] = (y[i][j] + 1LL * x[i][k] * x[k][j]) % MOD;
+        &#125;
+    &#125;
+    for (int i = 1; i &lt;= n + 2; i++)
+        for (int j = 1; j &lt;= n + 2; j++)
+            x[i][j] = y[i][j];
+&#125;
+
+int main() &#123;
+    while (scanf(&quot;%d%d&quot;, &amp;n, &amp;m) != EOF) &#123;
+        a[1] = 1, a[2] = 23;
+        for (int i = 3; i &lt;= n + 2; i++)
+            scanf(&quot;%d&quot;, &amp;a[i]);
+        b[1][1] = 1;
+        for (int i = 2; i &lt;= n + 2; i++) &#123;
+            b[i][1] = 3, b[i][2] = 10;
+            for (int j = 3; j &lt;= i; j++)
+                b[i][j] = 1;  
+        &#125;
+        for (; m; m &gt;&gt;= 1) &#123;
+            if (m &amp; 1) mul(b, a);
+            sqr(b);
+        &#125;
+        printf(&quot;%d\n&quot;, a[n + 2]);
+    &#125;
+    return 0;
+&#125;</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/03/%E7%A7%AF%E6%80%A7%E5%87%BD%E6%95%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/09/03/%E7%A7%AF%E6%80%A7%E5%87%BD%E6%95%B0/" class="post-title-link" itemprop="url">蒟蒻的数论笔记——积性函数</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-09-03 07:52:46" itemprop="dateCreated datePublished" datetime="2018-09-03T07:52:46-04:00">2018-09-03</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="定义">定义</h1>
+<p>若数论函数<span class="math inline">\(f\)</span>满足如下性质，我们称<span class="math inline">\(f\)</span>为积性函数：</p>
+<ol type="1">
+<li><span class="math inline">\(f(1) = 1\)</span>。</li>
+<li>对于任意<strong>互素</strong>正整数<span class="math inline">\(n, m\)</span>有<span class="math inline">\(f(nm) = f(n)f(m)\)</span>。</li>
+<li>（可选项）如果对于任意正整数<span class="math inline">\(n, m\)</span>都有<span class="math inline">\(f(nm) = f(n)f(m)\)</span>，则称<span class="math inline">\(f\)</span>为完全积性函数（没卵用）。</li>
+</ol>
+<h1 id="欧拉函数varphin">欧拉函数<span class="math inline">\(\varphi(n)\)</span></h1>
+<h2 id="定义-1">定义</h2>
+<p><span class="math inline">\(\varphi(n)\)</span>为不大于<span class="math inline">\(n\)</span>的与<span class="math inline">\(n\)</span>互素的数的个数，即： <span class="math display">\[
+\varphi(n) = \sum_{i = 1}^n \left[\gcd(i, n) = 1\right]
+\]</span></p>
+<h2 id="积性证明">积性证明</h2>
+<p>我们证明对于任意正整数<span class="math inline">\(n, m\)</span>若<span class="math inline">\(\gcd(n, m) = 1\)</span>则<span class="math inline">\(\varphi(mn) = \varphi(m)\varphi(n)\)</span>：</p>
+<p>首先我们把不大于<span class="math inline">\(mn\)</span>的正整数排成<span class="math inline">\(m\)</span>行<span class="math inline">\(n\)</span>列的表： <span class="math display">\[
+\begin{matrix}
+1 &amp;m + 1 &amp;\cdots &amp;(n - 1)m + 1\\
+2 &amp;m + 2 &amp;\cdots &amp;(n - 1)m + 2\\
+\vdots &amp;\vdots &amp;\ddots &amp;\vdots\\
+m &amp;2m &amp;\cdots &amp;nm
+\end{matrix}
+\]</span> 由定义，<span class="math inline">\(\varphi(mn)\)</span>为这张表中与<span class="math inline">\(mn\)</span>互素的数的个数。</p>
+<p>因为表中的每一行模<span class="math inline">\(m\)</span>同余，因此共有<span class="math inline">\(\varphi(m)\)</span>行与<span class="math inline">\(m\)</span>互素。</p>
+<p>我们接下来证明：每一行的<span class="math inline">\(n\)</span>个数模<span class="math inline">\(n\)</span>两两不同余，因为假设在第<span class="math inline">\(r\)</span>行存在两个数<span class="math inline">\(am+r\)</span>和<span class="math inline">\(bm + r\)</span>，使得 <span class="math display">\[
+\begin{aligned}
+am + r &amp;\equiv bm + r &amp;\pmod n \\
+(a - b)m &amp;\equiv 0 &amp;\pmod n
+\end{aligned}
+\]</span> 因为<span class="math inline">\(m,n\)</span>互素，因此<span class="math inline">\(a - b \equiv 0 \pmod n\)</span>，又因为<span class="math inline">\(a, b &lt; n\)</span>，因此<span class="math inline">\(a = b\)</span>，矛盾。</p>
+<p>因为每一行的<span class="math inline">\(n\)</span>个数模<span class="math inline">\(n\)</span>两两不同余，所以说虽然我不知道它们每个数模<span class="math inline">\(n\)</span>是多少，但是我知道<strong>这些数模<span class="math inline">\(n\)</span>一定构成了<span class="math inline">\(0, 1, \cdots, n - 1\)</span>的一个排列</strong>。因此，因为<span class="math inline">\(0, 1, \cdots, n-1\)</span>中有<span class="math inline">\(\varphi(n)\)</span>个数与<span class="math inline">\(n\)</span>互素，因此每一行中也有<span class="math inline">\(\varphi(n)\)</span>个数与<span class="math inline">\(n\)</span>互素。因此这<span class="math inline">\(\varphi(m)\)</span>行与<span class="math inline">\(m\)</span>互素的数中总共有<span class="math inline">\(\varphi(m)\varphi(n)\)</span>个数与<span class="math inline">\(mn\)</span>互素，因此<span class="math inline">\(\varphi(mn) = \varphi(m)\varphi(n)\)</span>，证毕。</p>
+<p>在刚刚的证明中有一个非常重要的思想——<strong>原来有<span class="math inline">\(n\)</span>个数，对它们进行一定的变换，如果我们能够证明变换的结果两两不同，而且没变出其他的数，那么变换的结果一定是原来<span class="math inline">\(n\)</span>个数的一个排列！</strong></p>
+<h2 id="计算">计算</h2>
+<h3 id="单点计算">单点计算</h3>
+<p>要探究<span class="math inline">\(\varphi(n)\)</span>的计算公式，我们先探究<span class="math inline">\(n = p^k\)</span>，其中<span class="math inline">\(p\)</span>为素数时的特例。在前<span class="math inline">\(p^k\)</span>个正整数中共有<span class="math inline">\(\frac{p^k}{p} = p^{k -1}\)</span>个数是<span class="math inline">\(p\)</span>的倍数与<span class="math inline">\(p^k\)</span>不互素，因此： <span class="math display">\[
+\varphi(p^k) = p^k - p^{k - 1} = p^k \left( 1 - \frac{1}{p}\right)
+\]</span> 对于单个素数<span class="math inline">\(p\)</span>，有<span class="math inline">\(\varphi(p) = p - 1\)</span>。</p>
+<p>接下来，我们利用<span class="math inline">\(\varphi\)</span>的积性把上述公式拓展到一般情况，设<span class="math inline">\(n\)</span>可以被素因数分解成<span class="math inline">\(n = \prod_{i = 1}^r p_i^{c_i}\)</span>的形式，那么我们就有： <span class="math display">\[
+\begin{aligned}
+\varphi(n) &amp;= \prod_{i = 1}^r \varphi(p_i^{c_i}) \\
+&amp;= \prod_{i = 1}^r p_i^{c_i} \left(1 - \frac{1}{p_i}\right) \\
+&amp;= \prod_{i = 1}^r p_i^{c_i} \prod_{i = 1}^r \left(1 - \frac{1}{p_i}\right) \\
+&amp;= n \prod_{i = 1}^r \left(1 - \frac{1}{p_i}\right)
+\end{aligned}
+\]</span> 这就是欧拉函数的单点计算式，时间复杂度取决于素因数分解的时间复杂度，一般用试除法可以达到<span class="math inline">\(O(\sqrt n)\)</span>。</p>
+<h3 id="n计算"><span class="math inline">\([1, n]\)</span>计算</h3>
+<p>使用欧拉筛计算任何积性函数我们需要知道这个函数在以下三种点的取值：</p>
+<ol type="1">
+<li>在素数点的取值：<span class="math inline">\(\varphi(p) = p - 1\)</span></li>
+<li>对于合数<span class="math inline">\(n\)</span>和它的素因子<span class="math inline">\(p\)</span>在<span class="math inline">\(p \mid \frac{n}{p}\)</span>时的取值：由单点计算式，<span class="math inline">\(\varphi(n) = p\varphi(\frac{n}{p})\)</span></li>
+<li>对于合数<span class="math inline">\(n\)</span>和它的素因子<span class="math inline">\(p\)</span>在<span class="math inline">\(p \nmid \frac{n}{p}\)</span>时的取值：由积性，<span class="math inline">\(\varphi(n) = \varphi(p)\varphi(\frac{n}{p}) = (p - 1)\varphi(\frac{n}{p})\)</span></li>
+</ol>
+<p>知道这三点信息之后我们就可以用欧拉筛完成在<span class="math inline">\(O(n)\)</span>时间内计算<span class="math inline">\([1, n]\)</span>内所有欧拉函数（或其他积性函数）的值：</p>
+<pre class="line-numbers"><code class="language-cpp">bool v[N]; 
+int phi[N];
+int prime[P], tot = 0;
+for (int i = 2; i &lt;= n; i++) &#123;
+    if (!v[i]) &#123;
+        prime[++tot] = i;
+        phi[i] = i - 1; // 第一条
+    &#125;
+    for (int j = 1; i * prime[j] &lt;= n; j++) &#123;
+        v[i * prime[j]] = true;
+        if (i % prime[j] == 0) &#123;
+            phi[i * prime[j]] = phi[i] * prime[j]; // 第二条
+            break;
+        &#125; else
+            phi[i * prime[j]] = phi[i] * (prime[j] - 1); // 第三条
+    &#125;
+&#125;</code></pre>
+<h3 id="前缀和计算">前缀和计算</h3>
+<p>我们可以使用名为杜教筛的大佬专用工具在<span class="math inline">\(O(n^{2 \over 3})\)</span>的时间复杂度计算出<span class="math inline">\(\sum_{i = 1}^n \varphi(i)\)</span>的值。</p>
+<h2 id="欧拉定理">欧拉定理</h2>
+<p>若正整数<span class="math inline">\(a, n\)</span>互素，则<span class="math inline">\(a^{\varphi(n)} \equiv 1 \pmod n\)</span>。</p>
+<p><strong>证明：</strong>考虑与不大于<span class="math inline">\(n\)</span>的与<span class="math inline">\(n\)</span>互素的<span class="math inline">\(\varphi(n)\)</span>个数： <span class="math display">\[
+x_1, x_2, \cdots, x_{\varphi(n)}
+\]</span> 将它们同时乘以<span class="math inline">\(a\)</span>： <span class="math display">\[
+ax_1, ax_2, \cdots, ax_{\varphi(n)}
+\]</span> 因为<span class="math inline">\(a\)</span>与<span class="math inline">\(n\)</span>互素，因此这些数依然和<span class="math inline">\(n\)</span>互素。</p>
+<p>接下来我们用证明欧拉函数积性时用到的方法，证明这些数模<span class="math inline">\(n\)</span>两两不同余，假设存在<span class="math inline">\(x_i,x_j\)</span>，使得<span class="math inline">\(ax_i \equiv ax_j \pmod n\)</span>，那么因为<span class="math inline">\(a, n\)</span>互素，<span class="math inline">\(x_i \equiv x_j \pmod n\)</span>，矛盾。</p>
+<p>因为这些数模<span class="math inline">\(n\)</span>还是那几个与<span class="math inline">\(n\)</span>互素的余数，而又两两不同余，这些数一定是<span class="math inline">\(x_1, x_2, \cdots, x_{\varphi(n)}\)</span>的一个排列，既然如此，我们有： <span class="math display">\[
+\begin{aligned}
+\prod_{i = 1}^{\varphi(n)} x_i &amp;\equiv \prod_{i = 1}^{\varphi(n)} ax_i &amp;\pmod n \\
+(a^{\varphi(n)} - 1) \prod_{i = 1}^{\varphi(n)} x_i &amp;\equiv 0 &amp;\pmod n\\
+\end{aligned}
+\]</span> 因为<span class="math inline">\(\prod_{i = 1}^{\varphi(n)} x_i\)</span>与<span class="math inline">\(n\)</span>互素，我们有： <span class="math display">\[
+\begin{aligned}
+a^{\varphi(n)} - 1 &amp;\equiv 0 &amp;\pmod n \\
+a^{\varphi(n)} &amp;\equiv 1 &amp;\pmod n
+\end{aligned}
+\]</span> 得证。</p>
+<p><strong>特例：</strong>当<span class="math inline">\(n\)</span>时素数时，<span class="math inline">\(\varphi(n) = n - 1\)</span>，因此我们有： <span class="math display">\[
+a^{n - 1} \equiv 1 \pmod n
+\]</span> 即<em>费马小定理</em>。</p>
+<h1 id="莫比乌斯函数mun">莫比乌斯函数<span class="math inline">\(\mu(n)\)</span></h1>
+<h2 id="定义-2">定义</h2>
+<p>设正整数<span class="math inline">\(n\)</span>可以被素因数分解成<span class="math inline">\(n = \prod_{i = 1}^r p_i^{c_i}\)</span>的形式，那么莫比乌斯函数的定义为： <span class="math display">\[
+\mu(n) = \begin{cases}
+    0 &amp; \exists 1 \le i \le r,  c_i &gt; 1 \\
+    (-1)^r &amp; \forall 1 \le i \le r, c_i \le 1
+\end{cases}
+\]</span> 即若<span class="math inline">\(n\)</span>包含<em>平方素因子</em>，则<span class="math inline">\(\mu(n) = 0\)</span>，反之为<span class="math inline">\(-1\)</span>的素因子个数次方。</p>
+<h2 id="积性证明-1">积性证明</h2>
+<p>设正整数<span class="math inline">\(m, n\)</span>互素，则：</p>
+<ol type="1">
+<li>若其中有一个包含平方素因子（一个的函数值为<span class="math inline">\(0\)</span>），则它们的积必定也包含这个平方素因子，函数值也为<span class="math inline">\(0\)</span>。</li>
+<li>若两个都不包含平方素因子，则由于<span class="math inline">\(m, n\)</span>互素（各自有不同的素因子），它们的积必定不包含平方素因子。不同素因子个数也一定为<span class="math inline">\(m, n\)</span>不同素因子个数的和。</li>
+</ol>
+<p>证毕。</p>
+<h2 id="计算-1">计算</h2>
+<h3 id="单点计算-1">单点计算</h3>
+<p>见定义。</p>
+<h3 id="n计算-1"><span class="math inline">\([1, n]\)</span>计算</h3>
+<p>我们依然可以用欧拉筛在<span class="math inline">\(O(n)\)</span>时间内计算出不大于<span class="math inline">\(n\)</span>的所有<span class="math inline">\(\mu\)</span>的值，代码如下：</p>
+<pre class="line-numbers"><code class="language-cpp">bool v[N]; 
+int mu[N];
+int prime[P], tot = 0;
+for (int i = 2; i &lt;= n; i++) &#123;
+    if (!v[i]) &#123;
+        prime[++tot] = i;
+        mu[i] = -1; // 素数有一个素因子 (-1)^1
+    &#125;
+    for (int j = 1; i * prime[j] &lt;= n; j++) &#123;
+        v[i * prime[j]] = true;
+        if (i % prime[j] == 0) &#123;
+            mu[i * prime[j]] = 0; // 平方素因子
+            break;
+        &#125; else
+            mu[i * prime[j]] = -mu[i]; // 多了一个素因子 
+    &#125;
+&#125;</code></pre>
+<h1 id="除数函数sigman">除数函数<span class="math inline">\(\sigma(n)\)</span></h1>
+<h2 id="定义-3">定义</h2>
+<p>除数函数特指一大类的函数，对于正整数<span class="math inline">\(n\)</span>： <span class="math display">\[
+\sigma_x(n) = \sum_{d \mid n} d^x
+\]</span> <span class="math inline">\(\sigma_0(n)\)</span>为<span class="math inline">\(n\)</span>的约数个数，<span class="math inline">\(\sigma_1(n)\)</span>为<span class="math inline">\(n\)</span>的约数和。</p>
+<p><strong>结论：</strong><span class="math inline">\(\sigma_0(n) \sim O(n^{1 \over \ln\ln n})\)</span></p>
+<h2 id="积性证明-2">积性证明</h2>
+<p>设<span class="math inline">\(n, m\)</span>互素，则有： <span class="math display">\[
+\begin{aligned}
+\sigma_x(mn) &amp;= \sum_{d_m \mid m}\sum_{d_n \mid n} (d_nd_m)^x \\
+&amp;= \sum_{d_m \mid m} d_m^x \sum_{d_n \mid n} d_n^x \\
+&amp;= \sigma_x(m)\sigma_x(n)
+\end{aligned}
+\]</span> 注意这里我们在展开<span class="math inline">\(\sigma_x(mn)​\)</span>的时候利用了<span class="math inline">\(m, n​\)</span>互素这一点，如果<span class="math inline">\(m, n​\)</span>不互素则在这种写法中<span class="math inline">\(mn​\)</span>的某些因子会被计算多次，假设<span class="math inline">\(m, n​\)</span>有非平凡公因子<span class="math inline">\(p​\)</span>，则<span class="math inline">\(d_m = 1, d_n= p​\)</span>和<span class="math inline">\(d_m = p, d_n = 1​\)</span>都可以令<span class="math inline">\(d_md_n = p​\)</span>，<span class="math inline">\(p​\)</span>就被计算了两次，结果就不对了。</p>
+<h2 id="计算-2">计算</h2>
+<p><span class="math inline">\(\sigma\)</span>这个东西在OI中存在感极低（说白了就是没卵用），因此对计算并不做要求。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/03/BSGS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/09/03/BSGS/" class="post-title-link" itemprop="url">BSGS算法笔记</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-09-03 05:35:20" itemprop="dateCreated datePublished" datetime="2018-09-03T05:35:20-04:00">2018-09-03</time>
+    </span>
 
   
 </div>
@@ -352,7 +823,7 @@ ll bsgs(ll a, ll b, ll p) &#123;
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/01%E5%88%86%E6%95%B0%E8%A7%84%E5%88%92/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/01/%E6%95%B0%E8%AE%BA%E7%AC%94%E8%AE%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -365,7 +836,7 @@ ll bsgs(ll a, ll b, ll p) &#123;
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/01%E5%88%86%E6%95%B0%E8%A7%84%E5%88%92/" class="post-title-link" itemprop="url">01分数规划</a>
+          <a href="/2018/09/01/%E6%95%B0%E8%AE%BA%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">蒟蒻的数论笔记——素数</a>
         </h2>
 
         <div class="post-meta-container">
@@ -376,15 +847,358 @@ ll bsgs(ll a, ll b, ll p) &#123;
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
+      <time title="创建时间：2018-09-01 23:13:32" itemprop="dateCreated datePublished" datetime="2018-09-01T23:13:32-04:00">2018-09-01</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-11-02 22:37:44" itemprop="dateModified" datetime="2018-11-02T22:37:44-04:00">2018-11-02</time>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><strong>定义</strong>：只能被<span class="math inline">\(1\)</span>和自身整除的数。</p>
+<h1 id="素数的判定">素数的判定</h1>
+<h2 id="试除法">试除法</h2>
+<p>如果<span class="math inline">\(n\)</span>不是素数那么它必定有一个不大于<span class="math inline">\(\sqrt n\)</span>的因子，因此我们枚举<span class="math inline">\([1, \sqrt n]\)</span>中的所有数挨个试除即可，时间复杂度<span class="math inline">\(O(\sqrt n)\)</span>，虽然慢但是保证正确。</p>
+<h2 id="费马判定法">费马判定法</h2>
+<p>逆用费马小定理，即若<span class="math inline">\(n\)</span>为素数则<span class="math inline">\(a^{n - 1} \equiv 1 \pmod n\)</span>，对于一个可能的<span class="math inline">\(n\)</span>我们尝试不同的<span class="math inline">\(a\)</span>并判断是否符合定理，如果不是那么<span class="math inline">\(n\)</span>一定不是素数，如果是，那么对于单个的<span class="math inline">\(a\)</span>我们正确的概率约为<span class="math inline">\(1 \over 4\)</span>，因此我们可以多试几次（比如<span class="math inline">\(20\)</span>次），这样基本上就可以保证正确性了。时间复杂度就是快速幂的复杂度<span class="math inline">\(O(\log n)\)</span>。</p>
+<p><strong>缺点：会被卡迈克尔数干死。</strong>如果合数<span class="math inline">\(n\)</span>是卡迈克尔数，那么对于所有和<span class="math inline">\(n\)</span>互素的<span class="math inline">\(a\)</span>，也有<span class="math inline">\(a^{n - 1} \equiv 1 \pmod n\)</span>，简而言之就是费马小定理逆定理的反例。最小的卡迈克尔数是<span class="math inline">\(561 = 3 \times 11 \times 17\)</span>。虽然这种数很稀少但是，在<span class="math inline">\([1, 1 \times 10^8]\)</span>之间总共有<span class="math inline">\(255\)</span>个卡迈克尔数，出题人想干死你还是很简单。</p>
+<h2 id="miller-rabin-判定法">Miller-Rabin 判定法</h2>
+<p><strong>引理</strong>：模素数<span class="math inline">\(n\)</span>意义下<span class="math inline">\(1\)</span>的平方根模<span class="math inline">\(n\)</span>为<span class="math inline">\(\pm 1\)</span>。</p>
+<p><strong>证明：</strong>设此时<span class="math inline">\(1\)</span>的平方根为<span class="math inline">\(x\)</span>： <span class="math display">\[
+\begin{aligned}
+x^2 &amp;\equiv 1 &amp;\pmod n\\
+x^2 - 1 &amp;\equiv 0 &amp;\pmod n\\
+(x + 1)(x - 1) &amp;\equiv 0 &amp;\pmod n\\
+\end{aligned}
+\]</span> 因此<span class="math inline">\(n\mid (x + 1)\)</span>或<span class="math inline">\(n\mid (x - 1)\)</span>，即<span class="math inline">\(x \equiv \pm1 \pmod n\)</span>，得证。</p>
+<p>对于一个奇素数<span class="math inline">\(n\)</span>，偶数<span class="math inline">\(n - 1\)</span>一定可以写成<span class="math inline">\(2^sd\)</span>的形式，其中<span class="math inline">\(d\)</span>是奇数。我们断言对于所有<span class="math inline">\(a\)</span>和某个<span class="math inline">\(r\)</span>以下两个不等式必有一个成立： <span class="math display">\[
+\begin{aligned}
+a^d &amp;\equiv 1 &amp;\pmod n \\
+a^{2^rd} &amp;\equiv -1 &amp;\pmod n
+\end{aligned}
+\]</span> 其中<span class="math inline">\(0 &lt; a &lt; n, 0 \le r &lt; s\)</span>。</p>
+<p><strong>证明：</strong>由费马小定理可得<span class="math inline">\(a^{2^sd} \equiv 1 \pmod n\)</span>，我们不断地对这个式子两边开根，由引理，如果开出<span class="math inline">\(-1\)</span>，那么下式成立，如果开了<span class="math inline">\(s\)</span>次没开出<span class="math inline">\(-1\)</span>，则上式成立。</p>
+<p>Miller-Rabin 判别法基于以上命题的逆否命题，即如果存在一个<span class="math inline">\(a\)</span>，使得<span class="math inline">\(a^d \not \equiv 1 \pmod n\)</span>且对于所有的<span class="math inline">\(0 \le r &lt; s\)</span>都有<span class="math inline">\(a^{2^rd} \not\equiv -1 \pmod n\)</span>，那<span class="math inline">\(n\)</span>一定不是素数。反之，<span class="math inline">\(n\)</span>就<em>很有可能</em>是素数。</p>
+<p>因此，Miller Rabin的工作流程如下：</p>
+<pre class="line-numbers"><code class="language-cpp">bool millerRabin(int n) &#123; // n &gt; 3
+    int s = 0, d = n - 1;
+    while (!(d &amp; 1)) s++, d &gt;&gt;= 1; // 分解s, d
+    for (int i = 1; i &lt;= K; i++) &#123; // K 越大越准
+        int a = rand() % (n - 3) + 2; // 随机一个[2, n - 2]的a
+        int x = qpow(a, d, n); // a^d mod n, qpow快速幂
+        if (x == 1 || x == n - 1) continue; // 不满足逆否命题, n - 1是r = 0时的下式
+        bool flag = false;
+        for (int j = 1; j &lt;= s - 1; j++) &#123;
+            x = x * x % n;
+            if (x == n - 1) &#123;
+                flag = true; // 不满足逆否命题
+                break;
+            &#125;
+        &#125;
+        if (flag) continue;
+        return false;
+    &#125;
+    return true;
+&#125;</code></pre>
+<p>要我说还是蛮复杂的，但是这个测试就已经不会被卡迈克尔数干死了。而且在<span class="math inline">\(K = 1\)</span>时就已经很准了。</p>
+<p>时间复杂度为<span class="math inline">\(O(n\log n)\)</span>。</p>
+<h2 id="自己的判定法">自己的判定法？</h2>
+<p>可以通过研究素数的更多性质，例如高次剩余的特性等等发明自己的判别法，如果在复杂度允许的情况下能够在<code>int</code>范围内没问题也可以用。</p>
+<h1 id="计算1-n的所有素数">计算<span class="math inline">\([1, n]\)</span>的所有素数</h1>
+<p>如何快速获得<span class="math inline">\([1, n]\)</span>的所有素数呢？如果对于<span class="math inline">\(n\)</span>个数都进行以上的素数判定肯定是非常慢的，因此我们需要筛法，顾名思义，就是把不是素数的全部筛掉，那么剩下的就都是素数了。</p>
+<h2 id="埃拉托色尼筛法">埃拉托色尼筛法</h2>
+<p>最朴素的筛法，基于的思想是如果我把每一个素数的倍数都标记成合数的话那么剩下没有标记的就是素数了，代码非常简洁，如下：</p>
+<pre class="line-numbers"><code class="language-cpp">bool v[N]; // 不是质数
+int prime[P], tot = 0;
+for (int i = 2; i &lt;= n; i++) &#123;
+    if (v[i]) continue;
+    prime[++tot] = i;
+    for (int j = 2; j &lt;= n / i; j++)
+        v[i * j] = true;
+&#125;</code></pre>
+<p>其复杂度应该为<span class="math inline">\(\sum_{素数p \le n} \left\lfloor \frac{n}{p} \right\rfloor\)</span>。由麦腾斯定理，这个式子在<span class="math inline">\(n \to \infty\)</span>时逼近<span class="math inline">\(n\ln\ln n\)</span>，因此埃拉托色尼筛法的时间复杂度为<span class="math inline">\(O(n\ln\ln n)\)</span>，一般<span class="math inline">\(n\)</span>可以达到<span class="math inline">\(10^7\)</span>。这个筛法有一个小优化我也在<a href="https://alan20210202.github.io/2018/08/21/筛法/">之前的笔记</a>中有提到。</p>
+<p>埃拉托色尼筛法的精髓在于它利用了<strong>约数和倍数的关系是成对的</strong>这一点，将素数判断这一个枚举约数的问题转化为了枚举倍数的问题并加快了速度，这一思想十分重要，在计算狄利克雷卷积和反演的时候也会用到（把对因数求和转化为对倍数算贡献）。</p>
+<h2 id="欧拉筛">欧拉筛</h2>
+<p>虽然<span class="math inline">\(\ln\ln n\)</span>这个因子已经很小了，但是面对<span class="math inline">\(n = 10^8\)</span>的时候还是会跪掉。因此我们需要一种筛法能够在<span class="math inline">\(O(n)\)</span>的时间内筛出所有的素数。</p>
+<p>我们发现埃氏筛效率欠佳的一点是：<em>一个合数会被每一个它的素因数筛掉共计好几次</em>。我们能不能让一个合数只被筛一次呢？</p>
+<pre class="line-numbers"><code class="language-cpp">bool v[N]; // 不是质数
+int prime[P], tot = 0;
+for (int i = 2; i &lt;= n; i++) &#123;
+    if (!v[i]) prime[++tot] = i;
+    for (int j = 1; i * prime[j] &lt;= n; j++) &#123;
+        v[i * prime[j]] = true;
+        if (i % prime[j] == 0) break;
+    &#125;
+&#125;</code></pre>
+<p>欧拉筛的精髓在于那句<code>if (i % prime[j] == 0) break;</code>。</p>
+<p><strong>结论：</strong>在欧拉筛中每个合数<em>会且仅会</em>被它的最小素因子筛去。</p>
+<p><strong>证明：</strong>设合数<span class="math inline">\(N\)</span>的最小素因子为<span class="math inline">\(p_o\)</span>，因为<span class="math inline">\(\frac{N}{p_0}\)</span>不可能被<span class="math inline">\(p_0\)</span>更小的素数所整除，因此在循环到<span class="math inline">\(i = \frac{N}{p_0}\)</span>时，内循环一定会在<code>break</code>之前筛到<span class="math inline">\(\frac{N}{p_0} \cdot p_0 = N\)</span>。而假设有<span class="math inline">\(N\)</span>有另外一个素因子<span class="math inline">\(p_1 &gt; p_0\)</span>，则显然<span class="math inline">\(p_0 \mid \frac{N}{p_1}\)</span>，因此在循环到<span class="math inline">\(i = \frac{N}{p_1}\)</span>时，内循环一定会在筛到（<code>prime[j]</code>为）<span class="math inline">\(p_0\)</span>之后就立刻<code>break</code>，因此一定不会再筛到<span class="math inline">\(\frac{N}{p_1} \cdot p_1\)</span>。</p>
+<p><strong>推论：</strong>因为合数的数量少于<span class="math inline">\(n\)</span>，因此欧拉筛的复杂度为<span class="math inline">\(O(n)\)</span>。</p>
+<p>欧拉筛原名线性筛，冠以欧拉之名纯粹是因为我们不仅用它筛素数，还可以顺便计算以欧拉函数为首的一票积性函数。</p>
+<h1 id="素因数分解">素因数分解</h1>
+<h2 id="试除法-1">试除法</h2>
+<p>如果<span class="math inline">\(n\)</span>为合数那么<span class="math inline">\(n\)</span>一定有一个不大于<span class="math inline">\(\sqrt n\)</span>的素因子，因此我们枚举<span class="math inline">\([1, \sqrt n]\)</span>中的所有数挨个试除即可，时间复杂度<span class="math inline">\(O(\sqrt n)\)</span>，是最常用的方法。</p>
+<h2 id="pollards-rho方法">Pollard's-Rho方法</h2>
+<p><strong>引理（生日悖论）：</strong>在<span class="math inline">\([1, N]\)</span>当中随机选出若干个数，平均需要抽出<span class="math inline">\(O(\sqrt N)\)</span>个数才会抽到两个相同的数。</p>
+<p><strong>简介：</strong>抽前<span class="math inline">\(k - 1\)</span>个数两两不同的概率为： <span class="math display">\[
+\frac{P(N, k - 1)}{N^{k - 1}} = \frac{N!}{(N - k+1)!N^{k-1}}
+\]</span> 如果你抽第<span class="math inline">\(k\)</span>个数，与之前<span class="math inline">\(k - 1\)</span>个数相同的概率为<span class="math inline">\(\frac{k - 1}{N}\)</span>，因此你恰巧在刚刚抽完第<span class="math inline">\(k\)</span>个数后得到两个相同的数的概率为： <span class="math display">\[
+\frac{N!}{(N - k+1)!N^{k-1}} \cdot \frac{k - 1}{N} = \frac{(k - 1)N}{(N - k +1)!N^k}
+\]</span> 因此为了得到两个相同的数你需要抽出的数的期望是： <span class="math display">\[
+\sum_{k = 2}^{N+1} \frac{k(k - 1)N}{(N - k +1)!N^k}
+\]</span> 它也<a target="_blank" rel="noopener" href="https://math.stackexchange.com/questions/693996/average-number-of-people-required-to-find-a-pair-with-same-birthday">等价</a>于TAOCP中的： <span class="math display">\[
+1 + \sum_{k = 1}^N \frac{N!}{(N-k)!N^k}
+\]</span> 神奇的数学家拉马努金曾对该函数进行过研究，并指出它渐进逼近<span class="math inline">\(\sqrt {\frac{\pi N}{2}}\)</span>。</p>
+<p>好的，现在假设我们需要分解出<span class="math inline">\(n = pq\)</span>的一个非平凡因子<span class="math inline">\(p\)</span>，假设我们有一个多项式同余函数<span class="math inline">\(g\)</span>（例如<span class="math inline">\(g(x) = (x^2 + 1) \bmod n\)</span>）。我们使用<span class="math inline">\(g\)</span>来迭代生成一个<em>伪随机</em>序列<span class="math inline">\(\{x_n\}\)</span>，它和其模<span class="math inline">\(p\)</span>的序列<span class="math inline">\(\{x_n \bmod p\}\)</span>相关联。由之前的生日悖论引理，前者平均在<span class="math inline">\(O(\sqrt n)\)</span>次迭代后产生循环，而后者只需要<span class="math inline">\(O(\sqrt p) &lt; O(\sqrt n)\)</span>次。我们可以在迭代中检测这个循环，从而完成对于素因数的分解。</p>
+<p>我们知道<span class="math inline">\(\{x_n \bmod p\}\)</span>产生循环当且仅当存在<span class="math inline">\(x_i, x_j\)</span>，有<span class="math inline">\(x_i \equiv x_j \pmod p\)</span>，此时<span class="math inline">\(x_i\)</span>和<span class="math inline">\(x_j\)</span>之间就是这个序列的一个循环节，但是我们预先是不知道<span class="math inline">\(p\)</span>的，那怎么判断以上条件是否成立呢？我们发现以上条件等价于<span class="math inline">\(p \mid |x_i - x_j|\)</span>，因为同时<span class="math inline">\(p \mid n\)</span>，所以此时<span class="math inline">\(p\)</span>最大可以为<span class="math inline">\(\gcd(n, |x_i - x_j|)\)</span>，因此如果我们发现<span class="math inline">\(\gcd(n, |x_i - x_j|) \neq 1\)</span>我们就已经找到了一个<span class="math inline">\(p = \gcd(n, |x_i - x_j|)\)</span>，非常巧妙！</p>
+<p>在算法实现中，我们使用弗洛伊德判圈算法，其精髓就是环上的追及问题，我们维护两个指针<span class="math inline">\(x_i, x_j\)</span>，从出发点开始<span class="math inline">\(x_i\)</span>一个一个地跳，<span class="math inline">\(x_j\)</span>两个两个地跳，他们的速度差为<span class="math inline">\(1\)</span>，只要出现了了一个环那么在某一时刻<span class="math inline">\(x_j\)</span>总是可以套<span class="math inline">\(x_i\)</span>一圈！每一轮过后我们检测$(n, |x_i - x_j|) $，如果不为<span class="math inline">\(1\)</span>那说明我们找到一个因子，但是如果为<span class="math inline">\(n\)</span>的话就是<span class="math inline">\(\{x_n\}\)</span>和<span class="math inline">\(\{x_n \bmod p\}\)</span>一起循环了，我们的算法就GG了，需要重新选定一个出发点（给<span class="math inline">\(g\)</span>的种子）。</p>
+<p>这个启发式算法的复杂度取决于<span class="math inline">\(O(\sqrt p)\)</span>，但是因为一般来说<span class="math inline">\(p \le \sqrt n\)</span>，因此算法的复杂度平均下来是<span class="math inline">\(O(n^{1 \over 4})\)</span>的，实测在<code>int</code>范围内快得飞起。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/01/%E6%95%B4%E9%99%A4%E5%88%86%E5%9D%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/09/01/%E6%95%B4%E9%99%A4%E5%88%86%E5%9D%97/" class="post-title-link" itemprop="url">整除分块</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
       </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-09-01 21:03:56" itemprop="dateCreated datePublished" datetime="2018-09-01T21:03:56-04:00">2018-09-01</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="一维情况">一维情况</h1>
+<p>在莫比乌斯反演中，我们经常需要计算类似如下的和式： <span class="math display">\[
+\sum_{i = 1}^n \left\lfloor \frac{n}{i} \right\rfloor
+\]</span> 如果朴素计算的话时间复杂度是<span class="math inline">\(O(n)\)</span>的，这个代价对于很多多询问的题目来说是在是太高了，因此我们需要更快的方法。</p>
+<p><strong>结论：</strong><span class="math inline">\(\left\lfloor \frac{n}{i} \right\rfloor\)</span>总共只有<span class="math inline">\(O(\sqrt n)\)</span>种不同的取值。</p>
+<p><strong>证明</strong>：我们首先证明：对于所有的<span class="math inline">\(k \le \lfloor \sqrt n \rfloor\)</span>我们都可以找到一个<span class="math inline">\(i\)</span>使得<span class="math inline">\(\lfloor n / i \rfloor = k\)</span>：</p>
+<p>令<span class="math inline">\(i = \left\lfloor n / k\right\rfloor \ge k\)</span>： <span class="math display">\[
+ik \le n &lt; (i + 1)k = ik + k \le ik + i = i(k + 1) \\
+\Rightarrow k \le n / i &lt; k + 1 \\
+\Rightarrow \left\lfloor n / i \right\rfloor = k
+\]</span> 因此，通过适当地选择<span class="math inline">\(i\)</span>我们已经可以让<span class="math inline">\(\lfloor n / i \rfloor\)</span>取到<span class="math inline">\(\lfloor \sqrt n\rfloor\)</span>个值，因为这些<span class="math inline">\(i \ge \lfloor \sqrt n\rfloor\)</span>，因此我们进一步推得：对于所有<span class="math inline">\(i \ge \lfloor \sqrt n\rfloor\)</span>，<span class="math inline">\(\lfloor n / i \rfloor \le \lfloor \sqrt n\rfloor\)</span>共有<span class="math inline">\(\lfloor \sqrt n\rfloor\)</span>种取值。</p>
+<p>对于所有的<span class="math inline">\(i \le \lfloor \sqrt n \rfloor\)</span>，我们证明对于这些<span class="math inline">\(i\)</span>，<span class="math inline">\(\lfloor n / i \rfloor\)</span> 的值各不相同，因为假设存在一对相邻的<span class="math inline">\(i - 1, i\)</span>，使得<span class="math inline">\(\lfloor {n \over i - 1} \rfloor = \lfloor {n \over i} \rfloor = k\)</span>，则： <span class="math display">\[
+k \le {n \over i - 1} &lt; k + 1 \\
+k \le {n \over i} &lt; k + 1 \\
+\Rightarrow {n \over i - 1} - {n \over i} = {n \over i(i - 1)} &lt; 1
+\]</span> 而事实上因为<span class="math inline">\(i \le \lfloor \sqrt n\rfloor\)</span>，<span class="math inline">\(i(i - 1) &lt; n \Rightarrow {n \over i(i - 1)} &gt; 1\)</span>，矛盾。</p>
+<p>因此对于<span class="math inline">\(i \le \lfloor \sqrt n\rfloor\)</span>的<span class="math inline">\(\lfloor \sqrt n\rfloor\)</span>个<span class="math inline">\(i\)</span>，<span class="math inline">\(\lfloor n / i \rfloor \ge \lfloor \sqrt n\rfloor\)</span>此时也有<span class="math inline">\(\lfloor \sqrt n\rfloor\)</span>种取值。</p>
+<p>因此总共大约有<span class="math inline">\(2\lfloor \sqrt n \rfloor\)</span>种取值，证毕。</p>
+<p>这样子我们就可以一段一段地计算了，时间复杂度骤降为<span class="math inline">\(O(\sqrt n)\)</span>，但是一段到底到哪里结束呢？</p>
+<p><strong>结论：</strong>值为<span class="math inline">\(k\)</span>的一段结束于<span class="math inline">\(i = \lfloor n / k\rfloor\)</span>。</p>
+<p><strong>证明：</strong>随着<span class="math inline">\(i\)</span>的变大，<span class="math inline">\(n / i - \lfloor n / i\rfloor\)</span>的值必定单调递减，临界点就是<span class="math inline">\(n / i = \lfloor n / i\rfloor = k\)</span>，此时<span class="math inline">\(i = n / k\)</span>。考虑到此时<span class="math inline">\(i\)</span>可能不是整数，因此结束位置为<span class="math inline">\(\lfloor n / k\rfloor\)</span>。</p>
+<p><strong>推论：</strong><span class="math inline">\(i\)</span>所在的一段结束于<span class="math inline">\(\lfloor n / \lfloor n / i \rfloor \rfloor\)</span>。</p>
+<p>有这两条结论，我们就可以很快地计算一开头和式的值了：</p>
+<pre class="line-numbers"><code class="language-cpp">for (int l = 1, r; l &lt;= n; l = r + 1) &#123;
+    r = n / (n / l);
+    ans += (r - l + 1) * (n / l);
+&#125;</code></pre>
+<h1 id="二维情况">二维情况</h1>
+<p>假设<span class="math inline">\(n &lt; m\)</span>，我们有时候还会碰到类似如下的和式： <span class="math display">\[
+\sum_{i = 1}^n \left\lfloor \frac{n}{i} \right\rfloor \left\lfloor \frac{m}{i} \right\rfloor
+\]</span> <strong>结论：</strong><span class="math inline">\(\left\lfloor \frac{n}{i} \right\rfloor \left\lfloor \frac{m}{i} \right\rfloor\)</span>共有<span class="math inline">\(O(\sqrt n + \sqrt m)\)</span>种取值</p>
+<p><strong>证明：</strong>我们可以这样想象：假设有一根数轴表示<span class="math inline">\(i\)</span>的不同取值，<span class="math inline">\(\left\lfloor \frac{n}{i} \right\rfloor\)</span>用<span class="math inline">\(O(\sqrt n)\)</span>个分割点把数轴分成了<span class="math inline">\(O(\sqrt n)\)</span>段（姑且叫它们<span class="math inline">\(N\)</span>段），<span class="math inline">\(\left\lfloor \frac{m}{i} \right\rfloor\)</span>用<span class="math inline">\(O(\sqrt m)\)</span>个分割点在不同的位置把数轴也分成了<span class="math inline">\(O(\sqrt m)\)</span>段（姑且叫它们<span class="math inline">\(M\)</span>段），现在把这些段overlay一下，你会发现现在总共有<span class="math inline">\(O(\sqrt n + \sqrt m)\)</span>个分割点把数轴分成了<span class="math inline">\(O(\sqrt n + \sqrt m)\)</span>段，每一段的取值可能不同（想一下，两个点只有不完全在相同的<span class="math inline">\(N\)</span>段和<span class="math inline">\(M\)</span>段时计算出来的<span class="math inline">\(\left\lfloor \frac{n}{i} \right\rfloor \left\lfloor \frac{m}{i} \right\rfloor\)</span>才可能不一样！）</p>
+<p><strong>结论：</strong><span class="math inline">\(i\)</span>所在的一段结束于<span class="math inline">\(\min\{\lfloor n / \lfloor n / i \rfloor \rfloor, \lfloor m / \lfloor m / i \rfloor \rfloor\}\)</span>。</p>
+<p><strong>证明：</strong>类似一维情况。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/01/HDU2204/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/09/01/HDU2204/" class="post-title-link" itemprop="url">HDU 2204 / 容斥原理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-09-01 10:02:38" itemprop="dateCreated datePublished" datetime="2018-09-01T10:02:38-04:00">2018-09-01</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><a target="_blank" rel="noopener" href="http://acm.hdu.edu.cn/showproblem.php?pid=2204">题面</a></p>
+<p>大意：求在<span class="math inline">\([1, n]\)</span>中可以表示为<span class="math inline">\(m^k\)</span>形式的数的个数（<span class="math inline">\(m, k \in \mathbb{Z}^+, k &gt; 1,n \le 10^{18}\)</span>）</p>
+<p>这道题不像是有<span class="math inline">\(O(1)\)</span>的解法，但是哪怕是<span class="math inline">\(O(\sqrt{n})\)</span>的算法也会超时，因此直觉上我们应该寻找的是<span class="math inline">\(O(\log n)\)</span>的算法。</p>
+<p>首先，因为<span class="math inline">\(m = 1\)</span>的情形是trivial的，所以考虑<span class="math inline">\(m \ge 2\)</span>此时<span class="math inline">\(k \le \log_m n \le \log_2 n \le 60\)</span>，这也是<span class="math inline">\(k\)</span>的一个上界。</p>
+<p>接下来我们发现：如果一个数可以表示为<span class="math inline">\(m^4\)</span>的形式，也一定可以表示为<span class="math inline">\((m^2)^2\)</span>的形式，类似地，如果<span class="math inline">\(k = pq\)</span>是合数的话，那么<span class="math inline">\(m^k\)</span>一定可以表示为<span class="math inline">\((m^p)^q\)</span>和<span class="math inline">\((m^q)^p\)</span> 。</p>
+<p>令<span class="math inline">\(P(i)\)</span>表示可以表示为<span class="math inline">\(m^i\)</span>形式的数的个数，那么题目显然要我们求的是： <span class="math display">\[
+\left| \bigcup_{素数p\le\log_2n}P(p) \right|
+\]</span> 接下来就用容斥原理很快就能解决这道题了，代码非常的简洁，注意精度：</p>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;cmath&gt;
+
+using namespace std;
+typedef long long ll;
+const double EPS = 1e-8;
+const int p[] = &#123; 0, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59 &#125;;
+ll n;
+
+ll calc(ll d, ll a) &#123;
+    if (a &gt; 60) return 0;
+    if (d == 0) 
+        return a == 1 ? 0 : (ll)(pow(n, 1.0 / a) + EPS) - 1;
+    return calc(d - 1, a) - calc(d - 1, a * p[d]);
+&#125;
+
+int main() &#123;
+    while (scanf(&quot;%lld&quot;, &amp;n) != EOF)
+        printf(&quot;%lld\n&quot;, -calc(17, 1) + 1);
+    return 0;
+&#125;</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/01/%E5%9F%BA%E7%AB%99%E9%80%89%E5%9D%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/09/01/%E5%9F%BA%E7%AB%99%E9%80%89%E5%9D%80/" class="post-title-link" itemprop="url">NOIP模拟赛 基站选址</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-09-01 05:28:26" itemprop="dateCreated datePublished" datetime="2018-09-01T05:28:26-04:00">2018-09-01</time>
+    </span>
 
   
 </div>
@@ -397,869 +1211,125 @@ ll bsgs(ll a, ll b, ll p) &#123;
     
     <div class="post-body" itemprop="articleBody">
           <h1 id="题意">题意</h1>
-<p>给定<span class="math inline">\(a_1,a_2,\cdots a_n\)</span>以及<span class="math inline">\(b_1,b_2,\cdots b_n\)</span>，要求最大化： <span class="math display">\[
-\frac{\sum_{i = 1}^n a_ix_i}{\sum_{i = 1}^n b_ix_i}
-\]</span> 其中<span class="math inline">\(\forall 1\le i \le n, x_i \in \{0, 1\}\)</span>。</p>
+<p>给定一个<span class="math inline">\(n\)</span>个顶点<span class="math inline">\(m\)</span>条边的无向图，第<span class="math inline">\(i\)</span>个节点有可靠度<span class="math inline">\(r_i\)</span>，要求在节点中选取四个节点建设基站，其中有两个主基站，两个副基站。要求两个主基站必须和分别剩下的三个基站相连边，而两个副基站必须分别和两个主基站相连边。一个由两个主基站<span class="math inline">\(a, b\)</span>和两个副基站<span class="math inline">\(c, d\)</span>组成的基站的总可靠度定义为<span class="math inline">\((r_a + 1)(r_b + b) + r_cr_d\)</span>，求最大总可靠度。</p>
+<p><span class="math inline">\(n \le 5 \times 10^4, m \le 2 \times 10^5\)</span>。</p>
 <h1 id="解法">解法</h1>
-<p>我们可以二分答案<span class="math inline">\(L​\)</span>，这样这个问题就转变为：能否求出一组解<span class="math inline">\(x​\)</span>，使得<span class="math inline">\(\frac{\sum_{i = 1}^n a_ix_i}{\sum_{i = 1}^n b_ix_i} \ge L​\)</span>？</p>
-<p>对不等式进行变形： <span class="math display">\[
-\begin{aligned}
-\frac{\sum_{i = 1}^n a_ix_i}{\sum_{i = 1}^n b_ix_i} &amp;\ge L \\
-\sum_{i = 1}^n a_ix_i &amp;\ge L\sum_{i = 1}^n b_ix_i \\
-\sum_{i = 1}^n a_ix_i - L\sum_{i = 1}^n b_ix_i &amp;\ge 0 \\
-\sum_{i = 1}^n (a_i - Lb_i)x_i &amp;\ge 0
-\end{aligned}
-\]</span> 我们计算<span class="math inline">\(\sum_{i = 1}^n (a_i - Lb_i)x_i\)</span>的最大值，即构造<span class="math inline">\(x\)</span>使<span class="math inline">\(x_i = 1\)</span>当且仅当<span class="math inline">\(a_i - Lb_i &gt; 0\)</span>，并判断最大值的正负性，在此基础上不断二分答案即可。时间复杂度为<span class="math inline">\(O(n\log L_{max})\)</span>。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/03/17/MITAdmitted/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/03/17/MITAdmitted/" class="post-title-link" itemprop="url">被MIT录取杂感</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-03-17 20:44:31" itemprop="dateCreated datePublished" datetime="2021-03-17T20:44:31-04:00">2021-03-17</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-03-27 04:17:58" itemprop="dateModified" datetime="2021-03-27T04:17:58-04:00">2021-03-27</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>3月15日清晨6:30分</p>
-<p>某人迷迷糊糊地刚刚从被窝里爬出来</p>
-<p>迷迷糊糊地唤醒一夜没关的电脑</p>
-<p>迷迷糊糊地点进MIT的portal</p>
-<p>啊，果然status更新了呢，虽然不该抱什么期待的</p>
-<p>自己这个水平申请纯属做分母哦，大概一定是thank you for applying to MIT这种套路话罢（确信）</p>
-<p>为了彻底让自己死心点了进去并开始阅读</p>
-<blockquote>
-<p>On behalf of the Admissions Committee, it is my pleasure to offer you admission to the MIT Class of 2025! You stood out ...</p>
-</blockquote>
-<p>嗯？（要素察觉）</p>
-<p><img src="/2021/03/17/MITAdmitted/%E5%9C%B0%E9%93%81%E8%80%81%E4%BA%BA%E6%89%8B%E6%9C%BA.jpg" class=""></p>
-<p><strong>嗯？！？！？</strong></p>
-<p><img src="/2021/03/17/MITAdmitted/%E8%BF%99%E5%9C%BA%E9%9D%A2%E6%88%91%E7%9C%9F%E6%B2%A1%E8%A7%81%E8%BF%87.jpg" class=""></p>
-<p>千言万语在早晨上学的急忙中汇成一句话</p>
-<blockquote>
-<p>草，居然录了？</p>
-</blockquote>
-<p>然后简单地发了个朋友圈，吃完饭，开开心心上学去了。</p>
-<p>学校申请的竞争是残酷的，所谓成王败寇莫不如是。抢救性写感言，各路学弟开始问经验，然后我其实一时半会并答不出来。另一方面，我在学姐的帮助下倒是在一个小时内就找到了组织见到了前几届MIT的学长，然后发现群里面个个都是集训队级别的大佬，区区国铜瑟瑟发抖。</p>
-<p>一切都引向了一个我必须思考的问题：</p>
-<blockquote>
-<p>我这么菜，为啥会被MIT看上呢？</p>
-</blockquote>
-<p><img src="/2021/03/17/MITAdmitted/%E5%8F%8D%E5%A4%8D%E5%88%86%E6%9E%90.jpg" class=""></p>
-<p>论标化，自己的标化成绩在国内传统认知内对于MIT的申请只能称得上是堪堪够用。</p>
-<p>论文书，因为自己原本对MIT的申请不抱特别大的希望，文书写的是中规中矩，没有特别多的灵光一现和奇妙构思。</p>
-<p>论活动，自己没有上过许多国内奉为圭臬的夏校。没有辩论，没有模联，没有特别多社会活动。</p>
-<p>论竞赛，自己国铜的最高水准大概只到了最低线？</p>
-<p>论申请策略，自己直接说喜欢EECS的直球做法在许多人看来也是头铁。</p>
-<p>那是为什么呢？</p>
-<p>转了一圈，思绪回到1月6号申请最后一天在电脑前的奋笔疾书。</p>
-<p>是了，原来如此，答案或许见诸于MIT申请系统的首页：</p>
-<blockquote>
-<p>The key is to be yourself.</p>
-</blockquote>
-<p>我在最后一天才意识到MIT的申请居然允许递交一份maker portfolio，那时的兴奋是无以言表的。</p>
-<p>自己就把自己平时乱搞的小项目连简介带Github链接填了上去，填了九个，简介写了一千多个词，自己从未如此畅快。</p>
-<p>想必让招生官高看我一眼的，大概就是这么多乱搞项目当中体现出来的对<del>摸鱼</del>计算机的一种热情？（暴论）</p>
-<p>记得自己曾经做第一个小项目的时候，一方面是觉得自己开心，另一方面为未尝没有“如果项目牛逼了会不会被人赏识”的小功利心和小幻想。做了那么多小项目，快乐是总有的，但牛逼的项目是没有的，所以在高中的几年觉得大学申请愈发迫近也曾焦虑迷茫过，尝试过竞赛，但也难以完全投入精力，最终屈服于自己强大的摸鱼欲之下重操旧业。也不止一次地心中有“自己摸鱼做项目的时间是不是浪费了呢？”的疑问。</p>
-<p>但是现实证明，所有的努力都不会被辜负。</p>
-<p>自己的气质或许也和MIT很般配呢（大雾）。</p>
-<p><img src="/2021/03/17/MITAdmitted/tradeschoolmeme.png" class=""></p>
-<p>当然，这也可以理解为是某人摸鱼主义哲学的大胜利（大雾）。</p>
-<p><img src="/2021/03/17/MITAdmitted/image-20210326162803734.png" class=""></p>
-<p><del>上图：当你摸鱼的contribution都状似摸鱼，你就达成了二阶摸鱼的至高境界，物极必反，这是MIT的隐藏通道</del></p>
-<p>人啊，还是要有理想的，有理想地摸鱼，这就达成了一组矛盾的对立统一，矛盾摸鱼，乃摸鱼之大境界。</p>
-<p>最后还是要说一句，<del>Cornell你拒的好啊！</del></p>
-<p>录了技校，人很开心，加上之前录了剑桥，所以现在就是一个去Cambridge还是去Cambridge的问题了，我选择去Cambridge。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/12/14/NTTP/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/12/14/NTTP/" class="post-title-link" itemprop="url">NTT在SOCKS5代理中的奇妙应用</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-12-14 00:00:00" itemprop="dateCreated datePublished" datetime="2019-12-14T00:00:00-05:00">2019-12-14</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-27 03:42:42" itemprop="dateModified" datetime="2021-04-27T03:42:42-04:00">2021-04-27</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p>The enemy knows the system. ——Claude Shannon</p>
-</blockquote>
-<blockquote>
-<p>闷声大发财，这是坠吼的！ ——?</p>
-</blockquote>
-<p>程序是一个月以前写的。决定重新启用博客之后就把想法心得写一写吧，顺便把灵敏度分析补上。</p>
-<p>OI的奇怪知识点可真多~</p>
-<h1 id="什么是socks5">什么是SOCKS5?</h1>
-<p>SOCKS5是<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc1928">RFC1928</a>定义的一类网络代理协议。</p>
-<p>理论上来说，由于其简洁性，理论上SOCKS5是开销最低的代理协议。</p>
-<p>然而由于其过于简单，数据可以明文传输的特点，其流量特征非常明显，容易被干扰。因此在某些地区从很久以前就不能有效使用了。</p>
-<p>话虽如此，由于其协议简单，用作学习用途真是极好的。</p>
-<h1 id="什么是ntt">什么是NTT?</h1>
-<p>NTT是离散傅里叶变换在<span class="math inline">\(\mathbb{Z}/p\mathbb{Z}\)</span>（其中<span class="math inline">\(p\)</span>是素数）上的推广。</p>
-<p>具体的NTT以及FFT算法可以看之前的笔记<a href="/2021/07/25/NTT/" title="NTT笔记">NTT笔记</a>。</p>
-<h1 id="协议设计">协议设计</h1>
-<p>因为一个字节是8个比特，我们使用<span class="math inline">\(\mathbb{Z}/257\mathbb{Z}\)</span>下长度为<span class="math inline">\(256\)</span>的序列NTT。</p>
-<p>但是<span class="math inline">\(\mathbb{Z}/257\mathbb{Z}\)</span>毕竟不是<span class="math inline">\(\mathbb{Z}/256\mathbb{Z}\)</span>，如果尝试把<span class="math inline">\(256\)</span>放进字节里面就会溢出。考虑到这一点，定义如下的协议结构来储存NTT的结果。</p>
-<table>
-<thead>
-<tr class="header">
-<th style="text-align: left;">意义:</th>
-<th style="text-align: center;">溢出数</th>
-<th style="text-align: center;">溢出下标</th>
-<th style="text-align: center;">NTT 序列模<span class="math inline">\(256\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">字节数:</td>
-<td style="text-align: center;">1</td>
-<td style="text-align: center;"><em>溢出数</em></td>
-<td style="text-align: center;">256</td>
-</tr>
-</tbody>
-</table>
-<p>对于一段数据流，我们一次至多取<span class="math inline">\(255\)</span>字节，把这一段的长度放在最前面组成共<span class="math inline">\(256\)</span>个字节的数据块，NTT之后在放到上面这张表当中拼成至少<span class="math inline">\(257\)</span>字节的数据块。（理论上可以通过Padding省掉储存长度的字节）</p>
-<p>解码类似，先从上表规定的数据块复原出NTT序列，然后再INTT以下获得原序列，就行了。</p>
-<p>由于被NTT过的数据特征已经和明文的数据特征大不一样，因此可以规避一些现有的检测。</p>
-<p><em>但是根据本文一开头的Shannon's Maxim（又称Kerckhoff Principle），NTT无疑会带来新的数据特征，因而其obscurity源于对方对使用了NTT这一事实本身的不知晓或忽视，这和加密还是不一样的。</em></p>
-<h1 id="实现">实现</h1>
-<p>这种网络应用程序果然还是应该用Go写啊~</p>
-<blockquote>
-<p>你看这goroutine，它不香吗？</p>
-</blockquote>
-<p>因为NTT是成块处理的，无论是在写还是在读的时候都需要额外的buffer来缓存长度不够的块，就这一部分需要一点细节，总体按照上述协议实现一个套NTT的<code>ReadWriter</code>还是很简单的。写好的<code>NTTReadWriter</code>不仅可以套在<code>Conn</code>上，还可以套在文件上实现文件NTT之类的（虽然似乎没啥卵用）。</p>
-<p>在网络方面，客户端就留一个relay把本地监听的SOCKS请求NTT之后forward到服务端，然后服务端处理请求之后再forward回去就行了。用goroutine写这些还是很容易的。</p>
-<p>最后要在服务端实现SOCKS协议，这个似乎Go没有现成库的样子（现成的都很难和NTT耦合），于是只能自己写。最后的成品支持RFC1928中规定的Connect和Bind请求，功能基本上全了。</p>
-<p>在性能方面，我写的<code>NTTReadWriter</code>本身的性能测试下来应该在<span class="math inline">\(30\mathrm{MB/s}\)</span>左右，虽然不高但是已经超过网速了。最后在VPS上的综合测试结果也是能够跑满网速，8K不卡，非常顺滑。</p>
-<p><em>代码？不存在的。</em></p>
-<h1 id="优缺点">优缺点</h1>
-<h2 id="优点">优点</h2>
-<ol type="1">
-<li>把NTT用在网络通讯上的骚操作似乎我还没有听说过。（或许是我见识粗鄙了）</li>
-<li>NTT对于微小的扰动很敏感，因此数据特征应该会出现很大的变化。（会在下一个部分展示）</li>
-<li>NTT因为使用了大量的模运算，计算的开销比较大，块大小也不小。这对许多基于流模型的检测方法提出了挑战。</li>
-</ol>
-<h2 id="缺点">缺点</h2>
-<ol type="1">
-<li>太慢了。（虽然也足以跑满带宽）</li>
-<li>一般来说一个NTT块至多只有两个溢出，也就表明数据流中平均每<span class="math inline">\(256-258\)</span>个字节就会有一个很小的数，这不失为一个比较明显的特征。</li>
-<li>溢出位的记录导致额外的流量开销。（大概在<span class="math inline">\(1\%\)</span>的水平，还是相当可以接受的）</li>
-</ol>
-<h1 id="灵敏度分析">灵敏度分析</h1>
-<p>直觉告诉我NTT对于源数据的微小变化应该是非常敏感的，就算是一点点微扰在一层层处理之后也会让最后的结果面目全非。这也是我开脑洞选择用NTT隐藏SOCKS特征的原因（而且事实就是成功了（喜））。</p>
-<p>但是直觉总是不靠谱的。还是需要具体数据。</p>
-<p>测试环境如下：</p>
-<pre class="line-numbers"><code class="language-python"># 这似乎不是最Pythonic的写法（悲）
-import numpy as np
-import matplotlib.pyplot as plt
-
-MOD = 257
-G = 3
-LOG = 8
-LEN = 1 &lt;&lt; LOG
-
-def qpow(x, y):
-    ret = 1
-    while y != 0:
-        if y &amp; 1 == 1:
-            ret = ret * x % MOD
-        x = x * x % MOD
-        y &gt;&gt;= 1
-    return ret
-
-pos = np.zeros(LEN, dtype=int)
-for i in range(1, LEN):
-    pos[i] = ((i &amp; 1) &lt;&lt; (LOG - 1)) | (pos[i &gt;&gt; 1] &gt;&gt; 1)
-    
-def ntt(x, d=1):
-    y = np.array([x[pos[i]] for i in range(LEN)])
-    for k in range(LOG):
-        half, span = 1 &lt;&lt; k, 1 &lt;&lt; (k + 1)
-        w_ = qpow(G, (MOD - 1) // span)
-        if d == -1:
-            w_ = qpow(w_, MOD - 2)
-        for l in range(0, LEN, span):
-            mid = l + half
-            w = 1
-            for i in range(half):
-                t = w * y[mid + i] % MOD
-                y[mid + i] = (y[l + i] - t) % MOD
-                y[l + i] = (y[l + i] + t) % MOD
-                w = w * w_ % MOD
-    return qpow(LEN, MOD - 2) * y % MOD if d == -1 else y    </code></pre>
-<h2 id="不同位置相同扰动">不同位置，相同扰动</h2>
-<pre class="line-numbers"><code class="language-python">x = np.random.randint(MOD, size=LEN)
-ys = []
-for i in range(LEN):
-    x_ = np.copy(x)
-    x_[i] = (x_[i] + 1) % MOD
-    ys.append(ntt(x_))
-plt.matshow(np.array(ys))</code></pre>
-<p>即测试在原数列不同位置加<span class="math inline">\(1\)</span>微扰后对于NTT后数列的影响。结果如下：</p>
-<p><img src="/2019/12/14/NTTP/ntt-11.jpg" class=""></p>
-<p><img src="/2019/12/14/NTTP/ntt-12.jpg" class=""></p>
-<p><img src="/2019/12/14/NTTP/ntt-13.jpg" class=""></p>
-<p>除了位置（例如中间，大概是直流分量？）看起来都还不错！</p>
-<h2 id="同一位置不同扰动">同一位置，不同扰动</h2>
-<pre class="line-numbers"><code class="language-python">x = np.random.randint(MOD, size=LEN)
-p = np.random.randint(LEN)
-ys = []
-for i in range(LEN):
-    x_ = np.copy(x)
-    x_[p] = (x_[p] + i) % MOD
-    ys.append(ntt(x_))
-plt.matshow(np.array(ys))</code></pre>
-<p>即测试在原数据相同位置施加不同扰动对于NTT结果的影响，结果也还不错：</p>
-<p><img src="/2019/12/14/NTTP/ntt-21.jpg" class=""></p>
-<p><img src="/2019/12/14/NTTP/ntt-22.jpg" class=""></p>
-<p><img src="/2019/12/14/NTTP/ntt-23.jpg" class=""></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/12/12/%E7%BA%A2%E8%8C%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/12/12/%E7%BA%A2%E8%8C%B6/" class="post-title-link" itemprop="url">红 茶 用 量（乱 算）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2019-12-12 00:00:00 / 修改时间：21:52:28" itemprop="dateCreated datePublished" datetime="2019-12-12T00:00:00-05:00">2019-12-12</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p>只有红茶可以吗？ ——XXXX</p>
-</blockquote>
-<h1 id="起源">起源</h1>
-<p>冬天果然还是热水泡红茶比较舒服啊。</p>
-<p>但是就算是保温杯里面的茶也会很快冷下来，每次下课都要加热水。</p>
-<p>那么问题来了</p>
-<blockquote>
-<p>我应该喝多少茶，使得每次倒完热水之后的水温都是恒定的呢？</p>
-</blockquote>
-<p>这种果然还是应该建个模啊~</p>
-<h1 id="假设">假设</h1>
-<p>为了探究这个问题，我们不妨做以下假设：</p>
-<ol type="1">
-<li>将水看做一个整体，不考虑内部对流以及温度差异。</li>
-<li>冷热水的热交换瞬 间 完 成。</li>
-<li>热水冷却的过程符合牛顿冷却定律。</li>
-<li>我以恒定的速率喝茶<del>是不可能的（悲）</del>。</li>
-</ol>
-<h1 id="计算">计算</h1>
-<p>不妨假设环境温度为<span class="math inline">\(T_a\)</span>。牛顿冷却定律告诉我们 <span class="math display">\[
-\dot{Q}=-k(T-T_a)
-\]</span> 我们又知道： <span class="math display">\[
-\dot{Q}=cm\dot{T}
-\]</span> 假设加完水时质量为<span class="math inline">\(m_0\)</span>，喝水速度为<span class="math inline">\(v\)</span>，则组合以上式子可以得到： <span class="math display">\[
-\dot{T}=-\frac{k}{c(m_0 - vt)}(T-T_a)
-\]</span> 不妨设<span class="math inline">\(T&#39;=T-T_a\)</span>，直接分： <span class="math display">\[
-\begin{aligned}
-    \frac{\dot{T&#39;}}{T&#39;} &amp;= -\frac{k}{c(m_0-vt)} \\
-    \Rightarrow \int \frac{\dot{T&#39;}}{T&#39;} \mathrm{d}t &amp;= \int-\frac{k\mathrm{d}t}{c(m_0-vt)} \\
-    \Rightarrow \ln T&#39;&amp;= \frac{k}{cv}\ln(m_0 - vt) + C_1 \\
-    \Rightarrow T&#39; &amp;= C_2(m_0-vt)^{k\over cv} \\
-    \Rightarrow T &amp;= T_a + C_2(m_0-vt)^{k\over cv}
-\end{aligned}
-\]</span> 假设加完水<span class="math inline">\(t=0\)</span>时<span class="math inline">\(T=T_0\)</span>。则求解得 <span class="math display">\[
-\begin{aligned}
-T_0&amp;=T_a + C_2m_0^{\frac{k}{cv}}\\
-\Rightarrow C_2 &amp;= (T_0-T_a)m_0^{-\frac{k}{cv}}\\
-\Rightarrow T&amp;=T_a+\left(\frac{m_0-vt}{m_0}\right)^{\frac{k}{cv}}(T_0-T_a)
-\end{aligned}
-\]</span> 假设每<span class="math inline">\(t_f\)</span>时间补加一次热水，那么最终的温度 <span class="math display">\[
-T_f=T_a+\left(\frac{m_0-vt_f}{m_0}\right)^{\frac{k}{cv}}(T_0-T_a)
-\]</span> 这个时候补充温度为<span class="math inline">\(T_h\)</span>的热水，假设混合后的温度为<span class="math inline">\(T_0&#39;\)</span>： <span class="math display">\[
-(m_0-vt_f)(T_0&#39;-T_f)=vt_f(T_h-T_0&#39;)
-\]</span> 解得 <span class="math display">\[
-T_0&#39;= \frac{(m_0-vt_f)T_f+vt_fT_h}{m_0}
-\]</span> 为了保持恒温，我们需要<span class="math inline">\(T_0=T_0&#39;\)</span>，即： <span class="math display">\[
-m_0T_0=(m_0-vt_f)\left[T_a+\left(\frac{m_0-vt_f}{m_0}\right)^{\frac{k}{cv}}(T_0-T_a)\right]+vt_fT_h
-\]</span> 接下来只要解出<span class="math inline">\(v\)</span>就行了！</p>
-<p>可惜这个形式似乎没有初等的解析解（悲）<del>Mathematica跑死机了都没跑出来</del>。</p>
-<p><em>注：根据<a target="_blank" rel="noopener" href="https://arxiv.org/abs/math/9411224">arXiv:math/9411224</a>以及<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1406.1948v2">arXiv:1406.1948v2</a>，或许可以使用超几何函数或者无穷根式求出方程的解，然而依然没有什么卵用。</em></p>
-<p>但是通过一些直觉可以得出<span class="math inline">\(T_0&#39;\)</span>一定是随着<span class="math inline">\(v\)</span>增加递增的，所以如果有现实数据的话直接二分或者牛顿迭代就行了。</p>
-<p>Whatever，感觉还是挺有意思的，如果之后自己真的找时间测到了参数的现实值，大概会算一下吧。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/12/10/DummyDisplay/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/12/10/DummyDisplay/" class="post-title-link" itemprop="url">使用边角料糊一个Dummy Display</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-12-10 21:54:12" itemprop="dateCreated datePublished" datetime="2019-12-10T21:54:12-05:00">2019-12-10</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-12-12 09:00:36" itemprop="dateModified" datetime="2019-12-12T09:00:36-05:00">2019-12-12</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>决定把家里的旧的MBA改装成服务器。如此便要合上盖子。</p>
-<p>但是合上盖子系统似乎就自动休眠了，改设置也没有什么很好的效果，即使可以使用<code>caffeinate</code>，重启之后还是会有问题。何况就算避免了休眠，在检测不到Display的时候据说显卡也是不工作的（虽然不知道核显是否也是如此）。网传常见的解决方法是“显卡欺骗器”，也就是Dummy Display，通过在显示端口模拟协议让系统检测到一个并不存在的Display，就行了。</p>
-<p>但是Dummy Display一个现成的就要10块左右，而且对于MBA这种DP的接口还不是很好找。</p>
-<p>于是自己从家里搜刮出了一些边角料糊了一个，效果还不错，成品如下：</p>
-<p><img src="/2019/12/10/DummyDisplay/device.jpg" class=""></p>
-<p>使用的元件是一个DP转接头以及若干买Arduino送的电阻。</p>
-<p>怎么做到的呢？</p>
-<p>根据<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/VGA_connector">Wikipedia</a>上的表述，下图VGA端口的1, 2, 3线分别表示RGB的模拟信号，6, 7, 8对应返线。</p>
-<p><img src="/2019/12/10/DummyDisplay/VGA_Port.svg" class=""></p>
-<p>再根据Wiki上的资料，RGB线路的阻抗为<span class="math inline">\(75\mathrm{\Omega}\)</span>。对于VGA这种老式模拟接口，通常通过线路负载确定是否连接，因此为了欺骗端口，我们只需要在1-6，2-7，3-8分别接上三个<span class="math inline">\(75\mathrm{\Omega}\)</span>的电阻即可。</p>
-<p>但是家里面只搜出5个<span class="math inline">\(220\mathrm{\Omega}\)</span>的和<span class="math inline">\(5\)</span>个<span class="math inline">\(110\mathrm{\Omega}\)</span>的电阻，于是乎就有了上图的蜜汁接线。具体来说：</p>
-<ol type="1">
-<li>三个<span class="math inline">\(220\mathrm{\Omega}\)</span>并联</li>
-<li>两个<span class="math inline">\(220\mathrm{\Omega}\)</span>并上两个<span class="math inline">\(110\mathrm{\Omega}\)</span>的串联</li>
-<li>一个<span class="math inline">\(110\mathrm{\Omega}\)</span>并上两个<span class="math inline">\(110\mathrm{\Omega}\)</span>的串联</li>
-</ol>
-<p>最后每个电路的等效电阻就是<span class="math inline">\(220/3\approx 73.33\mathrm{\Omega}\)</span>，再假装有线阻就是<span class="math inline">\(75\mathrm{\Omega}\)</span>的水平，使用下来完全没问题，当然因为其他线没连，分辨率之类的信息是缺失的，我的电脑似乎默认<span class="math inline">\(1024\times768\)</span>处理了。</p>
-<p>不得不说还是VGA这种模拟的端口欺骗起来容易，HDMI这种数字端口就要复杂很多。</p>
-<p>（后续万用表测试下来<span class="math inline">\(110\mathrm{\Omega}\)</span>的实际电阻是<span class="math display">\[1\mathrm{k\Omega}\]</span>，大概是读色环的时候读反了<del>我依然坚持认为就应该按照我的方向读</del>，然而最后成品依然可以工作，只能认为是冗余比较高，或者是玄学了。）</p>
-<p>（似乎装了Linux之后就可以通过设置避免自动休眠了？）</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/11/10/CometOJ1110C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/11/10/CometOJ1110C/" class="post-title-link" itemprop="url">Comet OJ 11/10模拟赛C / 分块</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-11-10 00:00:00" itemprop="dateCreated datePublished" datetime="2019-11-10T00:00:00-05:00">2019-11-10</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-12-08 08:38:28" itemprop="dateModified" datetime="2019-12-08T08:38:28-05:00">2019-12-08</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>本地笔记整理~原稿写于11/10，2019/12/8上传</p>
-<h1 id="题意">题意</h1>
-<blockquote>
-<p>若干年后。</p>
-<p>主持魔法学院重建工作的 <span class="math inline">\(\omega\)</span>坐在围墙上，与一旁的少女交谈。</p>
-<p>「老师老师，你知道咱们学院是怎么传递信息的吗？」</p>
-<p>「当然知道啊！」<span class="math inline">\(\omega\)</span> 笑着摸了摸少女的头说道，「魔法学院有 <span class="math inline">\(n\)</span>处地点，它们依次编号为 <span class="math inline">\(1\)</span>到 <span class="math inline">\(n\)</span> 。我们搭设了<span class="math inline">\(n-1\)</span>条线路，第<span class="math inline">\(i\)</span>条线路连接 <span class="math inline">\(u_i\)</span>号地点和 <span class="math inline">\(v_i\)</span>号地点。当然，任意两处地点间都存在一条由线路构成的路径。」</p>
-<p>少女调皮地歪了下脑袋。「但是老师，为什么我在<span class="math inline">\(1\)</span>号地点，经常收不到 <span class="math inline">\(n\)</span>号地点的信息呢？」</p>
-<p>「因为怕狡猾的敌人窃听我们啊。」<span class="math inline">\(\omega\)</span>回答道，「学院内部只使用 <span class="math inline">\(m\)</span>个频道，每处地点分别会选择性地屏蔽一些频道。两处地点能够直接通信，当且仅当它们被一条线路所连接，且存在两处地点都没有屏蔽的频道。为了测评通讯质量，我们定义『通讯值』为最多能把<span class="math inline">\(n\)</span>处地点分成多少<strong>非空</strong>组，满足不同组内的地点无法直接通信。」</p>
-<p>「这样一成不变的话，行动不是迟早会暴露在敌人面前吗？」</p>
-<p>「是啊。所以我们打算轮流执行<span class="math inline">\(q\)</span>次修改，第<span class="math inline">\(i\)</span>次修改会改变<span class="math inline">\(x_i\)</span>号地点的频道屏蔽状态。现在我来考考你，在修改之前以及每次修改后，你能分别求出通讯值是多少吗？」</p>
-<p>少女微微一笑，仿佛心中已有了答案。</p>
-</blockquote>
-<p>这题目的题面，有点尬啊。</p>
-<h1 id="解法">解法</h1>
-<p>考虑<span class="math inline">\(u,v\)</span>如果<span class="math inline">\(S_u \cap S_v \neq \emptyset\)</span>那么<span class="math inline">\(u,v\)</span>必在同一组内，因此若定义该条件为连边条件的话问题就变成了动态计算树子图的连通分量个数。</p>
-<p>因为每一次都是单点修改，所以每次只要计算少连了多少边就可以得知答案增加了多少。</p>
-<p>因此，问题被转化为如何快速计算一个节点所有相邻节点中与其集合交集非空的节点数，或者交集为空的节点数。</p>
-<p>对于一般的树，暴力大约是足够了，时间复杂度就是<span class="math inline">\(\mathcal O(q\deg(u))\)</span>，但是对于菊花图<span class="math inline">\(\deg(u) = \mathcal{O}(n)\)</span>，于是乎就没了。</p>
-<p>考虑转化为有根树，每个节点只有一个父亲，对于这个父亲我们现场算，我们接着维护一个数组<span class="math inline">\(f[u][S]\)</span>表示<span class="math inline">\(u\)</span>的儿子当中集合为<span class="math inline">\(S\)</span>的节点个数，然后在询问时变为<span class="math inline">\(\mathcal O\left(2^m\right)\)</span>查询。在修改时<span class="math inline">\(\mathcal O(1)\)</span>修改父亲的数组值。</p>
-<p>这当然是可以的，但是<span class="math inline">\(m\le 20\)</span>。还是不够。</p>
-<p>注意到如果<span class="math inline">\(A \cap B = \emptyset\)</span>，那么<span class="math inline">\(B \subseteq \overline A\)</span> ，因此，我们还可以维护数组<span class="math inline">\(f[u][S]\)</span>记录<span class="math inline">\(u\)</span>的儿子中集合为<span class="math inline">\(S\)</span>的子集的节点数，询问便是<span class="math inline">\(f[u][\overline{S_u}]\)</span>，变成了<span class="math inline">\(\mathcal O(1)\)</span>的复杂度，倒是修改变为了<span class="math inline">\(\mathcal O\left(2^m\right)\)</span>。依然不行。</p>
-<p>考虑合并两种解法，对于集合的前<span class="math inline">\(\left\lfloor \frac{m}{2} \right\rfloor\)</span>种元素，我们用第一种方法，对于集合的后<span class="math inline">\(\left\lceil \frac{m}{2} \right\rceil\)</span>种元素，我们用第二种方法，那么单次的查询修改就都到了<span class="math inline">\(\mathcal O\left(2^{m\over 2}\right)\)</span>。时间复杂度上是能通过该题了。</p>
-<p>但是这张表要<span class="math inline">\(\mathcal O\left(n2^m\right)\)</span>的空间不就炸了吗？</p>
-<p>为了解决炸空间的问题，我们只选择度数大于<span class="math inline">\(d\)</span>使用这种方法，对于小度数的节点暴力就完事了。</p>
-<p>总体复杂度就是<span class="math inline">\(\mathcal O \left(nd + \frac{n}{d}2^{m\over 2}\right)\)</span>。</p>
-<h1 id="代码">代码</h1>
+<p>题目要求我们寻找的四个点其实是<strong>三元环的并</strong>，主基站就是公共边的两个端点，而副基站就是公共边两侧的另外两个节点，因此，如果我们能够找出所有的三元环，并且对于每一条边维护他所在三元环相对顶点可靠度的最大和次大值，我们就可以通过枚举每一条边的方式完成最大总可靠度的计算。</p>
+<p>因此，这个题目的核心就是寻找三元环，朴素的算法是<span class="math inline">\(O(n^3)\)</span>的，明显不足以通过此题，因此我们要寻找复杂度更优的做法。</p>
+<p><strong>我们把顶点分为两类——大点和小点</strong>，分类的依据是点的度数，如果一个顶点的度数大于<span class="math inline">\(\sqrt m\)</span>就分在大点里，反之就落在小点里。我们对大点和小点分别处理。</p>
+<p><strong>对于大点，我们暴力枚举每个点</strong>：</p>
+<p>因为对于无向图来说，有 <span class="math display">\[
+\sum_{i = 1}^n \deg(i) = 2m
+\]</span> 因此我们可以断言：大点的数量是<span class="math inline">\(O(\sqrt m)\)</span>的，因此枚举大点的时间复杂度是<span class="math inline">\(O((\sqrt m)^3) = O(m\sqrt m)\)</span>。</p>
+<p>在这里我们处理了全部由大点构成的三元环。</p>
+<p><strong>对于小点，我们暴力枚举它的两条出边并判断对面两个点是否相连</strong>：</p>
+<p>因为我们在枚举一个顶点<span class="math inline">\(u\)</span>的出边的时候，显然每条边都被枚举了<span class="math inline">\(\deg(u) - 1\)</span>次，所以图中小点发出的每一条边都被枚举了<span class="math inline">\(O(\sqrt m)\)</span>次，总共有<span class="math inline">\(O(m)\)</span>条边，因此处理小点的时间复杂度还是<span class="math inline">\(O(m \sqrt m)\)</span>。</p>
+<p>在这里我们处理了至少包含一个小点的三元环。</p>
+<p><strong>合并在一起，这个算法可以找到所有的三元环，总的时间复杂度为<span class="math inline">\(O(m \sqrt m)\)</span></strong>，虽然对于稠密图而言因为<span class="math inline">\(m = O(n^2)\)</span>因此算法的复杂度还是接近<span class="math inline">\(O(n^3)\)</span>，但对于题目中的图大小还是非常优秀的。</p>
+<p>代码实现也不是非常复杂，使用链式前向星存图，然后额外维护数组<code>grt</code>和<code>snd</code>表示一条边所在三元环中所对点可靠值最大和次大的点的编号，再首先一个哈希表用于快速查询点和点之间的相连关系就可以了，注意常数。</p>
 <pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-#include &lt;algorithm&gt;
-using namespace std;
-const int N = 100010;
-const int MS = 1 &lt;&lt; 10;
-const int D = 200;
-const int T = 500;
-int n, m, fa[N], w[N], all, tp, ans = 0;
-int fst[N], nxt[2 * N], to[2 * N], tot = 1;
-int f[D][MS][MS], id[N], cnt = 0 , deg[N];
-void link(int u, int v) &#123;
-    deg[u]++; deg[v]++;
-    nxt[++tot] = fst[u];
-    fst[u] = tot; to[tot] = v;
-&#125;
-void dfs(int u, int p) &#123;
-    fa[u] = p;
-    for (int e = fst[u]; e; e = nxt[e])
-        if (to[e] != p) dfs(to[e], u);
-&#125;
-inline int readbin() &#123;
-    char s[22]; scanf(&quot;%s&quot;, s);
-    int ans = 0;
-    for (int i = 0; i &lt; m; i++)
-        ans = (ans &lt;&lt; 1) | (s[i] - &#39;0&#39;);
-    return ans;
-&#125;
-void modify(int u, int x, int d) &#123;
-    int k = id[u];
-    int mask = (1 &lt;&lt; tp) - 1;
-    int fr = x &gt;&gt; tp, bk = x &amp; mask, c = mask ^ bk;
-    for (int s = c; s; s = c &amp; (s - 1))
-        f[k][fr][mask ^ s] += d;
-    f[k][fr][mask] += d;
-&#125;
-int query(int u, int x) &#123;
-    int k = id[u];
-    x = all ^ x;
-    int mask = (1 &lt;&lt; tp) - 1;
-    int fr = x &gt;&gt; tp, bk = x &amp; mask, ans = 0;
-    for (int s = fr; s; s = fr &amp; (s - 1))
-        ans += f[k][s][bk];
-    return ans + f[k][0][bk];
-&#125;
-void solve() &#123;
-    all = (1 &lt;&lt; m) - 1;
-    tp = (m + 1) / 2;
-    for (int i = 1; i &lt;= n; i++) 
-        if (deg[i] &gt; T) id[i] = ++cnt;
-    for (int i = 1; i &lt;= n; i++)
-        if (id[fa[i]]) modify(fa[i], w[i], 1);
-    int Q; scanf(&quot;%d&quot;, &amp;Q);
-    while (Q--) &#123;
-        int x, c; scanf(&quot;%d &quot;, &amp;x);
-        c = readbin();
-        int last = 0, now = 0;
-        if (id[x]) &#123;
-            last = query(x, w[x]);
-            now = query(x, c);
-            if (fa[x]) &#123;
-                last += (w[x] &amp; w[fa[x]]) == 0;
-                now += (c &amp; w[fa[x]]) == 0;
-            &#125;
-        &#125; else &#123;
-            for (int e = fst[x]; e; e = nxt[e]) &#123;
-                last += (w[x] &amp; w[to[e]]) == 0;
-                now += (c &amp; w[to[e]]) == 0;
-            &#125;
-        &#125;
-        printf(&quot;%d\n&quot;, (ans += now - last));
-        if (id[fa[x]]) &#123;
-            modify(fa[x], w[x], -1);
-            modify(fa[x], c, 1);
-        &#125;
-        w[x] = c; 
-    &#125;
-&#125;
-int main() &#123;
-    scanf(&quot;%d%d&quot;, &amp;n, &amp;m);
-    for (int i = 1; i &lt; n; i++) &#123;
-        int u, v; scanf(&quot;%d%d&quot;, &amp;u, &amp;v);
-        link(u, v); link(v, u);
-    &#125;
-    for (int i = 1; i &lt;= n; i++) w[i] = readbin(); 
-    dfs(1, 0); ans = n;
-    for (int i = 2; i &lt;= n; i++) if (w[i] &amp; w[fa[i]]) ans--;
-    printf(&quot;%d\n&quot;, ans);
-    solve();
-    return 0;
-&#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/10/28/BZOJ2118/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/10/28/BZOJ2118/" class="post-title-link" itemprop="url">BZOJ 2118 / 同余最短路</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-10-28 00:00:00" itemprop="dateCreated datePublished" datetime="2019-10-28T00:00:00-04:00">2019-10-28</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-12-08 08:38:32" itemprop="dateModified" datetime="2019-12-08T08:38:32-05:00">2019-12-08</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>本地笔记整理重发，原文写于2019/10/28，2019/12/8上传</p>
-<h1 id="题面">题面</h1>
-<p><strong>题意：</strong>求使得关于<span class="math inline">\(\{x_i\}\)</span>的方程 <span class="math display">\[
-\sum_{i=1}^n a_ix_i = b
-\]</span> 存在非负整数解的的<span class="math inline">\(b \in [l, r]\)</span>的个数。</p>
-<p><strong>数据范围：</strong><span class="math inline">\(n \le 12, a_i \le 5\times 10^5, l, r \in 10^{12}\)</span>。</p>
-<p>神题。不妨设<span class="math inline">\(a_1\)</span>为<span class="math inline">\(\{a_i\}\)</span>当中的最小值。则若对于任意的<span class="math inline">\(b \equiv x \pmod{a_1}\)</span>当中的<span class="math inline">\(b\)</span>如果符合题意有解，那么<span class="math inline">\(b+a_1\)</span>也一定有解。令满足这个性质的最小的<span class="math inline">\(b\)</span>为<span class="math inline">\(b_x\)</span>。</p>
-<p>考虑在此条件下如何计算解的数目，设<span class="math inline">\(m\)</span>以下满足题意的<span class="math inline">\(b\)</span>有<span class="math inline">\(f(m)\)</span>个，则可以得出计算式： <span class="math display">\[
-f(m) = \sum_{x=0}^{a_1-1} [b_x \le m]\left(\left\lfloor\frac{m-b_x}{a_1}\right\rfloor+1\right)
-\]</span> 原理显然。</p>
-<p>答案就是<span class="math inline">\(f(r) - f(l - 1)\)</span>。</p>
-<p>接下来考虑如何求取<span class="math inline">\(b_x\)</span>。考虑构建具有<span class="math inline">\(a_1\)</span>个点，编号分别为<span class="math inline">\(0,1,2,\cdots,a_1 - 1\)</span>的图，对于编号<span class="math inline">\(u\)</span>的点，向<span class="math inline">\((u + a_i) \bmod a_1, \ (i=2,3,\cdots, n)\)</span>连边。表示在模<span class="math inline">\(a_1\)</span>意义下，如果<span class="math inline">\(u\)</span>可以有解，那么<span class="math inline">\(u+a_i\)</span>也一定有解。</p>
-<p>由于<span class="math inline">\(0\)</span>是一定有平凡解的，我们从<span class="math inline">\(0\)</span>开始跑最短路，就可以求出<span class="math inline">\(b_x\)</span>。这背后的思想无疑是非常巧妙的。</p>
-<p>复杂度就是<span class="math inline">\(\mathcal{O}(na_1(\log n + \log a_1))\)</span>，即为Dijkstra的复杂度。</p>
-<h1 id="代码">代码</h1>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-#include &lt;algorithm&gt;
-#include &lt;queue&gt;
+#include &lt;cmath&gt;
 
 using namespace std;
 typedef long long ll;
-typedef pair&lt;ll, int&gt; pli;
-const int N = 13;
-const int V = 500010;
-const int E = N * V;
-const ll INF = 1ll &lt;&lt; 60;
-ll n, Bl, Br, a[N], mn, len[E];
-int fst[V], nxt[E], to[E], tot = 1;
-ll dis[V];
-void link(int u, int v, ll w) &#123;
-    nxt[++tot] = fst[u];
-    fst[u] = tot; to[tot] = v; len[tot] = w;
+const int N = 50100;
+const int M = 500100;
+const int HASH = 1000007;
+const int INF = 0x3f3f3f3f;
+int n, m;
+int r[N];
+int tot, fst[N], nxt[M], to[M];
+int deg[N], bc, sc;
+int big[N], small[N];
+int grt[M], snd[M];
+
+#define max(a, b) ((a) &gt; (b) ? (a) : (b))
+#define hashEdge(a, b) (((a) &lt;&lt; 12) | (b))
+
+int hfst[HASH], hnxt[M], hval[M], htot;
+int hl[M], hr[M];
+
+void link(int a, int b) &#123;
+    deg[a]++;
+    nxt[++tot] = fst[a];
+    fst[a] = tot; to[tot] = b;
+    hl[++htot] = a; hr[htot] = b;
+    hval[htot] = tot;
+    int ent = hashEdge(a, b) % HASH;
+    hnxt[htot] = hfst[ent];
+    hfst[ent] = htot;
+&#125; 
+
+inline int findEdge(int a, int b) &#123; 
+    int ent = hashEdge(a, b) % HASH;
+    for (int i = hfst[ent]; i; i = hnxt[i])
+        if (hl[i] == a &amp;&amp; hr[i] == b) return hval[i];
+    return -1; 
 &#125;
-void dijkstra() &#123;
-    static priority_queue&lt;pli, vector&lt;pli&gt;, greater&lt;pli&gt; &gt; q;
-    fill(dis, dis + mn, INF);
-    dis[0] = 0; q.push(make_pair(0, 0));
-    while (!q.empty()) &#123;
-        pli p = q.top(); q.pop();
-        int u = p.second;
-        if (dis[u] != p.first) continue;
-        for (int e = fst[u]; e; e = nxt[e]) &#123;
-            int v = to[e];
-            if (dis[v] &gt; dis[u] + len[e]) &#123;
-                dis[v] = dis[u] + len[e];
-                q.push(make_pair(dis[v], v));
+
+inline void updateEdge(int e, int c) &#123;
+    if (c == grt[e] || c == snd[e]) return;
+    if (r[c] &gt;= r[grt[e]]) snd[e] = grt[e], grt[e] = c;
+    else if (r[c] &gt;= r[snd[e]]) snd[e] = c;
+&#125;
+
+inline void updateTriplet(int a, int b, int c, int ab, int ac, int bc) &#123;
+    updateEdge(ab, c);
+    updateEdge(ab ^ 1, c);
+    updateEdge(ac, b);
+    updateEdge(ac ^ 1, b);
+    updateEdge(bc, a);
+    updateEdge(bc ^ 1, a);
+&#125;
+
+int main() &#123;    
+    scanf(&quot;%d%d&quot;, &amp;n, &amp;m); tot = htot = 1; r[0] = -INF;
+    for (int i = 1; i &lt;= n; i++) scanf(&quot;%d&quot;, &amp;r[i]);
+    for (int i = 1; i &lt;= m; i++) &#123;
+        int a, b;
+        scanf(&quot;%d%d&quot;, &amp;a, &amp;b);
+        link(a, b);
+        link(b, a);
+    &#125;
+    int s = sqrt(m);
+    sc = bc = 0;
+    for (int i = 1; i &lt;= n; i++) &#123;
+        if (deg[i] &lt; s) small[++sc] = i;
+        else big[++bc] = i;
+    &#125;
+    for (int i = 1; i &lt;= sc; i++) &#123;
+        int w = small[i];
+        for (int wu = fst[w]; wu; wu = nxt[wu]) &#123;
+            int u = to[wu];
+            for (int wv = fst[w]; wv != wu; wv = nxt[wv]) &#123;
+                int v = to[wv];
+                int uv = findEdge(u, v);
+                if (uv &gt; 0) updateTriplet(w, u, v, wu, wv, uv);
             &#125;
         &#125;
     &#125;
-&#125;
-ll calc(ll x) &#123;
-    ll ans = 0;
-    for (int i = 0; i &lt; mn; i++)
-        if (x &gt;= dis[i]) ans += (x - dis[i]) / mn + 1;
-    return ans;
-&#125;
-int main() &#123;
-    scanf(&quot;%lld%lld%lld&quot;, &amp;n, &amp;Bl, &amp;Br);
-    for (int i = 1; i &lt;= n; i++) scanf(&quot;%lld&quot;, &amp;a[i]);
-    sort(a + 1, a + 1 + n); mn = a[1];
-    for (int i = 0; i &lt; mn; i++)
-        for (int j = 2; j &lt;= n; j++)
-            link(i, (i + a[j]) % mn, a[j]);
-    dijkstra();
-    printf(&quot;%lld\n&quot;, calc(Br) - calc(Bl - 1));  
+    for (int i = 1; i &lt;= bc; i++) &#123;
+        int w = big[i];
+        for (int j = 1; j &lt; i; j++) &#123;
+            int u = big[j];
+            int wu = findEdge(w, u);
+            if (wu &lt; 0) continue;
+            for (int k = 1; k &lt; j; k++) &#123;
+                int v = big[k];
+                int wv = findEdge(w, v), uv = findEdge(u, v);
+                if (wv &gt; 0 &amp;&amp; uv &gt; 0)
+                    updateTriplet(w, u, v, wu, wv, uv);
+            &#125;
+        &#125;
+    &#125;
+    int ans = 0; 
+    for (int i = 2; i &lt;= tot; i++) &#123;
+        int a = to[i], b = to[i ^ 1];
+        int c = grt[i], d = snd[i];
+        if (c == 0 || d == 0) continue;
+        ans = max(ans, (r[a] + 1) * (r[b] + 1) + r[c] * r[d]);
+    &#125;
+    printf(&quot;%d\n&quot;, ans);
     return 0;
 &#125;</code></pre>
 
@@ -1288,7 +1358,7 @@ int main() &#123;
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/10/25/Luogu4719/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/01/%E5%AF%86%E7%A0%81%E9%94%81/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -1301,7 +1371,7 @@ int main() &#123;
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/10/25/Luogu4719/" class="post-title-link" itemprop="url">Luogu 4719 / 动态DP</a>
+          <a href="/2018/09/01/%E5%AF%86%E7%A0%81%E9%94%81/" class="post-title-link" itemprop="url">NOIP模拟赛 密码锁</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1312,15 +1382,8 @@ int main() &#123;
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2019-10-25 00:00:00" itemprop="dateCreated datePublished" datetime="2019-10-25T00:00:00-04:00">2019-10-25</time>
+      <time title="创建时间：2018-09-01 04:42:34" itemprop="dateCreated datePublished" datetime="2018-09-01T04:42:34-04:00">2018-09-01</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-07-30 02:10:44" itemprop="dateModified" datetime="2020-07-30T02:10:44-04:00">2020-07-30</time>
-      </span>
 
   
 </div>
@@ -1332,193 +1395,149 @@ int main() &#123;
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>本地笔记整理第一发，比较散，2019/12/8上传 <span class="math display">\[
-\newcommand{\dp}{\mathrm{dp}}
-\newcommand{\BigO}[1]{\mathcal{O}\left(#1\right)}
-\newcommand{\ldp}{\mathrm{ldp}}
-\newcommand{\lch}[1]{\mathrm{lch}(#1)}
-\newcommand{\hch}[1]{\mathrm{hch}(#1)}
-\]</span></p>
-<h1 id="分析">分析</h1>
-<p>题目要求求取带修改的树上最大独立集，朴素<span class="math inline">\(\BigO{n^2}\)</span>DP如下： <span class="math display">\[
-\begin{aligned}
-    \dp[u][0] &amp;= \sum_{v \in \mathrm{ch}(u)} \max\left\{\dp[v][1], \dp[v][0]\right\} \\
-    \dp[u][1] &amp;= \mathrm{val}[u] + \sum_{v \in \mathrm{ch}(u)} \dp[v][0]
-\end{aligned}
-\]</span></p>
-<p>但是这么一次转移是<span class="math inline">\(\BigO{n}\)</span>的，考虑优化，定义<span class="math inline">\(\mathrm{lch}(u)\)</span>为<span class="math inline">\(u\)</span>的轻儿子集合。<span class="math inline">\(\mathrm{hch}(u)\)</span>为<span class="math inline">\(u\)</span>的重儿子，稍微修改一下，定义</p>
-<p><span class="math display">\[
-\begin{aligned}
-\ldp[u][0] &amp;= \sum_{v \in \lch{u}} \max\left\{\dp[v][1], \dp[v][0]\right\} \\
-\ldp[u][1] &amp;= \mathrm{val}[u] + \sum_{v \in \lch{u}} \dp[v][0] \\
-\end{aligned}
-\]</span></p>
-<p>则有</p>
-<p><span class="math display">\[
-\begin{aligned}
-    \dp[u][0] &amp;= \max\left\{\dp[\hch{u}][0],\dp[\hch{u}][1]\right\} + \ldp[u][0]\\
-    \dp[u][1] &amp;= \dp[\hch{u}][0] + \ldp[u][1]
-\end{aligned}
-\]</span></p>
-<p>使用Max-Plus Algebra的方式重写：</p>
-<p><span class="math display">\[
-\begin{pmatrix}
-    \dp[u][0] \\
-    \dp[u][1]
-\end{pmatrix} = 
-\begin{pmatrix}
-    \ldp[u][0] &amp; \ldp[u][0] \\
-    \ldp[u][1] &amp; -\infty
-\end{pmatrix}
-\begin{pmatrix}
-    \dp[\hch{u}][0] \\
-    \dp[\hch{u}][1]
-\end{pmatrix}
-\]</span> 接下来只需要树链剖分维护矩阵转移就行了，单次修改的时间复杂度为<span class="math inline">\(\BigO{\log^2n}\)</span>。</p>
-<h1 id="代码">代码</h1>
+          <h1 id="题意">题意</h1>
+<p>有<span class="math inline">\(n\)</span>把串级连接的锁（前一把的输入连接到后一把的输出），每一把锁将输入和一个操作数进行<em>与</em>，<em>或</em>，<em>异或</em>之一的二元位运算的结果作为输出，给定初始时每把锁的参数和运算类型。接下来<span class="math inline">\(m\)</span>个操作共两种：</p>
+<ol type="1">
+<li>查询某个数通过这一串锁的结果</li>
+<li>修改某个锁的操作数和运算</li>
+</ol>
+<p>$n  ^5, m ^5 $，保证查询的数和操作数不超过<span class="math inline">\(1000\)</span>。</p>
+<h1 id="解法">解法</h1>
+<p>从数据范围可知正解的复杂度是<span class="math inline">\(O(n\log n)\)</span>级别的，考虑其操作中又有查询又有修改，直觉上我们断定这是一道数据结构题。</p>
+<p>那维护什么呢？位运算？肯定是不行的，原因就是<strong>位运算是不结合的</strong>，比如说<code>(a | b) &amp; c</code>就不一定等于<code>a | (b &amp; c)</code>，而无论是线段树还是树状数组都只能维护有结合律的代数结构，因此直接维护位运算是行不通的。</p>
+<p>但是<strong>因为二元位运算的一个操作数已经给出，而且每个位的运算有互不干扰，我们可以把给定的一个二元位运算转化为若干个依赖于输入某一位的一元位运算或函数</strong>。</p>
+<p>那么这样做有什么好处呢？我们看看这样的一元函数有哪些：</p>
+<ol type="1">
+<li><span class="math inline">\(e\)</span>：将输入位直接输出。</li>
+<li><span class="math inline">\(n\)</span>：将输入位取反输出。</li>
+<li><span class="math inline">\(0\)</span>：输出恒为0。</li>
+<li><span class="math inline">\(1\)</span>：输出恒为1。</li>
+</ol>
+<p>定义它们之间的二元运算为串联：<span class="math inline">\((f \cdot g)(x)=g(f(x))\)</span>，则有如下性质：</p>
+<ol type="1">
+<li>结合律：<span class="math inline">\((f \cdot g) \cdot h = f \cdot (g \cdot h)\)</span></li>
+<li>单位元：<span class="math inline">\(e\)</span></li>
+<li>封闭性：任意两个运算的复合都是这四个运算之一（自己列张表）</li>
+</ol>
+<p>可以看到这构成了一个<strong>幺半群</strong>，因此可以用线段树进行维护。接下来就很简单了，开<span class="math inline">\(10\)</span>棵线段树分别维护每一位，然后单点修改全局查询即可。</p>
+<p>代码：</p>
 <pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-#include &lt;algorithm&gt;
+#include &lt;cstdlib&gt;
 #include &lt;cstring&gt;
+#include &lt;cctype&gt;
+#include &lt;algorithm&gt;
+#include &lt;queue&gt;
+#define rg register
 
 using namespace std;
-const int N = 100010;
-const int T = 4 * N;
-const int INF = 0x3f3f3f3f;
-int n;
-int fst[N], nxt[2 * N], to[2 * N], tot = 1;
-struct vec &#123;
-    int a[2];
-    vec() &#123; memset(a, 0, sizeof a); &#125;
-    int &amp;operator [](int x) &#123; return a[x]; &#125;
-    const int &amp;operator [](int x) const &#123; return a[x]; &#125;
-&#125; eye;
-struct mat &#123;
-    int a[2][2];
-    mat() &#123; memset(a, 0, sizeof a); &#125;   
-    int *operator [](int x) &#123; return a[x]; &#125;
-    const int *operator [](int x) const &#123; return a[x]; &#125;
-    mat operator *(const mat &amp;b) const &#123;
-        mat c;
-        for (int i = 0; i &lt; 2; i++) &#123;
-            for (int j = 0; j &lt; 2; j++) &#123;
-                c[i][j] = -INF;
-                for (int k = 0; k &lt; 2; k++)
-                    c[i][j] = max(c[i][j], a[i][k] + b[k][j]);
-            &#125;
-        &#125;
-        return c;
-    &#125;
-    vec operator *(const vec &amp;b) const &#123;
-        vec c;
-        for (int i = 0; i &lt; 2; i++) &#123;
-            c[i] = -INF;
-            for (int j = 0; j &lt; 2; j++)
-                c[i] = max(c[i], a[i][j] + b[j]);
-        &#125;
-        return c;
-    &#125;
-&#125;;
-void link(int u, int v) &#123;
-    nxt[++tot] = fst[u];
-    fst[u] = tot; to[tot] = v;
-&#125;
-int cnt = 0, id[N], top[N], dep[N], bot[N], sz[N], son[N], fa[N];
-int a[N], ldp[N][2], dp[N][2];
-mat val[T], init[N];
-void dfs1(int u, int p) &#123;
-    dep[u] = dep[p] + 1; fa[u] = p;
-    sz[u] = 1; int mx = -1;
-    for (int e = fst[u]; e; e = nxt[e]) &#123;
-        int v = to[e];
-        if (v == p) continue;
-        dfs1(v, u); sz[u] += sz[v];
-        if (sz[v] &gt; mx) mx = sz[v], son[u] = v;
-    &#125;
-&#125;
-void dfs2(int u, int tp) &#123;
-    id[u] = ++cnt, top[u] = tp;
-    bot[top[u]] = u;
-    if (son[u]) dfs2(son[u], tp);
-    for (int e = fst[u]; e; e = nxt[e]) &#123;
-        int v = to[e];
-        if (v == fa[u] || v == son[u]) continue;
-        dfs2(v, v); 
-    &#125;
-&#125;
+typedef long long ll;
+typedef unsigned int u32;
 #define lch (rt &lt;&lt; 1)
 #define rch (lch | 1)
 #define larg lch, l, mid
 #define rarg rch, mid + 1, r
-void pushup(int rt) &#123;
-    val[rt] = val[lch] * val[rch];
-&#125;
-void build(int rt, int l, int r) &#123;
-    if (l == r) return;
-    int mid = (l + r) &gt;&gt; 1;
-    build(larg); build(rarg);
-    pushup(rt);
-&#125;
-mat query(int rt, int l, int r, int ql, int qr) &#123;
-    if (ql &lt;= l &amp;&amp; r &lt;= qr) return val[rt];
-    int mid = (l + r) &gt;&gt; 1;
-    if (qr &lt;= mid) return query(larg, ql, qr);
-    if (ql &gt; mid) return query(rarg, ql, qr);
-    return query(larg, ql, qr) * query(rarg, ql, qr);
-&#125;
-void update(int rt, int l, int r, int p, const mat &amp;v) &#123;
-    if (l == r) &#123; val[rt] = v; return; &#125;
-    int mid = (l + r) &gt;&gt; 1;
-    if (p &lt;= mid) update(larg, p, v);
-    else update(rarg, p, v);
-    pushup(rt);
-&#125;
-void updateu(int u) &#123;
-    mat m; m[0][0] = m[0][1] = ldp[u][0];
-    m[1][0] = ldp[u][1]; m[1][1] = -INF;
-    update(1, 1, n, id[u], m);
-&#125;
-void dfs3(int u) &#123;
-    ldp[u][0] = 0, ldp[u][1] = a[u];
-    for (int e = fst[u]; e; e = nxt[e]) &#123;
-        int v = to[e];
-        if (v == fa[u]) continue;
-        dfs3(v);
-        if (v == son[u]) continue;
-        ldp[u][0] += max(dp[v][0], dp[v][1]);
-        ldp[u][1] += dp[v][0];
+#define bit(a, b) (((a) &gt;&gt; (b)) &amp; 1)
+const int INF = 0x3f3f3f3f;
+const int BITS = 10;
+const int N = 200010;
+const int T = N * 4;
+const int r[4][4] = &#123;
+    &#123; 0, 1, 1, 0 &#125;, // 0
+    &#123; 0, 1, 0, 1 &#125;, // 1
+    &#123; 0, 1, 3, 2 &#125;, // N
+    &#123; 0, 1, 2, 3 &#125; // E 
+&#125;;
+const int p[4][2] = &#123;
+    &#123; 0, 0 &#125;,
+    &#123; 1, 1 &#125;,
+    &#123; 1, 0 &#125;,
+    &#123; 0, 1 &#125;
+&#125;;
+const int x[3][2] = &#123;
+    &#123; 0, 3 &#125;, // AND
+    &#123; 3, 1 &#125;, // OR
+    &#123; 3, 2 &#125; // XOR
+&#125;;
+
+char t[BITS][T], a[BITS][N];
+char s[5];
+int n, m;
+
+inline int read() &#123;
+    char ch = getchar(), s = 1;
+    while (!isdigit(ch)) &#123;
+        if (ch == &#39;-&#39;) s = -1;
+        ch = getchar();
     &#125;
-    updateu(u);
-    vec res = query(1, 1, n, id[u], id[bot[top[u]]]) * eye;
-    dp[u][0] = res[0]; dp[u][1] = res[1];
-&#125;
-void modify(int u, int p) &#123;
-    ldp[u][1] += p - a[u]; a[u] = p;
-    updateu(u);
-    while (true) &#123;
-        u = top[u];
-        vec res = query(1, 1, n, id[u], id[bot[u]]) * eye;
-        if (u != 1) &#123;
-            ldp[fa[u]][0] += max(res[0], res[1]) - max(dp[u][0], dp[u][1]);
-            ldp[fa[u]][1] += res[0] - dp[u][0];
-        &#125;
-        dp[u][0] = res[0]; dp[u][1] = res[1];
-        if (u == 1) break;
-        updateu(u = fa[u]);
+    int ans = 0;
+    while (isdigit(ch)) &#123;
+        ans = ans * 10 + ch - 48;
+        ch = getchar();
     &#125;
+    return ans * s;
 &#125;
+
+inline void pushup(int z, int rt) &#123;
+    t[z][rt] = r[t[z][lch]][t[z][rch]];
+&#125;
+
+void build(int z, int rt, int l, int r) &#123;
+    if (l == r) &#123;
+        t[z][rt] = a[z][l];
+        return;
+    &#125;
+    int mid = (l + r) &gt;&gt; 1;
+    build(z, larg);
+    build(z, rarg);
+    pushup(z, rt);
+&#125;
+
+void update(int z, int rt, int l, int r, int pos, int d) &#123;
+    if (l == r) &#123;
+        t[z][rt] = d;
+        return;
+    &#125;
+    int mid = (l + r) &gt;&gt; 1;
+    if (pos &lt;= mid) update(z, larg, pos, d);
+    else update(z, rarg, pos, d);
+    pushup(z, rt);
+&#125;
+
 int main() &#123;
-    int q; scanf(&quot;%d%d&quot;, &amp;n, &amp;q);
-    for (int i = 1; i &lt;= n; i++) scanf(&quot;%d&quot;, &amp;a[i]);
-    for (int i = 1; i &lt; n; i++) &#123;
-        int x, y; scanf(&quot;%d%d&quot;, &amp;x, &amp;y);
-        link(x, y); link(y, x);
+    freopen(&quot;cipher.in&quot;, &quot;r&quot;, stdin);
+    freopen(&quot;cipher.out&quot;, &quot;w&quot;, stdout);
+    scanf(&quot;%d%d&quot;, &amp;n, &amp;m);
+    for (rg int i = 1; i &lt;= n; ++i) &#123;
+        int tmp, op;
+        scanf(&quot;%s%d&quot;, s, &amp;tmp);
+        if (s[0] == &#39;A&#39;) op = 0;
+        else if (s[0] == &#39;O&#39;) op = 1;
+        else op = 2;
+        for (rg int j = 0; j &lt; BITS; ++j)
+            a[j][i] = x[op][bit(tmp, j)];
     &#125;
-    dfs1(1, 0); dfs2(1, 1); build(1, 1, n); dfs3(1);
-    while (q--) &#123;
-        int x, y; scanf(&quot;%d%d&quot;, &amp;x, &amp;y);
-        modify(x, y);
-        printf(&quot;%d\n&quot;, max(dp[1][0], dp[1][1]));
+    for (rg int i = 0; i &lt; BITS; ++i)
+        build(i, 1, 1, n);
+    while (m--) &#123;
+        int op; scanf(&quot;%d&quot;, &amp;op);
+        if (op == 1) &#123;
+            int tmp; scanf(&quot;%d&quot;, &amp;tmp);
+            int res = 0;
+            for (rg int i = 0; i &lt; BITS; ++i)
+                res |= p[t[i][1]][bit(tmp, i)] &lt;&lt; i;
+            printf(&quot;%d\n&quot;, res);
+        &#125; else &#123;
+            int pos, tmp;
+            scanf(&quot;%d%s%d&quot;, &amp;pos, s, &amp;tmp);
+            if (s[0] == &#39;A&#39;) op = 0;
+            else if (s[0] == &#39;O&#39;) op = 1;
+            else op = 2;
+            for (rg int i = 0; i &lt; BITS; ++i)
+                update(i, 1, 1, n, pos, x[op][bit(tmp, i)]);
+        &#125;
     &#125;
+    fclose(stdin);
+    fclose(stdout);
     return 0;
 &#125;</code></pre>
 
@@ -1547,7 +1566,7 @@ int main() &#123;
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2019/09/12/%E6%9F%90%E7%89%B9%E6%AE%8A%E7%9A%84%E6%B1%82%E5%92%8C%E6%96%B9%E6%B3%95/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2018/09/01/%E5%9F%8E%E5%B8%82%E8%A7%84%E5%88%92/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -1560,7 +1579,7 @@ int main() &#123;
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/09/12/%E6%9F%90%E7%89%B9%E6%AE%8A%E7%9A%84%E6%B1%82%E5%92%8C%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">某特殊的求和方法</a>
+          <a href="/2018/09/01/%E5%9F%8E%E5%B8%82%E8%A7%84%E5%88%92/" class="post-title-link" itemprop="url">NOIP模拟赛 城市规划</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1571,15 +1590,8 @@ int main() &#123;
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2019-09-12 00:00:00" itemprop="dateCreated datePublished" datetime="2019-09-12T00:00:00-04:00">2019-09-12</time>
+      <time title="创建时间：2018-09-01 04:42:04" itemprop="dateCreated datePublished" datetime="2018-09-01T04:42:04-04:00">2018-09-01</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-12-08 08:37:18" itemprop="dateModified" datetime="2019-12-08T08:37:18-05:00">2019-12-08</time>
-      </span>
 
   
 </div>
@@ -1591,239 +1603,55 @@ int main() &#123;
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>本地稿整理，原稿供班级公众号，写于2019-09-12，2019-12-08上传</p>
-<h1 id="序">序</h1>
-<p>最近数学课上在讲数列。众所周知，我们主要探寻数列的两个属性：</p>
-<ol type="1">
-<li>通项公式</li>
-<li>前<span class="math inline">\(n\)</span>项和</li>
-</ol>
-<p>关于第二点，我们已经在课上学习了等差数列和等比数列前<span class="math inline">\(n\)</span>项和的计算方法，但是更为复杂的数列呢？例如数列<span class="math inline">\(\{a_n\},a_n=n^2,n\in\mathbb{N}^{\ast}\)</span>的前<span class="math inline">\(n\)</span>项和： <span class="math display">\[
-S_n = \sum_{x=1}^n x^2
-\]</span> 或是更复杂一点，<span class="math inline">\(a_n=2^nn^2,n\in\mathbb{N}^{\ast}\)</span>： <span class="math display">\[
-S_n = \sum_{x=1}^{n}2^xx^2
-\]</span> 或者更复杂呢？</p>
-<p>诚然，你可能知道平方和的公式，对于第二个式子也许也有巧办法解决。但是很多方法仍存在不少局限性。有没有更通用的办法呢？</p>
-<p>如果你自学过一点基础的微积分，你会不会想到，既然 <span class="math display">\[
-\int_{1}^n2^xx^2\mathrm{d}x
-\]</span> 可以通过分部积分比较套路地演算，变成数列之后有没有类似的方法呢？</p>
-<p>这篇文章想分享的，就是在通过类比微积分构造出的这样一种系统化的求和方法。</p>
-<p><em>下面的文章如果自学过微积分的话可能会比较好读，没学过也没关系，反正本身不用到任何微积分概念。</em></p>
-<p><em>这个方法是我在《具体数学》里面看到的，也似乎只有这一本书里讲到这个方法，网上都没有。但是真的很有效，也很成系统，很震撼。这里对记号和名词做了一点小修改并避免了一些概念。</em></p>
-<p><em>以下统一把数列看做函数，然后因为下面有非常多的函数，一定会牵涉到定义域的问题。但是好在这些函数的定义域都是平凡且显然的，所以就不写了。</em></p>
-<h1 id="基础记号与理念">基础记号与理念</h1>
-<p>定义<span class="math inline">\(f(x)\)</span>对于<span class="math inline">\(x\)</span>的<strong>差分</strong>为且记作： <span class="math display">\[
-\frac{\mathrm{\delta} f(x)}{\mathrm{\delta} x} = f(x+1)-f(x)
-\]</span> 易证差分对加减法有分配率： <span class="math display">\[
-\frac{\mathrm{\delta} \left[f(x) \pm g(x)\right]}{\mathrm{\delta} x} = \frac{\mathrm{\delta} f(x)}{\mathrm{\delta} x} \pm \frac{\mathrm{\delta} g(x)}{\mathrm{\delta} x}
-\]</span> 且易证其线性： <span class="math display">\[
-\frac{\mathrm{\delta} kf(x)}{\mathrm{\delta} x} = k\frac{\mathrm{\delta} f(x)}{\mathrm{\delta} x}
-\]</span> 又易证常数的差分为<span class="math inline">\(0\)</span>（显然地）。</p>
-<p>若<span class="math inline">\(F(x)\)</span>的差分为<span class="math inline">\(f(x)\)</span>，我们观察到对于<span class="math inline">\(a,b\in\mathbb{Z}, b &gt; a\)</span>，有： <span class="math display">\[
-F(b)-F(a) = \sum_{x=a}^{b-1} f(x)
-\]</span> 那么，一个求和问题就可以被规约为求同一函数两个函数值差的问题。</p>
-<p>因此，在这个框架下，如果要计算<span class="math inline">\(\sum_{x=a}^b f(x)\)</span>，我们就要：</p>
-<ol type="1">
-<li>找到合适的<span class="math inline">\(F(x)\)</span>，其差分为<span class="math inline">\(f(x)\)</span></li>
-<li>计算<span class="math inline">\(F(b+1)-F(a)\)</span></li>
-</ol>
-<p>（前几天课上讲的“累减法”是以上步骤的反向简化版）</p>
-<p>当中最核心，也是最有意思的一个步骤，自然就是寻找<span class="math inline">\(F(x)\)</span>。寻找<span class="math inline">\(F(x)\)</span>的过程本质上是<strong>差分的逆运算</strong>。不妨把这个逆运算称作”<strong>逆差分</strong>“。因为使用<span class="math inline">\(F(x)\)</span>易产生指代不清的问题，我们为<span class="math inline">\(f(x)\)</span>的逆差分定义如下记号： <span class="math display">\[
-F(x) = \sum f(x)\mathrm{\delta} x
-\]</span> 则由定义，可得： <span class="math display">\[
-\frac{\mathrm{\delta} \left(\sum f(x) \mathrm{\delta} x\right)}{\mathrm{\delta} x} = f(x), \sum \frac{\mathrm{\delta} f(x)}{\mathrm{\delta} x} \mathrm{\delta} x = f(x)
-\]</span> 举些例子： <span class="math display">\[
-\begin{aligned}
-\frac{\mathrm{\delta} x}{\mathrm{\delta} x} = 1 &amp;\Leftrightarrow \sum1\mathrm{\delta} x = x + C\\
-\frac{\mathrm{\delta} x^2}{\mathrm{\delta} x} = 2x+1 &amp;\Leftrightarrow \sum (2x+1)\mathrm{\delta} x = x^2 + C
-\end{aligned}
-\]</span> 为什么要<span class="math inline">\(+C\)</span>呢？因为<span class="math inline">\(f(x)\)</span>的逆差分<strong>不唯一</strong>：对于任意已知的<span class="math inline">\(f(x)\)</span>逆差分加上任意的常数依然是<span class="math inline">\(f(x)\)</span>的逆差分（差分的时候常数就抵消掉了）。这里的<span class="math inline">\(C\)</span>便是这个意思。</p>
-<p>逆差分由于是差分的逆运算，其对于加法的分配率以及线性亦显然。</p>
-<p>接下来的这篇文章的中心便是：如何计算<span class="math inline">\(\sum f(x) \mathrm{\delta} x\)</span>？</p>
-<p><strong>以下默认<span class="math inline">\(x,n \in \mathbb Z\)</span>。</strong></p>
-<h1 id="幂法则">“幂”法则</h1>
-<p>对微积分有些许了解的同学一定知道积分当中的幂法则： <span class="math display">\[
-\int x^m \mathrm{d}x=\frac{x^{m+1}}{m+1}+C
-\]</span> 它来源于微分的幂法则： <span class="math display">\[
-\frac{\mathrm{d}x^m}{\mathrm{d}x} = mx^{m-1}
-\]</span> 类似的幂法则在我们刚刚建立的框架当中的类比是什么呢？</p>
-<p>直接把微分换成差分？ <span class="math display">\[
-\frac{\mathrm{\delta} x^m}{\mathrm{\delta} x} = (x+1)^m-x^m = ?
-\]</span> 我们发现好像没有什么优雅的结果诶！</p>
-<p>会不会是"幂"出了问题呢？</p>
-<p>定义<strong>下降阶乘幂</strong><span class="math inline">\(x^{\underline{m}}\)</span>： <span class="math display">\[
-x^{\underline m} = x(x-1)(x-2)\cdots(x-m+1) = \frac{x!}{(x - m)!} , \quad x&gt;0,m\in \mathbb{Z}
-\]</span> （当然，最右边那个有阶乘的式子要有意义，应该<span class="math inline">\(x\ge m\)</span>，如果<span class="math inline">\(x&lt;m\)</span>，那么不妨令整个阶乘幂为<span class="math inline">\(0\)</span>）</p>
-<p>为什么要定义那么奇怪的幂呢？考查下降阶乘幂的差分： <span class="math display">\[
-\begin{aligned}
-\frac{\mathrm{\delta} x^{\underline m}}{\mathrm{\delta} x} &amp;= (x + 1)^{\underline m} - x^{\underline m} \\
-&amp;= \frac{(x + 1)!}{(x + 1 - m)!} - \frac{x!}{(x - m)!} \\
-&amp;= \frac{(x + 1)! - (x + 1 - m)x!}{(x + 1 - m)!} \\
-&amp;= \frac{x![(x + 1) - (x + 1 - m)]}{(x + 1 - m)!} \\
-&amp;= \frac{mx!}{[x - (m - 1)]!} \\
-&amp;= mx^{\underline{m - 1}}
-\end{aligned}
-\]</span> 我们发现在使用下降阶乘幂的情况下，我们就可以把微分当中的幂法则类比到差分当中了。</p>
-<p>同时，我们不妨探索一下常规幂的性质在下降阶乘幂中的类比： <span class="math display">\[
-x^{\underline{m + n}} = x^{\underline m}(x - m)^{\underline n}, \quad m,n\in \mathbb{Z}
-\]</span> 以及当<span class="math inline">\(m&lt;0\)</span>时： <span class="math display">\[
-x^{\underline{-m}} = \frac{1}{(x + 1)(x + 2)\cdots(x + m)}
-\]</span> 这些类比得来的性质有助于我们加深对于下降阶乘幂的认识。</p>
-<p>既然我们得到了差分的幂法则，逆差分中的幂法则也就呼之欲出了： <span class="math display">\[
-\sum x^{\underline m} \mathrm{\delta} x = \frac{x^{\underline{m+1}}}{m+1}+C,\quad m\in\mathbb{Z}, m\neq -1
-\]</span> 这些法则有什么用呢？我们先试试看用我们的方法推导等差数列求和公式吧！</p>
-<p>欲求式为 <span class="math display">\[
-S_n = \sum_{x=1}^n [a_1+(x-1)d]
-\]</span> 那么我们计算： <span class="math display">\[
-\begin{aligned}
-    \sum [a_1+(x-1)d]\mathrm{\delta} x &amp;= \sum[a_1-d+dx]\mathrm{\delta} x \\
-    &amp;= \sum(a_1 - d)\mathrm{\delta} x+\sum dx\mathrm{\delta} x \\
-    &amp;= (a_1-d)x + d\sum x^{\underline 1} \delta x \\
-    &amp;= (a_1-d)x + d\cdot\frac{x^{\underline 2}}{2} + C
-\end{aligned}
-\]</span> 然后根据之前提到的步骤分别代入<span class="math inline">\(x=1\)</span>和<span class="math inline">\(x=n+1\)</span>作差相减，就是答案： <span class="math display">\[
-\begin{aligned}
-\sum_{x=1}^n [a_1+(x-1)d] &amp;= \left[(a_1-d)(n+1)+d\cdot\frac{(n+1)^{\underline 2}}{2}\right] - \left[(a_1 - d)\cdot 1 + d\cdot\frac{1^{\underline 2}}{2} \right] \\
-&amp;= (a_1-d)n + \frac{n(n+1)}{2}d \\
-&amp;= na_1+\frac{n(n-1)}{2}d
-\end{aligned}
-\]</span> 是不是很简单？再比如说我们要求平方和 <span class="math display">\[
-\sum_{x=1}^n x^2
-\]</span> 然后我们发现 <span class="math display">\[
-x^2 = x^{\underline 2} + x^{\underline 1}
-\]</span> 那我们可以借此求取<span class="math inline">\(x^2\)</span>的逆差分： <span class="math display">\[
-\begin{aligned}
-\sum x^2 \mathrm{\delta} x &amp;= \sum x^{\underline 2}\mathrm{\delta} x + \sum x^{\underline 1}\mathrm{\delta} x \\
-&amp;= \frac{x^{\underline 3}}{3} + \frac{x^{\underline 2}}{2} + C \\
-&amp;= \frac{2x(x - 1)(x - 2) + 3x(x - 1)}{6} + C \\
-&amp;= \frac{x(x - 1)(2x - 1)}{6} + C
-\end{aligned}
-\]</span></p>
-<p>代入上下界： <span class="math display">\[
-\begin{aligned}
-\sum_{x=1}^n x^2 &amp;= \frac{(n+1)[(n+1) - 1][2(n+1) - 1]}{6} - \frac{1(1- 1)(2\cdot1 - 1)}{6} \\
-&amp;= \frac{n(n+1)(2n+1)}{6}
-\end{aligned}
-\]</span> 我们一不小心就推出了平方和公式？</p>
-<p>再来一个： <span class="math display">\[
-\sum_{x=1}^n \frac{1}{x(x+1)}
-\]</span> 我们先把它转变成： <span class="math display">\[
-\sum_{x=0}^{n-1}\frac{1}{(x+1)(x+2)}
-\]</span> 因为这样凑到了形式： <span class="math display">\[
-\frac{1}{(x+1)(x+2)} = x^{\underline{-2}}
-\]</span> 然后用幂法则逆差分： <span class="math display">\[
-\sum x^{\underline{-2}} \mathrm{\delta} x = \frac{x^{\underline{-1}}}{-1} + C= -\frac{1}{x+1} + C
-\]</span> 然后代入<span class="math inline">\(x=0\)</span>和<span class="math inline">\(x=n\)</span>相减： <span class="math display">\[
-\begin{aligned}
-\sum_{x=0}^{n-1}\frac{1}{(x+1)(x+2)} &amp;= \left(-\frac{1}{n+1}\right) - \left(-\frac{1}{0+1}\right) \\
-&amp;= 1-\frac{1}{n+1}
-\end{aligned}
-\]</span> 这不就是裂项吗？</p>
-<p>其实，通过归纳可以证明，任何整式多项式都可以被表示为若干个下降阶乘幂的线性组合（且方法是显然的）。且裂项公式的另类证明也说明幂法则在指数为负数的时候也可以使用。（对于复杂的分式，我们也可以待定系数拆着做）。</p>
-<h1 id="指数法则">指数法则</h1>
-<p>自然而然地，我们接下来探究指数函数（包括底数为负数）的差分与逆差分： <span class="math display">\[
-\frac{\mathrm{\delta} a^{x}}{\mathrm{\delta} x} = a^{x+1}-a^x=(a-1)a^x
-\]</span> 因此 <span class="math display">\[
-\sum a^x\mathrm{\delta} x=\frac{a^x}{a-1} + C ,\quad a\neq 1
-\]</span> （要验证？再差分一下）</p>
-<p>因此 <span class="math display">\[
-\sum_{x=0}^{n-1}a^x = \frac{a^n}{a-1} - \frac{a^0}{a-1} = \frac{a^n-1}{a-1} ,\quad a\neq 1
-\]</span> 啊，是非平凡等比数列的求和公式呢。</p>
-<p>刚刚的结论也可以稍作拓展： <span class="math display">\[
-\begin{aligned}
-\frac{\mathrm{\delta} a^{x+k}}{\mathrm{\delta} x} &amp;= (a-1)a^{x+k}\\ \sum a^{x+k}\mathrm{\delta} x&amp;=\frac{a^{x+k}}{a-1} + C
-\end{aligned}
-\]</span> 同时可以注意下： <span class="math display">\[
-\frac{\mathrm{\delta} 2^x}{\mathrm{\delta} x} = 2^x, \sum2^x\mathrm{\delta} x=2^x+C
-\]</span> 这是一个有意思的现象：<span class="math inline">\(2^x\)</span>（或更为广义来讲，<span class="math inline">\(2^{x+k}\)</span>）的差分与逆差分等于其自身。这与微积分中<span class="math inline">\(e^x\)</span>的地位是相似的。</p>
-<h1 id="分部求和">分部求和</h1>
-<p>如果仅有指数法则和幂法则，那么这套方法其实并没有那么优秀（计算的式子我们常规方法也能算啊！）</p>
-<p>真正让这套方法威力大幅提升的，是分部求和。</p>
-<p>你也许知道分部积分是从微分的积法则变化而来的： <span class="math display">\[
-\begin {aligned}
-&amp;\frac{\mathrm{d}f(x)g(x)}{\mathrm{d}x} = f(x)\frac{\mathrm{d}g(x)}{\mathrm{d}x} + g(x)\frac{\mathrm{d}f(x)}{\mathrm{d}x} \\
-\Longleftrightarrow&amp; f(x)\frac{\mathrm{d}g(x)}{\mathrm{d}x} = \frac{\mathrm{d}f(x)g(x)}{\mathrm{d}x}- g(x)\frac{\mathrm{d}f(x)}{\mathrm{d}x}\\
-\Longleftrightarrow  &amp;\int f(x)\mathrm{d}g(x) = f(x)g(x) - \int g(x)\mathrm{d}f(x) \\
-\end{aligned}
-\]</span> （出于统一风格的需要没有用<span class="math inline">\(u,v\)</span>，写得繁复了一点）</p>
-<p>我们类比着探寻差分下的积法则： <span class="math display">\[
-\begin{aligned}
-    \frac{\mathrm{\delta} f(x)g(x)}{\mathrm{\delta} x} &amp;= f(x+1)g(x+1) - f(x)g(x) \\
-    &amp;= f(x+1)g(x+1)-f(x)g(x+1)+f(x)g(x+1)-f(x)g(x) \\
-    &amp;= f(x)[g(x+1) - g(x)] + g(x+1)[f(x+1)-f(x)] \\
-    &amp;= f(x)\frac{\mathrm{\delta} g(x)}{\mathrm{\delta} x} + g(x+1)\frac{\mathrm{\delta} f(x)}{\mathrm{\delta} x}
-\end{aligned}
-\]</span> 因此 <span class="math display">\[
-\sum f(x) \mathrm{\delta} g(x) = f(x)g(x)-\sum g(x+1)\mathrm{\delta} f(x)
-\]</span> (<span class="math inline">\(\sum f(x) \mathrm{\delta} g(x) = \sum f(x)\frac{\mathrm{\delta} g(x)}{\cancel{\mathrm{\delta} x}} \cancel{\mathrm{\delta} x}\)</span>，虽然不是直接“约分”，但是是一种简便的记号)</p>
-<p>这便是逆差分当中的<strong>分部求和</strong>方法。</p>
-<p>怎么用？</p>
-<p>比如说我们要计算： <span class="math display">\[
-\sum x^22^x \mathrm{\delta} x
-\]</span> 那么令<span class="math inline">\(f(x)=x^2,\frac{\mathrm{\delta} g(x)}{\mathrm{\delta} x} = 2^x \Rightarrow g(x)=2^x\)</span>: <span class="math display">\[
-\begin{aligned}
-\sum x^22^x \mathrm{\delta} x = \sum x^2 \mathrm{\delta}2^x&amp;=x^22^x- \sum 2^{x+1}\mathrm{\delta} x^2 \\
-&amp;= x^22^x- \sum 2^{x+1}(2x+1)\mathrm{\delta} x \\
-&amp;= x^22^x - \sum 2^{x+1}\mathrm{\delta} x - 2\sum x2^{x+1}\mathrm{\delta} x \\
-&amp;= x^22^x - 2^{x+1} - 4\sum x2^x\mathrm{\delta} x
-\end{aligned}
-\]</span> 再来，令<span class="math inline">\(f(x) = x,\frac{\mathrm{\delta} g(x)}{\mathrm{\delta} x} = 2^x \Rightarrow g(x)=2^x\)</span>： <span class="math display">\[
-\begin{aligned}
-\sum x2^x\mathrm{\delta} x &amp;= x2^x- \sum 2^{x+1} \mathrm{\delta} x \\
-&amp;= x2^x - 2^{x+1} + C \\
-\end{aligned}
-\]</span> 代回去： <span class="math display">\[
-\begin{aligned}
-\sum x^22^x \mathrm{\delta} x &amp;= x^22^x - 2^{x+1} - 4\left(x2^x - 2^{x+1}\right) + C \\
-&amp;=(x^2-4x+6)2^x+C
-\end{aligned}
-\]</span> 然后上下界就按需求随意加好了~</p>
-<p>（<span class="math inline">\(g(x)=2^x+C\)</span>的时候推导还成立吗？要不要考虑呢？）</p>
-<h1 id="换元求和"><del>换元求和</del></h1>
-<p>你也许会想</p>
-<blockquote>
-<p>既然我们都把分部积分类比到了分部求和，那么再把换元积分类比到换元求和岂不美哉？</p>
-</blockquote>
-<p>很遗憾，这在通常意义上是不可以的。</p>
-<p>为什么？</p>
-<p>因为换元积分逆用的是微分的链式法则。</p>
-<p>差分有链式法则吗？ <span class="math display">\[
-\begin{aligned}
-    \frac{\mathrm{\delta} f[g(x)]}{\mathrm{\delta} x} &amp;= f[g(x+1)] - f[g(x)] \\
-    &amp;\stackrel{?}{=} \left\{f[g(x)+1]-f[g(x)]\right\}[g(x+1)-g(x)] \\
-    &amp;= \frac{\mathrm{\delta} f[g(x)]}{\mathrm{\delta} g(x)} \cdot \frac{\mathrm{\delta} g(x)}{\mathrm{\delta} x}
-\end{aligned}
-\]</span> 打问号的那一步是推不过来的，除非<span class="math inline">\(g(x+1)=g(x)+1 \Longleftrightarrow \frac{\mathrm{\delta} g(x)}{\mathrm{\delta} x} = 1\)</span>。在这种特例条件下，<span class="math inline">\(g(x)=x+C\)</span>，也就是说我们只能在这样形式的<span class="math inline">\(g(x)\)</span>上应用链式法则/换元求和——这个形式不就是平移吗？</p>
-<p>而在其他形式的<span class="math inline">\(g(x)\)</span>当中，正如我们所看到的一样，推不过去。</p>
-<p>其实，我们没有必要将所有微积分里面的要素全部类比到我们的体系里面。比如说，微分的链式法则与商法则之所以必要是因为微分按照定义计算十分繁琐，而差分的定义本身就可以用来进行计算，因而不需要链式法则与商法则。类似地，微积分里面一些关于三角的技巧也不用，也不能类比到我们的框架当中，因为在离散的情况很难对待三角。</p>
-<h1 id="小结">小结</h1>
-<p>这篇文章给大家分享了一整套可以用来机械化一部分求和计算的方法,并在此方法框架内推导了我们所学过的许多求和公式。这个方法精彩且难能可贵的是，这个方法完全是借助于<strong>类比</strong>的思想借鉴微积分体系建立起来的。因而如果同学们有关于微积分的了解，那么会发现知识的迁移可以很快完成。这种类比的方法是我们数学学习过程中应该提倡的。</p>
-<blockquote>
-<p>这套方法有名字吗？</p>
-</blockquote>
-<p>《具体数学》当中称该方法为“有限微积分”，我个人认为“离散微积分”更为恰当，但是既然是离散的，那么“微”和“积”自然无从说起，我个人一直想回避给这个方法命名（<del>就是一个微积分的类比又不是什么开拓性创新有啥好命名的</del>）。</p>
-<blockquote>
-<p>考试/作业可以用吗？</p>
-</blockquote>
-<p>我觉得肯定是不行的。首先我确信考试或者作业大概率不会出这种求和。其次我确定很多人并没有听说过这个方法。再其次这套方法和其他技巧还不大一样，是成体系的，所以如果你要用也要像这篇文章一样从头开始定义差分写一大堆。然而如果真的碰到了这样的题目，你当然……可以……在草稿纸上……假装是灵光一闪得到答案……然后归纳证明对吧……我觉得老师大概也不会拿你怎么样？</p>
-<h1 id="调和级数与自然对数"><em>调和级数与自然对数</em></h1>
-<p>这里只是对于幂法则的一个简要补充，可以跳过。</p>
-<p>你也许注意到，正如积分的幂法则一样，我们逆差分的幂法则规定指数不能为<span class="math inline">\(-1\)</span>。原因显然。</p>
-<p>那指数<span class="math inline">\(-1\)</span>怎么办呢？</p>
-<p>你也许知道 <span class="math display">\[
-\int_1^n x^{-1}\mathrm{d}x=\ln n
-\]</span> 那类比着不妨看看 <span class="math display">\[
-\sum_{x=0}^{n-1} x^{\underline{-1}} = \frac{1}{1}+\frac{1}{2}+\cdots+\frac{1}{n}=?
-\]</span> 这不是调和级数吗？这和<span class="math inline">\(\ln n\)</span> 看起来一点都不像啊！然而，可以证明， <span class="math display">\[
-\lim_{n\to\infty} \left(- \ln n + \sum_{x=1}^n \frac{1}{x}\right) = \gamma \approx 0.57722
-\]</span> <span class="math inline">\(\gamma\)</span>被称作欧拉-马歇罗尼常数。当然这和这篇文章的主题已经一点关系都没有了，权当是对于指数为<span class="math inline">\(-1\)</span>情况的探究与补全吧。</p>
-<h1 id="bonus"><em>Bonus</em></h1>
-<p>暑假里刷计算机竞赛的时候小马碰到一道神奇的数列题。当时所有人都是打表找规律做的（计算机竞赛日常，你写出程序就行），但是我一直很好奇有没有严谨的推导。数列是这个样子的： <span class="math display">\[
-\begin{aligned}
-    a_1 &amp;= 1 \\
-    a_n &amp;= \left(\sum_{i=1}^{n-1} i\cdot a_i\right) \bmod n ,\quad n\ge2, n\in \mathbb{N^{\ast}}
-\end{aligned}
-\]</span> 求<span class="math inline">\(a_n\)</span>的通项公式。我趁这篇文章的机会问问各位大佬有没有想法，有的话可以和我分享一下。</p>
+          <h1 id="题意">题意</h1>
+<p>有<span class="math inline">\(n\)</span>座高度为正整数的建筑物，定义不美观度为相邻建筑物高度差绝对值的最大值，你可以任意改动至多<span class="math inline">\(k\)</span>座建筑物的高度，求能够达到的最小不美观度。</p>
+<p><span class="math inline">\(k \le n \le 2000, h \le 2 \times 10^9\)</span></p>
+<h1 id="解法">解法</h1>
+<p>从数据范围看出这应该是一道DP题，所以很容易陷入的一条歪路就是，定义<span class="math inline">\(f[i, j]\)</span>为前<span class="math inline">\(i\)</span>座建筑物修改了<span class="math inline">\(j\)</span>次的最小不美观度，然后会发现没办法消除后效性<del>当场去世</del>。</p>
+<p>但是如果我们把题目paraphrase一下，变成：在修改至多<span class="math inline">\(k\)</span>座建筑物高度的情况下，<em>最大</em>的相邻高度差<em>最小</em>是多少？首先我们发现<strong>随着修改数增加，不美观度肯定是可以单调递减的</strong>，其次我们从这熟悉的句型就发现这其实是一道二分答案的题目，问题就变成了如何判定一个不美观度能不能达到了，我们还是需要使用DP来完成。</p>
+<p>定义<span class="math inline">\(f[i]\)</span>为修改前<span class="math inline">\(i - 1\)</span>座建筑物但是不修改<span class="math inline">\(i\)</span>的情况下为了达到我们二分的答案所需要的最小修改数，我们把它们全部初始化为<span class="math inline">\(i - 1\)</span>，即最坏情况下前面的我们都需要修改。</p>
+<p>接下来我们思考状态转移，设我们此时二分的答案为<span class="math inline">\(x\)</span>，我们发现如果对于<span class="math inline">\(j &lt; i\)</span>，如果<span class="math inline">\(|h_j - h_i| \le (i - j)x\)</span>，那么就说明我们总可以通过调整<span class="math inline">\(i\)</span>和<span class="math inline">\(j\)</span>之间（不包括<span class="math inline">\(i, j\)</span>）的<span class="math inline">\(i - j - 1\)</span>座建筑物达到我们需要二分的答案。因此状态转移方程为： <span class="math display">\[
+f[i] = \min_{1 \le j &lt; i, |h_j - h_i| \le (i - j)x} \{ f[j] + i - j - 1\}
+\]</span> 那么最后总体上为了达到二分的答案所需要的最小修改数是多少呢？是<span class="math inline">\(\min_{1 \le i \le n} \{f[i]\}\)</span>吗？其实并不是，因为对于<span class="math inline">\(f[i]\)</span>，最坏情况下我们还需要修改<span class="math inline">\(i\)</span>后面的<span class="math inline">\(n - i\)</span>座建筑物，因此总的最小修改数为： <span class="math display">\[
+\min_{1 \le i \le n} \{f[i] + n - i\}
+\]</span> 接下来就可以愉快的二分答案了，总的复杂度为<span class="math inline">\(O(n^2\log h_{max})\)</span>，还有要注意的是如果你采用<code>int mid = (l + r) / 2</code>的话是会爆<code>int</code>的，解决方法是使用<code>int mid = l + (r - l) / 2</code>：</p>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
+
+using namespace std;
+const int INF = 0x7fffffff;
+const int N = 2010;
+int f[N], h[N];
+int n, k;
+
+#define abs(a) ((a) &gt; 0 ? (a) : -(a))
+#define min(a, b) ((a) &lt; (b) ? (a) : (b))
+
+int valid(int x) &#123;
+    for (int i = 1; i &lt;= n; i++)
+        f[i] = i - 1;
+    for (int i = 2; i &lt;= n; i++) &#123;
+        for (int j = 1; j &lt; i; j++)
+            if (abs(h[i] - h[j]) &lt;= 1ll * x * (i - j))
+                f[i] = min(f[i], f[j] + i - j - 1);
+    &#125;
+    int ans = INF;
+    for (int i = 1; i &lt;= n; i++)
+        ans = min(ans, f[i] + n - i);
+    return ans;
+&#125; 
+
+int main() &#123;
+    scanf(&quot;%d%d&quot;, &amp;n, &amp;k);
+    for (int i = 1; i &lt;= n; i++) scanf(&quot;%d&quot;, &amp;h[i]);
+    int l = 0, r = INF;
+    while (l &lt; r) &#123;
+        int mid = l + (r - l) / 2;
+        if (valid(mid) &lt;= k) r = mid;
+        else l = mid + 1;
+    &#125;
+    printf(&quot;%d\n&quot;, l);
+    return 0;
+&#125;</code></pre>
 
       
     </div>

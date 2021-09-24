@@ -235,7 +235,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/%E5%88%9D%E6%8E%A2%E6%8B%9F%E9%98%B5/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/04/PACT0703/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -248,7 +248,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/%E5%88%9D%E6%8E%A2%E6%8B%9F%E9%98%B5/" class="post-title-link" itemprop="url">拟阵笔记</a>
+          <a href="/2020/07/04/PACT0703/" class="post-title-link" itemprop="url">PACT 07/03 集合覆盖问题</a>
         </h2>
 
         <div class="post-meta-container">
@@ -259,15 +259,8 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
+      <time title="创建时间：2020-07-04 06:29:26" itemprop="dateCreated datePublished" datetime="2020-07-04T06:29:26-04:00">2020-07-04</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-10-07 04:12:10" itemprop="dateModified" datetime="2018-10-07T04:12:10-04:00">2018-10-07</time>
-      </span>
 
   
 </div>
@@ -279,1638 +272,138 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>拟阵是很多贪心算法的基础，也可以帮助我们验证自己的贪心算法的正确性，接下来是我从<del>抄</del>《算法导论》中整理出来的一些关于拟阵的性质：</p>
-<h1 id="定义">定义</h1>
-<p><strong>吐槽：</strong>虽然说拟阵叫拟阵，但是这个“阵”和矩阵的阵几乎一点关系都没有（名字的由来纯粹是历史遗留问题），拟阵和矩阵的关系就像JavaScript和Java，雷锋和雷峰塔一样……</p>
-<p><strong>拟阵：</strong>拟阵是一个二元组<span class="math inline">\(M = (S, I)\)</span>，其中<span class="math inline">\(S\)</span>为一个有限集，<span class="math inline">\(I\)</span>为<span class="math inline">\(S\)</span>的一个族（即子集的集合）并满足如下性质：</p>
-<ol type="1">
-<li><strong>遗传性：</strong>若<span class="math inline">\(B \in I\)</span>且<span class="math inline">\(A \subseteq B\)</span>，则<span class="math inline">\(A \in I\)</span>。</li>
-<li><strong>交换性：</strong>若<span class="math inline">\(A \in I, B \in I\)</span>且<span class="math inline">\(|A| &lt; |B|\)</span>，那么存在元素<span class="math inline">\(x \in B \setminus A\)</span>，使得<span class="math inline">\(A \cup \{x\} \in I\)</span>。（又是一个误导性的名字……）</li>
-</ol>
-<p><span class="math inline">\(I\)</span>中的集合成为<span class="math inline">\(S\)</span>的<strong>独立子集</strong>。</p>
-<p><strong>图拟阵：</strong>对于一个图<span class="math inline">\(G = (V, E)\)</span>，我们定义它的图拟阵为<span class="math inline">\(M_G = (S_G, I_G)\)</span>，当中<span class="math inline">\(S_G\)</span>为边集，而<span class="math inline">\(E\)</span>的子集<span class="math inline">\(A \in I_G\)</span>的当且仅当<span class="math inline">\(A\)</span>中无环（森林）。图拟阵与最小生成树有关（这也解释了为什么最小生成树的算法都是贪心）。由于森林的子图还是森林，因此该拟阵的遗传性显然。而该拟阵的交换性也在算法导论中有详细的证明，简单讲起来就是对于森林<span class="math inline">\(A, B\)</span>，<span class="math inline">\(|A| &lt; |B|\)</span>，我们知道<span class="math inline">\(A\)</span>中有<span class="math inline">\(|V| - |A|\)</span>棵树，<span class="math inline">\(B\)</span>中有<span class="math inline">\(|V| - |B|\)</span>棵树比<span class="math inline">\(A\)</span>少，因此一定存在一条边<span class="math inline">\((u, v)\)</span>使得<span class="math inline">\(u, v\)</span>在<span class="math inline">\(A\)</span>中分别属于两棵树，而在<span class="math inline">\(B\)</span>中却在一棵树上，显然<span class="math inline">\(A \cup \{(u, v)\} \in I_G\)</span>，证毕。</p>
-<p><strong>拓展：</strong>对于集合<span class="math inline">\(A\)</span>，若存在元素<span class="math inline">\(x\)</span>使得<span class="math inline">\(A \cup \{x\} \in I\)</span>，则称<span class="math inline">\(x\)</span>是<span class="math inline">\(A\)</span>的一个拓展。</p>
-<p><strong>最大独立子集：</strong>不存在拓展的独立子集。</p>
-<p><strong>定理：</strong>所有的最大独立子集等大小。</p>
-<p><strong>证明：</strong>反证， 假设存在最大独立子集<span class="math inline">\(A, B\)</span>使得<span class="math inline">\(|A| &lt; |B|\)</span>，由交换性，必然存在<span class="math inline">\(x \in B \setminus A\)</span>是<span class="math inline">\(A\)</span>的一个拓展，证毕。</p>
-<p><strong>加权拟阵：</strong>若存在一个权函数<span class="math inline">\(w\)</span>为所有<span class="math inline">\(S\)</span>的元素定义了严格正的权值，则称<span class="math inline">\(M\)</span>为加权拟阵，定义独立子集<span class="math inline">\(A\)</span>的权值为： <span class="math display">\[
-w(a) = \sum_{x \in A} w(x)
-\]</span></p>
-<h1 id="和贪心的关系">和贪心的关系</h1>
-<p>很多贪心问题可以转化为<strong>在拟阵上求最大权独立子集</strong>，或者称为拟阵的<strong>最优子集</strong>。</p>
-<p><strong>例：</strong>最小生成树算法当中我们可以对于边<span class="math inline">\(e\)</span>定义权重<span class="math inline">\(w(e) = l_{max} - l(e)\)</span>，其中<span class="math inline">\(l(e)\)</span>为边的长度，<span class="math inline">\(l_{max}\)</span>为一个极大的数。<em>在图拟阵上最大化独立子集权重必然等价于在图上最小化生成树边权</em>（因为生成树的边数总是固定的）。</p>
-<p><strong>求解最优子集的算法：</strong>将<span class="math inline">\(S\)</span>的所有元素<span class="math inline">\(x\)</span>按照<span class="math inline">\(w(x)\)</span>从大到小排序，初始化<span class="math inline">\(A = \emptyset\)</span>，然后依次从大到小考虑每个元素<span class="math inline">\(x\)</span>，并<strong>尽可能地</strong>用<span class="math inline">\(x\)</span>去拓展<span class="math inline">\(A\)</span>，最后得到的集合必定是最优子集。</p>
-<p>这个算法的贪心本质暴露无遗，接下来我们证明这个算法的正确性：</p>
-<p><strong>引理1（贪心选择）：</strong>若将<span class="math inline">\(S\)</span>的元素从大到小排序，令<span class="math inline">\(x\)</span>为排序后第一个使得<span class="math inline">\(\{x\} \in I\)</span>的元素，那么必然存在一个包含<span class="math inline">\(x\)</span>的最优子集。</p>
-<p><strong>证明：</strong>如果不存在<span class="math inline">\(x\)</span>，则最优子集为空，显然。</p>
-<p>否则，假设我们有一个不含<span class="math inline">\(x\)</span>的最优子集<span class="math inline">\(B\)</span>，显然由遗传性，对于<span class="math inline">\(y \in B\)</span>都有<span class="math inline">\(\{y\} \in I\)</span>，又因为我们选择<span class="math inline">\(x\)</span>的方式显然由<span class="math inline">\(w(x) \ge w(y)\)</span>。我们初始化<span class="math inline">\(A = \{x\}\)</span>，利用和<span class="math inline">\(B\)</span>交换性不断拓展<span class="math inline">\(A\)</span>直至<span class="math inline">\(|A| = |B|\)</span>，此时必定存在另一元素<span class="math inline">\(y\)</span>，使得<span class="math inline">\(A \setminus \{x\} = B \setminus \{y\}\)</span>，又因为<span class="math inline">\(w(x) \ge w(y)\)</span>，那么<span class="math inline">\(A\)</span>一定不会比<span class="math inline">\(B\)</span>差，得证。</p>
-<p><strong>引理2：</strong>若元素<span class="math inline">\(x\)</span>是<span class="math inline">\(A\)</span>的一个拓展，那么<span class="math inline">\(\{x\} \in I\)</span>，换而言之，<span class="math inline">\(x\)</span>是<span class="math inline">\(\emptyset\)</span>的拓展。</p>
-<p><strong>证明：</strong>由定义，<span class="math inline">\(A \cup \{x\} \in I\)</span>，由遗传性显然。</p>
-<p><strong>推论（逆否命题）：</strong>若<span class="math inline">\(x\)</span>不是<span class="math inline">\(\emptyset\)</span>的拓展，那它也一定不是其他非空独立子集的拓展。</p>
-<p><strong>引理3（最优子结构）：</strong>在如上算法中选择完<span class="math inline">\(x\)</span>之后，在<span class="math inline">\(M = (S, I)\)</span>中寻找最优子集等价于在<span class="math inline">\(M&#39;= (S&#39;, I&#39;)\)</span>中寻找最优子集，其中： <span class="math display">\[
-\begin{aligned}
-S&#39; &amp;= \{y \mid \{x, y\} \in S\} \\
-I&#39; &amp;= \{B \mid B \subseteq S \setminus \{x\}, B \cup \{x\} \in I\}
-\end{aligned}
-\]</span> 即<strong>我们可以忽略<span class="math inline">\(x\)</span>继续我们的算法。</strong></p>
-<p><strong>证明：</strong>如果我们在<span class="math inline">\(M&#39;\)</span>当中选出了最优子集<span class="math inline">\(A&#39;\)</span>，则显然<span class="math inline">\(A&#39; \cup \{x\}\)</span>是<span class="math inline">\(M\)</span>的独立子集，并且由<span class="math inline">\(x\)</span>的选择方式可知也是最优子集，证毕。</p>
-<p><strong>贪心正确性的证明：</strong>由引理2的推论，我们知道贪心算法没能一开始用来拓展的<span class="math inline">\(x\)</span>一定在后面也没有用。由引理3，选择完<span class="math inline">\(x\)</span>之后我们把问题缩小，还可以进一步贪心，此时贪心实质上是在<span class="math inline">\(M&#39;\)</span>上寻找最优子集。证毕。</p>
-<p>从以上讨论我们可以看出，对于一类问题，如果我们可以以某种方式把它规约为在拟阵上求取最优子集，那你一定可以使用贪心解决，这给很多贪心算法（例如Kruskal）提供了理论支持。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/WebAssembly/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/WebAssembly/" class="post-title-link" itemprop="url">WebAssembly初体验</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-01-14 08:40:14" itemprop="dateModified" datetime="2020-01-14T08:40:14-05:00">2020-01-14</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>我在之前用JavaScript实现了PageDewarp的核心算法。但是众所周知，JavaScript作为一门解释性语言并不适合运算密集型的任务，导致算法运行一次要30秒钟……这个效率虽然不能算特别差，我还是不满意的。所以又花了两天学习了WebAssembly把瓶颈算法用C重写了，现在在手机端一次也只需要1秒左右，效果自然是极好的。但是WebAssembly毕竟还是新科技，和现有的一些框架融合的确实不算好，在应用的过程中踩了非常多的坑，尤其是对于我这种1个月前还是Web萌新的人更是新坑老坑一起踩到怀疑人生（悲）。</p>
-<h1 id="webassembly-emscripten">WebAssembly &amp; Emscripten</h1>
-<p>什么是WebAssembly？</p>
-<p>WebAssembly是一种通过将静态的系统编程语言（比如说C，C++，Rust）AOT编译成一种基于栈虚拟机架构的字节码，然后在浏览器端再次实时JIT执行，来逼近这些语言native performance的技术。</p>
-<p>(<em>吐槽：</em>我最初看到WebAssembly的时候有一种莫名的，很强烈的Java Applet的既视感。)</p>
-<p>和CLR类似，WebAssembly只是字节码的标准，至于将特定语言编译成字节码的实现则是那些语言自己的事情。在目前的生态下，C和C++有名为Emscripten的基于LLVM的编译器，Rust则有它们自己的一套toolchain，两者都处于勉强凑活的水平。</p>
-<p>就我个人而言我其实觉得Rust在这方面做得最好，官方维护，官方文档。wasm_bindgen也给自定义数据结构类型提供了很好的支持，非常适合大项目开发。但是我只是实现一个小算法，Rust的那一套太重了，有一种boilerplate会比真正代码多的预感，所以我最终选择了C（至于为什么不是C++，那是因为name mangling已经破坏了我对它FFI能力产生了非常深的心理阴影）。</p>
-<p>前面说了，C对接WebAssembly的工具链是Emscripten。现在Emscripten的生态已经相对比较成熟了，跟着官方的<a target="_blank" rel="noopener" href="https://emscripten.org/docs/getting_started/downloads.html">Getting Started</a>走基本上就没有问题。写C的时候就按照正常的写法（我感觉Emscripten对于libc里面的大多数常用函数都做了适配）写就可以了。算法的代码很短：</p>
-<pre class="line-numbers"><code class="language-c">#include &lt;math.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;emscripten.h&gt;
-
-typedef struct v3 &#123;
-    float x, y, z;
-&#125; v3;
-v3 add(v3 a, v3 b) &#123;
-    return (v3) &#123; .x = a.x + b.x, .y = a.y + b.y, .z = a.z + b.z &#125;;
-&#125;
-v3 mul(v3 a, float k) &#123;
-    return (v3) &#123; .x = a.x * k, .y = a.y * k, .z = a.z * k &#125;;
-&#125;
-v3 a2v(float *a) &#123;
-    return (v3) &#123; .x = a[0], .y = a[1], .z = a[2] &#125;;
-&#125;
-EMSCRIPTEN_KEEPALIVE
-unsigned char *dewarp(
-        unsigned char *src, int srcWidth, int srcHeight,
-        int dstWidth, int dstHeight,
-        float *cpX, float *cpY,
-        float *upperLeft, float *baseVec, float *normalVec, 
-        float *vertical, float d
-        ) &#123;
-    v3 ul = a2v(upperLeft);
-    v3 bv = a2v(baseVec);
-    v3 nv = a2v(normalVec);
-    v3 vt = a2v(vertical);
-    unsigned char *dst = malloc(4 * dstWidth * dstHeight);
-    for (int x = 0; x &lt; dstWidth; x++) &#123;
-        v3 top = add(ul, add(mul(bv, cpX[x]), mul(nv, cpY[x])));
-        for (int y = 0; y &lt; dstHeight; y++) &#123;
-            v3 c = add(top, mul(vt, (float)y / dstHeight));
-            float sx = c.x / (1 + c.z / d); 
-            float sy = c.y / (1 + c.z / d); 
-            sx = (sx + 0.5f) * srcWidth;
-            sy = sy * srcWidth + 0.5f * srcHeight;
-            int di = (y * dstWidth + x) * 4;
-            int si = ((int)round(sy) * srcWidth + (int)round(sx)) * 4;
-            dst[di] = src[si];
-            dst[di + 1] = src[si + 1];
-            dst[di + 2] = src[si + 2];
-            dst[di + 3] = src[si + 3];
-        &#125;
-    &#125;
-    return dst;
-&#125;</code></pre>
-<p>注意函数前面加的<code>EMSCRIPTEN_KEEPALIVE</code>宏，这个宏一方面导出了函数，另一方面防止LLVM过于智能把这段函数当成dead code消除掉或者内联掉。如果不用这个宏，就需要在编译选项里加上<code>-s EXPORTED_FUNCTIONS="['_dewarp']"</code>。注意<strong>Emscripten在导出函数名称的时候都在前面加上了<code>_</code></strong>，直接引用的时候不能漏掉。</p>
-<p>另外一个要注意的点是程序内部是无法直接访问JavaScript里面的变量的，我用的是Vue，那就更不用说了。所有要用到的context都需要在参数里面传进来。而目前来说，Emscripten对于自定义结构体之类的支持很少，传参基本上只支持primitive types和指针。除此以外，在指针方面吧，Emscripten并没有自动帮我们做好数组的转换，这一部分需要自行编写，一维的还容易一点，高维的写起来就更难受了。可以参考这个<a target="_blank" rel="noopener" href="https://github.com/Planeshifter/emscripten-examples">repo</a>。</p>
-<pre class="line-numbers"><code class="language-javascript">function copyToHeap(typedArray) &#123;
-  let size = typedArray.length * typedArray.BYTES_PER_ELEMENT;
-  let offset = Module._malloc(size);
-  Module.HEAPU8.set(new Uint8Array(typedArray.buffer), offset);
-  return offset;
-&#125;
-
-Module[&quot;dewarp&quot;] = function(src, srcWidth, srcHeight, dstWidth, dstHeight, cpX, cpY, upperLeft, baseVec, normalVec, vertical, d) &#123;
-  let pSrc = copyToHeap(src);
-  let pCpX = copyToHeap(cpX), pCpY = copyToHeap(cpY);
-  let pUL = copyToHeap(upperLeft), pBV = copyToHeap(baseVec);
-  let pNV = copyToHeap(normalVec), pVertical = copyToHeap(vertical);
-  let pDst = Module._dewarp(pSrc, srcWidth, srcHeight, dstWidth, dstHeight, pCpX, pCpY, pUL, pBV, pNV, pVertical, d);
-  let ret = new Uint8ClampedArray(4 * dstWidth * dstHeight);
-  ret.set(new Uint8ClampedArray(Module.HEAPU8.buffer, pDst, 4 * dstWidth * dstHeight));
-  Module._free(pSrc); Module._free(pDst);
-  Module._free(pCpX); Module._free(pCpY);
-  Module._free(pUL); Module._free(pBV);
-  Module._free(pNV); Module._free(pVertical);
-  return ret;
-&#125;;</code></pre>
-<p>WebAssembly内部是简单的线性内存空间，可以使用<code>Module.HEAPU8</code>来获取一个<code>U8</code>的View。调用的时候直接<code>Module._dewarp</code>，依然注意要在C函数名前面加<code>_</code>。官方还提供了了<code>ccall</code>的调用方式，会自动对字符串做转码，在这里并不需要。在调用时指针一律当做整数处理。在返回时直接把返回数组在内存中的数据复制一份就行了。之后记得全部<code>free</code>掉就行了。</p>
-<p>编译的指令是：</p>
-<pre class="line-numbers shell"><code class="language-none">emcc -O3 dewarp.c -o dewarp.js --post-js dewarp_post.js \
-    -s ENVIRONMENT=&quot;web&quot; \
-    -s MODULARIZE=1 \
-    -s ALLOW_MEMORY_GROWTH=1</code></pre>
-<p>选项的意义如下：</p>
-<ul>
-<li><code>-O3</code>：优化级别，和一般的C编译器类似。<code>-O3</code>是最激进的优化之一。除了在字节码上优化还会minify生成的接口js。</li>
-<li><code>-o dewarp.js</code>：生成的接口文件名。</li>
-<li><code>--post-js dewarp_post.js</code>：把<code>dewarp_post.js</code>（也就是上面<code>copyToHeap</code>所在的文件）附到生成的<code>dewarp.js</code>后。类似地还有<code>--pre-js</code>。</li>
-<li><code>-s ENVIRONMENT="web"</code>：默认Emscripten在编译接口文件的时候会同时加入node和浏览器环境下不同的加载方案。我们这边只需要浏览器环境，加上这个选项有助于减少生成的接口js大小。何况在使用webpack的情况下不开这个webpack会傻乎乎地把<code>fs</code>加到dependencies里面然后报错，这个时候要不这里加选项要不webpack那里额外配置二选一。</li>
-<li><code>-s MODULARIZE=1</code>：在写Emscripten的js端的文件的时候<code>Module</code>是一个关键的变量。在默认情况下Emscripten把它定义为全局变量。这会造成命名污染。如果加上这个选项，编译出来的代码就相当于是在一个大的<code>function</code>里面。这个函数接受一个预先加了点东西的<code>Module</code>对象，加上自己的私货（还有我们在<code>dewarp_post.js</code>里面定义的helper函数）之后返回完成的<code>Module</code>。确保不会产生命名污染的问题。同时Emscripten会自动把这个大函数设成<code>module.exports</code>。</li>
-<li><code>-s ALLOW_MEMORY_GROWTH=1</code>：默认的内存空间是固定的，这个选项允许内存空间的扩张。图像处理算法占的内存比较大，不加这个选项会爆内存。</li>
-</ul>
-<p>另外还有两个常用的选项：</p>
-<ul>
-<li><code>-s EXPORTED_FUNCTIONS="['_foo', ...]"</code>：指定要导出的函数，这里的名称要加下划线。等号右边是js列表的写法。如果在C源码要导出的函数前加上<code>EMSCRIPTEN_KEEPALIVE</code>的话这里就不需要再指明了。</li>
-<li><code>-s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall', ...]"</code>：默认Emscripten不会把很多API导出，因为这有助于减小接口文件的大小，但是如果要用<code>ccall</code>和<code>cwrap</code>之类的API的话就要在这里指明。</li>
-</ul>
-<p>（自己一开始<code>-s</code>开头的选项一个都不知道要加，然后疯狂出问题，就暴毙了）</p>
-<p>编译完之后会生成两个文件，一个是接口的js文件，一个是wasm文件，里面存放的就是字节码了。</p>
-<h1 id="javascript端的磨合">Javascript端的磨合</h1>
-<p>Emscripten上的教程在这里说得非常轻巧：只要<code>&lt;script/&gt;</code>引入，然后接口js会自动加载wasm文件，然后调用方法就行了。这样做是没错，但是忽略了一点：大家现在都在用webpack之类的打包器，这类打包器面对WebAssembly需要特殊的配置才能确保其顺利运行。</p>
-<p>我之前一直避免自己动webpack配置这种东西，因为我觉得Vue CLI帮我安顿得挺好的自己一搞搞不好怎么挂的都不知道。刚开始配置我这个萌新就真马上跌进坑里了：网上教程里面写的都是<code>webpack.config.js</code>，然后我一直试都没有效果，纳闷了很久，才发觉因为我用的是Vue CLI，所以配置都在<code>vue.config.js</code>里面：</p>
-<pre class="line-numbers"><code class="language-javascript">module.exports = &#123;
-  ...
-  configureWebpack: &#123;
-    // 原来webpack.config.js的内容
-  &#125;
-&#125;;</code></pre>
-<p><del>这种坑有经验的开发者都不会进去吧？还是我太菜了</del></p>
-<p>同时注意如果开启ESLint的话，注意一定要在<code>.eslintignore</code>文件里面加上接口js，一方面自动生成的js不需要lint，另一方面由于上下文不足lint下来会有很多误报。</p>
-<p>在webpack的配置上，对于两种文件分别采取如下策略：</p>
-<ul>
-<li>wasm文件就是普通文件，应该使用<code>file-loader</code>。</li>
-<li>js文件由于采用<code>-s MODULARIZE=1</code>编译开关，会把一个函数挂载到<code>module.exports</code>上，这个时候就要用<code>exports-loader</code>加载。</li>
-</ul>
-<p>我这个萌新一开始对于loader的概念很困惑。因为我一开始觉得webpack一个打包的东西有哪里需要load呢？在那里用这些loader呢？后来意识到loader机制的意思是把</p>
-<pre class="line-numbers"><code class="language-javascript">import foo from &quot;bar&quot;</code></pre>
-<p>转变成</p>
-<pre class="line-numbers"><code class="language-javascript">var foo = some_loader(&quot;bar&quot;);</code></pre>
-<p>这件事情其实是挺有意思的。静态语言写多了就觉得模块导入语句应该有固定的语义才对，结果到JavaScript这里发现<code>import</code>其实纯粹是类似语法糖的元素，语义不固定=_=。</p>
-<p>倒腾一圈下来我项目当中的webpack配置如下：</p>
-<pre class="line-numbers"><code class="language-javascript">&#123;
-  module: &#123;
-    rules: [
-      &#123;
-        test: /dewarp\.js$/,
-        loader: &quot;exports-loader&quot;
-      &#125;,
-      &#123;
-        test: /dewarp\.wasm$/,
-        type: &quot;javascript/auto&quot;,
-        loader: &quot;file-loader&quot;,
-      &#125;
-    ]
-  &#125;,
-&#125;</code></pre>
-<p>还没完，在javascript代码里面这样写：</p>
-<pre class="line-numbers"><code class="language-javascript">// 指定用exports-loader，所以wasmInterface现在就是Emscripten导出的那个返回Module的大函数
-import wasmInterface from &quot;./wasm/dewarp.js&quot;
-// 指定用file-loader，所以wasmBytecode现在就是指向wasm文件的路径
-import wasmBytecode from &quot;./wasm/dewarp.wasm&quot;
-
-let wasmModule = wasmInterface(&#123;
-  // Emscripten导出的函数可以接受一个已经塞了东西的对象作为Module的基础
-  // 可以在里面定义Emscripten文档里面写的一些特殊函数，比如说这里的locateFile
-  // 如果定义了，在加载字节码的时候就会调用这个函数获取path的真实有效值，因为webpack
-  // 调整了文件位置关系，而Emscripten生成接口脚本时写入的是生成时的文件位置，因此我们
-  // 就必须在这个函数里告诉它真实的文件位置，不然会404翻车
-  locateFile(path) &#123;
-    return path.endsWith(&quot;.wasm&quot;) ? wasmBytecode : path;
-  &#125;
-&#125;); // 创建对象之后自动加载
-wasmModule.onRuntimeInitialized = () =&gt; &#123;
-  // 文件加载完毕
-&#125;;</code></pre>
-<p>在这么一番操作之后，我才终于可以在原来的地方写上</p>
-<pre class="line-numbers"><code class="language-javascript">wasmModule.dewarp(...) // 调用dewarp_post.js里面的helper函数，间接调用C函数</code></pre>
-<p>整个过程挺折腾的，但事实也确实证明这么折腾一番是值得的，性能提升三十倍，非常愉悦。</p>
-<h1 id="结论">结论</h1>
-<p>总体下来我觉得WebAssembly现在技术上已经趋于成熟了，像我第一次积累了经验之后以后再用WebAssembly不踩那些坑的话体验是相当不错的。当然对于Emscripten来说在调用时的转化上目前还不是那么智能，还有很多要改进的地方（这也可能和JavaScript太放飞自我的设计有关？），使用Rust的开发我还没有试过，看官方文档上Game of Life的demo觉得非常有意思（我觉得Rust真的是绝对的后起之秀，各种方面的）。</p>
-<p>更有意思的是，这还不是优化的终点。我听说WebAssembly还有一个SIMD的提案，这似乎又可以让性能提升若干个台阶（当然我不知道目前的JIT VM能不能根据字节码进行自动向量化）。还真的就是啥native上的技术都往web端搬，浏览器也是啥活现在都要揽=_=，估计过几年就真成一个小的操作系统了（ChromeOS: Hold my chrome :）</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/Wallis/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/Wallis/" class="post-title-link" itemprop="url">数学课划水整活之Wallis乘积公式的一种证明</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-03-16 01:07:28" itemprop="dateModified" datetime="2021-03-16T01:07:28-04:00">2021-03-16</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>今天数学课讲了一点组合数的性质，因为太简单了所以稍微划了一会水。</p>
-<p>结果发现自己整出来了一个算<span class="math inline">\(\pi\)</span>的式子？</p>
-<p>化简以后发现是传说中的Wallis公式？</p>
-<p>虽然原理一样的证明Wiki上有提到但是还是当场惊了。</p>
-<p>简单记一笔吧。</p>
-<p>一切的开端是今年寒假做夏校申请的时候证明过的一个极限 <span class="math display">\[
-\lim_{n\to\infty} 2^{-2n}\binom{2n}{n} = 0
-\]</span> 当时是用斯特林近似暴力代换进行证明（现在看来并不严谨） <span class="math display">\[
-\begin{aligned}
-    \lim_{n\to\infty} \binom{2n}{n} \frac{\left[\sqrt{2\pi n} \left(n \over e\right)^n \right]^2} {\sqrt{4\pi n} \left(2n \over e\right)^{2n}} &amp;= \lim_{n\to\infty} \left[\frac{\sqrt{2\pi n} \left(n \over e\right)^n}{n!}\right]^2 \frac{(2n)!}{\sqrt{4\pi n} \left(2n \over e\right)^{2n}} \\
-    &amp;= 1 \\     
-    \Rightarrow 
-    \lim_{n\to\infty} 2^{-2n}\binom{2n}{n} &amp;= \lim_{n\to\infty} 2^{-2n}\frac {\sqrt{4\pi n} \left(2n \over e\right)^{2n}}{\left[\sqrt{2\pi n} \left(n \over e\right)^n\right]^2} \cdot \lim_{n\to\infty} \binom{2n}{n} \frac{\left[\sqrt{2\pi n} \left(n \over e\right)^n\right]^2} {\sqrt{4\pi n} \left(2n \over e\right)^{2n}} \\
-    &amp;=  \lim_{n\to\infty} 2^{-2n}\frac {\sqrt{4\pi} 2^{2n}n^{2n+\frac{1}{2}}e^{-2n}}{2\pi n^{2n+1}e^{-2n}} \\
-    &amp;= \lim_{n\to\infty} \frac{1}{\sqrt{\pi n}}\\
-    &amp;= 0
-\end{aligned}
-\]</span> 今天划水的时候发现由以上过程，这个极限可以加强为 <span class="math display">\[
-\lim_{n\to\infty} \frac{\sqrt{\pi n}\binom{2n}{n}}{2^{2n}} = 1
-\]</span> 稍作整理即得 <span class="math display">\[
-\lim_{n\to\infty} \frac{2^{4n}}{n\binom{2n}{n}^2} = \pi
-\]</span> 拿卡西欧摁了一下，发现式子没有假，虽然收敛得有亿点点慢但确实是收敛到了<span class="math inline">\(\pi\)</span>。</p>
-<p>关键是这个式子我似乎没见过啊？<del>内心直接膨胀，可把我牛逼坏了。</del></p>
-<p>因为形式看起来较复杂，接着我就想可不可以通过邻项作比的方式变换一下形态 <span class="math display">\[
-\begin{aligned}
-\frac{2^{4n}}{n\binom{2n}{n}^2} \Bigg / \frac{2^{4(n-1)}}{(n-1)\binom{2n-2}{n-1}^2} &amp;= \frac{16(n-1)}{n} \left[\binom{2n-2}{n-1} \bigg/ \binom{2n}{n}\right]^2 \\
-&amp;= \frac{16(n-1)}{n} \left[\frac{n^2}{2n(2n-1)}\right]^2 \\
-&amp;= \frac{16n(n-1)}{(4n-2)^2} \\
-&amp;= \frac{2n}{2n-1}\cdot \frac{2n-2}{2n-1}
-\end{aligned}
-\]</span> 这个形式似曾相识，结合上式把式子化为连乘积的形式，要素察觉！ <span class="math display">\[
-\begin{aligned}
-\frac{2^{4n}}{n\binom{2n}{n}^2} &amp;= \frac{2^{4}}{1\binom{2}{1}^2} \cdot \frac{2}{3} \cdot \frac{4}{3} \cdot \frac{4}{5} \cdot \frac{6}{5} \cdots \frac{2n-2}{2n-1}\cdot \frac{2n}{2n-1} \\
-&amp;= 4\cdot \frac{2}{3} \cdot \frac{4}{3} \cdot \frac{4}{5} \cdot \frac{6}{5} \cdots \frac{2n-2}{2n-1}\cdot \frac{2n}{2n-1}
-\end{aligned}
-\]</span> 这不就是Wallis乘积公式嘛？翻出Wikipedia一看： <span class="math display">\[
-\begin{aligned}
-\frac{\pi}{2} &amp;=\prod_{n=1}^{\infty} \frac{4 n^{2}}{4 n^{2}-1}=\prod_{n=1}^{\infty}\left(\frac{2 n}{2 n-1} \cdot \frac{2 n}{2 n+1}\right) \\
-&amp;=\left(\frac{2}{1} \cdot \frac{2}{3}\right) \cdot\left(\frac{4}{3} \cdot \frac{4}{5}\right) \cdot\left(\frac{6}{5} \cdot \frac{6}{7}\right) \cdot\left(\frac{8}{7} \cdot \frac{8}{9}\right) \cdots
-\end{aligned}
-\]</span> 完全一致，直接得证。</p>
-<p>哇，也就是说我划着水就把Wallis公式不严谨地整了一遍？</p>
-<p><em>果然还是要膨胀.jpg</em></p>
-<p>以前觉得这个式子很高端的，现在有种莫名的幻灭感。</p>
-<p>但是写到这的时候多看了一眼，发现斯特林逼近的一个推导里用到了Wallis公式？</p>
-<p>突然有点不确定这算不算是循环论证了。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/TreapMultiset/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/TreapMultiset/" class="post-title-link" itemprop="url">Reinventing the Wheel: A Drop-in STL Multiset Alternative Using Treap</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-03-15 23:30:50" itemprop="dateModified" datetime="2021-03-15T23:30:50-04:00">2021-03-15</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p>It turns out that writing a STL container from scratch is mostly a tedious physical labor.</p>
-</blockquote>
-<p>STL is created to save C++ programmers the time of reinventing wheels. Unfortunately, many STL data structures, most notably self-balancing BSTs (aka. <code>std::(multi)set</code>), are not extendable and are by itself too limited to be used in the context of competitive programming, forcing us to write our own BSTs again and again in competitions.</p>
-<p>There comes the fact I find really interesting: A quick and dirty self-balancing BST implementation written during a competition is only about 50-60 lines long, while the STL implementation of <code>std::set</code> and <code>std::multiset</code> is usually more than a thousand-lines long in total.</p>
-<p>It does make me wonder: what makes this huge difference? And, will the code of our BST bloat as well if we write it the STL way -- with generics, iterators, and all the necessary bits and pieces as specified in the reference?</p>
-<p>To answer my question, I have here tried creating my implementation of multiset using treap as the underlying data structure. The result, <code>treap_multiset</code>, is almost a drop-in replacement to <code>std::multiset</code>. The few places where it does not conform to the C++ standard are:</p>
-<ol type="1">
-<li>It is currently not allocator-aware, so all allocator-related features are not implemented.</li>
-<li><code>emplace</code> and <code>emplace_hint</code> are not implemented.</li>
-<li>All operations that have logarithmic time complexity in <code>std::multiset</code> still have logarithmic time complexity here, but only in the average sense (because treap is a randomized data structure), and could have linear worst-case time complexity (though very, very, very unlikely).</li>
-<li><code>void erase(iterator)</code> takes amortized logarithmic time instead of constant time.</li>
-<li>A few uncommonly-used member types are missing.</li>
-</ol>
-<p><code>treap_multiset</code> also supports two new operations that are not supported in the original <code>std::multiset</code>:</p>
-<ol type="1">
-<li><pre class="line-numbers"><code class="language-cpp">   size_type rank(iterator it) const;
-   size_type rank(const_iterator it) const;</code></pre>
-<p>Both take average logarithmic time and return the rank / position of the iterator.</p></li>
-<li><pre class="line-numbers"><code class="language-cpp">   iterator at(size_type index);
-   const iterator at(size_type index) const;</code></pre>
-<p>Both take average logarithmic time and return the iterator at the specified index/position.</p></li>
-</ol>
-<p>The code is shown below:</p>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;stdexcept&gt;
-#include &lt;random&gt;
-#include &lt;algorithm&gt;
-
-static std::random_device random_device;
-static std::mt19937_64 random_engine(random_device());
-
-template &lt;typename T&gt;
-struct treap_node &#123;
-    using rand_weight_type = decltype(random_engine)::result_type;
-    using size_type = std::size_t;
-
-    treap_node *left, *right, *parent;
-    rand_weight_type weight;
-    size_type size;
-    T value;
-
-    treap_node(const T &amp;value): left(nullptr), right(nullptr), parent(nullptr),
-        weight(random_engine()), size(1), value(value) &#123;&#125;
-
-    treap_node(treap_node *left, treap_node *right, treap_node *parent, 
-        rand_weight_type weight, size_type size, const T &amp;value): 
-        left(left), right(right), parent(parent), weight(weight),
-        size(size), value(value) &#123;&#125;
-
-    void update_size() &#123;
-        size = 1 + (left ? left-&gt;size : 0) + (right ? right-&gt;size : 0);
-    &#125;
-&#125;;
-
-#define IMPL_ITERATOR_MOVE_NEXT do &#123; \
-    if (!node) break; \
-    if (node-&gt;right) &#123; \
-        node = node-&gt;right; \
-        while (node &amp;&amp; node-&gt;left) node = node-&gt;left; \
-    &#125; else &#123; \
-        bool from_right = true; \
-        while (from_right) &#123; \
-            if (!node-&gt;parent) &#123; node = nullptr; break; &#125; \
-            from_right = node-&gt;parent-&gt;right == node; \
-            node = node-&gt;parent; \
-        &#125; \
-    &#125; \
-&#125; while (0)
-
-#define IMPL_ITERATOR_MOVE_PREV do &#123; \
-    if (!node) break; \
-    if (node-&gt;left) &#123; \
-        node = node-&gt;left; \
-        while (node &amp;&amp; node-&gt;right) node = node-&gt;right; \
-    &#125; else &#123; \
-        bool from_left = true; \
-        while (from_left) &#123; \
-            if (!node-&gt;parent) &#123; node = nullptr; break; &#125; \
-            from_left = node-&gt;parent-&gt;left == node; \
-            node = node-&gt;parent; \
-        &#125; \
-    &#125; \
-&#125; while (0)
-
-#define TREAP_ITERATOR_DECL(name, qualifier, inc, dec) \
-template &lt;typename T&gt; struct name &#123; \
-    qualifier treap_node&lt;T&gt; *node; bool past_the_end; \
-    name(): node(nullptr), past_the_end(true) &#123;&#125; \
-    name(qualifier treap_node&lt;T&gt; *node, bool past_the_end) \
-        : node(node), past_the_end(past_the_end) &#123;&#125; \
-    name(qualifier treap_node&lt;T&gt; *node): node(node), past_the_end(false) &#123;&#125; \
-    qualifier T &amp;operator *() qualifier &#123; \
-        if (!node || past_the_end) \
-            throw std::runtime_error(&quot;dereferencing null/past-end iterator&quot;); \
-        return node-&gt;value; \
-    &#125; \
-    bool operator ==(const name&lt;T&gt; &amp;b) const &#123; \
-        return node == b.node &amp;&amp; past_the_end == b.past_the_end; \
-    &#125; \
-    bool operator !=(const name&lt;T&gt; &amp;b) const &#123; \
-        return node != b.node || past_the_end != b.past_the_end; \
-    &#125; \
-    name&lt;T&gt; &amp;operator ++() &#123; \
-        qualifier treap_node&lt;T&gt; *backup = node; \
-        IMPL_ITERATOR_MOVE_##inc; \
-        if (!node) past_the_end = true, node = backup; \
-        return *this; \
-    &#125; \
-    name&lt;T&gt; operator ++(int) &#123; \
-        name&lt;T&gt; ret(*this); \
-        return ++(*this), ret; \
-    &#125; \
-    name&lt;T&gt; &amp;operator --() &#123; \
-        if (past_the_end) past_the_end = false; \
-        else IMPL_ITERATOR_MOVE_##dec; \
-        if (!node) \
-            throw std::runtime_error(&quot;can&#39;t decrement at the beginning&quot;); \
-        return *this; \
-    &#125; \
-    name&lt;T&gt; operator --(int) &#123; \
-        name&lt;T&gt; ret(*this); \
-        return --(*this), ret; \
-    &#125; \
-&#125;
-
-TREAP_ITERATOR_DECL(treap_iterator, /* NO QUALIFIER */, NEXT, PREV);
-TREAP_ITERATOR_DECL(reverse_treap_iterator, /* NO QUALIFIER */, PREV, NEXT);
-TREAP_ITERATOR_DECL(const_treap_iterator, const, NEXT, PREV);
-TREAP_ITERATOR_DECL(const_reverse_treap_iterator, const, PREV, NEXT);
-
-template &lt;typename T, typename Compare = std::less&lt;T&gt;&gt;
-class treap_multiset &#123;
-public:
-    using key_type = T;
-    using value_type = T;
-    using size_type = typename treap_node&lt;T&gt;::size_type;
-    using key_compare = Compare;
-    using value_compare = Compare;
-    using node_type = treap_node&lt;T&gt;*;
-    using iterator = treap_iterator&lt;T&gt;;
-    using reverse_iterator = reverse_treap_iterator&lt;T&gt;;
-    using const_iterator = const_treap_iterator&lt;T&gt;;
-    using const_reverse_iterator = const_reverse_treap_iterator&lt;T&gt;;
-
-    treap_multiset(): root(nullptr) &#123;&#125;
-
-    treap_multiset(const treap_multiset &amp;b): root(deep_copy(b.root)), comp(b.comp) &#123;&#125;
-
-    treap_multiset(treap_multiset &amp;&amp;b): root(b.root), comp(b.comp) &#123;&#125;
-
-    ~treap_multiset() &#123; if (root) recursive_free(root); &#125;
-
-    bool empty() const &#123; return root == nullptr; &#125;
-
-    size_type size() const &#123; return root ? root-&gt;size : 0; &#125;
-
-    size_type max_size() const &#123; return 0x7FFFFFFF; &#125;
-
-    key_compare key_comp() const &#123; return comp; &#125;
-
-    value_compare value_comp() const &#123; return comp; &#125;
-
-    iterator begin() 
-        &#123; return iterator(leftmost(root)); &#125;
-
-    const_iterator begin() const 
-        &#123; return const_iterator(leftmost(root)); &#125;
-
-    const_iterator cbegin() const 
-        &#123; return const_iterator(leftmost(root)); &#125;
-
-    iterator end() 
-        &#123; return iterator(rightmost(root), true); &#125;
-
-    const_iterator end() const 
-        &#123; return const_iterator(rightmost(root), true); &#125;
-
-    const_iterator cend() const 
-        &#123; return const_iterator(rightmost(root), true); &#125;
-
-    reverse_iterator rbegin() 
-        &#123; return reverse_iterator(rightmost(root)); &#125;
-
-    const_reverse_iterator rbegin() const 
-        &#123; return const_reverse_iterator(rightmost(root)); &#125;
-
-    const_reverse_iterator crbegin() const 
-        &#123; return const_reverse_iterator(rightmost(root)); &#125;
-
-    reverse_iterator rend() 
-        &#123; return reverse_iterator(leftmost(root), true); &#125;
-
-    const_reverse_iterator rend() const 
-        &#123; return const_reverse_iterator(leftmost(root), true); &#125;
-
-    const_reverse_iterator crend() const 
-        &#123; return const_reverse_iterator(leftmost(root), true); &#125;
-
-    iterator insert(const value_type &amp;value) &#123;
-        node_type left, right;
-        split_le(root, value, left, nullptr, right, nullptr);
-        node_type temp = new treap_node&lt;T&gt;(value);
-        root = join(join(left, temp), right);
-        return iterator(temp);
-    &#125;
-
-    iterator insert(iterator position, const value_type &amp;value) 
-        &#123; return insert(value); &#125;
-
-    template &lt;typename II&gt;
-    void insert(II first, II last) &#123; 
-        for (; first != last; first++) 
-            insert(*first); 
-    &#125;
-
-    size_type rank(iterator it) const &#123; return rank(it.node); &#125;
-    
-    size_type rank(const_iterator it) const &#123; return rank(it.node); &#125;
-
-    iterator at(size_type index) &#123;
-        if (index &lt; 0 || index &gt; size()) return end();
-        return iterator(at_internal(index));
-    &#125;
-
-    const_iterator at(size_type index) const &#123;
-        if (index &lt; 0 || index &gt; size()) return end();
-        return const_iterator(at_internal(index));
-    &#125;
-
-    void erase(iterator pos) &#123;
-        assert_valid(pos);
-        node_type a, b, c;
-        size_type rank = this-&gt;rank(pos.node);
-        split_size(root, rank, a, nullptr, c, nullptr);
-        split_size(a, rank - 1, a, nullptr, b, nullptr);
-        root = join(a, c);
-        // assert(b == pos.node);
-        delete b;
-    &#125;
-
-    size_type erase(const value_type &amp;key) &#123;
-        node_type a, b, c;
-        split_le(root, key, a, nullptr, c, nullptr);
-        split_re(a, key, a, nullptr, b, nullptr);
-        root = join(a, c);
-        if (b) &#123;
-            size_type ret = b-&gt;size;
-            recursive_free(b);
-            return ret;
-        &#125;
-        return 0;
-    &#125;
-
-    void erase(iterator first, iterator last) &#123;
-        size_type rank_first = rank(first);
-        size_type rank_last = rank(last);
-        node_type a, b, c;
-        split_size(root, rank_last, a, nullptr, c, nullptr);
-        split_size(a, rank_last - 1, a, nullptr, b, nullptr);
-        root = join(a, c);
-        if (b) recursive_free(b);
-    &#125;
-
-    void clear() &#123; if (root) recursive_free(root); &#125;
-
-    void swap(treap_multiset &amp;b) &#123; swap(root, b.root); &#125;
-
-    iterator find(const value_type &amp;key) &#123;
-        node_type ret = find_internal(key);
-        return ret ? iterator(ret) : end();
-    &#125;
-
-    const_iterator find(const value_type &amp;key) const &#123;
-        node_type ret = const_cast&lt;treap_multiset&lt;T&gt;*&gt;(this)-&gt;find_internal(key);
-        return ret ? const_iterator(ret) : end();
-    &#125;
-
-    size_type count(const value_type &amp;key) const &#123;
-        node_type a, b, c;
-        treap_multiset&lt;T&gt; *thiz = const_cast&lt;treap_multiset&lt;T&gt;*&gt;(this);
-        thiz-&gt;split_le(root, key, a, nullptr, c, nullptr);
-        thiz-&gt;split_re(root, key, a, nullptr, b, nullptr);
-        size_type ret = b ? b-&gt;size : 0;
-        thiz-&gt;root = thiz-&gt;join(thiz-&gt;join(a, b), c);
-        return ret;
-    &#125;
-
-    iterator lower_bound(const value_type &amp;key) &#123;
-        node_type ret = lower_bound_internal(key);
-        return ret ? iterator(ret) : end();
-    &#125;
-
-    const_iterator lower_bound(const value_type &amp;key) const &#123;
-        node_type ret = const_cast&lt;treap_multiset&lt;T&gt;*&gt;(this)-&gt;lower_bound_internal(key);
-        return ret ? const_iterator(ret) : end();
-    &#125;
-
-    iterator upper_bound(const value_type &amp;key) &#123;
-        node_type ret = upper_bound_internal(key);
-        return ret ? iterator(ret) : end();
-    &#125;
-
-    const_iterator upper_bound(const value_type &amp;key) const &#123;
-        node_type ret = const_cast&lt;treap_multiset&lt;T&gt;*&gt;(this)-&gt;upper_bound_internal(key);
-        return ret ? const_iterator(ret) : end();
-    &#125;
-
-    std::pair&lt;iterator, iterator&gt; equal_range(const value_type &amp;key) &#123;
-        return std::make_pair(lower_bound(key), upper_bound(key));
-    &#125;
-
-    std::pair&lt;const_iterator, const_iterator&gt; equal_range(const value_type &amp;key) const &#123;
-        return std::make_pair(lower_bound(key), upper_bound(key));
-    &#125;
-
-    size_type depth(node_type node) &#123;
-        if (!node) return 0;
-        return 1 + std::max(depth(node-&gt;left), depth(node-&gt;right));
-    &#125;
-    
-private:
-    Compare comp;
-    node_type root;
-
-    void recursive_free(node_type root) &#123;
-        if (root-&gt;left) 
-            recursive_free(root-&gt;left);       
-        if (root-&gt;right) 
-            recursive_free(root-&gt;right);
-        delete root;
-    &#125;
-
-    void split_le(node_type root, const value_type &amp;key, 
-        node_type &amp;left, node_type left_parent,
-        node_type &amp;right, node_type right_parent) &#123;
-        if (!root) &#123; left = right = nullptr; return; &#125;
-        if (!comp(key, root-&gt;value)) &#123;
-            left = root; root-&gt;parent = left_parent;
-            split_le(root-&gt;right, key, root-&gt;right, root, right, right_parent);
-        &#125; else &#123;
-            right = root; root-&gt;parent = right_parent;
-            split_le(root-&gt;left, key, left, left_parent, root-&gt;left, root);
-        &#125;
-        root-&gt;update_size();
-    &#125;
-
-    void split_re(node_type root, const value_type &amp;key, 
-        node_type &amp;left, node_type left_parent,
-        node_type &amp;right, node_type right_parent) &#123;
-        if (!root) &#123; left = right = nullptr; return; &#125;
-        if (comp(root-&gt;value, key)) &#123;
-            left = root; root-&gt;parent = left_parent;
-            split_re(root-&gt;right, key, root-&gt;right, root, right, right_parent);
-        &#125; else &#123;
-            right = root; root-&gt;parent = right_parent;
-            split_re(root-&gt;left, key, left, left_parent, root-&gt;left, root);
-        &#125;
-        root-&gt;update_size();
-    &#125;
-
-    void split_size(node_type root, size_type size, 
-        node_type &amp;left, node_type left_parent,
-        node_type &amp;right, node_type right_parent) &#123;
-        if (!root) &#123; left = right = nullptr; return; &#125;
-        size_type left_size = 1 + (root-&gt;left ? root-&gt;left-&gt;size : 0);
-        if (left_size &lt;= size) &#123;
-            left = root; root-&gt;parent = left_parent;
-            split_size(root-&gt;right, 
-                size - left_size, root-&gt;right, root, right, right_parent);
-        &#125; else &#123;
-            right = root; root-&gt;parent = right_parent;
-            split_size(root-&gt;left, size, left, left_parent, root-&gt;left, root);
-        &#125;
-        root-&gt;update_size();
-    &#125;
-
-    node_type join(node_type left, node_type right) &#123;
-        if (!left) return right;
-        if (!right) return left;
-        if (left-&gt;weight &lt;= right-&gt;weight) &#123;
-            node_type temp = join(left-&gt;right, right);
-            if (temp) temp-&gt;parent = left;
-            left-&gt;right = temp;
-            left-&gt;update_size();
-            return left;
-        &#125; else &#123;
-            node_type temp = join(left, right-&gt;left);
-            if (temp) temp-&gt;parent = right;
-            right-&gt;left = temp;
-            right-&gt;update_size();
-            return right;
-        &#125;
-    &#125;
-
-    node_type leftmost(node_type x) const &#123;
-        if (!x) return nullptr;
-        node_type ret = x; while (ret-&gt;left) ret = ret-&gt;left;
-        return ret;
-    &#125;
-
-    node_type rightmost(node_type x) const &#123;
-        if (!x) return nullptr;
-        node_type ret = x; while (ret-&gt;right) ret = ret-&gt;right;
-        return ret;
-    &#125;
-
-    node_type find_internal(const value_type &amp;key) &#123;
-        node_type a, b, c;
-        split_le(root, key, a, nullptr, c, nullptr);
-        split_re(root, key, a, nullptr, b, nullptr);
-        root = join(join(a, b), c);
-        return b;
-    &#125;
-
-    node_type lower_bound_internal(const value_type &amp;key) &#123;
-        node_type left, right;
-        split_re(root, key, left, nullptr, right, nullptr);
-        node_type ret = leftmost(right);
-        root = join(left, right);
-        return ret;
-    &#125;
-
-    node_type upper_bound_internal(const value_type &amp;key) &#123;
-        node_type left, right;
-        split_le(root, key, left, nullptr, right, nullptr);
-        node_type ret = leftmost(right);
-        root = join(left, right);
-        return ret;
-    &#125;
-
-    node_type at_internal(size_type index) const &#123;
-        node_type temp = root;
-        while (true) &#123;
-            size_type left_size = 1 + (temp-&gt;left ? temp-&gt;left-&gt;size : 0);
-            if (index == left_size) return temp;
-            else if (index &lt; left_size) temp = temp-&gt;left;
-            else temp = temp-&gt;right, index -= left_size;
-        &#125;
-        return nullptr; // UNREACHABLE
-    &#125;
-
-    size_type rank(node_type node) &#123;
-        bool from_right = true;
-        size_type ret = 0;
-        while (node) &#123;
-            if (from_right)
-                ret += 1 + (node-&gt;left ? node-&gt;left-&gt;size : 0);
-            if (node-&gt;parent)
-                from_right = node == node-&gt;parent-&gt;right;
-            node = node-&gt;parent;
-        &#125;
-        return ret;
-    &#125;
-
-    node_type deep_copy(node_type node) &#123;
-        if (!node) return nullptr;
-        node_type left = deep_copy(node-&gt;left);
-        node_type right = deep_copy(node-&gt;right);
-        node_type ret = new treap_node&lt;T&gt;(
-            left, right, nullptr,
-            node-&gt;weight, node-&gt;size, node-&gt;value
-        );
-        if (left) left-&gt;parent = ret;
-        if (right) right-&gt;parent = ret;
-        return ret;
-    &#125;
-
-    void assert_valid(iterator it) &#123;
-        if (!it.node || it.past_the_end)
-            throw std::runtime_error(&quot;invalid iterator&quot;);
-        node_type temp = it.node;
-        while (temp-&gt;parent) temp = temp-&gt;parent;
-        if (temp != root)
-            throw std::runtime_error(&quot;invalid iterator&quot;);
-    &#125;
-&#125;;</code></pre>
-<p>(The code above hasn't been thoroughly tested yet and could still contain bugs).</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/Tanh%E7%BA%BF%E6%80%A7%E5%8C%96/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/Tanh%E7%BA%BF%E6%80%A7%E5%8C%96/" class="post-title-link" itemprop="url">基于反双曲正切函数的马达线性化</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-09-28 05:15:04" itemprop="dateModified" datetime="2018-09-28T05:15:04-04:00">2018-09-28</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="概况">概况</h1>
-<p>由于VEX中PWM频率偏低，因此马达的响应并不是线性的，例如马达指令在较小时存在死区，在较大时对转速的影响可以忽略不计等等。以269马达的数据为例（393也是类似）：</p>
-<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/8570621.jpg" /></p>
-<p>那么如何让马达的响应变得线性呢？从数学角度出发，我们需要试图找到，或者逼近以上马达曲线<span class="math inline">\(f\)</span>的<strong>反函数</strong><span class="math inline">\(g = f^{-1}\)</span>，对于输出我们应用反函数再应用到马达上，由于马达曲线是单调的，因此在理想状况下，这波操作以后马达的响应就是线性的了，这一过程也称作<strong>马达线性化</strong>。</p>
-<p>出于简单起见，我们规定这个<span class="math inline">\(g\)</span>的定义域和值域都是<span class="math inline">\([-127, 127]\)</span>，这样的话，理论上大部分原来没有使用线性化的PID算法可以较为简单地加上线性化（不然的话就需要从零开始调参）。显然由马达曲线的单调性可得<span class="math inline">\(g(127) = 127\)</span>，以及<span class="math inline">\(g(-127) = -127\)</span>。</p>
-<p>目前机器人社实践过的线性化算法有：</p>
-<ol type="1">
-<li>去除死区的简单线性化：只比没有线性化好一点，简单来说就是对输出的指令加一个bias，这样就不会有死区的问题。</li>
-<li>三段线性插值线性化：就是被WSJ吹爆的所谓模型，本质是把马达曲线分为三段并分别用线性函数近似，效果很好，缺点是调参较为复杂。</li>
-<li>二次函数线性化：我们发现马达曲线的形状有点像<span class="math inline">\(f(x) = \sqrt x\)</span>的图像，因此我们使用二次函数为反函数进行线性化，效果一般。</li>
-<li>反双曲正切线性化：本篇主题，效果较好。</li>
-<li>真·模型线性化：使用马达模型直接计算马达曲线进行线性化，效果最好，可以针对不同的电量，场地状况，扭矩实时给出不同的曲线，缺点是计算慢。</li>
-</ol>
-<h1 id="数学推导">数学推导</h1>
-<p>直觉上，有没有觉得马达曲线的图像很像<span class="math inline">\(\tanh\)</span>函数的图像？</p>
-<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/66159356.jpg" /></p>
-<p>因此我们选择使用双曲正切函数的反函数来进行线性化： <span class="math display">\[
-\tanh^{-1}(x) = \frac{1}{2}\ln\left(\frac{1 + x}{1 - x}\right)
-\]</span> 为了适应死区，以及满足上文中定义域和值域的要求，我们魔改拓展一下上式： <span class="math display">\[
-g(x) = a\operatorname{sgn}(x) + \frac{127 - a}{2b}\ln\left(\frac{c + x}{c - x}\right)
-\]</span> 解释一下各参数的意义：</p>
-<ol type="1">
-<li><span class="math inline">\(a\)</span>是死区，一般来说<span class="math inline">\(5 \le a \le 20\)</span>。</li>
-<li><span class="math inline">\(b\)</span>是我叫做“缩放因子”的参数，其图像意义是<strong>把原双曲正切函数自变量<span class="math inline">\([-b, b]\)</span>这一段的图像看做马达函数图像形状上的近似</strong>。从图像上可以看到，一般<span class="math inline">\(2 \le b \le 3\)</span>。</li>
-<li><span class="math inline">\(c\)</span>是一个依赖于<span class="math inline">\(a, b\)</span>的参数，由<span class="math inline">\(g(127) = 127\)</span>，我们反解得<span class="math inline">\(c = 127\frac{e^{2b} + 1}{e^{2b} - 1}\)</span>。</li>
-</ol>
-<p>就完了，不难吧？</p>
-<h1 id="代码">代码</h1>
-<p>注意变量名可能和推导中用到的符号并不一致：</p>
-<pre class="line-numbers"><code class="language-cpp">typedef struct &#123;
-    float a, b;
-    float alpha;
-&#125; TanhLinearizer;
-
-void initTanhLinearizer(TanhLinearizer *t, float deadband, float scale = 2.333333) &#123;
-    t-&gt;b = scale * 2;
-    t-&gt;a = 127 - deadband;
-    float x = exp(2 * scale);
-    t-&gt;alpha = 127 * (x + 1) / (x - 1);
-&#125;
-
-int getTanhLinearizedOutput(TanhLinearizer *t, int cmd) &#123;
-    if (cmd &gt; 127) cmd = 127;
-    if (cmd &lt; -127) cmd = -127;
-    int s = sgn(cmd);
-    cmd = fabs(cmd);
-    return round(t-&gt;a / t-&gt;b * log((t-&gt;alpha + cmd) / (t-&gt;alpha - cmd)) + s * (127 - t-&gt;a));
-&#125;</code></pre>
-<h1 id="效果">效果</h1>
-<p>马达曲线的反函数应该原本是这个样子的（就是原图像转一转）：</p>
-<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/24070987.jpg" /></p>
-<p>然后在<span class="math inline">\(a = 8, b = 3\)</span>时我们的线性化算法给出的反函数是这个样子的：</p>
-<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/83393060.jpg" /></p>
-<p>是不是很像呢？实测的效果确实也是极好的。</p>
-<h1 id="更多">更多</h1>
-<p>其实马达函数的图像不只是像<span class="math inline">\(\tanh\)</span>啦，其实观察一下你也可以说它像<span class="math inline">\(\arctan\)</span>之类的，自然也可以发展出一套线性化的方法，从的来说看图像猜函数只能说是一种近似，最好自然是找出马达曲线精确的计算方法，也就是建模。但是这类线性化方法的一大好处就是<strong>计算量很小，很快</strong>，因此往往更多地得到应用。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/Treap/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/Treap/" class="post-title-link" itemprop="url">Treap</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-09-17 09:26:00" itemprop="dateModified" datetime="2018-09-17T09:26:00-04:00">2018-09-17</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="概念">概念</h1>
-<p>众所周知，BST在特定的插入顺序下常常会退化成链，从而使单次查找的时间复杂度退化为<span class="math inline">\(O(n)\)</span>，这是很糟糕的，因此出现了一箩筐的平衡树，在保证BST性质的同时，尽量保持BST的平衡。</p>
-<p>Treap就是当中概念比较简单而且比较好写的一种<del>真的吗？</del>。Treap是Tree和Heap的合成，即“树堆”，其精髓就在于通过维护，使得一棵树在<strong>保有BST性质的同时，也具有大根堆的性质</strong>。为此，每个节点都会随机生成一个额外的权值用于堆性质的维护：</p>
-<pre class="line-numbers"><code class="language-cpp">struct node &#123;
-    int l, r; // 左右子树
-    int cnt, sz; // 当前键值副本树与子树（包括自身）大小
-    int val, w; // 键值与随机权值
-&#125; t[N];
-
-int newnode(int val) &#123;
-    t[++tot].val = val;
-    t[tot].cnt = t[tot].sz = 1;
-    t[tot].l = t[tot].r = 0;
-    t[tot].w = rand();
-    return tot;
-&#125;
-
-void pushup(int p) &#123; // 维护sz
-    t[p].sz = t[t[p].l].sz + t[t[p].r].sz + t[p].cnt;
-&#125;</code></pre>
-<p>为了防止讨论边界条件，我们插入两个值为<span class="math inline">\(\pm \infty\)</span>的节点：</p>
-<pre class="line-numbers"><code class="language-cpp">void build() &#123;
-    tot = 0;
-    rt = newnode(-INF);
-    t[rt].r = newnode(INF);
-    pushup(rt);
-&#125;</code></pre>
-<h1 id="旋转">旋转</h1>
-<p>改变BST的形状而不破坏其性质的操作是二叉树的旋转，分为右旋（zig）和左旋（zag）两种，以右旋为例，右旋把一个节点<span class="math inline">\(p\)</span>的左子树<span class="math inline">\(q\)</span>绕其“向右（顺时针）”旋转到原来<span class="math inline">\(p\)</span>的位置，并且让<span class="math inline">\(p\)</span>成为<span class="math inline">\(q\)</span>的右子树，<span class="math inline">\(q\)</span>原来的右子树成为<span class="math inline">\(p\)</span>的左子树，左旋类似：</p>
-<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-17/36711485.jpg" /></p>
-<p>落实在代码上，就是：</p>
-<pre class="line-numbers"><code class="language-cpp">void zig(int &amp;p) &#123;
-    int q = t[p].l;
-    t[p].l = t[q].r, t[q].r = p;
-    p = q; pushup(t[p].r); pushup(p); 
-&#125;
-
-void zag(int &amp;p) &#123;
-    int q = t[p].r;
-    t[p].r = t[q].l, t[q].l = p;
-    p = q; pushup(t[p].l); pushup(p); 
-&#125;</code></pre>
-<p><strong>注意<code>pushup</code>的顺序。</strong></p>
-<h1 id="排名相关查询">排名相关查询</h1>
-<p>我们接下来考虑平衡树的前两个查询操作，分别是查排名和按排名查数，两个都相对简单，可以递归实现：</p>
-<pre class="line-numbers"><code class="language-cpp">int rank(int p, int val) &#123;
-    if (p == 0) return 0;
-    if (val == t[p].val) return t[t[p].l].sz + 1;
-    if (val &lt; t[p].val) return rank(t[p].l, val);
-    return t[t[p].l].sz + t[p].cnt + rank(t[p].r, val);
-&#125;
-
-int query(int p, int rk) &#123;
-    if (p == 0) return INF;
-    if (t[t[p].l].sz &gt;= rk) return query(t[p].l, rk);
-    if (t[t[p].l].sz + t[p].cnt &gt;= rk) return t[p].val;
-    return query(t[p].r, rk - t[t[p].l].sz - t[p].cnt);
-&#125;</code></pre>
-<p><strong>注意这里查询的结果包含<span class="math inline">\(\pm \infty\)</span>，要去掉。</strong></p>
-<h1 id="前驱后继查询">前驱后继查询</h1>
-<p>接下来考虑查询<span class="math inline">\(x\)</span>的前驱/后继的操作，以前驱为例，我们初始化答案<span class="math inline">\(ans\)</span>为<span class="math inline">\(- \infty\)</span>，有以下几种情况：</p>
-<ol type="1">
-<li>没有找到<span class="math inline">\(x\)</span>节点：那么答案就在经过的节点上。</li>
-<li>找到<span class="math inline">\(x\)</span>节点，可惜是叶子：同上，答案在经过的节点上。</li>
-<li>找到<span class="math inline">\(x\)</span>节点，不是叶子：若<span class="math inline">\(x\)</span>节点有左子树<span class="math inline">\(p\)</span>，从<span class="math inline">\(p\)</span>开始一路往右走直到不存在右子树为止，此时节点对应的值即为前驱。</li>
-</ol>
-<p>代码：</p>
-<pre class="line-numbers"><code class="language-cpp">int querypre(int val) &#123;
-    int ans = 1; // t[1].val = -inf
-    int p = rt;
-    while (p) &#123;
-        if (val == t[p].val) &#123;
-            if (t[p].l) &#123;
-                p = t[p].l;
-                while (t[p].r) p = t[p].r;
-                ans = p;
-            &#125;
-            break;
-        &#125;
-        if (t[p].val &lt; val &amp;&amp; t[p].val &gt; t[ans].val) ans = p;
-        p = val &lt; t[p].val ? t[p].l : t[p].r;
-    &#125;
-    return t[ans].val;
-&#125;
-
-int querynxt(int val) &#123;
-    int ans = 2; // t[2].val = inf
-    int p = rt;
-    while (p) &#123;
-        if (val == t[p].val) &#123;
-            if (t[p].r) &#123;
-                p = t[p].r;
-                while (t[p].l) p = t[p].l;
-                ans = p;
-            &#125;
-            break;
-        &#125;
-        if (t[p].val &gt; val &amp;&amp; t[p].val &lt; t[ans].val) ans = p;
-        p = val &lt; t[p].val ? t[p].l : t[p].r;
-    &#125;
-    return t[ans].val;
-&#125;</code></pre>
-<h1 id="插入">插入</h1>
-<p>递归进行，同时注意维护大根堆性质即可：</p>
-<pre class="line-numbers"><code class="language-cpp">void insert(int &amp;p, int val) &#123;
-    if (p == 0) &#123;
-        p = newnode(val);
-        return;
-    &#125;
-    if (val == t[p].val) &#123;
-        t[p].cnt++;
-        pushup(p);
-        return;
-    &#125;
-    if (val &lt; t[p].val) &#123;
-        insert(t[p].l, val);
-        if (t[p].w &lt; t[t[p].l].w) zig(p);
-    &#125; else &#123;
-        insert(t[p].r, val);
-        if (t[p].w &lt; t[t[p].r].w) zag(p);
-    &#125;
-    pushup(p);
-&#125;</code></pre>
-<h1 id="删除">删除</h1>
-<p>我们利用旋转一路把要删的节点转到叶子的位置，然后直接删除即可，同时一路上维护堆的性质：</p>
-<pre class="line-numbers"><code class="language-cpp">void remove(int &amp;p, int val) &#123;
-    if (p == 0) return;
-    if (val == t[p].val) &#123;
-        if (t[p].cnt &gt; 1) &#123;
-            t[p].cnt--;
-            pushup(p);
-            return;
-        &#125;
-        if (t[p].l || t[p].r) &#123;
-            if (t[p].r == 0 || t[t[p].l].w &gt; t[t[p].r].w)
-                zig(p), remove(t[p].r, val);
-            else
-                zag(p), remove(t[p].l, val);
-            pushup(p);
-        &#125; else p = 0;
-        return;
-    &#125;
-    val &lt; t[p].val ? remove(t[p].l, val) : remove(t[p].r, val);
-    pushup(p);
-&#125;</code></pre>
-<h1 id="完整代码">完整代码</h1>
-<p>以下是通过普通平衡树模板题的全部代码，共计150行左右，感觉平衡树这个东西代码量还是有点恐怖，而且需要注意非常多的细节，需要结合理解记忆：</p>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-#include &lt;cstdlib&gt;
-#include &lt;ctime&gt;
-
-using namespace std;
-const int N = 100010;
-const int INF = 0x3f3f3f3f;
-struct node &#123;
-    int l, r;
-    int cnt, sz;
-    int val, w;
-&#125; t[N];
-int n, tot = 0, rt;
-
-int newnode(int val) &#123;
-    t[++tot].val = val;
-    t[tot].cnt = t[tot].sz = 1;
-    t[tot].l = t[tot].r = 0;
-    t[tot].w = rand();
-    return tot;
-&#125;
-
-void pushup(int p) &#123;
-    t[p].sz = t[t[p].l].sz + t[t[p].r].sz + t[p].cnt;
-&#125;
-
-void zig(int &amp;p) &#123;
-    int q = t[p].l;
-    t[p].l = t[q].r, t[q].r = p;
-    p = q; pushup(t[p].r); pushup(p); 
-&#125;
-
-void zag(int &amp;p) &#123;
-    int q = t[p].r;
-    t[p].r = t[q].l, t[q].l = p;
-    p = q; pushup(t[p].l); pushup(p); 
-&#125;
-
-void build() &#123;
-    tot = 0;
-    rt = newnode(-INF);
-    t[rt].r = newnode(INF);
-    pushup(rt);
-&#125;
-
-int rank(int p, int val) &#123;
-    if (p == 0) return 0;
-    if (val == t[p].val) return t[t[p].l].sz + 1;
-    if (val &lt; t[p].val) return rank(t[p].l, val);
-    return t[t[p].l].sz + t[p].cnt + rank(t[p].r, val);
-&#125;
-
-int query(int p, int rk) &#123;
-    if (p == 0) return INF;
-    if (t[t[p].l].sz &gt;= rk) return query(t[p].l, rk);
-    if (t[t[p].l].sz + t[p].cnt &gt;= rk) return t[p].val;
-    return query(t[p].r, rk - t[t[p].l].sz - t[p].cnt);
-&#125;
-
-int querypre(int val) &#123;
-    int ans = 1;
-    int p = rt;
-    while (p) &#123;
-        if (val == t[p].val) &#123;
-            if (t[p].l) &#123;
-                p = t[p].l;
-                while (t[p].r) p = t[p].r;
-                ans = p;
-            &#125;
-            break;
-        &#125;
-        if (t[p].val &lt; val &amp;&amp; t[p].val &gt; t[ans].val) ans = p;
-        p = val &lt; t[p].val ? t[p].l : t[p].r;
-    &#125;
-    return t[ans].val;
-&#125;
-
-int querynxt(int val) &#123;
-    int ans = 2;
-    int p = rt;
-    while (p) &#123;
-        if (val == t[p].val) &#123;
-            if (t[p].r) &#123;
-                p = t[p].r;
-                while (t[p].l) p = t[p].l;
-                ans = p;
-            &#125;
-            break;
-        &#125;
-        if (t[p].val &gt; val &amp;&amp; t[p].val &lt; t[ans].val) ans = p;
-        p = val &lt; t[p].val ? t[p].l : t[p].r;
-    &#125;
-    return t[ans].val;
-&#125;
-
-void insert(int &amp;p, int val) &#123;
-    if (p == 0) &#123;
-        p = newnode(val);
-        return;
-    &#125;
-    if (val == t[p].val) &#123;
-        t[p].cnt++;
-        pushup(p);
-        return;
-    &#125;
-    if (val &lt; t[p].val) &#123;
-        insert(t[p].l, val);
-        if (t[p].w &lt; t[t[p].l].w) zig(p);
-    &#125; else &#123;
-        insert(t[p].r, val);
-        if (t[p].w &lt; t[t[p].r].w) zag(p);
-    &#125;
-    pushup(p);
-&#125;
-
-void remove(int &amp;p, int val) &#123;
-    if (p == 0) return;
-    if (val == t[p].val) &#123;
-        if (t[p].cnt &gt; 1) &#123;
-            t[p].cnt--;
-            pushup(p);
-            return;
-        &#125;
-        if (t[p].l || t[p].r) &#123;
-            if (t[p].r == 0 || t[t[p].l].w &gt; t[t[p].r].w)
-                zig(p), remove(t[p].r, val);
-            else
-                zag(p), remove(t[p].l, val);
-            pushup(p);
-        &#125; else p = 0;
-        return;
-    &#125;
-    val &lt; t[p].val ? remove(t[p].l, val) : remove(t[p].r, val);
-    pushup(p);
-&#125;
-
-int main() &#123;
-    srand(time(0)); build();
-    scanf(&quot;%d&quot;, &amp;n);
-    while (n--) &#123;
-        int op, x;
-        scanf(&quot;%d%d&quot;, &amp;op, &amp;x);
-        switch (op) &#123;
-        case 1: insert(rt, x); break;
-        case 2: remove(rt, x); break;
-        case 3: printf(&quot;%d\n&quot;, rank(rt, x) - 1); break;
-        case 4: printf(&quot;%d\n&quot;, query(rt, x + 1)); break;
-        case 5: printf(&quot;%d\n&quot;, querypre(x)); break;
-        case 6: printf(&quot;%d\n&quot;, querynxt(x)); break;
-        &#125;
-    &#125;
-    return 0;
-&#125; </code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/Sublinear/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/Sublinear/" class="post-title-link" itemprop="url">次线性算法与有序判定问题</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-07-11 23:17:56" itemprop="dateModified" datetime="2020-07-11T23:17:56-04:00">2020-07-11</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="什么是次线性算法">什么是次线性算法？</h1>
-<p>如何衡量算法的效率？一般来说，问题（以及对应的算法）可以分为以下几类：</p>
-<ol type="1">
-<li>不可判定问题。这种问题不存在算法。</li>
-<li>指数时间可解。这种问题虽然存在算法但是就目前我们的技术水平，对于大输入，它们没办法在可接受的时间内返回结果。</li>
-<li>多项式时间可解。这些算法可以在现在的电脑上较为高效地运行。</li>
-<li>线性时间可解。这是大多数人认为的最高效算法，一般来说不会有比这更高效的了（读取输入就是线性的，不读完输入怎么计算输出？）</li>
-<li><strong>次线性时间算法</strong>。“次线性”(sublinear)即“线性以下”，指在利用低于与输入线性的资源（可以是时间也可以是空间）的情况下解决问题的一类算法。这类算法有着非常不可思议的特性：它甚至都不会看完完整的输入！</li>
-</ol>
-<p>为什么我们需要次线性算法？</p>
-<p>大数据时代我们要处理的数据是在是太多了，光是谷歌一天就会产生20PB的数据，我们根本没有足够的时空资源来哪怕运行线性的算法或者把它们全部过一遍！但是我们又希望从这些数据中挖掘有价值的结论，就只能求助于次线性算法了。</p>
-<p>因为次线性算法没法看到完整的输入，给出错误的结果自然是情有可原的（在精确解没法在次线性时间内算出的情况下）。因此，次线性算法多是<strong>近似算法</strong>。同时，因为如果一个算法是确定性的，对手就可以预判这个算法会看那部分输入，并针对这个造出会让算法100%翻车的数据，因此<strong>随机化</strong>在次线性算法的设计也经常出现。</p>
-<h1 id="查询模型">查询模型</h1>
-<p>好，既然次线性算法不能把输入完整地读一遍，那么要怎么样才能获取输入的信息呢？我们将次线性算法获取输入信息的方式称为<strong>查询</strong>（query）。而算法的难易自然和可以进行的查询方式有着很大的关系，因此我们还需要一组规则定义在一个问题中可以进行何种方式的查询，这种规则称一个问题的<strong>查询模型</strong>（query model）。例如，在以数组为输入的问题当中，常见的查询方式是按照一个下标询问对应的值，在以图为输入的问题当中，查询可以是按照两点查询边权……可以看到，查询模型是因问题而异的。</p>
-<h1 id="有序判定问题sortedness-problem">有序判定问题（Sortedness Problem）</h1>
+          <h1 id="集合覆盖问题">集合覆盖问题</h1>
 <h2 id="定义">定义</h2>
-<p><strong>输入：</strong>一个<span class="math inline">\(n\)</span>个元素的数组<span class="math inline">\(A\)</span>。</p>
-<p><strong>查询模型：</strong>对于一个整数<span class="math inline">\(1\le i \le n\)</span>，查询<span class="math inline">\(A_i\)</span>的值。</p>
-<p><strong>目标：</strong>在尽量少的时间内（假设一次查询时<span class="math inline">\(\mathcal{O}(1)\)</span>的）<strong>判断这个数组是否是有序</strong>（此处单指<strong>升序</strong>）的。</p>
-<p>很显然，任何一个确定性的算法都必须进行<span class="math inline">\(\Omega(n)\)</span>次查询才能解决这个问题（不然肯定会有漏看的）。</p>
-<p>因此我们退而求其次：如果运用随机化的话，我们能不能在<span class="math inline">\(o(n)\)</span>次查询之内给出正确概率至少为<span class="math inline">\(\frac{1}{2}+\epsilon\ (\epsilon &gt;0)\)</span>的答案呢？</p>
-<p>（正确概率在这里只要大于<span class="math inline">\(\frac{1}{2}\)</span>就行，精确的值没有意义，因为我们总是可以重复运行不靠谱的算法提高正确率）</p>
-<p>答案还是不行（证明课上似乎没讲？）</p>
-<p>那我们怎么办？只好稍微把题目修改一下，再退而求其次看看能不能有高效的<strong>近似算法</strong>了。</p>
-<h2 id="修改后的定义">修改后的定义</h2>
-<p>我们不妨寻找这么一个算法，它</p>
-<ol type="1">
-<li>在数组有序的时候输出是</li>
-<li>在数组“非常无序”的时候输出否</li>
-<li>而对于那种非常接近有序的数组，我们干脆不管。</li>
-</ol>
-<p>设计这样的算法显然比设计能够精确解决这个问题的算法要容易多了。</p>
-<p>那么怎么样算是“非常无序”，怎么样算是“接近有序”呢？显然，我们需要在数学上给予这些描述严谨的定义。</p>
-<p><strong>定义：</strong>对于<span class="math inline">\(\epsilon\in(0,1)\)</span>，如果需要至少修改<span class="math inline">\(\epsilon n\)</span>个数才能让数组<span class="math inline">\(A\)</span>变为有序，那么称数组<span class="math inline">\(A\)</span>是<span class="math inline">\(\epsilon\)</span>无序（<span class="math inline">\(\epsilon\)</span>-far from sorted）的。</p>
-<p>那么我们就可以进一步精炼我们上面的问题了：我们需要设计一个算法，使其</p>
-<ol type="1">
-<li>在<span class="math inline">\(A\)</span>有序的时候输出是</li>
-<li>在<span class="math inline">\(A\)</span> <span class="math inline">\(\epsilon\)</span>无序的时候输出否</li>
-</ol>
-<p>（<span class="math inline">\(\epsilon\)</span>是算法的一个参数）</p>
-<p>从这里其实可以看到对于近似算法的一种设计思路：对于数值型的问题，我们通过对于最优解的放缩定义了近似比<span class="math inline">\(\alpha\)</span>，而对于判定型的问题，我们试图放宽需要判定的条件。在上面的问题当中我们相当于变相假设，或者说承诺了<span class="math inline">\(A\)</span>要么是有序要么是<span class="math inline">\(\epsilon\)</span>无序的，因此这种问题被称作promise problem。</p>
-<h2 id="二元数组">二元数组</h2>
-<p>我们先从最简单的情形开始分析：如果数组只有<span class="math inline">\(0\)</span>和<span class="math inline">\(1\)</span>两种元素呢？</p>
-<h3 id="初步分析">初步分析</h3>
-<p>显然此时数组有序等价于所有的<span class="math inline">\(0\)</span>都在<span class="math inline">\(1\)</span>前面。</p>
-<p>我们不妨定义两个集合，<span class="math inline">\(L_1\)</span>和<span class="math inline">\(R_0\)</span>。如果将数组里的元素从左到右排列，<span class="math inline">\(L_1\)</span>表示最靠左的<span class="math inline">\(\frac{\epsilon n}{2}\)</span>个<span class="math inline">\(1\)</span>的下标集合，<span class="math inline">\(R_0\)</span>表示最靠右的<span class="math inline">\(\frac{\epsilon n}{2}\)</span>个<span class="math inline">\(0\)</span>的下标集合。</p>
-<p>显然在数组有序时，<span class="math inline">\(L_1\)</span>整体都在<span class="math inline">\(R_0\)</span>右边。而当数组不有序时，有可能：</p>
-<ol type="1">
-<li><span class="math inline">\(L_1\)</span>和<span class="math inline">\(R_0\)</span>的区间重叠。</li>
-<li><span class="math inline">\(L_1\)</span>在<span class="math inline">\(R_0\)</span>的左边。</li>
-</ol>
-<p>接下来我们证明：</p>
-<p><strong>引理：</strong>如果<span class="math inline">\(A\)</span>是<span class="math inline">\(\epsilon\)</span>无序的，那么<span class="math inline">\(L_1\)</span>必定在<span class="math inline">\(R_0\)</span>左边且不重叠。</p>
-<p><strong>证明：</strong>我们使用反证法，不妨假设<span class="math inline">\(L_1\)</span>和<span class="math inline">\(R_0\)</span>有重叠的部分： <span class="math display">\[
-0,0,\cdots,\rlap{\overbrace{1,\cdots,1,0,1}^{L_1} }1,\cdots,1,\underbrace{ {\color{blue}{0} },{\color{red}{1} },0,\cdots,0}_{R_0},\cdots1,1
+<p><strong>输入：</strong>全集<span class="math inline">\(\mathcal{U}\)</span>，以及一些集合的集合<span class="math inline">\(S=\{S_1,S_2,S_3,\cdots,S_n\}\)</span>，满足<span class="math inline">\(\forall i, S_i\subseteq \mathcal{U}\)</span>。</p>
+<p><strong>目标：</strong>从<span class="math inline">\(S\)</span>中选择一个最小数目的集合，使得它们能够覆盖<span class="math inline">\(\mathcal{U}\)</span>中所有的元素（即并集为<span class="math inline">\(\mathcal U\)</span>）</p>
+<p><img src="/2020/07/04/PACT0703/SC1.svg" class=""></p>
+<p>如图，<span class="math inline">\(S_1,S_2,S_4\)</span>就构成一个集合覆盖。</p>
+<h2 id="贪心算法及其分析">贪心算法及其分析</h2>
+<p>我们的想法很简单：<strong>每次都取含有最多未覆盖元素的集合加入我们的覆盖集</strong>，不断循环直至所有集合都被覆盖。</p>
+<p>我们定义<span class="math inline">\(\mathcal U_i\)</span>表示第<span class="math inline">\(i\)</span>次循环开始时未覆盖的元素集合，定义<span class="math inline">\(S_i\)</span>表示第<span class="math inline">\(i\)</span>次循环选择的集合，假设我们选了<span class="math inline">\(k\)</span>个集合。有引理：</p>
+<p><strong>引理：</strong> <span class="math display">\[
+\left|S_i \cap\mathcal{U}_i \right| \ge \frac{\left|\mathcal{U}_i\right|}{|\mathrm{OPT}|}
+\]</span> 这个引理其实反映了一个“优于平均”的思想。</p>
+<p><strong>证明：</strong> <span class="math display">\[
+\begin{aligned}
+    \left|\mathcal{U}_i\right| &amp;= \left|\bigcup_{Z\in\mathrm{OPT}}\left(Z\cap\mathcal{U}_i\right)\right| \\
+    &amp;\le \sum_{Z\in\mathrm{OPT}}\left|Z\cap\mathcal{U}_i\right| \\
+    &amp;\le \sum_{Z\in\mathrm{OPT}}\left|S_i\cap\mathcal{U}_i \right| \\
+    &amp;= |\mathrm{OPT}||S_i\cap\mathcal{U}_i |
+\end{aligned}
+\]</span> 得证。</p>
+<p><strong>定理：</strong>我们的算法是一个<span class="math inline">\(\mathcal{O}\left(\log n\right)\)</span>倍近似算法。</p>
+<p><strong>证明：</strong>考虑每次循环开始时未覆盖元素的数量： <span class="math display">\[
+\begin{aligned}
+    |\mathcal U_1| &amp;= n \\
+    |\mathcal U_2| &amp;= |\mathcal U_1| - |S_1\cap\mathcal{U}_1| \\
+    &amp;\le |\mathcal U_1|\left(1-\frac{1}{|\mathrm{OPT}|}\right) \\
+    |\mathcal U_3| &amp;= |\mathcal U_2| - |S_2\cap\mathcal{U}_2| \\
+    &amp;\le |\mathcal U_2|\left(1-\frac{1}{|\mathrm{OPT}|}\right) \\
+    &amp;\le |\mathcal U_1|\left(1-\frac{1}{|\mathrm{OPT}|}\right)^2 \\
+    &amp;\vdots \\
+    |\mathcal U_k| 
+    &amp;\le |\mathcal U_1|\left(1-\frac{1}{|\mathrm{OPT}|}\right)^{k-1} \\
+    &amp;= n\left(1-\frac{1}{|\mathrm{OPT}|}\right)^{k-1}
+\end{aligned}
 \]</span></p>
-<p><span class="math inline">\(\color{red}1\)</span>是<span class="math inline">\(L_1\)</span>中最右边的<span class="math inline">\(1\)</span>，<span class="math inline">\(\color{blue}0\)</span>是<span class="math inline">\(R_0\)</span>中最左边的<span class="math inline">\(0\)</span>。</p>
-<p>由<span class="math inline">\(L_1,R_0\)</span>的定义可知，<span class="math inline">\(\color{red}1\)</span>左侧的<span class="math inline">\(1\)</span>的数量严格小于<span class="math inline">\(\frac{\epsilon n}{2}\)</span>，<span class="math inline">\(\color{blue}0\)</span>右侧的<span class="math inline">\(0\)</span>的数量也严格小于<span class="math inline">\(\frac{\epsilon n}{2}\)</span>。而注意到如果把<span class="math inline">\(\color{red}1\)</span>的左侧<span class="math inline">\(1\)</span>改成<span class="math inline">\(0\)</span>，把<span class="math inline">\(\color{blue}0\)</span>右侧的<span class="math inline">\(0\)</span>的改成<span class="math inline">\(1\)</span>，那么数组就变得有序了，而此时我们修改的元素数量严格小于<span class="math inline">\(\epsilon n\)</span>，这和数组是<span class="math inline">\(\epsilon\)</span>无序的前提是矛盾的。</p>
-<h3 id="算法">算法</h3>
-<p>接下来我们给出能够以<span class="math inline">\(1-\delta\)</span>的成功率判定二元数组有序性的算法：</p>
-<ol type="1">
-<li>从数组当中随机选取<span class="math inline">\(t=\frac{2}{\epsilon}\ln\frac{2}{\delta}\)</span>个下标<span class="math inline">\(i_1,\cdots,i_t\)</span>（为了简化分析，允许下标重复）。</li>
-<li>查询<span class="math inline">\(A_{i_1},\cdots, A_{i_t}\)</span>的值。</li>
-<li>如果在<span class="math inline">\(\left\{A_{i_1},\cdots, A_{i_t}\right\}\)</span>当中发现了逆序对，输出否，否则输出是。</li>
-</ol>
-<h3 id="分析">分析</h3>
-<p>很显然，如果数组是有序的，那么我们的算法一定会输出是，成功率<span class="math inline">\(1&gt;1-\delta\)</span>。</p>
-<p>而如果数组是<span class="math inline">\(\epsilon\)</span>-无序的，为了证明此时的成功率至少为<span class="math inline">\(1-\delta\)</span>，我们只需要证明 <span class="math display">\[
-\operatorname{Pr}[\text{wrong answer}] \le \delta
-\]</span> 即错误（输出了是）概率不大于<span class="math inline">\(\delta\)</span>。</p>
-<p>设随机事件<span class="math inline">\(E_L\)</span>表示在随机选取的<span class="math inline">\(t\)</span>个下标中，至少有一个下标来自<span class="math inline">\(L_1\)</span>，<span class="math inline">\(E_R\)</span>表示至少有一个下标来自<span class="math inline">\(R_0\)</span>。</p>
-<p>那么由之前的引理，如果<span class="math inline">\(E_L\cap E_R\)</span>，我们一定找得到逆序对。</p>
-<p>因此只有可能在<span class="math inline">\(\overline{E_L\cap E_R}\)</span>才有可能出错： <span class="math display">\[
+<p>因为<span class="math inline">\(\mathcal{U}_k\neq \emptyset\)</span>，有 <span class="math display">\[
 \begin{aligned}
-    \operatorname{Pr}[\text{wrong answer}] \le \operatorname{Pr}\left[\overline{E_L}\cup\overline{E_R} \right] \le \operatorname{Pr}\left[\overline{E_L}\right] +  \operatorname{Pr}\left[\overline{E_R}\right]
+    1\le |\mathcal U_k| &amp;\le n\left(1-\frac{1}{|\mathrm{OPT}|}\right)^{k-1} \\
+    1\le n\left(1-\frac{1}{|\mathrm{OPT}|}\right)^k &amp;\le n\left(e^{-\frac{1}{|\mathrm{OPT}|}}\right)^{k-1} \\ 
+    e^{-\frac{k-1}{|\mathrm{OPT}|}} &amp;\ge  \frac{1}{n} \\
+    -\frac{k-1}{|\mathrm{OPT}|} &amp;\ge -\ln n \\
+    k &amp;\le  \ln n\cdot |\mathrm{OPT}|+1 \\
+    k &amp;\le \mathcal O\left(\log n\right)|\mathrm{OPT}|
 \end{aligned}
-\]</span> 而 <span class="math display">\[
-\begin{aligned}
-    \operatorname{Pr}\left[\overline{E_L}\right] &amp;= \left(1-\frac{\left|L_1\right|}{n}\right) ^ t \\
-    &amp;= \left(1-\frac{\epsilon}{2}\right)^{\frac{2}{\epsilon}\ln\frac{2}{\delta}} \\
-    &amp;\le \left(e^{-\frac{\epsilon}{2}}\right)^{\frac{2}{\epsilon}\ln\frac{2}{\delta}} \\
-    &amp;= \frac{\delta}{2}
-\end{aligned}
-\]</span> 倒数第二步我们运用了不等式<span class="math inline">\(1+x\le e^x\)</span>。</p>
-<p>同理可证<span class="math inline">\(\operatorname{Pr}\left[\overline{E_R}\right] \le \frac{\delta}{2}\)</span>，因此 <span class="math display">\[
-\operatorname{Pr}[\text{wrong answer}] \le \operatorname{Pr}\left[\overline{E_L}\right] +  \operatorname{Pr}\left[\overline{E_R}\right] \le \frac{\delta}{2} + \frac{\delta}{2} = \delta
 \]</span> 证毕。</p>
-<h3 id="时间复杂度">时间复杂度</h3>
-<p>随机采样花费的时间复杂度为<span class="math inline">\(\mathcal{O}(t)\)</span>。</p>
-<p>查询子数组花费的时间复杂度也是<span class="math inline">\(\mathcal{O}(t)\)</span>。</p>
-<p>而在子数组当中查找逆序对也可以被优化成<span class="math inline">\(\mathcal{O}(t)\)</span>，实现的方法有很多，例如可以计算<span class="math inline">\(1\)</span>的下标的最小值和<span class="math inline">\(0\)</span>的下标的最大值进行比较等。</p>
-<p>因此这个算法的时间复杂度就是<span class="math inline">\(\mathcal O(t) = \mathcal O\left(\frac{1}{\epsilon}\ln\frac{1}{\delta}\right)\)</span>，和<span class="math inline">\(n\)</span>无关。</p>
-<h2 id="一般情况">一般情况</h2>
-<p>接下来我们来看数组元素可以是任意数字的情况。</p>
-<p>我们之前随机采样的想法还能继续沿用吗？</p>
-<p>考虑如下情况： <span class="math display">\[
-3,2,1{\color{red}|}6,5,4{\color{red}|}9,8,7
-\]</span> 虽然这个数组是<span class="math inline">\(\frac{2}{3}\)</span>无序的，但是如果我的随机采样在每个段中只挑了一个元素，那采样出来的子序列却一定是有序的，我们的算法就被糊弄过去了。</p>
-<p>这就是问题所在：如果我们把一个数组分成若干段“总体有序，但局部无序”的连续段，显然这样的段最多可以有<span class="math inline">\(\mathcal O(n)\)</span>个。而为了能够在子序列当中找到逆序对，就必须从同一个段当中至少选两个数。而由生日悖论可知，为了大概率确保能从一个段中选两个数，我们必须至少随机选<span class="math inline">\(\mathcal O\left(\sqrt n\right)\)</span>个数——这让我们之前的分析几乎废掉。</p>
-<p>那怎么办呢？</p>
-<p>考虑一个有序的数组所具有的性质。在算法层面，一个熟悉的性质便是：<strong>可以进行二分查找</strong>。</p>
-<p>这给我们一个思路：如果我们不管三七二十一在给定的数组上跑二分，如果二分翻车了，那么数组一定是无序的，如果二分没翻车，数组或许就是有序的。</p>
-<p>如何定义二分有没有“翻车”？或者说，如何定义一次正常的二分？</p>
-<p>引入<em>一致二分查找</em>（Consistent Binary Search）的概念，如果对于一次二分查找，</p>
-<ol type="1">
-<li>我最后找到了我要找的那个数（也就是说，如果我要找的是<span class="math inline">\(A_i\)</span>，而我的二分最后终止于下标<span class="math inline">\(i\)</span>），</li>
-<li>假设二分的左右端点和终点分别为<span class="math inline">\(l,r,m\)</span>，二分的过程中<span class="math inline">\(A_l &lt; A_m &lt; A_r\)</span>始终成立，</li>
-</ol>
-<p>那么我们称这次二分查找是“一致的”或“相容的”（我觉得翻译成哪个似乎都不大合适）。</p>
-<h3 id="算法-1">算法</h3>
-<p>在二分思想的指引下我们提出如下的算法：</p>
-<ol type="1">
-<li>随机选择一个下标<span class="math inline">\(i\)</span>并查询<span class="math inline">\(A_i\)</span>的值。</li>
-<li>二分查找<span class="math inline">\(A_i\)</span>。</li>
-<li>如果这次二分查找是一致的，那么输出是，反之输出否。</li>
-</ol>
-<h3 id="分析-1">分析</h3>
-<p><strong>引理：</strong>如果对于<span class="math inline">\(A_i\)</span>和<span class="math inline">\(A_j\)</span>的二分查找都是一致的，而且<span class="math inline">\(i&lt;j\)</span>，一定有<span class="math inline">\(A_i&lt;A_j\)</span>。</p>
-<p><strong>证明：</strong>虽然两次二分查找中前几层的搜索区间可能相同，但由于<span class="math inline">\(i &lt; j\)</span>，到了某一层一定会出现<span class="math inline">\(A_i\)</span>往左边，<span class="math inline">\(A_j\)</span>往右边的分歧。假设该层搜索区间的中点是<span class="math inline">\(A_m\)</span>，显然对<span class="math inline">\(A_i\)</span>的二分搜索之所以在这层之后往左走是因为<span class="math inline">\(A_i &lt; A_m\)</span>，同理可知<span class="math inline">\(A_j&gt;A_m\)</span>，将二式组合引理便得证。</p>
-<p>假设<span class="math inline">\(C\)</span>表示所有对下标对应的数进行的二分搜索是一致的下标的集合。则由刚刚的引理，由<span class="math inline">\(C\)</span>中下标组成的原数组的子序列一定是有序的。因为原数组是<span class="math inline">\(\epsilon\)</span>无序的，因此必然有<span class="math inline">\(|C|&lt;(1-\epsilon) n\)</span>（可以通过反证法证明）。</p>
-<p>这个结论有什么意义呢？要知道我们的算法在原数组有序的时候一定输出正确的结果，而在原数组无序时，我们算法只有在抽到<span class="math inline">\(C\)</span>中的下标时才会做出误判。因此我们算法的错误率的上界为<span class="math inline">\(1-\epsilon\)</span>。</p>
-<p>在得出这个上界之后，我们就可以改进我们的算法了：</p>
-<ol type="1">
-<li>将之前的算法运行<span class="math inline">\(k=\frac{1}{\epsilon}\ln\frac{1}{\delta}\)</span>遍。</li>
-<li>如果<span class="math inline">\(k\)</span>次运行的结果都为是，则输出是，反之则输出否。</li>
-</ol>
-<p>这样的错误率是多少呢？ <span class="math display">\[
+<h2 id="跑满上界的输入样例">跑满上界的输入样例</h2>
+<p>对于这个算法而言我们的分析能不能更好一点呢？这里有一个可以让满足这个上界的例子：</p>
+<p><img src="/2020/07/04/PACT0703/SC2.svg" class=""></p>
+<p>最优解显然是<span class="math inline">\(2\)</span>个集合，但是我们的贪心算法每一次都可能选到红色的集合，而这样就需要<span class="math inline">\(\mathcal{O}\left(\log n\right)\)</span>个集合完成覆盖了。</p>
+<h1 id="带权集合覆盖问题">带权集合覆盖问题</h1>
+<p>如果把给每个集合赋予一个权重，而我们需要寻找一个权重和最小的覆盖集呢？这个问题被称作带权集合覆盖。</p>
+<h2 id="贪心算法及其分析-1">贪心算法及其分析</h2>
+<p>我们依然贪心，这个时候我们每次选择“性价比”最优的集合加入我们的覆盖集，设一个集合的权重为<span class="math inline">\(w(\cdot)\)</span>，那么<strong>我们每一次循环都挑选<span class="math inline">\(\frac{w(\cdot)}{|\cdot|}\)</span>最小的集合</strong>（<span class="math inline">\(|\cdot|\)</span>这里不算已经被覆盖的元素）。</p>
+<p>如何分析这个算法？沿用分析不带权覆盖的记号，我们有引理：</p>
+<p><strong>引理：</strong> <span class="math display">\[
+\frac{w(S_i)}{|S_i\cap \mathcal{U}_i|} \le \frac{w(\mathrm{OPT})}{|\mathcal{U}_i|}
+\]</span> <strong>证明：</strong> <span class="math display">\[
 \begin{aligned}
-    \operatorname{Pr}[\text{wrong answer}] &amp;\le \left(1-\epsilon\right)^k \\
-    &amp;= \left(1-\epsilon\right)^{\frac{1}{\epsilon}\ln\frac{1}{\delta}} \\
-    &amp;\le \left(e^{-\epsilon}\right)^{\frac{1}{\epsilon}\ln\frac{1}{\delta}} \\
-    &amp; = \delta
+    \left|\mathcal{U}_i\right| &amp;= \left|\bigcup_{Z\in\mathrm{OPT}}\left(Z\cap\mathcal{U}_i\right)\right| \\
+    &amp;\le \sum_{Z\in\mathrm{OPT}}\left|Z\cap\mathcal{U}_i\right|
 \end{aligned}
-\]</span> 因此正确率至少为<span class="math inline">\(1-\delta\)</span>，符合我们的要求。而这个算法的时间复杂度是<span class="math inline">\(\mathcal O\left(\frac{1}{\epsilon}\ln\frac{1}{\delta}\log n\right)\)</span>，也是相当优秀的。</p>
+\]</span> 而由我们算法贪心的本质可知， <span class="math display">\[
+\frac{w(S_i)}{|S_i \cap \mathcal{U}_i|} \le \frac{w(Z)}{|Z \cap \mathcal{U}_i|}, \quad \forall Z\in\mathrm{OPT}, Z\cap\mathcal{U}_i\neq\emptyset
+\]</span> 也就是 <span class="math display">\[
+|Z \cap \mathcal{U}_i| \le \frac{w(Z)}{w(S_i)}|S_i \cap \mathcal{U}_i|,\quad \forall Z\in\mathrm{OPT}, Z\cap\mathcal{U}_i\neq\emptyset
+\]</span> 因此 <span class="math display">\[
+\begin{aligned}
+    \left|\mathcal{U}_i\right| &amp;\le \sum_{Z\in\mathrm{OPT}}\left|Z\cap\mathcal{U}_i\right| \\
+    &amp;\le \sum_{Z\in\mathrm{OPT}}\frac{w(Z)}{w(S_i)}|S_i \cap \mathcal{U}_i| \\
+    &amp;= \frac{|S_i \cap \mathcal{U}_i|}{w(S_i)}\sum_{Z\in\mathrm{OPT}}w(Z) \\
+    &amp;= \frac{|S_i \cap \mathcal{U}_i|}{w(S_i)}w(\mathrm{OPT})
+\end{aligned}
+\]</span> 随后稍加变形便得引理，证毕。</p>
+<p><strong>定理：</strong>我们的算法是一个<span class="math inline">\(\mathcal O\left(\log n\right)\)</span>倍近似算法。</p>
+<p><strong>证明：</strong> <span class="math display">\[
+\begin{aligned}
+    |\mathcal U_1| &amp;= n \\
+    |\mathcal U_2| &amp;= |\mathcal U_1| - |S_1\cap\mathcal{U}_1| \\
+    &amp;\le |\mathcal U_1|\left(1-\frac{w(S_1)}{w(\mathrm{OPT})}\right) \\
+    &amp;\le |\mathcal U_1|\exp\left(-\frac{w(S_1)}{w(\mathrm{OPT})}\right)\\
+    |\mathcal U_3| &amp;= |\mathcal U_2| - |S_2\cap\mathcal{U}_2| \\
+    &amp;\le |\mathcal U_2|\exp\left(-\frac{w(S_2)}{w(\mathrm{OPT})}\right) \\
+    &amp;\le |\mathcal U_1|\exp\left(-\frac{w(S_1)+w(S_2)}{w(\mathrm{OPT})}\right) \\
+    &amp;\vdots \\
+    |\mathcal U_k| 
+    &amp;\le |\mathcal U_1|\exp\left(-\frac{\sum_{i=1}^{k-1}w(S_i)}{w(\mathrm{OPT})}\right) \\
+    &amp;= n\exp\left(-\frac{\sum_{i=1}^{k-1}w(S_i)}{w(\mathrm{OPT})}\right)
+\end{aligned}
+\]</span> 又因<span class="math inline">\(|\mathcal U_k| \ge 1\)</span>： <span class="math display">\[
+\begin{aligned}
+    n\exp\left(-\frac{\sum_{i=1}^{k-1}w(S_i)}{w(\mathrm{OPT})}\right) &amp;\ge 1 \\
+    -\frac{\sum_{i=1}^{k-1}w(S_i)}{w(\mathrm{OPT})} &amp;\ge -\ln n \\
+    \sum_{i=1}^{k-1}w(S_i) &amp;\le \ln n\cdot w(\mathrm{OPT})
+\end{aligned}
+\]</span> 证完了？还没有！我们的覆盖集的总代价是<span class="math inline">\(\sum_{i=1}^k w(S_i)\)</span>，还差一个<span class="math inline">\(S_k\)</span>没有处理呢！</p>
+<p>但是注意到之前的结论： <span class="math display">\[
+\frac{w(S_i)}{|S_i\cap \mathcal{U}_i|} \le \frac{w(\mathrm{OPT})}{|\mathcal{U}_i|}
+\]</span> 而当<span class="math inline">\(i=k\)</span>时因为是最后一轮，自然有<span class="math inline">\(|S_k\cap \mathcal{U}_k| = |\mathcal{U}_k|\)</span>，因此便有 <span class="math display">\[
+w(S_k) \le w(\mathrm{OPT})
+\]</span> 和之前的式子相加： <span class="math display">\[
+\begin{aligned}
+    \sum_{i=1}^{k-1}w(S_i) + w(S_k) &amp;\le \ln n\cdot w(\mathrm{OPT}) + w(\mathrm{OPT})\\
+    \sum_{i=1}^{k}w(S_i) &amp;\le (\ln n +1)w(\mathrm{OPT})  \\
+    \sum_{i=1}^{k}w(S_i) &amp;\le \mathcal O(\log n) w(\mathrm{OPT})
+\end{aligned}
+\]</span> 证毕。</p>
+<p>其实，如果我们不知道如何给<span class="math inline">\(w(S_k)\)</span>定界也没有关系。参考<span class="math inline">\(k\)</span>中心问题时我们使用的技巧，我们<strong>可以枚举尝试<span class="math inline">\(\mathrm{OPT}\)</span>当中权值最大的集合</strong>。</p>
+<p>显然如果我们知道<span class="math inline">\(\mathrm{OPT}\)</span>当中权值最大的集合是什么，我们就会把权值大于这个集合的其他集合全部丢掉。这个时候我们算法的<span class="math inline">\(w(S_k)\)</span>自然就不大于<span class="math inline">\(w(\mathrm{OPT})\)</span>了。</p>
+<p>但是我们怎么知道我们猜的对不对呢？对不对不重要，重要的是因为我们尝试了每一个集合，我们至少会猜对一次——而对于猜对的那一次，我们的分析全部成立，我们的代价一定是不大于<span class="math inline">\(\mathcal O(\log n) w(\mathrm{OPT})\)</span>的。因此，如果<strong>我们最后取所有尝试的最小值作为我们的解</strong>，我们的最终代价一定也是不大于<span class="math inline">\(\mathcal O(\log n) w(\mathrm{OPT})\)</span>（虽然最终代价未必是猜对的那一次的代价），我们的算法依然有效，而时间复杂度不过是多了一个<span class="math inline">\(n\)</span>而已。</p>
+<p>这个技巧是很有意思的：如果可能性是多项式种，那么在只关注是否是多项式时间的近似算法当中，枚举一遍不失为一种好的思路。</p>
+<h2 id="另外一种分析方法">另外一种分析方法</h2>
+<p>令<span class="math inline">\(e_1,e_2,e_3,\cdots,e_n\)</span>表示第<span class="math inline">\(1,2,3,\cdots,n\)</span>个被覆盖的元素（我们一次选的集合很可能一次性覆盖好几个元素，在这种情况下这些元素的排列可以任意）。我们接下来<strong>把集合的权重分摊到元素上</strong>，对于被集合<span class="math inline">\(S_y\)</span>覆盖的元素<span class="math inline">\(e_i\)</span>，定义其代价为 <span class="math display">\[
+\operatorname{price}(e_i) = \frac{w(S_y)}{|S_y \cap \mathcal{U}_y|}
+\]</span> 很显然，因为覆盖到<span class="math inline">\(e_i\)</span>的时候<span class="math inline">\(e_i\)</span>后面的元素一定没有覆盖到，因此<span class="math inline">\(|S_y \cap \mathcal{U}_y| \ge n-i+1\)</span>。因此 <span class="math display">\[
+\operatorname{price}(e_i) \le \frac{w(S_y)}{n-i+1}
+\]</span> 又由之前的引理以及<span class="math inline">\(|S_y \cap \mathcal U_y| \le |\mathcal U_y|\)</span>，可得<span class="math inline">\(w(S_y) \le w(\mathrm{OPT})\)</span>，因此 <span class="math display">\[
+\operatorname{price}(e_i) \le \frac{w(\mathrm{OPT})}{n-i+1}
+\]</span> 而我们的覆盖集的总代价为 <span class="math display">\[
+\begin{aligned}
+    \sum_{i=1}^n w(S_i) &amp;= \sum_{i=1}^n \operatorname{price}(e_i) \\
+        &amp;\le  \sum_{i=1}^n \frac{w(\mathrm{OPT})}{n-i+1} \\
+        &amp;= w(\mathrm{OPT})\sum_{i=1}^n \frac{1}{n-i+1} \\
+        &amp;= w(\mathrm{OPT})\sum_{i=1}^n  \frac{1}{i} \\
+        &amp;= w(\mathrm{OPT}) H_n \\
+        &amp;=  O(\log n) w(\mathrm{OPT})
+\end{aligned}
+\]</span></p>
+<h2 id="跑满上界的输入样例-1">跑满上界的输入样例</h2>
+<p>有一个大集合，包含所有元素，权值为<span class="math inline">\(1+\varepsilon\)</span>。</p>
+<p>还有<span class="math inline">\(n\)</span>个只包含一个元素的小集合，权值为<span class="math inline">\(\frac{1}{n}, \frac{1}{n-1}, \frac{1}{n-2},\cdots\)</span>。</p>
+<p>对于这个输入，我们的贪心算法会把所有小集合选掉，总权重为<span class="math inline">\(H_n = \mathcal{O}(\log n )\)</span>。而最优解为那个大集合，总权重为<span class="math inline">\(1+\varepsilon\)</span>，二者差<span class="math inline">\(\mathcal{O}(\log n )\)</span>倍，和我们的分析一致，这也说明如果算法不变，我们没办法单纯通过分析得出更好的结果了。</p>
+<p>其实集合覆盖问题可以证明hardness就是<span class="math inline">\(\mathcal{O}(\log n )\)</span>的，只是这个证明不简单，上课的时候只是顺带提了一下。</p>
 
       
     </div>
@@ -1937,7 +430,7 @@ int main() &#123;
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/Projection%20and%20Least%20Square/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/04/PACT0702/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -1950,7 +443,7 @@ int main() &#123;
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/Projection%20and%20Least%20Square/" class="post-title-link" itemprop="url">投影、最小二乘拟合与QR分解笔记</a>
+          <a href="/2020/07/04/PACT0702/" class="post-title-link" itemprop="url">PACT 07/02 TSP问题</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1961,15 +454,8 @@ int main() &#123;
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
+      <time title="创建时间：2020-07-04 03:30:38" itemprop="dateCreated datePublished" datetime="2020-07-04T03:30:38-04:00">2020-07-04</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-29 21:01:42" itemprop="dateModified" datetime="2021-04-29T21:01:42-04:00">2021-04-29</time>
-      </span>
 
   
 </div>
@@ -1981,155 +467,67 @@ int main() &#123;
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="投影">投影</h1>
-<p>高中的时候就学过，向量<span class="math inline">\(\boldsymbol b\)</span>在<span class="math inline">\(\boldsymbol a\)</span>上的投影为 <span class="math display">\[
-\boldsymbol p = \frac{\boldsymbol a^{\mathrm T}\boldsymbol b}{\boldsymbol a^{\mathrm T}\boldsymbol a} \cdot \boldsymbol a
-\]</span> 当时推导主要利用了点积的几何意义$a b = |a||b|$。在代数意义上上式是怎么推导的呢？</p>
-<p>其实也不难：注意到<span class="math inline">\(\boldsymbol b\)</span>和其投影<span class="math inline">\(\boldsymbol p\)</span>的差一定是垂直于基向量<span class="math inline">\(\boldsymbol a\)</span>的。因为<span class="math inline">\(\boldsymbol p\)</span>与<span class="math inline">\(\boldsymbol a\)</span>平行，设<span class="math inline">\(\boldsymbol p = x\boldsymbol a\)</span> <span class="math display">\[
-\begin{aligned}
-    \boldsymbol a^{\mathrm T}\left(\boldsymbol b - x\boldsymbol a\right) &amp;= 0 \\
-    \Rightarrow \boldsymbol a^{\mathrm T}x\boldsymbol a &amp;= \boldsymbol a^{\mathrm T}\boldsymbol b \\
-    \Rightarrow x\boldsymbol a^{\mathrm T}\boldsymbol a &amp;= \boldsymbol a^{\mathrm T}\boldsymbol b \\
-    \Rightarrow x &amp;= \frac{\boldsymbol a^{\mathrm T}\boldsymbol b}{\boldsymbol a^{\mathrm T}\boldsymbol a}
-\end{aligned}
-\]</span> 我们就得到了一开始的结论。如果把<span class="math inline">\(\boldsymbol a\)</span>写到左边（因为是向量的实数积所以可以交换） <span class="math display">\[
-p = \boldsymbol a\cdot \frac{\boldsymbol a^{\mathrm T}\boldsymbol b}{\boldsymbol a^{\mathrm T}\boldsymbol a} = \frac{\boldsymbol a\boldsymbol a^{\mathrm T}}{\boldsymbol a^{\mathrm T}\boldsymbol a}\boldsymbol b
-\]</span> 我们这下看清楚了：将<span class="math inline">\(\boldsymbol b\)</span>转变为其在<span class="math inline">\(\boldsymbol a\)</span>上的投影的是一个矩阵！这个矩阵<span class="math inline">\(P = \frac{\boldsymbol a\boldsymbol a^{\mathrm T}}{\boldsymbol a^{\mathrm T}\boldsymbol a}\)</span>被称为<strong>投影矩阵</strong>。</p>
-<p>代数推导和投影矩阵有啥用？它们可以让我们把投影从投影到一个向量推广到投影到向量空间。</p>
-<p>考虑如何把一个向量<span class="math inline">\(\boldsymbol b\)</span>投影到矩阵<span class="math inline">\(A = \begin{bmatrix} \boldsymbol {a_1} &amp;\boldsymbol {a_2} &amp;\cdots &amp;\boldsymbol {a_n}\end{bmatrix}\)</span>的列空间上（假设<span class="math inline">\(A\)</span>的列向量线性无关）。我们一样考虑<span class="math inline">\(\boldsymbol b\)</span>与<span class="math inline">\(\boldsymbol p\)</span>的差，其一定垂直于<span class="math inline">\(C(A)\)</span>，自然也垂直于<span class="math inline">\(\boldsymbol {a_1} \cdots \boldsymbol {a_n}\)</span>，于是就有： <span class="math display">\[
-\boldsymbol {a_k} ^{\mathrm T}\left(\boldsymbol b - \boldsymbol p\right) = 0, \quad k = 1,2,\cdots,n
-\]</span> 或者写在一起： <span class="math display">\[
-\begin{bmatrix}
-    \boldsymbol {a_1}^{\mathrm T} \\
-    \boldsymbol {a_2}^{\mathrm T} \\
-    \vdots \\
-    \boldsymbol {a_n}^{\mathrm T} \\
-\end{bmatrix}
-\left(\boldsymbol b  - \boldsymbol p\right) = \boldsymbol 0 \Rightarrow 
-A^{\mathrm T} \left(\boldsymbol b  - \boldsymbol p\right) = \boldsymbol 0
-\]</span> 因为<span class="math inline">\(\boldsymbol p \in C(A)\)</span>，所以<span class="math inline">\(\boldsymbol p\)</span>是<span class="math inline">\(A\)</span>列向量的线性组合，可以写作<span class="math inline">\(\boldsymbol p = A\boldsymbol x\)</span>。于是我们就得到了方程 <span class="math display">\[
-A^{\mathrm T} \left(\boldsymbol b  - A\boldsymbol x\right) = \boldsymbol 0 \Rightarrow A^{\mathrm T}A\boldsymbol x = A^{\mathrm T}\boldsymbol b
-\]</span> 因为<span class="math inline">\(A\)</span>的列是线性无关的，所以<span class="math inline">\(A^{\mathrm T}A\)</span>是可逆的（这个我们待会证明），于是我们可以解得 <span class="math display">\[
-\boldsymbol x = \left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\boldsymbol b
-\]</span> 即 <span class="math display">\[
-\boldsymbol p = A\left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\boldsymbol b
-\]</span> 此时我们很清楚地看到，投影矩阵是<span class="math inline">\(P = A\left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\)</span>。</p>
-<hr />
-<p>我们接下来证明之前我们用到的一个结论：<strong><span class="math inline">\(A^{\mathrm T}A\)</span>可逆的充分必要条件是<span class="math inline">\(A\)</span>的列向量线性无关</strong>。</p>
-<p>我们发现这个结论等价于：<span class="math inline">\(A^{\mathrm T}A\)</span>和<span class="math inline">\(A\)</span>有相同的零空间。</p>
-<p>怎么证明？一个方向是简单的： <span class="math display">\[
-A\boldsymbol x = \boldsymbol 0 \Rightarrow A^{\mathrm T}\left(A\boldsymbol x\right) = \boldsymbol 0 \Rightarrow A^{\mathrm T} A\boldsymbol x = \boldsymbol 0
-\]</span> 反方向的证明需要一些技巧： <span class="math display">\[
-A^{\mathrm T} A\boldsymbol x = \boldsymbol 0 \Rightarrow \boldsymbol x^{\mathrm T} A^{\mathrm T} A\boldsymbol x = 0 \Rightarrow \left(A\boldsymbol x\right)^{\mathrm T}A\boldsymbol x = 0 \Rightarrow A\boldsymbol x = \boldsymbol 0
-\]</span> 倒数第二步写得有点花里胡哨其实就是向量自己和自己的点积，如果是零的话显然原向量就是零。</p>
-<p>证毕。</p>
-<h1 id="最小二乘拟合">最小二乘拟合</h1>
-<p>投影和最小二乘拟合是怎么联系起来的呢？</p>
-<p>线性拟合的本质是用给定的若干列向量的线性组合表示另一个向量。</p>
-<p>比如我有一组数据<span class="math inline">\(\boldsymbol x,\boldsymbol y\)</span>，我的模型是<span class="math inline">\(y = a + bx\)</span>，拟合的过程就是用向量<span class="math inline">\(\boldsymbol 1\)</span>和<span class="math inline">\(\boldsymbol x\)</span>的线性组合表示<span class="math inline">\(\boldsymbol y\)</span>的过程： <span class="math display">\[
-\begin{bmatrix}
-    1 &amp;x_1 \\
-    1 &amp;x_2  \\
-    \vdots &amp;\vdots\\
-    1 &amp;x_n 
-\end{bmatrix}
-\begin{bmatrix}
-    a \\
-    b
-\end{bmatrix} \stackrel{?}{=} 
-\begin{bmatrix}
-    y_1 \\
-    y_2 \\
-    \vdots \\
-    y_n 
-\end{bmatrix}
-\]</span> “线性拟合”的线性指的是这种组合的线性，和模型本身的线性是没有关系的。模型里面有二次项不要紧，只要二次项和其他项是线性组合的，那也不过是在左边的矩阵里多了一个列向量而已： <span class="math display">\[
-\begin{bmatrix}
-    1 &amp;x_1 &amp;x_1^2 \\
-    1 &amp;x_2 &amp;x_2^2 \\
-    \vdots &amp;\vdots &amp;\vdots \\
-    1 &amp;x_n &amp;x_n^2
-\end{bmatrix}
-\begin{bmatrix}
-    a \\
-    b \\
-    c
-\end{bmatrix} \stackrel{?}{=} 
-\begin{bmatrix}
-    y_1 \\
-    y_2 \\
-    \vdots \\
-    y_n 
-\end{bmatrix}
-\]</span> 那么我们发现线性拟合的本质其实就是解一个形如<span class="math inline">\(A\boldsymbol x = \boldsymbol b\)</span>的方程组（这里的<span class="math inline">\(\boldsymbol x\)</span>表示模型中各项的系数，和上面表示自变量的<span class="math inline">\(\boldsymbol x\)</span>没有关系），这个我们老熟悉了。</p>
-<p>但是事情不太妙的就是<span class="math inline">\(A\)</span>又高又瘦，方程组比未知数多，所以几乎肯定不存在准确解。</p>
-<p>什么时候存在准确解？<span class="math inline">\(\boldsymbol b\)</span>要在<span class="math inline">\(A\)</span>的列空间<span class="math inline">\(C(A)\)</span>里。</p>
-<p>所以如果只能求近似解，我们可以考虑把<span class="math inline">\(\boldsymbol b\)</span>“近似到”<span class="math inline">\(C(A)\)</span>中的一个最近的向量，然后就能求解了。</p>
-<p>这个“近似”的过程其实就是投影。在<span class="math inline">\(C(A)\)</span>中<span class="math inline">\(\boldsymbol b\)</span>的投影肯定最接近<span class="math inline">\(\boldsymbol b\)</span>，因为只有二者的差是和<span class="math inline">\(C(A)\)</span>垂直的，这很符合我们的代数直觉。</p>
-<p>所以联系之前的投影的推导，假设这个投影向量是<span class="math inline">\(A\boldsymbol{\hat{x}}\)</span>，我们直接写出方程和解： <span class="math display">\[
-A^{\mathrm T} \left(\boldsymbol b  - A\boldsymbol{\hat{x}} \right) = \boldsymbol 0 \Rightarrow \boldsymbol{\hat{x}} = \left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\boldsymbol b
-\]</span> 这就叫“最小二乘拟合”。</p>
-<hr />
-<p>如果非要较真，从微积分的角度理解一波也是可以的：定义拟合的误差函数为 <span class="math display">\[
-L= \left|\boldsymbol b - A\boldsymbol{\hat x}\right| = \sum_{i = 1}^n \left(\boldsymbol b_i - \left(A\boldsymbol{\hat x}\right)_i\right)^2
-\]</span> 如果要最小化<span class="math inline">\(L\)</span>，那么<span class="math inline">\(L\)</span>关于<span class="math inline">\(\boldsymbol{\hat x}\)</span>的所有分量的导数都为<span class="math inline">\(0\)</span>： <span class="math display">\[
-\frac{\mathrm d L}{\mathrm d\boldsymbol{\hat x}_k} = 2\sum_{i = 1}^n A_{i, k} \left(\left(A\boldsymbol{\hat x}\right)_i - \boldsymbol b_i\right) =  0, \quad \forall k = 1, 2, \cdots, n
-\]</span> 令<span class="math inline">\(A\)</span>第<span class="math inline">\(i\)</span>列的列向量为<span class="math inline">\(\boldsymbol a_i\)</span>，那么上面也可以写成 <span class="math display">\[
-\frac{\mathrm d L}{\mathrm d\boldsymbol{\hat x}_k} = 2\boldsymbol a_k^{\mathrm T} \left(A\boldsymbol{\hat x} - \boldsymbol b\right) =  0, \quad \forall k = 1, 2, \cdots, n
-\]</span> 并在一起得 <span class="math display">\[
-2A^{\mathrm T}\left(A\boldsymbol{\hat x} - \boldsymbol b\right) =  0
-\]</span> 这就是上面我们通过投影推出的方程。</p>
-<p><span class="math inline">\(L\)</span>中的平方项也是最小二乘中“二”的由来。</p>
-<h1 id="矩阵的gram-schmidt正交化">矩阵的Gram-Schmidt正交化</h1>
-<p>我们发现无论是投影还是最小二乘拟合，计算<span class="math inline">\(A^{\mathrm T}A\)</span>和它的逆都是绕不过去的一步。<span class="math inline">\(A^{\mathrm T}A\)</span>本身就有一些特殊的性质，比如说其一定是正方阵，一定是对称的（通过转置等于自身易证）。但是这些性质在计算的时候帮助不大。如果我们能够优化<span class="math inline">\(A\)</span>的形态从而简化<span class="math inline">\(A^{\mathrm T}A\)</span>和它的逆的计算，那么各种算法的效率都会高上不少。</p>
-<p>注意到<span class="math inline">\(A^{\mathrm T}A\)</span>中的每一个位置都是<span class="math inline">\(A\)</span>两个列向量的点积。<strong>如果<span class="math inline">\(A\)</span>当中的列向量是两两正交的，那么<span class="math inline">\(A^{\mathrm T}A\)</span>就变成了一个对角阵。对角阵的逆不要太好算！更进一步，如果<span class="math inline">\(A\)</span>的每一个列向量都是单位向量，那么<span class="math inline">\(A^{\mathrm T}A\)</span>就是单位阵，连逆都不用求了</strong>！</p>
-<p>所以说啊，正交是个好东西。那对于一个矩阵<span class="math inline">\(A\)</span>，通过什么样的方式将其列向量完成正交化呢？</p>
-<p>比较简单的一个算法称为Gram-Schmidt正交化。设<span class="math inline">\(A\)</span>的列向量为<span class="math inline">\(\boldsymbol {a_1},\cdots, \boldsymbol{a_n}\)</span>，则向量正交化之后的结果<span class="math inline">\(\boldsymbol{q_i}\)</span>可以这么计算： <span class="math display">\[
-\boldsymbol{q_i} = \boldsymbol{a_i} - \sum_{j = 1}^{i - 1} \frac{\boldsymbol{q_j}^{\mathrm T}\boldsymbol{a_i}}{\boldsymbol{q_j}^{\mathrm T}\boldsymbol{q_j}} \boldsymbol{q_j}
-\]</span> 即对于第<span class="math inline">\(i\)</span>个列向量通过减去其在所有之前的（完成正交化的）向量上的投影来确保其和前面的向量都正交。</p>
-<p>最后，把所有的<span class="math inline">\(\boldsymbol{q_i}\)</span>除以其模完成归一化，我们就可以得到一个标准正交列向量组成的矩阵<span class="math inline">\(Q\)</span>，满足<span class="math inline">\(Q^{\mathrm T}Q = I\)</span>。（线性代数中常使用<span class="math inline">\(Q\)</span>表示列向量标准正交的矩阵）</p>
-<p>从<span class="math inline">\(A\)</span>变到<span class="math inline">\(Q\)</span>的过程没有改变列空间，所以不会改变投影矩阵，但计算投影矩阵的开销大大降低了： <span class="math display">\[
-P = Q\left(Q^{\mathrm T}Q\right)^{-1}Q^{\mathrm T} = QQ^{\mathrm T}
-\]</span></p>
-<h1 id="qr分解">QR分解</h1>
-<p>Gram-Schmidt正交化的过程可以看作是在原矩阵上进行列变换，而列变换是可以用矩阵表示的。类比从高斯消元导出LU分解的思路，我们可以从Gram-Schimidt正交化导出一个矩阵的QR分解： <span class="math display">\[
-A = QR
-\]</span> 我们有<span class="math inline">\(A\)</span>，可以通过Gram-Schmidt正交化算出<span class="math inline">\(Q\)</span>，但<span class="math inline">\(R\)</span>怎么计算呢？因为<span class="math inline">\(Q^{\mathrm T}Q=I\)</span>，所以只要在等式两边同时乘以<span class="math inline">\(Q^{\mathrm T}\)</span>，就得到<span class="math inline">\(R=Q^{\mathrm T}A\)</span>。或者用<span class="math inline">\(Q\)</span>和<span class="math inline">\(A\)</span>的列向量表示： <span class="math display">\[
-R = \begin{bmatrix}
-    \boldsymbol{q_1}^{\mathrm T} \\
-    \boldsymbol{q_2}^{\mathrm T} \\
-    \vdots \\
-    \boldsymbol{q_n}^{\mathrm T}
-\end{bmatrix}
-\begin{bmatrix}
-    \boldsymbol{a_1} &amp;\boldsymbol{a_2} &amp;\cdots &amp;\boldsymbol{a_n}
-\end{bmatrix}
-= \begin{bmatrix}
-    \boldsymbol{q_1}^{\mathrm T}\boldsymbol{a_1} &amp;\boldsymbol{q_1}^{\mathrm T}\boldsymbol{a_2} &amp;\cdots &amp;\boldsymbol{q_1}^{\mathrm T}\boldsymbol{a_n} \\
-    \boldsymbol{q_2}^{\mathrm T}\boldsymbol{a_1} &amp;\boldsymbol{q_2}^{\mathrm T}\boldsymbol{a_2} &amp;\cdots &amp;\boldsymbol{q_2}^{\mathrm T}\boldsymbol{a_n} \\
-    \vdots &amp;\vdots &amp;\ddots &amp;\vdots \\
-    \boldsymbol{q_n}^{\mathrm T}\boldsymbol{a_1} &amp;\boldsymbol{q_n}^{\mathrm T}\boldsymbol{a_2} &amp;\cdots &amp;\boldsymbol{q_n}^{\mathrm T}\boldsymbol{a_n}
-\end{bmatrix}
-\]</span> 注意到，因为<span class="math inline">\(\boldsymbol{q_i}\)</span>正交于所有<span class="math inline">\(\boldsymbol {q_j}(i &lt; j)\)</span>，而<span class="math inline">\(\boldsymbol{a_j}\)</span>又是由<span class="math inline">\(\boldsymbol{q_1},\cdots,\boldsymbol{q_j}\)</span>表示的，所以<span class="math inline">\(i &gt; j\)</span>时，<span class="math inline">\(\boldsymbol{q_i}^{\mathrm T}\boldsymbol{a_j} = 0\)</span>。所以<span class="math inline">\(R\)</span><strong>其实是一个上三角阵</strong>： <span class="math display">\[
-R = \begin{bmatrix}
-    \boldsymbol{q_1}^{\mathrm T}\boldsymbol{a_1} &amp;\boldsymbol{q_1}^{\mathrm T}\boldsymbol{a_2} &amp;\cdots &amp;\boldsymbol{q_1}^{\mathrm T}\boldsymbol{a_n} \\
-    0 &amp;\boldsymbol{q_2}^{\mathrm T}\boldsymbol{a_2} &amp;\cdots &amp;\boldsymbol{q_2}^{\mathrm T}\boldsymbol{a_n} \\
-    \vdots &amp;\vdots &amp;\ddots &amp;\vdots \\
-    0 &amp;0 &amp;\cdots &amp;\boldsymbol{q_n}^{\mathrm T}\boldsymbol{a_n}
-\end{bmatrix}
-\]</span> 再观察<span class="math inline">\(R\)</span>的各个非零位置的值以及Gram-Schimidt的公式，其实<span class="math inline">\(R\)</span>是可以在计算Gram-Schmidt正交化的时候顺便算出来的。</p>
-<p>QR分解有什么用呢？之前我们说正交化不改变投影矩阵，原因是“正交化不改变列空间”，QR分解能让我们在代数上证明这一点： <span class="math display">\[
-\begin{aligned}
-    P &amp;= A\left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T} \\
-    &amp;= QR\left(R^{\mathrm T}Q^{\mathrm T}QR\right)^{-1}R^{\mathrm T}Q^{\mathrm T} \\
-    &amp;= QR\left(R^{\mathrm T}R\right)^{-1}R^{\mathrm T}Q^{\mathrm T} \\
-    &amp;= QRR^{-1}\left(R^{\mathrm T}\right)^{-1}R^{\mathrm T}Q^{\mathrm T} \\
-    &amp;= QQ^{\mathrm T}
-\end{aligned}
-\]</span> 注：因为<span class="math inline">\(R\)</span>是一个方阵，所以我们这里能够把<span class="math inline">\(\left(R^{\mathrm T}R\right)^{-1}\)</span>改写成<span class="math inline">\(R^{-1}(R^{\mathrm T})^{-1}\)</span>。<span class="math inline">\(\left(A^{\mathrm T}A\right)^{-1}\)</span>是不能这么转换的，因为长方阵不存在常规意义上的逆。</p>
-<p>类似地，QR分解还简化了最小二乘拟合的计算： <span class="math display">\[
-\boldsymbol{\hat{x}} = \left(A^{\mathrm T}A\right)^{-1}A^{\mathrm T}\boldsymbol b = R^{-1}Q^{\mathrm T}\boldsymbol b
-\]</span></p>
+          <h1 id="定义">定义</h1>
+<p><strong>输入：</strong>完全图<span class="math inline">\(G=(V,E)\)</span>，边带正权，满足三角不等式。</p>
+<p><strong>目标：</strong>构造一个周游所有顶点的最小权回路。</p>
+<h1 id="下界估计">下界估计</h1>
+<p><span class="math inline">\(\mathrm{OPT}\)</span>的下界是什么？</p>
+<blockquote>
+<p>Hasit: <span class="math inline">\(\mathrm{OPT} \ge n\cdot\min_{e \in E}\{w_e\}\)</span></p>
+</blockquote>
+<p>这确实是一个下界，但是太松了一点？</p>
+<blockquote>
+<p>Andrew T: <span class="math inline">\(\mathrm{OPT} \ge\)</span>边权最小的<span class="math inline">\(n\)</span>条边</p>
+</blockquote>
+<p>好一点了，但是还不够！</p>
+<blockquote>
+<p>我: <span class="math inline">\(\mathrm{OPT}\ge\)</span>每个顶点相邻的最小边权</p>
+</blockquote>
+<p>似乎还不够？</p>
+<blockquote>
+<p>Mona: <span class="math inline">\(\mathrm{OPT}\ge\)</span><strong>最小生成树边权和</strong></p>
+</blockquote>
+<p>没错！证明这个并不难，回路首先是一个连通子图，而连通子图中边数最小的当属生成树，而生成树边权和最小的是最小生成树，因此最小生成树的边权和是一张图中所有连通子图边权和的下界。</p>
+<h1 id="基础近似算法以及分析">基础近似算法以及分析</h1>
+<p>这启发我们先去构造<span class="math inline">\(G\)</span>的最小生成树：</p>
+<p><img src="/2020/07/04/PACT0702/TSP1.svg" class=""></p>
+<p>如何在其基础上构造回路呢？</p>
+<p>我们不妨给每一条边复制一份：</p>
+<p><img src="/2020/07/04/PACT0702/TSP2.svg" class=""></p>
+<p>让后我们走一次DFS，下来的时候走黑边，上去的时候走绿边，整个回路的边权就是最小生成树边权的两倍。</p>
+<p>但是这样的话很多点我们重复走了，因此实际走的时候如果接下来的几个点已经走过了我们就直接跳过，如图，数字表示访问顺序：</p>
+<p><img src="/2020/07/04/PACT0702/TSP3.svg" class=""></p>
+<p>（不难发现，节点的访问顺序就是DFS序）</p>
+<p>由于三角不等式的存在，这个回路的边权一定小于最小生成树边权的两倍。</p>
+<p>由于<span class="math inline">\(\mathrm{OPT}\ge\)</span>最小生成树边权，因此这个算法至少是一个<span class="math inline">\(2\)</span>倍近似算法。</p>
+<h1 id="christofides算法">Christofides算法</h1>
+<p>我们为什么要把最小生成树上的每一条边复制一下？我们的目的其实是<strong>让最小生成树变为一张欧拉图</strong>。有了欧拉图之后就可以求出欧拉回路，有了欧拉回路之后就可以通过跳过重复点抄近道（shortcutting）的方式得到哈密尔顿回路，也就是我们近似算法的解。</p>
+<p>由此可见，一开始的欧拉图很重要。最小生成树之所以不是欧拉图，是因为里面可能会有奇度数的点，那么只要<strong>把奇度数的点变成偶度数不就行了嘛！</strong>我们之前把每条边都复制一下那无论度数奇偶都变成偶度数了，未免太粗暴了一点。</p>
+<p>如何把奇度数变成偶度数呢？首先很显然奇度数的点只有偶数个（度数之和必须是偶数），因此我们想到可以把这些奇度数的点两两配对——或者用更专业的术语来讲，<strong>在这些奇度数点的导出子图上计算一个最小权完美匹配</strong>。我们知道一个偶数点图的最小权完美匹配是可以通过带花树算法（Blossom algorithm）在多项式时间内求出的，所以这个思路没有问题。</p>
+<p><img src="/2020/07/04/PACT0702/TSP4.svg" class=""></p>
+<p>现在我们有了一张欧拉图，只要求出欧拉回路然后在上面抄近道我们就得到了一条周游路线了。</p>
+<p>这个算法被称为Christofides算法。</p>
+<h1 id="christofides算法分析">Christofides算法分析</h1>
+<p>如何分析这个最小权匹配的代价呢？</p>
+<p>我们不妨考虑最优周游路线，以及在这条路线上的最小生成树的奇度数点：</p>
+<p><img src="/2020/07/04/PACT0702/TSP6.svg" class=""></p>
+<p>如果定义连接奇度数点的橘色环的代价是<span class="math inline">\(C\)</span>，显然由三角不等式有<span class="math inline">\(C\le \mathrm{OPT}\)</span>，而如果我们把这个环拆开，便会得到两个完美匹配：</p>
+<p><img src="/2020/07/04/PACT0702/TSP5.svg" class=""></p>
+<p>假设两个完美匹配的代价为<span class="math inline">\(C_1,C_2\)</span>，我们最小权匹配的代价为<span class="math inline">\(C^{\ast}\)</span>，显然有 <span class="math display">\[
+C=C_1+C_2\ge C^{\ast} + C^{\ast} = 2C^{\ast}
+\]</span> 因此可得 <span class="math display">\[
+C^{\ast} \le \frac{1}{2}\mathrm{OPT}
+\]</span> 同时我们知道最小生成树的代价<span class="math inline">\(\le \mathrm{OPT}\)</span>，因此整张欧拉图的代价<span class="math inline">\(\le \frac{3}{2}\mathrm{OPT}\)</span>，而抄近路得到的最终回路的代价只会更小，因此这是一个<span class="math inline">\(\frac{3}{2}\)</span>倍近似算法。</p>
+<h1 id="令人绝望的一般tsp问题">令人绝望的一般TSP问题</h1>
+<p><strong>引理：</strong>对于没有三角不等式的一般TSP问题，除非<span class="math inline">\(\mathsf{P}=\mathsf{NP}\)</span>，不存在任何<span class="math inline">\(2\)</span>倍近似算法以及更优的近似。</p>
+<p><strong>证明：</strong>我们使用gap reduction来证明这一点。考虑哈密尔顿回路问题到TSP的规约。</p>
+<p><strong>哈密尔顿回路问题：</strong>给定图<span class="math inline">\(G=(V,E)\)</span>，问是否存在哈密尔顿回路？</p>
+<p><strong>一般TSP问题：</strong>给定边带权完全图<span class="math inline">\(G&#39;=(V&#39;,E&#39;)\)</span>，计算最小权回路。</p>
+<p>如何规约？对于<span class="math inline">\(G\)</span>中有的边，令其在<span class="math inline">\(G&#39;\)</span>中的权值为<span class="math inline">\(1\)</span>；对于<span class="math inline">\(G\)</span>中没有的边，令其在<span class="math inline">\(G&#39;\)</span>中的权值为<span class="math inline">\(n+2\)</span>。</p>
+<p>如此一来，如果<span class="math inline">\(G\)</span>存在哈密尔顿回路，则TSP解的代价为<span class="math inline">\(n\)</span>，反之则TSP的回路必定会至少用到一条<span class="math inline">\(G\)</span>中不存在的边，因此代价至少为<span class="math inline">\((n-1) + (n+2) = 2n+1\)</span>。</p>
+<p>假设有一个TSP的<span class="math inline">\(2\)</span>倍近似算法，那么如果<span class="math inline">\(G\)</span>存在哈密尔顿回路这个算法只能输出<span class="math inline">\(n\)</span>，因为<span class="math inline">\(n\)</span>到<span class="math inline">\(2n+1\)</span>中间有很大的gap，而如果<span class="math inline">\(G\)</span>不存在哈密尔顿回路，算法就会输出至少是<span class="math inline">\(2n+1\)</span>的代价——因此，我们可以使用这个算法在多项式时间内解决NPC的哈密尔顿回路问题！而如果<span class="math inline">\(\mathsf{P} \neq \mathsf{NP}\)</span>，这是不可能的，因此不存在这样的算法。</p>
+<p>绝望吧？</p>
+<p>更绝望的事情是因为没有三角不等式我们的边权可以设得任意大，不止是<span class="math inline">\(n+2\)</span>，还可以是<span class="math inline">\(3n+2\)</span>，<span class="math inline">\(kn+2\)</span>……我们可以用以上的论证在假定<span class="math inline">\(\mathsf{P} \neq \mathsf{NP}\)</span>的前提下否决任意近似比的近似算法——也就是这个问题根本无从近似。</p>
 
       
     </div>
@@ -2156,7 +554,7 @@ R = \begin{bmatrix}
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/PyMinecraft/">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/07/04/PACT0701/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.png">
@@ -2169,7 +567,7 @@ R = \begin{bmatrix}
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/PyMinecraft/" class="post-title-link" itemprop="url">用Python非侵入式自动化原版Minecraft</a>
+          <a href="/2020/07/04/PACT0701/" class="post-title-link" itemprop="url">PACT 07/01 任务调度问题</a>
         </h2>
 
         <div class="post-meta-container">
@@ -2180,15 +578,1169 @@ R = \begin{bmatrix}
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
+      <time title="创建时间：2020-07-04 03:23:26" itemprop="dateCreated datePublished" datetime="2020-07-04T03:23:26-04:00">2020-07-04</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-02-23 07:34:40" itemprop="dateModified" datetime="2020-02-23T07:34:40-05:00">2020-02-23</time>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="定义">定义</h1>
+<p><strong>输入：</strong><span class="math inline">\(n\)</span>个任务，第<span class="math inline">\(i\)</span>个任务的运行时间为<span class="math inline">\(p_i\)</span>，共有<span class="math inline">\(m\)</span>个相同的机器（一个任务在每台机器上运行时间都相同）。每台机器同一时间只能运行一个任务，每个任务只能在一台机器上运行（不能拆分）。</p>
+<p><strong>目标：</strong>合理地调度任务，使得完成所有任务的时间（makespan）最短。</p>
+<h1 id="下界估计">下界估计</h1>
+<p>自然而然地，我们首先思考<span class="math inline">\(\mathrm{OPT}\)</span>的下界。一个比较容易想到的下界是耗时最长的任务所需要的时间： <span class="math display">\[
+\mathrm{OPT} \ge \max_{i} \{p_i\}
+\]</span> 除此以外，考虑如果可以拆分任务，最短的运行时间是多少？自然是<span class="math inline">\(\frac{\sum_i p_i}{m}\)</span>，而这在现实中常常是做不到的，因此有： <span class="math display">\[
+\mathrm{OPT} \ge \frac{\sum_i p_i}{m}
+\]</span> 这两个下界对于之后的算法分析非常有用。</p>
+<h1 id="算法">算法</h1>
+<ol type="1">
+<li>将所有的任务随机排成一列。</li>
+<li>当一台机器完成了一个任务变得闲置了，马上把列表上的下一项任务安排到这个机器上去执行。</li>
+<li>重复步骤2直至所有任务都被执行完毕。</li>
+</ol>
+<p>这个算法是非常简单且自然的。</p>
+<h1 id="分析">分析</h1>
+<p>我们算法给出结果的什么？自然是最后一个结束的任务的结束时间。如果我们设最后一个结束的任务为任务<span class="math inline">\(l\)</span>，且这个任务开始于<span class="math inline">\(s_l\)</span>，那么就有： <span class="math display">\[
+\mathrm{Cost} = s_l+p_l
+\]</span> 接下来我们进行放缩。</p>
+<p>考虑<span class="math inline">\(s_l\)</span>的上界是什么？</p>
+<p><img src="/2020/07/04/PACT0701/SIPM1.svg" class=""></p>
+<p>很显然，<strong>在<span class="math inline">\(s_l\)</span>时刻，除了<span class="math inline">\(l\)</span>即将运行的那台机器，其他机器上必须有任务在运行或者刚刚空下来</strong>（如果有机器已经空了一阵子了，那当时<span class="math inline">\(l\)</span>就会被安排到那台机器上去跑），因此不难得出<span class="math inline">\(ms_l \le \sum_{i\neq l} p_i\)</span>，即 <span class="math display">\[
+s_l \le \frac{\sum_{i \neq l}p_i}{m}
+\]</span> 因此 <span class="math display">\[
+\begin{aligned}
+\mathrm{Cost} &amp;= s_l+p_l \\
+&amp; \le \frac{\sum_{i \neq l}p_i}{m} + p_l \\
+&amp;= \frac{\sum_{i}p_i}{m} + \left(1 - \frac{1}{m}\right) p_l \\
+&amp;\le \frac{\sum_{i}p_i}{m} + \left(1 - \frac{1}{m}\right)\max_{i}\{p_i\} \\
+&amp;\le \mathrm{OPT} + \left(1 - \frac{1}{m}\right)\mathrm{OPT} \\
+&amp;= \left(2 - \frac{1}{m}\right)\mathrm{OPT}
+\end{aligned}
+\]</span> 我们就证明了我们的算法是一个<span class="math inline">\(2\)</span>倍近似算法！</p>
+<h1 id="提升近似比">提升近似比</h1>
+<p>能不能在这个算法的基础上提升呢？我们注意到将<span class="math inline">\(\mathrm{OPT}\)</span>作为<span class="math inline">\(p_l\)</span>的上界其实还是太松了。如果我们能够缩短<span class="math inline">\(p_l\)</span>，那上界的估计有没有改善的空间呢？</p>
+<p>于是我们在原来算法的基础上不妨进行一个改进：与其在一开始将所有任务随机排列，不如<strong>将其按照运行时间从大到小的顺序进行排序</strong>。这也很符合直觉，一开始就把需要时间很长的任务跑完，之后肯定有些机器空着有些机器还在忙，这个时候就可以用完成时间比较短的小任务来灵活地填补这些空缺了。</p>
+<p>这一下让近似比提升了多少呢？</p>
+<p><strong>引理：</strong>加上排序之后的算法具有<span class="math inline">\(\frac{3}{2}\)</span>的近似比。</p>
+<p><strong>证明：</strong>我们不妨分类讨论，</p>
+<p><strong>情形1. </strong><span class="math inline">\(p_l \le \frac{1}{2}\mathrm{OPT}\)</span>，这个时候按照我们上文分析的路子走直接就可以得到<span class="math inline">\(\mathrm{Cost} \le \frac{3}{2}\mathrm{OPT}\)</span>，就做完了。</p>
+<p><strong>情形2. </strong><span class="math inline">\(p_l &gt; \frac{1}{2}\mathrm{OPT}\)</span>，此时所有<span class="math inline">\(l\)</span>之前的任务也肯定具有大于<span class="math inline">\(\frac{1}{2} \mathrm{OPT}\)</span>的运行时间。注意到<strong>我们不需要考虑<span class="math inline">\(p_l\)</span>之后的任务</strong>，因为依据定义<span class="math inline">\(l\)</span>是最后结束的，后面的任务对于我们的结果没有影响。那<span class="math inline">\(l\)</span>之前的任务在最优调度里面是怎么样的呢？反证法可以很快说明：<strong>在最优调度里面，每一台机器至多只能处理一件任务</strong>（忽略<span class="math inline">\(l\)</span>之后的任务）！也就是说事实上<span class="math inline">\(l\)</span>以及之前的任务数目加起来不会超过机器数<span class="math inline">\(m\)</span>，那再想一想在这种机器充足的情况下，我们的算法在分配这些任务的时候也是一个机器一个任务，<span class="math inline">\(p_l\)</span>必定是从一开始就执行的，因此<span class="math inline">\(\mathrm{Cost}=p_l\)</span>，而显然<span class="math inline">\(\mathrm{OPT} \ge p_l\)</span>，因此必有<span class="math inline">\(\mathrm{Cost} = \mathrm{OPT}\)</span>，结束。（事实上，由于<span class="math inline">\(l\)</span>还是最后结束的任务，不难想通在一机器一任务的情形下，<span class="math inline">\(l\)</span>之前的所有任务都一定和<span class="math inline">\(l\)</span>花费相同的时间，或<span class="math inline">\(l\)</span>就是我们算法分配的第一个任务。）</p>
+<p>综上所述，近似比是<span class="math inline">\(\frac{3}{2}\)</span>。</p>
+<h1 id="进一步提升近似比">进一步提升近似比</h1>
+<p>通过对于上述论证的些许修改，我们其实可以证明：</p>
+<p><strong>引理：</strong>加上排序之后的算法具有<span class="math inline">\(\frac{4}{3}\)</span>的近似比。</p>
+<p><strong>证明：</strong>我们故技重施：</p>
+<p><strong>情形1. </strong><span class="math inline">\(p_l \le \frac{1}{3}\mathrm{OPT}\)</span>，这个时候我们直接就可以得到<span class="math inline">\(\mathrm{Cost} \le \frac{4}{3}\mathrm{OPT}\)</span>。</p>
+<p><strong>情形2. </strong><span class="math inline">\(p_l &gt; \frac{1}{3}\mathrm{OPT}\)</span>，此时所有<span class="math inline">\(l\)</span>之前的任务也肯定具有大于<span class="math inline">\(\frac{1}{3} \mathrm{OPT}\)</span>的运行时间。我们同样不考虑<span class="math inline">\(l\)</span>之后的任务。可以通过反证证明：<strong>在最优调度里，每一台机器至多只能处理两件任务！</strong>因此，我们确定有足够的机器让我们的算法得以这样调度任务：</p>
+<p><img src="/2020/07/04/PACT0701/SIPM2.svg" class=""></p>
+<p>（看着是不是很像双指针？）</p>
+<p>具体来说，如果我们把机器按照第一个任务的耗时降序排序，那么它们第二个任务的耗时一定成升序排列。（这并不难证明：第一个任务耗时最短的机器一定能够先领到列表中最长的任务作为第二个任务，之后的机器领到的任务时间递减）</p>
+<p>（在这里我们假定<span class="math inline">\(l\)</span>一定是第二个任务，如果<span class="math inline">\(l\)</span>从头开始运行而且时间特别长的话，参考上一节的证明）</p>
+<p>而接下来我们证明这样的分配方式是最优的。</p>
+<p>我们采取反证的方法：不妨假设在最优方案中存在两个机器，两个机器上都有两个任务，耗时分别为<span class="math inline">\((a,b)\)</span>和<span class="math inline">\((c,d)\)</span>，且<span class="math inline">\(a&gt;c,b&gt;d\)</span>。那么我们把两个机器上的第二个任务互换，变成<span class="math inline">\((a,d)\)</span>和<span class="math inline">\((c,b)\)</span>，不难发现此时完成任务的最短时间会减少，和“最优”矛盾。因此，对于最优方案的任意两台机器<span class="math inline">\((a,b)\)</span>和<span class="math inline">\((c,d)\)</span>，如果<span class="math inline">\(a&gt;c\)</span>那么<span class="math inline">\(b&lt;d\)</span>：</p>
+<p><img src="/2020/07/04/PACT0701/SIPM3.svg" class=""></p>
+<p>这正是我们算法所给出的调度方案。因此<span class="math inline">\(\mathrm{OPT}\)</span>不会比我们算法的结果更好了。</p>
+<p>综上所述，近似比为<span class="math inline">\(\frac{4}{3}\)</span>。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/06/27/%E7%BB%84%E5%90%88%E6%B1%82%E5%92%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/06/27/%E7%BB%84%E5%90%88%E6%B1%82%E5%92%8C/" class="post-title-link" itemprop="url">论省选中有意思的一道组合题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
       </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-06-27 08:01:12" itemprop="dateCreated datePublished" datetime="2020-06-27T08:01:12-04:00">2020-06-27</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>省选结束了，本人作为划水3年的OIer宣告原地退役，唯一写出正解的是D1T2。我其实觉得这道题挺有意思的（虽然大佬们都说只是推式子而已……嘛，毕竟本来没期待自己能做出来），就写篇文章记一下自己的想法吧。</p>
+<h1 id="题意">题意</h1>
+<p>给定整数<span class="math inline">\(n, x, P\le 10^9\)</span>，以及一个<span class="math inline">\(m \le 1000\)</span>次整系数多项式<span class="math inline">\(f\)</span>，求 <span class="math display">\[
+\left[\sum_{k=0}^nf(k)x^k\binom{n}{k}\right]\bmod P
+\]</span></p>
+<h1 id="心路历程">心路历程</h1>
+<h2 id="先乱搞一波">先乱搞一波</h2>
+<p>看到这个题目的第一眼我觉得颇为眼熟。虽然没学过奥数，印象当中《具体数学》里面花了很大笔墨讲由这种指数，多项式以及二项式系数组合而成的和式的处理方法，似乎最后也讲到了机械求和法，然并卵，印象止步于印象，机械求合法太复杂了自己并没有记下来。</p>
+<p>但是自己的残存记忆告诉我机械求和法的第一步是把求和式化成超几何函数，虽然后者我更没办法但是本着有逼就要装的思想……为什么不试一试呢？</p>
+<p>什么样的级数是超几何的？《具体数学》里面给出的方法是求相邻项之比<del>幸好这个我还没有忘记</del>，而显而易见地是多项式求比是求不出具有良好形式的结果的，因此<strong>多项式必须转化为性质更优良的下降阶乘幂处理</strong>（关于下降阶乘幂我记得两年之前就写过一篇成套方法和有限微积分的博文，现在想来下降阶乘幂在离散求和问题当中真的有非常良好的性质，我在这里就沿用《具体数学》里的记号了：<span class="math inline">\(k^{\underline m} = \prod_{i=0}^m (k-i)\)</span>）： <span class="math display">\[
+\begin{aligned}
+\frac{(k+1)^{\underline{m}}x^{k+1}\binom{n}{k+1}}{k^{\underline{m}}x^k\binom{n}{k}} &amp;= \frac{(k+1)x(n-k)}{(k-m+1)(k+1)} \\
+&amp;= \frac{(n-k)x}{k-m+1}
+\end{aligned}
+\]</span> 不出所料，结果是一个有理函数，也就是说可以化成高斯超几何函数呢！</p>
+<p>不出所料，半瓶水的某人也就知道这些了（悲）。</p>
+<p>但是<strong>下降阶乘幂的思想是可以有的嘛</strong>！</p>
+<h2 id="部分分摸鱼">部分分摸鱼</h2>
+<p>在乱搞如预想的那般失败之后我就开始看部分分。</p>
+<p>部分分里面有一个<span class="math inline">\(f\)</span>是常数的，愣了一会发现能用二项式定理，答案是<span class="math inline">\((1+x)^n\)</span>。</p>
+<p>然后还有一个<span class="math inline">\(x=1\)</span>的。这个要怎么解决？</p>
+<p>从最简单的一次多项式开始： <span class="math display">\[
+\sum_{k=0}^nk\binom{n}{k}=?
+\]</span> 推式子本人是不会的，结论也忘了，但是从组合意义上还是好想的：<strong><span class="math inline">\(k\binom{n}{k}\)</span>就是从<span class="math inline">\(n\)</span>个人里面选<span class="math inline">\(k\)</span>个人，然后钦定一个做队长的方案数，把它求和，就是从<span class="math inline">\(n\)</span>个人里面选若干人，然后从当中钦定一个队长的方案数。</strong>这是先选人再定队长的顺序，我们可以先选队长再选人嘛！从<span class="math inline">\(n\)</span>个人里面选一个队长有<span class="math inline">\(n\)</span>种方法，剩下的<span class="math inline">\((n-1)\)</span>个人要不要都行，所以是<span class="math inline">\(2^{n-1}\)</span>种，二者相乘： <span class="math display">\[
+\sum_{k=0}^nk\binom{n}{k}=n2^{n-1}
+\]</span> 就把一次的式子推出来了。</p>
+<p>那二次的式子呢？ <span class="math display">\[
+\sum_{k=0}^nk^2\binom{n}{k}=?
+\]</span> 如果沿用之前运用组合意义化简的思路，那<span class="math inline">\(k^2\)</span>就有“可以重复选”的含义在，是不好处理的。但是之前的乱搞告诉我们，是不是化成下降阶乘幂会好处理一点呢？ <span class="math display">\[
+\sum_{k=0}^nk(k-1)\binom{n}{k}=?
+\]</span> 答案是肯定的，思路和一次的完全一样，只是从“选队长”变成了“选队长和副队长“，因此很快就可以得出： <span class="math display">\[
+\sum_{k=0}^nk(k-1)\binom{n}{k}=n(n-1)2^{n-2}
+\]</span> 然后就可以很快地推广出去了： <span class="math display">\[
+\sum_{k=0}^nk^{\underline{m}}\binom{n}{k}=n^{\underline{m}}2^{n-m}
+\]</span> 这样几个部分分就基本拿到了。</p>
+<h2 id="把两者组合起来">把两者组合起来</h2>
+<p>那如果<span class="math inline">\(x\neq 1\)</span>且<span class="math inline">\(f\)</span>非常数要怎么做呢？我们不妨还是把<span class="math inline">\(f\)</span>想成下降阶乘幂（怎么拆另说）： <span class="math display">\[
+\sum_{k=0}^nk^{\underline{m}}x^k\binom{n}{k}=?
+\]</span> 然后思考其组合意义，稍开脑洞即可得到：</p>
+<p><strong><span class="math inline">\(k^{\underline{m}}x^k\binom{n}{k}\)</span>是从<span class="math inline">\(n\)</span>个人里面挑选<span class="math inline">\(k\)</span>个人，再给让当中<span class="math inline">\(m\)</span>人担任<span class="math inline">\(m\)</span>个不同职位，最后再让每个人从<span class="math inline">\(x\)</span>种颜色的帽子当中选一个戴上的方案数</strong>（不要问我怎么想到戴帽子的）。</p>
+<p>因此，由加法原理，对其求和之后就是从<span class="math inline">\(n\)</span>个人里面挑选<em>若干</em>个人，再给让当中<span class="math inline">\(m\)</span>人担任<span class="math inline">\(m\)</span>个不同职位，最后再让每个人从<span class="math inline">\(x\)</span>种颜色的帽子当中选一个戴上的方案数。</p>
+<p>那我们故技重施，调换顺序，不妨先从<span class="math inline">\(n\)</span>个人当中调出担任<span class="math inline">\(m\)</span>个职位的那<span class="math inline">\(m\)</span>个人（<span class="math inline">\(n^{\underline{m}}\)</span>种取法），再先让他们先选帽子（<span class="math inline">\(x^m\)</span>种选法），然后让剩下的<span class="math inline">\((n-m)\)</span>个人要不挑一个颜色的帽子进队要么滚蛋（<span class="math inline">\((1+x)^{n-m}\)</span>种取法）。于是就有了： <span class="math display">\[
+\sum_{k=0}^nk^{\underline{m}}x^k\binom{n}{k}=n^{\underline{m}}x^m(1+x)^{n-m}
+\]</span> 哇，式子就推出来了！</p>
+<h2 id="多项式拆分">多项式拆分</h2>
+<p>现在基于下降阶乘幂的式子已经推出来了，唯一剩下的就是把给定的<span class="math inline">\(f\)</span>拆成若干个下降阶乘幂的线性组合。 <span class="math display">\[
+\sum_{i=0}^ma_ik^i = \sum_{j=0}^m b_jk^{\underline{j}}
+\]</span> 即求<span class="math inline">\(b_j\)</span>的过程。</p>
+<p>显而易见地，我们需要从高次到低次拆，这样后拆出来的幂才不会对之前的结果造成影响。</p>
+<p>同时显然的是，我们需要知道下降阶乘幂展开后对应多项式的系数。</p>
+<p>现在回过来看，朴素的多项式乘法是完全可以胜任的。但是写多项式乘法毕竟比较繁琐，不如观察多项式系数的规律。</p>
+<p>令<span class="math inline">\(c[m, n]\)</span>表示下降阶乘幂<span class="math inline">\(x^{\underline m}\)</span>的展开式当中<span class="math inline">\(x^n\)</span>的系数。则由下降阶乘幂的定义： <span class="math display">\[
+x^{\underline m} = x^{\underline{m-1}}[x-(m-1)],\quad (m\ge 1)
+\]</span> 可以得出递推式： <span class="math display">\[
+c[m,n]=c[m-1,n-1]-(m-1)c[m-1,n]
+\]</span> 边界条件是<span class="math inline">\(c[0,0] = 1\)</span>以及<span class="math inline">\(c[m,0]=0\quad \forall m&gt;0\)</span>。这是一个类似杨辉三角的递推式，自然可以在<span class="math inline">\(\mathcal{O}\left(m^2\right)\)</span>的时间内算出来，代码也好写。</p>
+<p>至此，这道题目就完全解决了。</p>
+<p>其实不止如此，这个三角在考场上让我感到非常眼熟，回去查证了一下，果然<span class="math inline">\(c[m,n]\)</span>就是所谓的<strong>带符号的第一类斯特林数</strong>，“下降阶乘幂的展开系数”正是其重要的性质之一。</p>
+<h2 id="感想">感想</h2>
+<p>这道题对我的感触是比较深刻的，尤其是做出来之后，颇有一种成就感。</p>
+<p>细想来，我组合数学的公式其实几乎都没有背过，故而几乎所有的式子都是现场推出来的。而且推理的方式也不纯代数的暴算，而是通过combinatorial proof的方式。自从PACT学来这招之后我觉得这种方法实在是精妙。在最后自己还稀里糊涂地推演出了斯特林数的递推公式，或许这种高大上的组合数本身离我们就不遥远吧。</p>
+<p>而话又说回来，大佬们看我写的这篇文章，只怕有些不耐烦与乏味吧。那些认真学习过组合数学的选手，大概看到这道题只剩下满满的套路，毕竟斯特林数名声在外，falling factorial这个套路熟悉了也不难想到，而类似的组合式子大概课后的习题会有很多吧。看到诸多大佬将D1T2云淡风轻地说成“裸的推式子”，他们做这道题时的从容大概可见一斑。只有像自己这样偶尔翻翻《组合数学》和《具体数学》，半瓶水晃荡的，才会在考场上各种心情复杂，一惊一乍了。</p>
+<p>然而换一个角度，我觉得这道题对我来说真的不错，自己之前偶尔翻翻书也是。作为一道数学题，这道题并没有远远超出我的见识让我一筹莫展，也没有远远低于我的见识让我秒杀，恰是我稍微努力一下就能解决的。而这次考试正是给了日渐颓废，游手好闲的我一个“努力一下”的契机。就结果来看，解决这道题不仅给了我市选的信心，也给了我组合数学的信心，还让我在结题过程中观赏到了极佳的风景，似乎确实不赖。尤其是后者，若放在平时做题，随时可以查找资料，正确答案触手可及，那结论得出时大概也不会有考场上那么惊喜，那么愉悦了。</p>
+<h2 id="逆-转">逆 转</h2>
+<p>啊？出分了？！</p>
+<p>我考个250都能压线进队？！</p>
+<p>我可是根本就没认真复习啊，半年没碰OI了……</p>
+<p>唉，看来这次强行退役失败了，心情复杂……</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/04/17/IceBoat/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/04/17/IceBoat/" class="post-title-link" itemprop="url">从技术角度看Minecraft的高级冰船技术</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-04-17 10:43:44" itemprop="dateCreated datePublished" datetime="2020-04-17T10:43:44-04:00">2020-04-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="背景">背景</h1>
+<p>最近比较无聊，偶尔会和同学们一起在Minecraft的私服上玩一会，现在地狱交通已经初见雏形了，nether hub已经搭好了，然而地狱交通网络应该基于哪一种运输方式还没有确定。常见的快速运输方式有两种：piston bolt和冰船。</p>
+<p>很显然按照每天半个小时的游戏时间是不可能有精力做双向的piston bolt的，况且论最高速度冰船比piston bolt还是快上许多的，因此几乎毫无疑议地大家都选择了冰船。</p>
+<p>这篇文章是在代码角度对于高级冰船技术的分析。</p>
+<p>全文的代码均为使用官方mapping以及CFR编译器进行反编译所得（但愿这并不违反EULA）。</p>
+<h1 id="带方向校准的高端冰船">带方向校准的高端冰船</h1>
+<p>冰船系统一直为人所诟病，也是其不如piston bolt的一点是：它在运动中是需要玩家控制的。不仅要一直按着W，还要使用AD确保船头一直向前。这在直道冰船上还好，但在斜线冰船道上就非常非常麻烦。</p>
+<p>幸好，Rays Works在几个月前分享了<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=hiQTnwqrfEU">解决方案</a>。其方案的思想是：</p>
+<p>如果一开始船就放正，那么就只需要W而不需要左右调整了！</p>
+<p>那怎么把船放正呢？</p>
+<p>观察一下代码（<code>net/minecraft/world/item/BoatItem</code>）：</p>
+<pre class="line-numbers"><code class="language-java">@Override
+public InteractionResultHolder&lt;ItemStack&gt;use(Level level, Player player, InteractionHand interactionHand) &#123;
+    Object object;
+    ItemStack itemStack = player.getItemInHand(interactionHand);
+    HitResult hitResult = BoatItem.getPlayerPOVHitResult(level, player, ClipContext.Fluid.ANY);
+    ...
+    if (hitResult.getType() == HitResult.Type.BLOCK) &#123;
+        object = new Boat(level, hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z);
+        ((Boat) object).setType(this.type);
+        ((Boat) object).yRot = player.yRot; // !
+        ...
+        return InteractionResultHolder.success(itemStack);
+    &#125;
+    return InteractionResultHolder.pass(itemStack);
+&#125;</code></pre>
+<p><code>yRot</code>自然是Y-axis Rotation的意思，也就是说放下船的方向直接等于当时玩家的视角方向。</p>
+<p>因此如果一开始视角方向， 那么问题就解决了！</p>
+<p>如何确保每一次放船的时候视角方向都是一个固定值呢？</p>
+<p>Rays Works的解决方案是：用另外一艘船！</p>
+<p>在<code>net/minecraft/client/player/LocalPlayer</code>当中：</p>
+<pre class="line-numbers"><code class="language-java">@Override
+public boolean startRiding(Entity entity, boolean bl) &#123;
+    if (!super.startRiding(entity, bl)) &#123;
+        return false;
+    &#125;
+    ...
+    if (entity instanceof Boat) &#123; // !!!
+        this.yRotO = entity.yRot;
+        this.yRot = entity.yRot;
+        this.setYHeadRot(entity.yRot);
+    &#125;
+    return true;
+&#125;</code></pre>
+<p>可以看到，当玩家乘上船的一瞬间，玩家的视角方向会强制调整到船的方向。</p>
+<p>因此我们只需要准备一艘校准船，确保这艘船的角度正确，之后要使用的时候直接先做上这艘船再立刻放船再坐上新放的船就可以了（简单来说就是三连右键）。</p>
+<p>这就是Rays Works视频的主旨，我这里只是找到了对应的源代码而已。</p>
+<h1 id="放置角度与minecraft的角度系统">放置角度与Minecraft的角度系统</h1>
+<p>Rays Works在视频当中宣称通过它的方法可以把冰道修到任何角度与朝向。</p>
+<p>似乎没有什么不对？只要把校准船放到任意角度就行了。</p>
+<p>然而在Ray的视频当中可以看到，有的时候明明船放下去是45°，不一会就转到了46.4°，Ray坦言这是这套冰船系统唯一比较麻烦的地方。Ray提出的解决方案是：</p>
+<blockquote>
+<p>If that happens, just remove this boat and place in a new one. ……and do it a couple times it actually fixes itself.</p>
+</blockquote>
+<p>并认为这是一个随机行为，具有一定意义上的周期性，等一会就好了。</p>
+<p>事实并非如此。有一些角度是无论如何都放不到的，刚放下去一会就会微微一转，然后角度就变了。属实糟心，我在自己服务器里面放了20次都没有放成功。那个时候我终于意识到Ray的claim可能是在扯淡，于是去看了下代码。</p>
+<p>代码里面似乎没有任何一处体现了“微微一转”这种行为。最上面<code>BoatItem</code>的代码就是直接把<code>yRot</code>设成了玩家的<code>yRot</code>。我用全文搜索对于<code>yRot</code>产生修改的片段，没有一处是这样的。<code>yRot</code>是用<code>float</code>存储的，应该不会产生舍入误差这种事情。</p>
+<p>整个事情让我对于Minecraft的屎山代码不由生出一份敬畏，我开始觉得这是玄学问题，直到看见<code>net/minecraft/network/protocol/game/ClientboundAddEntityPacket</code>的构造函数……</p>
+<pre class="line-numbers"><code class="language-java">public class ClientboundAddEntityPacket implements Packet&lt;ClientGamePacketListener&gt; &#123;
+    ...
+    private int xRot;
+    private int yRot;
+
+    public ClientboundAddEntityPacket(int n, UUID uUID, double d, double d2, double d3, float f, float f2, EntityType&lt;?&gt; entityType, int n2, Vec3 vec3) &#123;
+        ...
+        this.xRot = Mth.floor(f * 256.0f / 360.0f);
+        this.yRot = Mth.floor(f2 * 256.0f / 360.0f);
+        ...
+    &#125;
+&#125;</code></pre>
+<p>以及<code>net/minecraft/client/multiplayer/PacketListener</code>如何处理这个packet的:</p>
+<pre class="line-numbers"><code class="language-java"> @Override
+ public void handleAddEntity(ClientboundAddEntityPacket clientboundAddEntityPacket) &#123;
+     Entity entity;
+     ...
+     if (entity != null) &#123;
+         entity.xRot = (float)(clientboundAddEntityPacket.getxRot() * 360) / 256.0 f;
+         entity.yRot = (float)(clientboundAddEntityPacket.getyRot() * 360) / 256.0 f;
+         ...
+     &#125;
+ &#125;</code></pre>
+<p>哦……原来还真有舍入误差这回事……Mojang大概想省空间，虽然rotation在客户端和服务端内部都是<code>float</code>存储的，但是在网络传输的时候硬是塞到了<code>byte</code>里面。于是在这一层转换的帮助下，Minecraft理论上就只有256种可能的角度了。</p>
+<p>我猜测的整个放船的流程大致如下：</p>
+<ol type="1">
+<li>客户端玩家手持船右键</li>
+<li>客户端发出一个<code>ServerboundUseItemPacket</code></li>
+<li>服务端接收到<code>ServerboundUseItemPacket</code>，然后执行<code>BoatItem</code>有关的代码</li>
+<li>服务端新增船的实体，想客户端发送<code>ClientboundAddEntityPacket</code>，这个时候角度被舍入了</li>
+<li>客户端收到<code>ClientboundAddEntityPacket</code>，将本地的船同步为舍入的角度，在10gt的插值作用下体现为“微微一转”</li>
+<li>玩家坐上去，这个时候一系列网络同步把服务端的船的角度也舍入了</li>
+</ol>
+<pre class="line-numbers mermaid"><code class="language-none">sequenceDiagram
+    participant Client
+    participant Server
+    Note left of Client: Player right clicks
+    Client-&gt;&gt;Server: ServerboundUseItemPacket
+    Note right of Server: Execute code in &lt;br/&gt; BoatItem.use
+    Server-&gt;&gt;Client: ClientboundAddEntityPacket</code></pre>
+<p>因此，微微一转的问题其实根本就不是Ray说的随机事件，而是在网络传输当中舍入误差加上客户端线性插值带来的现象。看似的随机只是因为F3的精度不够，44.99和45.01都显示为45.0，虽然从代码当中我们可以清晰地看到两个数的舍入结果是不一样的。</p>
+<p>这么做的好处是对于90°，45°等特殊角这一层舍入可以保证绝对的精确，避免了放成45.01°然后在船上开1000格偏离航道的惨剧。缺点是很多角度就不能精确达到了。两个相邻的可达角度差1.40625°，大概勉强可以接受。</p>
+<p>话又说回来了，<code>ServerboundMovePlayerPacket</code>这种同步玩家信息倒是还是用<code>float</code>作为载体的。所以玩家的角度还是很精确的？难道是因为玩家相对于实体少很多所以有更多流量可以挥霍？</p>
+<p>我再次对于Minecraft的代码肃然起敬。</p>
+<h1 id="辅助高级冰船的scarpet脚本">辅助高级冰船的Scarpet脚本</h1>
+<p>在知道这些之后我们就可以有针对性地设计冰道了，因为人比较懒所以我写了一个scarpet的脚本：</p>
+<pre class="line-numbers"><code class="language-none">__command() -&gt; null;
+
+_ice_mark(x, y, z) -&gt; create_marker(&#39;ICE&#39;, l(x + 0.5, y + 0.5, z + 0.5));
+
+_mark_x(y, x1, z1, x2, z2, w) -&gt; (
+    if(x1 &gt; x2, l(x1, x2, z1, z2) = l(x2, x1, z2, z1));
+    k = (z2 - z1) / (x2 - x1);
+    for(range(x1, x2 + 1),
+        x = _; z = round((x - x1) * k + z1);
+        for(range(-w + 1, w), _ice_mark(x, y, z + _))
+    )
+);
+
+_mark_z(y, x1, z1, x2, z2, w) -&gt; (
+    if(z1 &gt; z2, l(x1, x2, z1, z2) = l(x2, x1, z2, z1));
+    k = (x2 - x1) / (z2 - z1);
+    for(range(z1, z2 + 1),
+        z = _; x = round((z - z1) * k + x1);
+        for(range(-w + 1, w), _ice_mark(x + _, y, z))
+    )
+);
+
+mark(y, x1, z1, x2, z2, w) -&gt; (
+    dx = abs(x1 - x2); dz = abs(z1 - z2);
+    if(dx == 0 || dx &lt; dz, _mark_z(y, x1, z1, x2, z2, w),
+        _mark_x(y, x1, z1, x2, z2, w))
+);
+
+clear() -&gt; remove_all_markers();
+
+_wrap_deg(x) -&gt; (
+    tmp = x % 360.0;
+    if(tmp &lt; -180, tmp + 360, tmp &gt; 180, tmp - 360, tmp)
+);
+
+_wrap_internal(x) -&gt; (
+    tmp = x % 360.0;
+    if (tmp &lt; 0, tmp + 360, tmp)
+);
+
+_angle(x1, z1, x2, z2) -&gt; -atan2(x2 - x1, z2 - z1);
+
+_floor_angle(x) -&gt; _wrap_deg(floor(x * 256 / 360.0) * 360 / 256);
+
+angle(x1, z1, x2, z2) -&gt; (
+    theta = _angle(x1, z1, x2, z2);
+    print(str(&#39;exact yaw: %f&#39;, theta));
+    lb = floor_angle(_wrap_internal(theta));
+    ub = floor_angle(_wrap_internal(theta + 360.0 / 256));
+    print(str(&#39;floored yaw (lb): %f&#39;, lb));
+    print(str(&#39;floored yaw (ub): %f&#39;, ub));
+    ret = if(abs(lb - theta) &lt; abs(ub - theta), lb, ub);
+    print(str(&#39;suggested yaw: %f&#39;, ret));
+);
+
+_best_angle(x1, z1, x2, z2) -&gt; (
+    theta = _angle(x1, z1, x2, z2);
+    lb = floor_angle(_wrap_internal(theta));
+    ub = floor_angle(_wrap_internal(theta + 360.0 / 256));
+    if(abs(lb - theta) &lt; abs(ub - theta), lb, ub)
+);
+
+adjust(x1, z1, x2, z2, dir) -&gt; (
+    x = _best_angle(x1, z1, x2, z2);
+    ov = 360; opt = 0;
+    print(str(&#39;yaw: %f&#39;, x));
+    if(
+        dir == &#39;x&#39;,
+        for(range(x2 - 1000, x2 + 1000), 
+            tmp = abs(_angle(x1, z1, _, z2) - x);
+            if (tmp &lt; ov, ov = tmp; opt = _)
+        );
+        print(str(&#39;%f %f %f %f&#39;, x1, z1, opt, z2)),
+        dir == &#39;z&#39;,
+        for(range(z2 - 1000, z2 + 1000), 
+            tmp = abs(_angle(x1, z1, x2, _) - x);
+            if (tmp &lt; ov, ov = tmp; opt = _)
+        );
+        print(str(&#39;%f %f %f %f&#39;, x1, z1, x2, opt)),
+        print(&#39;direction must either be x or z&#39;)
+    )
+)</code></pre>
+<p>用法如下：</p>
+<ol type="1">
+<li><p><code>/iceboat y x1 z1 x2 z2 w</code>标记一条从<span class="math inline">\((x_1,y,z_1)\)</span>到<span class="math inline">\((x_2,y,z_2)\)</span>的，宽度为<span class="math inline">\(2w-1\)</span>的冰道。</p></li>
+<li><p><code>/iceboat clear</code>清除标记。</p></li>
+<li><p><code>/iceboat angle x1 z1 x2 z2</code>计算站在<span class="math inline">\((x_1,z_1)\)</span>望向<span class="math inline">\((x_2,z_2)\)</span>的视角方向，最近的两个可达角度，以及推荐的可达角度。</p></li>
+<li><p><code>/iceboat adjust x1 z1 x2 z2 x/z</code>固定<span class="math inline">\((x_1,z_1)\)</span>，沿<span class="math inline">\(x/z\)</span>轴在<span class="math inline">\((x_2,z_2)\)</span>附近寻找最贴近可达角度的方块坐标。考虑到在几千格之后哪怕0.7°的角度差都会有导致最终百格的偏差，这个命令非常重要。在算法实现角度，用三分写是最快的，但是考虑到从-180°到180°有一个不连续间断点，导致写三分会涉及到一些繁琐的细节。我比较懒，所以就用了比较慢的写法（这个写法其实也有明显bug，但是我不准备修）。</p></li>
+</ol>
+<p>常见的使用流程：</p>
+<ol type="1">
+<li>确定冰道的两点。</li>
+<li>固定一点（通常是nether hub或者已经固定留好空间的端点），使用<code>/iceboat adjust</code>微调另一端点的位置。同时计算得出角度。</li>
+<li>使用<code>/iceboat mark</code>标记放冰的位置。</li>
+<li>放冰。</li>
+<li>使用<code>/iceboat clear</code>清除标记。</li>
+</ol>
+<p>目前比较不人性化的一点是carpet的<code>create_marker</code>用的是隐形盔甲架实现的，hitbox的制约导致有的时候放不了方块，用area effect cloud可能可以解决这个问题。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/04/17/PanDownload/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/04/17/PanDownload/" class="post-title-link" itemprop="url">自己对于PanDownload的一些想法</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-04-17 07:46:00" itemprop="dateCreated datePublished" datetime="2020-04-17T07:46:00-04:00">2020-04-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>PanDownload前几天被封了。</p>
+<p>网络上那个群情激奋啊，看B站连“百度的七宗罪”都出来了。还有人把GFW做的DNS污染，域名置换等和PanDownload做的“多线程下载百度云盘”相并列，不乏讥讽地质问为何遭到制裁的是看起来程度最轻的PanDownload。</p>
+<p>我不是PanDownload的使用者，自己也很少用百度云盘，或许称不上是特别利益相关者吧。</p>
+<p>但看到这个新闻的时候我是很矛盾的。</p>
+<p>我讨厌百度吗？</p>
+<p>肯定的，我从八年前开始用百度云盘，从不限速的年代一路用到限速的坑爹时代，不恨是不可能的。</p>
+<p>我喜欢PanDownload吗？</p>
+<p>喜欢的，我自己两三年以前还在用很多油猴的提取直连的脚本，这种绕开限速薅羊毛的软件我不要太喜闻乐见。</p>
+<p>那在这次事件中我支持PanDownload吗？</p>
+<p>我其实想保持中立。</p>
+<p>我们对于PanDownload等一众软件的推崇源于对于百度免费用户限速的痛恶。由俭入奢易由奢入俭难，对于限速的痛恶则源于几年前限速不存在的事实。</p>
+<p>但是仔细想想，免费的大云盘这件天上掉馅饼的事情合理吗？</p>
+<p>参照如今硬盘的价格以及带宽的价格，我觉得百度留着云盘业务肯定不是做慈善的。在线存储是一种服务，是企业生产的一种产品，收费这件事情本身是无可厚非的。放眼国外市场，Dropbox，Google Drive等也没有做慈善的。不是空间小就是下载慢。</p>
+<p>要说百度可恶，也就可恶给用户提供了“一开始的美好”，用2TB的存储空间诱惑用户，等用户粘性培养上来之后，在几年前再限速到一个坑爹的地步，这个时候你左右为难。付钱吧，跟几年前比感觉亏了，不付钱吧，自己很多数据还存着呢。反正百度这几年的潜台词是越来越明显了：不付钱别玩，让你免费用已经是施舍你了，还BB那么多干嘛。</p>
+<p>这句话很让人恼火，非常让人恼火，但是仔细思考一下，似乎是对的。云盘是一个市场，在市场里哪有永远白嫖的份。这个时候最好的结局是期待着市场竞争逼着百度降价。但是我国云盘市场的竞争着实不够激烈，百度隐隐形成垄断之势，降价看来是遥遥无期了（话又说回来，一个月25块钱的价格换算成美元大概与Google Drive差不多，其实真没那么多好抱怨的）。</p>
+<p>这个时候PanDownload以及一众多线程下载软件出现了。几十个线程一起下，让免费用户看到了曙光。</p>
+<p>我们不妨把PanDownload看做是网盘市场的一个有力的竞争者（虽然竞争并非其初衷），把它的下载服务看做是一个全新的网盘产品，它提供的“网盘产品”的竞争性优势在于</p>
+<ol type="1">
+<li>和已有百度网盘资料的完全兼容</li>
+<li>免费用户的高速下载</li>
+</ol>
+<p>如果PanDownload的网盘产品真的是独立而全新的，那百度该死，谁也不能阻止PanDownload一统江湖。</p>
+<p>但是事实不是这个样子的，PanDownload提供的这个如此有竞争性的“产品”，是基于百度网盘的生产资料与资本建立起来的。PanDownload运用的多线程下载，亦或是其他软件的直链提取，这些都不是百度网盘官方提供的API，也不是百度网盘官方认可的。</p>
+<p>因此，全民的喜闻乐见与对于百度的痛恨，也改变不了PanDownload不正当竞争（视作竞争者）或者说侵犯百度权益（是做第三方软件）的事实。</p>
+<p>单纯地因为PanDownload是在造福人类，是在薅垃圾公司的羊毛，就对这种行为的本质视而不见，其实是违背法治社会的初衷的。</p>
+<p>这就仿佛所有人都认为张三是人渣，李四替天行道把张三打死了就可以不犯法一样。事实上，哪怕张三是在逃的杀人犯过街喊打喊打，如果不处于类似正当防卫的情形，李四把张三打死也是不对的。故意杀人就是故意杀人。何况百度作为一家公司目前来看还没有在云盘的运营中触犯法律（或许有垄断？不清楚）。前几天在B站上看罗翔老师说“法律要考虑民众的诉求，但是要超越民众的偏见”。</p>
+<p>百度这叫体量大，如果是一家新创业的公司，被这么一集体白嫖，搞得破产了怎么办？这种事情不是没有发生过。难道法律里面还要加入一条“如果体量够大而且民众不爽，某某法规就失效”？</p>
+<p>如果对百度不爽，就尽量避免去用它。现在搭建一个自己的网盘已经是很简单的一件事情了。</p>
+<p>何况部分用户离不开百度网盘的原因大概是因为下”资源“，所谓”资源“，又大致可以分为免费（说的不好一点就是盗版）的电影与一些淫秽资源。后者我不想多说啥（其实吧，我觉得一些黄站之于内容提供者也是PanDownload之于百度网盘的存在），但是免费下盗版竟然还有理了？</p>
+<p>没错，一直白嫖一直爽是中文互联网的常态，我自己也爱装破解版软件，看视频听音乐能不付钱就不付钱，但是理直气壮地说出来又是另一回事情了。百度给你下就不错了，PanDownload让你下爽了就下爽了，但是这种处于灰色地带的软件，要较真起来，我们真的不占理。</p>
+<p>或许吧，网民一直隐隐有一种心态，在网络上白嫖是对的，反正就是一堆数据拷来拷去，百度云盘也就是一个网站而已，付费下载闻所未闻。这种心态在我看来是有问题的。垄断着实可恶，但是支付给服务提供者报酬的道理还是不错的。</p>
+<p>因此，我觉得PanDownload虽然对于我们是一款好软件，但是最近取缔PanDownload这一事，我觉得还是无可厚非的。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/04/03/Gradle%E5%88%9D%E6%8E%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/04/03/Gradle%E5%88%9D%E6%8E%A2/" class="post-title-link" itemprop="url">Gradle初探</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-04-03 10:26:36" itemprop="dateCreated datePublished" datetime="2020-04-03T10:26:36-04:00">2020-04-03</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>自己最近又在用JVM系的语言开新坑。这次终于说服自己从Jetbrains的温床里脱离出来改用了大家都在用的Gradle！感觉良好，在这里简单写一下大概咋用，给之后的自己留一个参考吧。</p>
+<p>为什么自己要用Gradle呢？</p>
+<ol type="1">
+<li>Gradle作为一个开源的构建系统不与任何IDE绑定（比如说IDEA），这相当于增加了代码的兼容性。</li>
+<li>Gradle里面可以直接从Maven Central上下库下来，省了我手动下库导入的过程，库更新了也好维护。这对我来说非常地有诱惑力。实测也非常舒服。</li>
+<li>Gradle从设计上来说非常灵活，Gradle默认的构建脚本是用Groovy写的（当然也可以用Kotlin但是这似乎不是主流的样子），而不是只有标记功能的XML，这使Gradle一下子非常强大。</li>
+<li>大家都在用的样子。</li>
+<li>IDEA对于Gradle的支持非常棒！（所以到头来自己还是没有逃脱JB的舒适圈……）</li>
+</ol>
+<p>虽然说Gradle的功能很强大我目前的用法还是最初级的。我目前用的Gradle代码大致如下：</p>
+<pre class="line-numbers"><code class="language-groovy">plugins &#123;
+    id &#39;java&#39;
+    id &#39;org.jetbrains.kotlin.jvm&#39; version &#39;1.3.61&#39;
+&#125;
+
+group &#39;chengyuan&#39;
+version &#39;1.0-SNAPSHOT&#39;
+
+sourceCompatibility = 1.8
+project.ext.lwjglVersion = &quot;3.2.3&quot;
+project.ext.lwjglNatives = &quot;natives-windows&quot;
+
+repositories &#123;
+    maven &#123; url &#39;http://maven.aliyun.com/nexus/content/groups/public/&#39; &#125;
+    maven &#123; url &quot;https://oss.sonatype.org/content/repositories/snapshots/&quot; &#125;
+    mavenCentral()
+&#125;
+
+dependencies &#123;
+    implementation platform(&quot;org.lwjgl:lwjgl-bom:$lwjglVersion&quot;)
+    
+    implementation &quot;org.lwjgl:lwjgl&quot;
+    implementation &quot;org.lwjgl:lwjgl-assimp&quot;
+    implementation &quot;org.lwjgl:lwjgl-bgfx&quot;
+    implementation &quot;org.lwjgl:lwjgl-glfw&quot;
+    implementation &quot;org.lwjgl:lwjgl-nanovg&quot;
+    implementation &quot;org.lwjgl:lwjgl-nuklear&quot;
+    implementation &quot;org.lwjgl:lwjgl-openal&quot;
+    implementation &quot;org.lwjgl:lwjgl-opengl&quot;
+    implementation &quot;org.lwjgl:lwjgl-par&quot;
+    implementation &quot;org.lwjgl:lwjgl-stb&quot;
+    implementation &quot;org.lwjgl:lwjgl-vulkan&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-assimp::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-bgfx::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-glfw::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-nanovg::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-nuklear::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-openal::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-opengl::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-par::$lwjglNatives&quot;
+    runtimeOnly &quot;org.lwjgl:lwjgl-stb::$lwjglNatives&quot;
+    
+    testCompile group: &quot;junit&quot;, name: &quot;junit&quot;, version: &quot;4.12&quot;
+&#125;
+
+compileKotlin &#123;
+    kotlinOptions.jvmTarget = &quot;1.8&quot;
+&#125;
+
+compileTestKotlin &#123;
+    kotlinOptions.jvmTarget = &quot;1.8&quot;
+&#125;</code></pre>
+<p>首先是<code>plugins</code>这段，这一段虽然重要但一般用不着特别操心，按照我的理解大概是语言支持的插件。</p>
+<p>接下来是版本、JVM版本之类的，看着也很明白。</p>
+<p>然后可以申明一些接下来会用到的常量。</p>
+<p><code>repository</code>告诉Gradle从哪里找库。常见的源有内置的函数，例如<code>mavenCentral()</code>，<code>jcenter()</code>。如果是其他的Maven源也可以指定URL。比如说我这里用了阿里云的Maven镜像，在国内速度就会快上很多。</p>
+<p>接下来是<code>dependencies</code>，这个是重头戏。</p>
+<p>最常见的是<code>implementation</code>，这个后面一般跟库的Maven id。如果想直接引用本地文件可以用<code>files(...)</code>，如果是一个平台一个版本的可以用<code>platform(...)</code>。基本上这就覆盖了99%的用途。</p>
+<p>此外还有<code>runtimeOnly</code>，这个和<code>implementation</code>的区别就是<code>runtimeOnly</code>的库是不参与编译的，只在运行期有效。这一般都是用JNI的一众native库和一些二级库。</p>
+<p>还有<code>testCompile</code>，用这个修饰的库是只在跑单元测试的时候依赖的，因此基本上都是一些测试有关的库。我人懒，平时懒得写单元测试，因此这个我基本上不用。</p>
+<p>这些就是我目前摸索出来的Gradle的基本用法，目前的感觉就是把IDEA里面的很多GUI的操作文字化，非常舒适，省了很多麻烦。更复杂的用法例如自定义build task等都可以在官网上找到（文档很丰富也是Gradle比较吸引人的点）。</p>
+<p>最后有一点点想吐槽，就是Groovy似乎单引号和双引号都可以表示字符串。双引号的字符串支持插值，这似乎是唯一的予以区别。IDE默认生成的是单引号，LWJGL的打包器生成的是双引号，似乎最通用的是双引号，自己到底是用双引号还是单引号呢？这种东西真的是万恶之源。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/03/29/FuckZhihu/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/03/29/FuckZhihu/" class="post-title-link" itemprop="url">退乎，与自省</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-03-29 22:45:24" itemprop="dateCreated datePublished" datetime="2020-03-29T22:45:24-04:00">2020-03-29</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>上一次发文章已经是三个星期以前了。</p>
+<p>感到一丝焦虑，但三个星期中确实没有做成值得写一写的事情是一个令人沮丧的事实。</p>
+<p>开学了人忙了是一个原因。人一忙，一个矛盾愈发凸显。</p>
+<p><strong>理性上对于系统化学习的追求与感性上沉溺于碎片化知识平台的矛盾。</strong></p>
+<p>自己要应付AP考试还有一整本的Gregory Mankiw的经济学要看。</p>
+<p>自己现在还在看柏拉图的《理想国》，书很好看，觉得很有启发。</p>
+<p>地理的等级考也是要准备起来的。</p>
+<p>文书也是要做起准备的。</p>
+<p>个人的项目也是要做的。</p>
+<p>退一步讲，自己还有一个追番TODO List还要十几部番要追，轻小说TODO List还有几部要抽空看。</p>
+<p>当时间就剩下这么一点，知乎这么一个搅屎棍的存在就显得令人恼火了。</p>
+<p>自己之前一直看不起快手和抖音，觉得这种垃圾玩意纯粹就是让人上瘾的。</p>
+<p>可悲的是，自己也成了知乎的奴隶。</p>
+<p>确实我在鄙视链上比抖音快手高一级，但是当鄙视链的每一根链环都足够拴着你吃屎的时候，其实区别不大。</p>
+<p>知乎不知不觉成为了我常逛的唯一平台。居然占据了30%的耗电，难道这不恐怖吗？</p>
+<p>只是为了看时事，结果刷了一个小时，难道这不恐怖吗？</p>
+<p>我觉得是时候好好反思反思了。</p>
+<p>要是这一个小时有营养就算了。</p>
+<p>现在的知乎，90%的回答就是在玩烂梗。时政问题下就是两个极端的口诛笔伐，喊入关的喊入关，吹国外的吹国外，骂公知的骂公知。党同伐异，贴上标签就开骂，评论区里友善度堪比电竞祖安。</p>
+<p>国家自信的大旗已经举起，反公知的政治正确俨然形成。这着实是好事，但是被这股情绪裹挟着消磨时间又是另一回事了。</p>
+<p>人们说政治是一个门槛看起来低实际上高得很的学科。谁都能对政治发表一番高论，但是要使理论逻辑自洽，预测准确一致就需要非常高的水平。</p>
+<p>知乎上大体是前者。山高死而入关兴，大家都在喊入关，要么就国家拟人化走一波，大家还就好这一口。</p>
+<p>敢情我是来看波兰球动画的呢？</p>
+<p>不然要么就恶政隐或者膜蛤走一波，下面的评论狂喊冲塔冲塔枪毙枪毙药丸药丸下个账号再见，不亦乐乎，谁说天朝子民不可妄议朝政？</p>
+<p>但是我现在真的觉得让我们普罗大众表达诉求可以，玩键盘政治或许不值得提倡。</p>
+<p>我记得16年刚玩知乎的时候，还是有很多很有意义的回答的。比如说人民群众喜闻乐见的知乎如意勺系列，虽然问题虚构荒诞，但是科普的目的确实达到了。每一篇文章洋洋洒洒干货十足，比起现在一千万和蜗牛的虚构问题不知道高到哪里去了。</p>
+<p>现在还有这么多干货文章吗？有的，引经据典的回答终究是有的，之前在知乎上看到的毕导的科普视频也是很好的。但是这些都被大大稀释了，到现在，为了这么一篇好文章刷过50篇朱一旦，营销号，观察者网或者环球时报似乎不值得。</p>
+<p>我不知道是资本的入驻使知乎变了味，还是推荐算法使然。</p>
+<p>我倾向于后者。</p>
+<p>推荐算法实在是太恐怖了。</p>
+<p>它恐怖就恐怖在它是一个正反馈系统，平衡点是不稳定的。只要思想稍有偏差，就会迅速滚到一个极端去。</p>
+<p>它迎合你，让你每一时刻都享受英雄所见略同的快感。很多时候看前两句句你就知道这篇文章要讲啥，但是禁不住讲的东西你喜欢，于是又看了下去。很多时候回答就只有两句，篇幅完全不重要。我逛知乎的心态已经从以往的获取知识，到寻求附和与认同为主，能看到啥就学啥为辅的情况了，非常可悲。自己当真就没有独立思考的能力和对此的自信？</p>
+<p>小群体内的自我认同除了加深偏执以外不会引入新的思想，甚至还会降低你对异见的容忍度，看到不一样的观点就烦躁，哪怕它的长篇大论是真的有论点有论据有深度可以学到东西的。知乎里现在键政领域两极分化，推荐算法功不可没。</p>
+<p>当一个问答网站将迎合用户，附和用户作为首要任务，而不是去挑战用户的认知，扩充用户的头脑的话，这个网站可就真的忘了初心，出了大问题了。</p>
+<p>或许也没有忘初心，万一人家初心就是赚钱呢。</p>
+<p>现在想想我每天干嘛？去知乎看人嘲讽美国防疫，还是看人调侃美股八熔八耻？</p>
+<p>但是我又不是靠知乎获得这些信息的。我每天一大早都是自己去JHU的网站上查人数，自己查道指的。小米内置的资讯在遇到大新闻的时候也没落下。也就是我不断心理暗示知乎是一个获得时政新闻的平台，其实根本不是。那我天天去干嘛？我贱不贱啊？贱不贱啊？</p>
+<p>自己完全是被动地被知乎牵着鼻子走，可太悲哀了。</p>
+<p>另一方面，知乎的产品设计实在是太高明了。</p>
+<p>我觉得我还是要回归搜索引擎。</p>
+<p>搜索引擎有两个好，一个是它没有针对个人的推荐算法，另一个是你永远有主动权。你搜索什么它给什么。你不搜它不给，爽到。搜出来的结果分散于网络，不容易对于一个平台形成粘性。因此，只要搜索引擎的算法不是特别差（比如说Google），用搜索引擎就不会有大问题。</p>
+<p>被搜索引擎带到知乎和直接在知乎搜索栏里搜索是完全两个不一样的概念。</p>
+<p>搜索引擎的覆盖面比知乎高，那我为啥不用搜索引擎呢？</p>
+<p>我要学习技术，我为啥不去SO、V2EX、SF之类的呢？</p>
+<p>同样是刷手机，我为啥不去B站上看看罗翔追追番呢？前者能普法，后者比看垃圾梗更娱乐一点。</p>
+<p>为什么呢？</p>
+<p>自己之前真的是懒。妄想着知乎一个平台就够了，结果被灌屎，被偶尔尝到的糖吊着胃口，持续地被喂屎。</p>
+<p>太糟糕了，实在是太糟糕了。</p>
+<p>丹麦哲学家 Søren Kierkegaard 讲过一句话，现在想起来觉得实在是太对了。</p>
+<blockquote>
+<p>People demand freedom of speech as a compensation for the freedom of thought which they seldom use.</p>
+</blockquote>
+<p>把知乎卸了。搜索引擎搜到还是会看一下，但是不会主动逛了。</p>
+<p>但愿不会真香。</p>
+<hr />
+<p>其实吧，我觉得，自己退出知乎的这个决定在我看来也是很可悲的。</p>
+<p>因为这是我对于无法解决实际问题的一个逃避。</p>
+<p>控制不住逛知乎，知乎用户粘性很高是外因，自己不自制是内因。外因通过内因而起作用。</p>
+<p>有的时候我觉得虽然学校的政治课大多弱智，但是一些矛盾论以及唯物辩证的思路终究还是受用的。</p>
+<p>自己究竟什么时候才会认认真真审视自己自制力不够的问题呢？</p>
+<p>我如何才能避免自己看知乎变成看B站呢？</p>
+<p>我自以为知乎比B站容易上瘾，先这么自以为着吧。与自己的颓废欲望做出妥协。</p>
+<hr />
+<p>搜索引擎让我掌握了主动权，但是主动权往往是不够的。我要主动搜啥呢？</p>
+<p>正如YPM里面Humphrey说的，I have to know everything so that I can decide whether I need them!</p>
+<p>我也有同学说知乎平台里面有很多宝藏回答，我自己也觉得很多时候知乎的热榜里有热点新闻，这是知乎的价值。</p>
+<p>可以料想到的是，我现在退出知乎以后，终究要有一个信息平台顶替它的位置，keeping myself well-informed.</p>
+<p>这个平台会是什么呢？</p>
+<p>我不期望是一个正反馈的系统，今日头条之类的肯定不行。</p>
+<p>直接看新闻？新闻是一个无反馈的系统，但为了避免被带入一家的政治立场当中去就要各种立场的新闻都看，不知道有没有时间。</p>
+<p>并没有人设计过负反馈的信息平台，估计也不会有人设计这种吃力不讨好的玩意，虽然这是最好的。</p>
+<p>朋友圈或许可以，让亲戚朋友代我受这些正反馈平台的戕害自然是最好不过的了（感觉自己的思想还是有点阴暗），反正他们在朋友圈几句话也不足以左右我本身的判断，他们转发的文章我也未必要看，我要的就是这件事情本身，这样我就可以自己去搜了。</p>
+<p>唉。有的时候我觉得学数理之类的不用区分立场，逻辑与实验自有定论，省了我的脑细胞，是我作为理科生的幸运，但让我缺乏批判性思考的锻炼，又是我作为理科生的不幸。以至于面对正反馈带来的立场极端化不得不采取“闭关锁国”的战略，我也不知道是不是好事。我一直认为，如果有人能够依靠自己的批判性思维带来的负反馈效用力压推荐算法的正反馈，以至于在主流平台当中依然可以保持相对地客观，那是真的厉害。</p>
+<p>另一种自暴自弃的思路莫过于，创造一种统一的政治立场，有一个绝对的权威来树立绝对的政治正确，这样大家都处在同一个立场，提前到达了正反馈的极限，正反馈也就没用了。这正如西方对于我国的态度。一个小圈子里互相认同而偏执是悲哀，但是如果几十亿人不断地相互认同而产生的根深蒂固的思潮，我也不知道是好是坏。它确实湮灭了所有的异见也降低了头脑在这个问题的负担，但也导致新思维的短缺。站在民智发展的角度来看，这样很危险，但是站在统战的角度上，这样似乎又不是不行。</p>
+<p>我从未学过认知论也从未学过教育学，但是我推断人类的认知过程本身不可避免地是一个先天的正反馈过程，别人的认可是激励，别人的反驳是惩罚。在基础教育的过程中，“别人”单指老师与同学，因此这个思路被不断提倡，而当到了网络的辩论场，人们自动就会把“别人”的定义延拓了。要逆转这个态势，审慎地对待别人的认可，积极地面对别人的反驳，小心翼翼地避免矫枉过正，在这个时代还要对抗推荐算法，实在是不容易。而如果只有一个人能够做到这一步，那么这个人被孤立于群体之中，也未必如之前一样快乐。</p>
+<p>因此我越看《理想国》，越觉得像里面的苏格拉底一样在辩论中不恼羞成怒诉诸于人身攻击，反而通过设问，在多个立场之间来回切换，将辩论用作真正探寻真理的途径而非自我膨胀的乱骂一通，实在是一种非常高明的智慧。我觉得自己离这个境界差远了，而对于是否所有人都能拥有这个智慧，是否应该拥有这份智慧，拥有这份智慧之后是否会感到快乐，我现在很悲观。</p>
+<p>唉，自己社科不行，也只能乱发牢骚一通。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/03/02/Manjaro-VM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/03/02/Manjaro-VM/" class="post-title-link" itemprop="url">用LaTeX实时记数学笔记？！</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-03-02 01:50:04" itemprop="dateCreated datePublished" datetime="2020-03-02T01:50:04-05:00">2020-03-02</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>我几个月前看到国外有人<a target="_blank" rel="noopener" href="https://castel.dev/post/lecture-notes-1/">分享</a>用LaTeX实时记1700页数学笔记的感受，当时就被惊艳到了，心生向往。这次因为疫情待在家里上在线课程，总算是给了我一个带电脑进课堂的机会。于是我也仿照原作者的做法尝试了用记LaTeX笔记，这篇文章就来写一写我配置环境时遇到的坑和使用感受。</p>
+<h1 id="系统选择">系统选择</h1>
+<p>原文的作者采用的是Ubuntu发行版+bspwm作为桌面管理器，但是bspwm太小众，网上的资料很少。而且实测装在Ubuntu上默认的配置在视觉上不协调（还要自己去装一个像样的状态栏，总之就是太烦了）。相比之下i3作为另一个Tiling Window Manager比bspwm资料多多了，也比较适合我这种小白。权衡之下我选用Manjaro + i3。在Virtual Box下安装。</p>
+<h1 id="配置镜像">配置镜像</h1>
+<p>这一步不是必须的，因为Manjaro的默认源在国内的速度也还可以接受（~400kBps）。但是换了交大的源之后可以到10MBps：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -Syy
+sudo pacman-mirrors -i -c China -m rank
+sudo pacman -Syyu</code></pre>
+<p>然后编辑<code>/etc/pacman.conf</code>加上ArchLinuxCN的交大镜像：</p>
+<pre class="line-numbers"><code class="language-ini">[archlinuxcn]
+SigLevel = Optional TrustedOnly
+Server = https://mirrors.sjtug.sjtu.edu.cn/archlinux-cn/$arch</code></pre>
+<p>最后导入一下密钥环，镜像就配置完了：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -Syy &amp;&amp; sudo pacman -S archlinuxcn-keyring</code></pre>
+<h1 id="安装virtual-box-ga">安装Virtual Box GA</h1>
+<p>Manjaro默认对于虚拟机的支持不是很好。我不选择在VMWare上装Manjaro的主要原因也是因为我没有找到VMWare下自动分辨率比较简单的解决方案。在Virtual Box下只要装Virtual Box Guest Addition就可以了，美滋滋。</p>
+<p>先安装基本的编译套件：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -S gcc make</code></pre>
+<p>然后查看一下Linux内核版本：</p>
+<pre class="line-numbers shell"><code class="language-none">uname -r</code></pre>
+<p>是5.4，因此安装5.4的headers：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -S linux54-headers</code></pre>
+<p>之后在Virtual Box菜单下插入GA的iso文件。我最初是手动挂载的（因为找不到i3里面怎么开文件管理器），就是<code>sudo blkid</code>看一下设备然后<code>mount</code>（如果出现不支持<code>iso9660</code>直接重启）。后来意识到文件管理器的名字是<code>pcmanfm</code>，再发现默认可以直接<code>mod + F3</code>打开文件管理器，于是就可以在上面直接操作了。<code>cd</code>进去运行<code>autorun.sh</code>跑完重启。就发现可以自动适应外部分辨率以及共享剪贴板了，非常方便。</p>
+<h1 id="配置键位">配置键位</h1>
+<p>默认Manjaro配置的<code>mod</code>键是<code>super</code>，也就是Win键。但是实测Win键在虚拟机环境下会有小问题（例如Win + L总是会被Windows先拦截导致锁屏）。所以我到<code>~/.i3/config</code>里面把<code>mod</code>键改成了<code>alt</code>。我还把i3默认的<code>jkl:</code>键位改成了和Vim相一致的<code>hjkl</code>键位。</p>
+<h1 id="中文相关">中文相关</h1>
+<p>Manjaro默认的中文渲染很有问题（装系统的时候居然没有中文字体！）。因此需要手动配置中文的渲染。</p>
+<p>我基本上是按照<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/Font_Configuration/Chinese_(简体中文)">Arch Wiki</a>上的Android类字体配置的。但是Arch Wiki上没有配置给终端用的等宽字体，需要个人发挥一下。我最喜欢的等宽字体是Sarasa Gothic（因为有中文）（去除中文我现在最喜欢的是Jetbrains Mono）。我发现ArchLinuxCN的源上已经有这款字体了，于是直接安装：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -S ttf-sarasa-gothic</code></pre>
+<p>然后修改<code>~/.Xresources</code></p>
+<pre class="line-numbers"><code class="language-ini">URxvt.font: xft:Sarasa Term SC:size=12</code></pre>
+<p>重启一下就好了（其实不用重启，<code>xrdb ~/.Xresources</code>也行？）</p>
+<p>接着是输入法。我原来准备装搜狗的，但是搜狗因为各种奇奇怪怪的原因（比如说字体找不到，比如说默认装<code>fcitx</code>的时候没有<code>qt4</code>的支持需要额外安装）不能用，在各种坑之后我决定不用它改用sunpinyin+cloud pinyin的组合，试用下来也是相当令人满意的：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -S fcitx-im
+sudo pacman -S fcitx-configtool
+sudo pacman -S fcitx-sunpinyin fcitx-cloudpinyin</code></pre>
+<p>安装后在<code>~/.xprofile</code>里面加上下列几行启用fcitx</p>
+<pre class="line-numbers shell"><code class="language-none">export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=&quot;@im=fcitx&quot;
+fcitx -d</code></pre>
+<p>最后一行是我自己加上的，因为似乎由于一些原因fcitx它开机不自启……</p>
+<h1 id="配置tex">配置TeX</h1>
+<p>终于可以开始进入正题了，首先安装TeXLive：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -S texlive-most texlive-langchinese</code></pre>
+<p>接着安装Vim Plug，在<code>~/.vimrc</code>里面写入自动安装脚本（手动安装亦可）以及一些基本的配置：</p>
+<pre class="line-numbers"><code class="language-vim">set number
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set smartindent
+
+syntax on
+
+if empty(glob(&#39;~/.vim/autoload/plug.vim&#39;))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif</code></pre>
+<p>接着安装所必要的VimTeX插件以及UltiSnips插件并进行相关的配置：</p>
+<pre class="line-numbers"><code class="language-vim">call plug#begin(&#39;~/.vim/plugged&#39;)
+
+Plug &#39;lervag/vimtex&#39;
+let g:tex_flavor=&#39;latex&#39;
+let g:vimtex_view_method=&#39;zathura&#39;
+let g:vimtex_quickfix_mode=0
+set conceallevel=1
+let g:tex_conceal=&#39;abdmg&#39;
+
+Plug &#39;sirver/ultisnips&#39;
+let g:UltiSnipsExpandTrigger=&#39;&lt;tab&gt;&#39;
+let g:UltiSnipsJumpForwardTrigger=&#39;&lt;tab&gt;&#39;
+let g:UltiSnipsJumpBackwardTrigger=&#39;&lt;s-tab&gt;&#39;
+let g:UltiSnipsSnippetDirectories=[&#39;mysnippets&#39;]
+
+call plug#end()</code></pre>
+<p>安装Zathura作为PDF阅读器：</p>
+<pre class="line-numbers shell"><code class="language-none">sudo pacman -S zathura zathura-pdf-mupdf</code></pre>
+<p>我查到Manjaro i3终端默认的背景色是<code>#222D31</code>，因此在<code>~/.config/zathura/zathurarc</code>里面写入</p>
+<pre class="line-numbers"><code class="language-none">set default-bg &quot;#222D31&quot;
+set recolor &quot;true&quot;
+set recolor-lightcolor &quot;#222D31&quot;
+set recolor-darkcolor &quot;#FFFFFF&quot;</code></pre>
+<p>这样Zathura打开白色的pdf文档的时候就会自动重新着色，完成了色调上的统一。</p>
+<p>Vimtex默认使用<code>latexmk</code>编译，<code>latexmk</code>默认调用<code>pdflatex</code>。因为要用中文我们希望它调用<code>xelatex</code>，于是在<code>~/.latexmkrc</code>里面加上</p>
+<pre class="line-numbers"><code class="language-none">$pdf_mode = 1;
+$pdflatex = &#39;xelatex --shell-escape %O %S&#39;;</code></pre>
+<p>现在随便打开一个tex文档，打出<code>\ll</code>，预览就冒出来了，非常方便。</p>
+<h1 id="配置snippets">配置Snippets</h1>
+<p>我基本上复制了作者原博客上的大部分snippets的定义。再加上了一些我觉得比较常用的：</p>
+<pre class="line-numbers"><code class="language-none">snippet exm &quot;example&quot; bA
+\begin&#123;example&#125;
+$1
+\end&#123;example&#125;
+$0
+endsnippet
+
+snippet sln &quot;solution&quot; bA
+\begin&#123;solution&#125;
+$1
+\end&#123;solution&#125;
+$0
+endsnippet
+
+snippet -&gt; &quot;arrow&quot; A
+\Rightarrow
+endsnippet
+
+snippet sc &quot;since&quot; wA
+\because
+endsnippet
+
+snippet tf &quot;therefore&quot; wA
+\therefore
+endsnippet
+
+snippet tx &quot;text&quot; wA
+\text&#123;$1&#125;$0
+endsnippet
+
+snippet par &quot;()&quot; wA
+\left($1\right)$0
+endsnippet
+
+snippet pbk &quot;[]&quot; wA
+\left[$1\right]$0
+endsnippet
+
+snippet pbr &quot;&#123;&#125;&quot; wA
+\left\\&#123;$1\right\\&#125;$0
+endsnippet
+
+snippet pabs &quot;||&quot; wA
+\left|$1\right|$0
+endsnippet
+
+snippet enum &quot;enumerate&quot; bwA
+\begin&#123;enumerate&#125;
+$1
+\end&#123;enumerate&#125;
+$0
+endsnippet
+
+snippet ml &quot;multiline math&quot; bwA
+\begin&#123;gather*&#125;
+$1
+\end&#123;gather*&#125;
+$0
+endsnippet</code></pre>
+<p>笔记源文件的preamable定义如下，使用<code>fleqn</code>选项对所有方程进行左对齐，并定义<code>example</code>和<code>solution</code>环境方便记例题和解答：</p>
+<pre class="line-numbers"><code class="language-latex">\documentclass[fleqn]&#123;ctexart&#125;
+
+\usepackage&#123;amsthm&#125;
+\usepackage&#123;amsmath&#125;
+\usepackage&#123;amssymb&#125;
+\usepackage&#123;tikz&#125;
+
+\newtheorem*&#123;solution&#125;&#123;解&#125;
+\newtheorem&#123;example&#125;&#123;例&#125;[subsection]
+
+\begin&#123;document&#125;
+    \maketitle
+    ...
+\end&#123;document&#125;</code></pre>
+<p>最后的效果如下：</p>
+<p><img src="https://s2.ax1x.com/2020/03/02/3RRrp6.png" alt="3RRrp6.png" /></p>
+<p>成果：</p>
+<p><img src="https://s2.ax1x.com/2020/03/02/3Rojqf.png" alt="3Rojqf.png" /></p>
+<p>对比手写版：</p>
+<p><img src="https://s2.ax1x.com/2020/03/02/3Ro6PJ.jpg" alt="3Ro6PJ.jpg" /></p>
+<p>是不是看起来还不错？</p>
+<h1 id="使用感受">使用感受</h1>
+<h2 id="优点">优点</h2>
+<ul>
+<li>格式内容分离，便于重新排版与整理</li>
+<li>字体统一美观（自己手写的字实在是太丑了哇）</li>
+<li>例题的自动编号很赞！</li>
+</ul>
+<h2 id="缺点">缺点</h2>
+<ul>
+<li><p>Vim原来就有两个常用的模式，输入法的使用又增加了一个模式。来回shift切换打断了编辑的流畅性，降低了效率。尤其是很多时候输入法还没切回英文就<code>jj</code>一下或者切片段，结果还要删掉，按shift，然后重新打，有的时候着实糟心。</p></li>
+<li><p>Snippets多固然增加了效率，但是也增加了记忆的负担。对于我这种新手来说，过多的snippets只是把打LaTeX的时间转换成回忆用哪个snippet比较好的时间，一下子增加太多snippets也会降低效率。</p></li>
+<li><p>错字的存在。搜狗输入法对于偶尔的打错具有自动修正的功能，但是无论是谷歌拼音还是sunpinyin在这方面都不行，加上很多时候这些输入法的选词并不智能，一个个看过来选词其实也是非常耗费时间的。</p></li>
+<li><p>还是错字，例如“已知”错打成“一直”，英文可以配置spell checker做实时的纠正，这在原文当中也有提到，但是中文目前在这方面还缺乏支持。我听说百度有这方面的接口，但是不知道对于数学笔记专业性这么强的语料效果怎么样。Vim插件我是肯定没找到。</p></li>
+<li><p>笔记的结构比较松散，在笔记本上我们可以拿箭头划来划去，有旁注也可以轻松插入，但是这在LaTeX当中绝非易事。很多时候数学笔记的格式很容易让人陷入纠结，比如说我乱打的一段</p>
+<blockquote>
+<p>设<span class="math inline">\(y=kx+b,\quad (k\neq 0)\)</span></p>
+<p><span class="math inline">\(\Rightarrow x=\frac{y-b}{k}\)</span>又因为已知<span class="math inline">\(k=\tan \alpha\)</span>...</p>
+</blockquote>
+<p>这种格式要怎么排版呢？</p>
+<ol type="1">
+<li>是整个作为一个大的display style math，中文文字作为<code>\text&#123;&#125;</code>镶嵌其中？</li>
+<li>还是一行一个display-style math?</li>
+<li>还是有中文字的行用inline math，然后纯数学符号的行用display math?</li>
+<li>要不要用<code>gather*</code>这种环境？</li>
+</ol>
+<p>又比如说如下这段：</p>
+<blockquote>
+<p><span class="math inline">\(\begin{cases}x=1 \\y=2\end{cases}\)</span>或<span class="math inline">\(\begin{cases}x=2 \\y=1\end{cases}\)</span></p>
+</blockquote>
+<p>手写起来非常简单，但是LaTeX代码呢？</p>
+<pre class="line-numbers"><code class="language-latex">$\begin&#123;cases&#125; x=1 \\ y=2 \end&#123;cases&#125;$
+或
+$\begin&#123;cases&#125; x=2 \\ y=1 \end&#123;cases&#125;$</code></pre>
+<p>一下子复杂了不少，更别说为了中间的“或”字需要输入法切换。这是snippets也难以挽救的低效。</p></li>
+<li><p>我还没有试过画图。但是这一定是一个天坑。</p></li>
+<li><p>如果编译失败那几乎是当场去世（悲）</p></li>
+</ul>
+<h1 id="总结">总结</h1>
+<p>就我个人体验而言，用LaTeX记笔记虽然能够达到非常高的排版质量，但是并没有传说中的那么高效（尤其是在使用中文的背景之下）。用LaTeX整理笔记自然是极好的，但是用LaTeX在课堂上实时记笔记绝对属于一大作死行为（更别说你也不知道老师收不收LaTeX记得笔记对不？）</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/02/23/PyMinecraft/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/02/23/PyMinecraft/" class="post-title-link" itemprop="url">用Python非侵入式自动化原版Minecraft</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-02-23 07:34:40" itemprop="dateCreated datePublished" datetime="2020-02-23T07:34:40-05:00">2020-02-23</time>
+    </span>
 
   
 </div>
@@ -2483,108 +2035,6 @@ def start_mining():
 </code></pre>
 <p>这个脚本运行的非常顺畅（虽然并不总是成功，这和玩家坐标控制的精度有很大关系）。已经初步有了实用价值。看起来我这个技术路线总体还是可行的。当然现在的功能非常简陋，但是F3的信息非常丰富，如果拓展一下用途还是非常丰富的。当然最重要的还是这个脚本可以适用于所有有F3界面的Minecraft版本，版本兼容性堪称完美，爽到。</p>
 <p><del>写这个脚本花了2个小时，就是为了挖一个简单的矿，这么算来似乎有点亏？！</del></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/07/25/PanDownload/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/PanDownload/" class="post-title-link" itemprop="url">自己对于PanDownload的一些想法</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-25 03:11:40" itemprop="dateCreated datePublished" datetime="2021-07-25T03:11:40-04:00">2021-07-25</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-04-17 07:46:00" itemprop="dateModified" datetime="2020-04-17T07:46:00-04:00">2020-04-17</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>PanDownload前几天被封了。</p>
-<p>网络上那个群情激奋啊，看B站连“百度的七宗罪”都出来了。还有人把GFW做的DNS污染，域名置换等和PanDownload做的“多线程下载百度云盘”相并列，不乏讥讽地质问为何遭到制裁的是看起来程度最轻的PanDownload。</p>
-<p>我不是PanDownload的使用者，自己也很少用百度云盘，或许称不上是特别利益相关者吧。</p>
-<p>但看到这个新闻的时候我是很矛盾的。</p>
-<p>我讨厌百度吗？</p>
-<p>肯定的，我从八年前开始用百度云盘，从不限速的年代一路用到限速的坑爹时代，不恨是不可能的。</p>
-<p>我喜欢PanDownload吗？</p>
-<p>喜欢的，我自己两三年以前还在用很多油猴的提取直连的脚本，这种绕开限速薅羊毛的软件我不要太喜闻乐见。</p>
-<p>那在这次事件中我支持PanDownload吗？</p>
-<p>我其实想保持中立。</p>
-<p>我们对于PanDownload等一众软件的推崇源于对于百度免费用户限速的痛恶。由俭入奢易由奢入俭难，对于限速的痛恶则源于几年前限速不存在的事实。</p>
-<p>但是仔细想想，免费的大云盘这件天上掉馅饼的事情合理吗？</p>
-<p>参照如今硬盘的价格以及带宽的价格，我觉得百度留着云盘业务肯定不是做慈善的。在线存储是一种服务，是企业生产的一种产品，收费这件事情本身是无可厚非的。放眼国外市场，Dropbox，Google Drive等也没有做慈善的。不是空间小就是下载慢。</p>
-<p>要说百度可恶，也就可恶给用户提供了“一开始的美好”，用2TB的存储空间诱惑用户，等用户粘性培养上来之后，在几年前再限速到一个坑爹的地步，这个时候你左右为难。付钱吧，跟几年前比感觉亏了，不付钱吧，自己很多数据还存着呢。反正百度这几年的潜台词是越来越明显了：不付钱别玩，让你免费用已经是施舍你了，还BB那么多干嘛。</p>
-<p>这句话很让人恼火，非常让人恼火，但是仔细思考一下，似乎是对的。云盘是一个市场，在市场里哪有永远白嫖的份。这个时候最好的结局是期待着市场竞争逼着百度降价。但是我国云盘市场的竞争着实不够激烈，百度隐隐形成垄断之势，降价看来是遥遥无期了（话又说回来，一个月25块钱的价格换算成美元大概与Google Drive差不多，其实真没那么多好抱怨的）。</p>
-<p>这个时候PanDownload以及一众多线程下载软件出现了。几十个线程一起下，让免费用户看到了曙光。</p>
-<p>我们不妨把PanDownload看做是网盘市场的一个有力的竞争者（虽然竞争并非其初衷），把它的下载服务看做是一个全新的网盘产品，它提供的“网盘产品”的竞争性优势在于</p>
-<ol type="1">
-<li>和已有百度网盘资料的完全兼容</li>
-<li>免费用户的高速下载</li>
-</ol>
-<p>如果PanDownload的网盘产品真的是独立而全新的，那百度该死，谁也不能阻止PanDownload一统江湖。</p>
-<p>但是事实不是这个样子的，PanDownload提供的这个如此有竞争性的“产品”，是基于百度网盘的生产资料与资本建立起来的。PanDownload运用的多线程下载，亦或是其他软件的直链提取，这些都不是百度网盘官方提供的API，也不是百度网盘官方认可的。</p>
-<p>因此，全民的喜闻乐见与对于百度的痛恨，也改变不了PanDownload不正当竞争（视作竞争者）或者说侵犯百度权益（是做第三方软件）的事实。</p>
-<p>单纯地因为PanDownload是在造福人类，是在薅垃圾公司的羊毛，就对这种行为的本质视而不见，其实是违背法治社会的初衷的。</p>
-<p>这就仿佛所有人都认为张三是人渣，李四替天行道把张三打死了就可以不犯法一样。事实上，哪怕张三是在逃的杀人犯过街喊打喊打，如果不处于类似正当防卫的情形，李四把张三打死也是不对的。故意杀人就是故意杀人。何况百度作为一家公司目前来看还没有在云盘的运营中触犯法律（或许有垄断？不清楚）。前几天在B站上看罗翔老师说“法律要考虑民众的诉求，但是要超越民众的偏见”。</p>
-<p>百度这叫体量大，如果是一家新创业的公司，被这么一集体白嫖，搞得破产了怎么办？这种事情不是没有发生过。难道法律里面还要加入一条“如果体量够大而且民众不爽，某某法规就失效”？</p>
-<p>如果对百度不爽，就尽量避免去用它。现在搭建一个自己的网盘已经是很简单的一件事情了。</p>
-<p>何况部分用户离不开百度网盘的原因大概是因为下”资源“，所谓”资源“，又大致可以分为免费（说的不好一点就是盗版）的电影与一些淫秽资源。后者我不想多说啥（其实吧，我觉得一些黄站之于内容提供者也是PanDownload之于百度网盘的存在），但是免费下盗版竟然还有理了？</p>
-<p>没错，一直白嫖一直爽是中文互联网的常态，我自己也爱装破解版软件，看视频听音乐能不付钱就不付钱，但是理直气壮地说出来又是另一回事情了。百度给你下就不错了，PanDownload让你下爽了就下爽了，但是这种处于灰色地带的软件，要较真起来，我们真的不占理。</p>
-<p>或许吧，网民一直隐隐有一种心态，在网络上白嫖是对的，反正就是一堆数据拷来拷去，百度云盘也就是一个网站而已，付费下载闻所未闻。这种心态在我看来是有问题的。垄断着实可恶，但是支付给服务提供者报酬的道理还是不错的。</p>
-<p>因此，我觉得PanDownload虽然对于我们是一款好软件，但是最近取缔PanDownload这一事，我觉得还是无可厚非的。</p>
 
       
     </div>

@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="代码仅作学习用途，请勿分享传播。 代码在这里。 问题背景 因为实体书购买麻烦、厚重、占地空间大（对于国外的一些原版教材来说，价格高昂），我一直是电子书的忠实拥趸。一般来说，市面上下载的到的电子书大致可以分为以下几类：  基于原内容的排版可变格式：一般为EPUB、MOBI或TXT格式，动态排版，在任何屏幕大小下都适合阅读。有索引，文字与图像本地渲染，清晰可辨。这是电子书的理想格式，但这种格">
+<meta property="og:type" content="article">
+<meta property="og:title" content="科学白嫖“图档清洁专家”">
+<meta property="og:url" content="https://alan20210202.github.io/2021/05/19/Docleaner/index.html">
+<meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
+<meta property="og:description" content="代码仅作学习用途，请勿分享传播。 代码在这里。 问题背景 因为实体书购买麻烦、厚重、占地空间大（对于国外的一些原版教材来说，价格高昂），我一直是电子书的忠实拥趸。一般来说，市面上下载的到的电子书大致可以分为以下几类：  基于原内容的排版可变格式：一般为EPUB、MOBI或TXT格式，动态排版，在任何屏幕大小下都适合阅读。有索引，文字与图像本地渲染，清晰可辨。这是电子书的理想格式，但这种格">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://alan20210202.github.io/2021/05/19/Docleaner/%E7%99%BD%E5%AB%96.jpg">
+<meta property="og:image" content="https://alan20210202.github.io/2021/05/19/Docleaner/Python.jpg">
+<meta property="og:image" content="https://alan20210202.github.io/2021/05/19/Docleaner/image-20210511174658388.png">
+<meta property="og:image" content="https://alan20210202.github.io/2021/05/19/Docleaner/image-20210511180117997.png">
+<meta property="og:image" content="https://alan20210202.github.io/2021/05/19/Docleaner/Comparison.jpg">
+<meta property="article:published_time" content="2021-05-19T12:35:44.000Z">
+<meta property="article:modified_time" content="2021-05-19T12:35:44.000Z">
+<meta property="article:author" content="Chengyuan Ma">
+<meta property="article:tag" content="乱搞">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://alan20210202.github.io/2021/05/19/Docleaner/%E7%99%BD%E5%AB%96.jpg">
+
+
+<link rel="canonical" href="https://alan20210202.github.io/2021/05/19/Docleaner/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
+<title>科学白嫖“图档清洁专家” | Chengyuan Ma's Blog</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
+    <script data-pjax>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-65HSG5NCY6');
+      }
+    </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Chengyuan Ma's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-pagedewarp"><a href="/dewarp/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>PageDewarp</a></li>
+        <li class="menu-item menu-item-english"><a href="/english/" rel="section"><i class="fa fa-globe-americas fa-fw"></i>English</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">问题背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#pdf%E5%85%89%E6%A0%85%E5%8C%96"><span class="nav-number">2.1.</span> <span class="nav-text">PDF光栅化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E5%9C%A8%E7%BA%BF%E4%BD%93%E9%AA%8C"><span class="nav-number">2.2.</span> <span class="nav-text">使用Selenium自动化“在线体验”</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86%E4%B8%8B%E8%BD%BD%E4%B8%8B%E6%9D%A5%E7%9A%84%E5%9B%BE%E7%89%87%E6%8B%BC%E5%90%88%E5%9B%9Epdf"><span class="nav-number">2.3.</span> <span class="nav-text">将下载下来的图片拼合回PDF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cli%E5%B0%81%E8%A3%85"><span class="nav-number">2.4.</span> <span class="nav-text">CLI封装</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">3.</span> <span class="nav-text">测试</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
+  <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
+  <div class="site-description" itemprop="description">不务正业高中生一枚</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://kalasearch.cn/" title="https:&#x2F;&#x2F;kalasearch.cn&#x2F;" rel="noopener" target="_blank">卡拉搜索</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2021/05/19/Docleaner/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          科学白嫖“图档清洁专家”
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-05-19 08:35:44" itemprop="dateCreated datePublished" datetime="2021-05-19T08:35:44-04:00">2021-05-19</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><strong>代码仅作学习用途，请勿分享传播。</strong></p>
+<p>代码在<a target="_blank" rel="noopener" href="https://github.com/alan20210202/docleaner-web">这里</a>。</p>
+<h1 id="问题背景">问题背景</h1>
+<p>因为实体书购买麻烦、厚重、占地空间大（对于国外的一些原版教材来说，价格高昂），我一直是电子书的忠实拥趸。一般来说，市面上下载的到的电子书大致可以分为以下几类：</p>
+<ol type="1">
+<li>基于原内容的排版可变格式：一般为EPUB、MOBI或TXT格式，动态排版，在任何屏幕大小下都适合阅读。有索引，文字与图像本地渲染，清晰可辨。这是电子书的理想格式，但这种格式的书大多是以小说，我几乎没有见到过用这种格式排版的学术的教科书。</li>
+<li>基于原内容的PDF：基于书的源文件直接渲染得来，排版不可变，在没有重排软件的情况下需要大屏阅读器才能舒适阅读，并且需要适当对页边进行裁剪。大部分时候有索引，文字和图像本地渲染，清晰可辨。这种PDF可遇而不可求。有教授把这种格式的书放在官网上给学生们免费下载（比如说<a target="_blank" rel="noopener" href="https://www.designofapproxalgs.com/">这个</a>）——我愿称他们为大善人。</li>
+<li>精修的扫描PDF：是基于实体书扫描而来，文字部分经过OCR和轮廓平滑化变得更加清晰，公式可能经过重写也很清楚。良心一点的制作者会顺便把目录也做了。这种PDF（有的时候是DJVU）见到的概率比较高，libgen上十本里面能有六七本。我的Introduction to Linear Algebra就是这种类型。</li>
+<li><strong>三无的扫描PDF</strong>：PDF制作者只进行了基本的扫描。<strong>文字有倾斜，页面有阴影，页边缘出镜导致黑边</strong>，有些还会有铅笔的笔记。OCR是没有的，目录是不用指望的。这种是电子书里的下品，像我这样有一些轻微强迫症的会觉得很难受。</li>
+</ol>
+<p>最近自己要找的一本书搜遍了网上也只有三无版本，真的感觉头很大，体验极差。那么，有什么办法能把这种三无版本清理一下，使之朝精修PDF的方向上靠拢呢？</p>
+<p><strong><a target="_blank" rel="noopener" href="http://www.docleaner.cn/">图档清洁专家</a></strong>是我前几天在网上发现的。实测效果拔群。缺点是要付60块钱买正版。60元不是什么大钱，但是人是要有追求的：</p>
+<p><img src="/2021/05/19/Docleaner/%E7%99%BD%E5%AB%96.jpg" class=""></p>
+<p>正好，图档清理专家提供了<a target="_blank" rel="noopener" href="http://www.docleaner.cn/experience.html">在线体验</a>，这个在线体验提供的功能已经涵盖了我的需求了，但是为了防止我们白嫖地太爽，在线体验限制只能上传图片文件。对于我手里这本460页的教科书，一页页手工操作能把人折磨死。怎么办呢？</p>
+<p><img src="/2021/05/19/Docleaner/Python.jpg" class=""></p>
+<p>用Python自动化试试看？似乎能学到很多东西的样子。</p>
+<h1 id="代码实现">代码实现</h1>
+<p>我们的脚本需要实现以下功能：</p>
+<ol type="1">
+<li>将输入的PDF按页转换成高清图片。</li>
+<li>以某种方式程序化地调用在线体验的功能。</li>
+<li>将结果的图片下载下来重新拼合成为PDF。</li>
+<li>可以顺便使用<a target="_blank" rel="noopener" href="https://pypi.org/project/pytesseract/">pytesseract</a>实现OCR。</li>
+</ol>
+<h2 id="pdf光栅化">PDF光栅化</h2>
+<p>如果只考虑“将PDF转化为图片”的功能，最切题的库是<a target="_blank" rel="noopener" href="https://pypi.org/project/pdf2image/">pdf2image</a>，底层调用的工具是poppler。这也是我一开始的选择。</p>
+<p>但是后来转念一想，既然后面还有要将图片转PDF，PDF拼合的需求，寻找一款更为通用的PDF库是更明智的做法。</p>
+<p>经过一番搜索，跳过已经五年没有出过新版本的的PyPDF2，我选择了目前维护勤快的<a target="_blank" rel="noopener" href="https://pypi.org/project/PyMuPDF/">PyMuPDF</a>。PyMuPDF调用的是MuPDF这个用C写的成熟的PDF库，功能与性能都是有保障的。MuPDF的license上说明对于开源项目免费授权，因此我就大胆地用了。</p>
+<p>使用PyMuPDF进行PDF的光栅化，代码如下：</p>
+<pre class="line-numbers"><code class="language-python">import fitz
+from typing import Optional, Generator, Union
+from pathlib import Path
+
+StrPath = Union[str, os.PathLike]
+
+def convert_pdf_to_images(pdf: StrPath, fmt: str, dpi: int,
+                          output: Optional[StrPath] = None,
+                          first_page: Optional[int] = None,
+                          last_page: Optional[int] = None) \
+        -&gt; Generator[StrPath, None, None]:
+    &quot;&quot;&quot;
+    Converts a pdf file to images. This a necessary pre-processing step
+    because docleaner online only accepts images as inputs.
+    
+    :param pdf: The path to the pdf file.
+    :param fmt: Image file format. jpg is the fastest but not lossless; png is
+        lossless but slow; tiff is theoretically the best but occupies a lot of
+        disk space.
+    :param dpi: Pixel density of the output images.
+    :param output: The output directory of intermediate images.
+    :param first_page: First page to convert (starting from 1, inclusive).
+    :param last_page: Last page to convert (starting from 1, inclusive).
+    :return: A generator yielding the paths to the images.
+    &quot;&quot;&quot;
+    doc = fitz.Document(pdf)
+
+    @contextmanager
+    def normal_dir(dir_path):
+        Path(dir_path).mkdir(parents=True, exist_ok=True)
+        yield dir_path
+
+    matrix = fitz.Matrix(dpi / 72, dpi / 72)
+    first_page = 0 if first_page is None else first_page - 1
+    last_page = doc.page_count if last_page is None else last_page
+    with tempfile.TemporaryDirectory() if output is None else normal_dir(
+            output) as path:
+        for i in range(first_page, last_page):
+            filename = os.path.join(path, f&quot;&#123;i&#125;.&#123;fmt&#125;&quot;)
+            # noinspection PyUnresolvedReferences
+            doc[i].get_pixmap(matrix=matrix).save(filename)
+            yield filename
+        if output is None:
+            # Yield an empty string if we are using a temporary directory,
+            # because without this, the temporary directory will be cleaned
+            # up the moment the last filename is yielded, when the caller
+            # hasn&#39;t done anything to the yielded temp file yet. Yielding an
+            # emtpy string keeps the TemporaryDirectory object in memory
+            # longer so the problem is solved.
+            yield &quot;&quot;</code></pre>
+<p>这个代码乍一看是比较复杂，有几个重点：</p>
+<ol type="1">
+<li>代码写成了生成器的形式，这样便于和后续的其他功能进行更好的耦合。个人认为生成器是一个很不错的语法糖。</li>
+<li>为了方便静态检查，我这里给方法签名标注了类型。</li>
+<li>为了同时处理输出图片到临时目录和正常目录（可以用于其他工具）的情形，这里定义了名为<code>normal_dir</code>的<a target="_blank" rel="noopener" href="https://docs.python.org/3/library/contextlib.html">context manager</a>以和<code>TemporaryDirectory</code>保持形式上的一致。这样代码可以更加简短。要使用<code>TemporaryDirectory()</code>而不是<code>mkdtemp()</code>的原因是前者确保了临时文件夹最终会被删除。</li>
+<li>但是<code>TemporaryDirectory()</code>在结束后删除临时文件夹会带来一个问题：在<code>yield</code>最后一页的图片的路径之后，临时文件夹马上就被删除了，刚返回的路径也就失效了。调用这个生成器的代码使用的时候就会产生找不到文件的错误。一个粗暴的解决方案就是让<code>with</code>块执行得再久一点——比如说在下次调用的时候再结束。这就是最后<code>yield ""</code>的意义。</li>
+<li>PyMyPDF默认的<code>get_pixmap</code>方法输出的图片分辨率等于当前页面的边界矩形大小（bound rectangle）。这个边界矩形尺寸是以点数（pts）为单位的，1英寸等于72点，因此如果需要达到指定的DPI，<code>get_pixmap</code>在执行的时候就需要放大<code>dpi / 72</code>倍。这就是<code>matrix = fitz.Matrix(dpi / 72, dpi / 72)</code>的含义。</li>
+</ol>
+<p>剩下的无非就是看文档写代码。</p>
+<h2 id="使用selenium自动化在线体验">使用Selenium自动化“在线体验”</h2>
+<p>人工一页一页上传手抽筋怎么办？一个很自然的思路就是让代码来直接操控浏览器。在这方面，因为网站开发自动化测试的需求，有人已经帮我们写好轮子了——Selenium。</p>
+<p><img src="/2021/05/19/Docleaner/image-20210511174658388.png" class=""></p>
+<p>根据官网上的描述，Selenium和我们的需求完美对接，而且Selenium提供了Python的接口。</p>
+<p>使用Selenium的第一步是打开浏览器并且访问目标网页：</p>
+<pre class="line-numbers"><code class="language-python">from selenium import webdriver
+
+browser = webdriver.Chrome()
+# browser = webdriver.Firefox()
+# browser = webdriver.Edge()
+# browser = webdriver.Safari()
+browser.get(&quot;http://www.docleaner.cn/experience.html&quot;)</code></pre>
+<p>打开哪个浏览器就取决于个人喜好了。在这里需要注意：除了在Python环境里安装selenium包以外，还需要自行安装对应浏览器的WebDriver。具体如何装，怎么装，请参阅Selenium的文档。就我个人体验而言，Chrome的WebDriver启动得很快，但是默认会把日志写入控制台导致进度条显示混乱；Firefox得WebDriver要花一两秒启动，但默认会写日志到geckodriver.log里面。</p>
+<p><img src="/2021/05/19/Docleaner/image-20210511180117997.png" class=""></p>
+<p>在执行以上代码之后要做两件事：</p>
+<ol type="1">
+<li>等待页面加载完毕（废话），以及</li>
+<li>打开去背景和自动纠斜这两个默认关闭但是很有用的开关。</li>
+</ol>
+<p>Selenium的API允许我们把两件事并在一起做，前提是我要知道两个开关的“路径”——CSS选择器或XPath都行。</p>
+<pre class="line-numbers"><code class="language-python">from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.ui import WebDriverWait
+
+WebDriverWait(browser, timeout).until(
+    expected_conditions.visibility_of_element_located(
+        (By.XPATH,
+        &quot;开关的XPath&quot;)
+    )
+).click()</code></pre>
+<p>以“自动纠斜”开关为例，其周围的HTML如下：</p>
+<pre class="line-numbers"><code class="language-html">&lt;div style=&quot;position: relative;&quot;&gt;
+    &lt;button type=&quot;button&quot; class=&quot;layui-btn layui-btn-primary buttoncss buttoncss0&quot; style=&quot;padding: 0 10px;&quot;&gt;
+        &lt;img src=&quot;http://www.docleaner.cn/templets/1/qwsoft//resource/images/jiuxie.png&quot;&gt;自动纠斜
+    &lt;/button&gt;
+    &lt;div class=&quot;buttoncheckbox&quot;&gt;
+        &lt;input type=&quot;checkbox&quot; name=&quot;exeConfig&quot; lay-filter=&quot;exeConfig&quot; value=&quot;自动纠斜&quot; lay-skin=&quot;primary&quot;&gt;
+        &lt;div class=&quot;layui-unselect layui-form-checkbox&quot; lay-skin=&quot;primary&quot;&gt;&lt;i class=&quot;layui-icon layui-icon-ok&quot;&gt;&lt;/i&gt;&lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<p>我们的目标是那个<code>&lt;button&gt;</code>元素，比较好找的是<code>&lt;input&gt;</code>元素，其XPath就是<code>//input[@value='自动纠斜']</code>。</p>
+<p>接下来我们要使用XPath的Axes语义间接地定位到<code>&lt;button&gt;</code>：</p>
+<p><code>//input[@value='自动纠斜']/parent::div/preceding-sibling::button</code></p>
+<p>语义很清楚，就不多解释了。完整的Axes列表可以看<a target="_blank" rel="noopener" href="https://www.w3schools.com/xml/xpath_axes.asp">这里</a>。</p>
+<p>类似地，我们可以定位上传按钮的位置：</p>
+<pre class="line-numbers"><code class="language-python">uploader = WebDriverWait(browser, timeout).until(
+    expected_conditions.presence_of_element_located(
+        (By.CLASS_NAME, &quot;layui-upload-file&quot;)))</code></pre>
+<p>注意到这里是<code>presence_of_element_located</code>，前面是<code>visibility_of_element_located</code>，区别在于后者必须要求元素在浏览器框里面可视，而前者只需要DOM里有就行了。我们之前需要点击开关，因此必须先看得见才行（而且可视是确保网页加载完毕的一个更靠谱的条件），而上传控件在网页里是一个隐藏起来的<code>&lt;input&gt;</code>，因此只要present in DOM就行了。</p>
+<p>往上传控件上传东西调用的是<code>send_keys</code>函数，很有意思：</p>
+<pre class="line-numbers"><code class="language-python">uploader.send_keys(file_path)</code></pre>
+<p>然后等一会网页右边就会出现处理后的图像。其实显示结果的<code>&lt;img&gt;</code>一直都在，只是直到处理完成之后才可见，我们借此找到这个控件并且作为处理完成的依据：</p>
+<pre class="line-numbers"><code class="language-python">result = WebDriverWait(browser, timeout).until(
+    expected_conditions.visibility_of_element_located(
+        (By.ID, &quot;dragImgRight&quot;)))</code></pre>
+<p>开发者很好心地（？）在结果图像控件的<code>src</code>字段直接使用base64编码图片，连额外下载的代码都免了，我们直接得到结果图像：</p>
+<pre class="line-numbers"><code class="language-python">import io
+import base64
+from PIL import Image
+
+result = result.get_attribute(&quot;src&quot;)
+result = base64.b64decode(
+    result.replace(&quot;data:image/jpg;base64,&quot;, &quot;&quot;))
+yield Image.open(io.BytesIO(result))</code></pre>
+<p>最后，注意把结果的<code>&lt;img&gt;</code>再藏起来，这样通过可见性来判断是否处理完成的逻辑在下一张图片传上去的时候才有效。经查，结果的可见性通过<code>&lt;img&gt;</code>父元素<code>class</code>列表里<code>layui-hide</code>的存在与否来判定。我们选择通过Selenium让浏览器执行JavaScript进行这种有点复杂度的操作：</p>
+<pre class="line-numbers"><code class="language-python">browser.execute_script(
+    &quot;arguments[0].parentNode.classList.add(&#39;layui-hide&#39;);&quot;, result)</code></pre>
+<p><code>arguments</code>自然就是后面传参的数组。</p>
+<p>完整的代码如下：</p>
+<pre class="line-numbers"><code class="language-python">def clean_doc_online(images: Generator[StrPath, None, None], browser: str) \
+        -&gt; Generator[Image.Image, None, None]:
+    &quot;&quot;&quot;
+    Cleans the scanned document pages using docleaner&#39;s online service.
+    
+    :param images: A generator yielding paths to document pages.
+    :param browser: Browser type, can be &quot;chrome&quot;, &quot;firefox&quot;, &quot;safari&quot;, or
+        &quot;edge&quot;. Requires the browser and its webdriver to be installed.
+    &quot;&quot;&quot;
+    if browser == &quot;chrome&quot;:
+        browser = webdriver.Chrome()
+    elif browser == &quot;firefox&quot;:
+        browser = webdriver.Firefox()
+    elif browser == &quot;safari&quot;:
+        browser = webdriver.Safari()
+    elif browser == &quot;edge&quot;:
+        browser = webdriver.Edge()
+    else:
+        raise RuntimeError(&quot;Unknown browser type&quot;)
+    # Timeout for web driver waits. 10s is a reasonable value unless you have
+    # a very high-res image / terrible network.
+    timeout = 10
+    browser.get(&quot;http://www.docleaner.cn/experience.html&quot;)
+
+    # Turn on background removal and automatic deskewing.
+    WebDriverWait(browser, timeout).until(
+        expected_conditions.visibility_of_element_located(
+            (By.XPATH,
+             &quot;//input[@value=&#39;去背景&#39;]/parent::div/preceding-sibling::button&quot;)
+        )
+    ).click()
+    WebDriverWait(browser, timeout).until(
+        expected_conditions.visibility_of_element_located(
+            (By.XPATH,
+             &quot;//input[@value=&#39;自动纠斜&#39;]/parent::div/preceding-sibling::button&quot;)
+        )
+    ).click()
+    # Wait for a while to ensure the changes take effect.
+    time.sleep(1)
+
+    uploader = WebDriverWait(browser, timeout).until(
+        expected_conditions.presence_of_element_located(
+            (By.CLASS_NAME, &quot;layui-upload-file&quot;)))
+
+    try:
+        uploader.send_keys(next(images))
+        while True:
+            # Write like this instead of a for loop enables us to fetch the
+            # next image while the browser &amp; remote server are processing the
+            # image just uploaded. Converting a pdf page to an image is slow,
+            # so we here save a lot of time :)
+            next_image = next(images)
+            # Wait for the result image to be visible.
+            result = WebDriverWait(browser, timeout).until(
+                expected_conditions.visibility_of_element_located(
+                    (By.ID, &quot;dragImgRight&quot;)))
+            # Hide the result image again so the wait condition above can be
+            # re-used.
+            browser.execute_script(
+                &quot;arguments[0].parentNode.classList.add(&#39;layui-hide&#39;);&quot;, result)
+            result = result.get_attribute(&quot;src&quot;)
+            result = base64.b64decode(
+                result.replace(&quot;data:image/jpg;base64,&quot;, &quot;&quot;))
+            yield Image.open(io.BytesIO(result))
+            if next_image == &quot;&quot;:
+                # See convert_pdf_to_images for the reason behind this weird
+                # branch.
+                break
+            uploader.send_keys(next_image)
+    except StopIteration:
+        pass
+
+    browser.quit()</code></pre>
+<p>注意三点：</p>
+<ol type="1">
+<li>之前在PDF转图片的设计中有返回空路径的奇技淫巧需要特判。</li>
+<li>在点击开关之后需要等一会来确保开关真的点下去了。</li>
+<li>循环的写法最好不要写成标准的<code>for</code>循环，因为这样的话文件图片上去之后代码就是干等。现在的写法确保了图片传上去之后立刻就获取下一张图片，之后再判断等待是否当前图片处理完成。再调用<code>next(images)</code>的过程中，浏览器也在独立于Python进程运行，因此我们毫无损失。将PDF的一页转化为一张高清图片需要1-2秒钟，而网站处理图片大概也是这么长时间，因此在这里循环写法的改变是一个很不错的优化。</li>
+</ol>
+<h2 id="将下载下来的图片拼合回pdf">将下载下来的图片拼合回PDF</h2>
+<p>这个功能的实现是相对简单，只要照着PyMuPDF的文档写就行了。</p>
+<p>同时，我注意到pytesseract里面有输入图片直接输出PDF的函数，因此可以一并在这里完成。</p>
+<p>顺便可以通过tqdm显示一个进度条，方便看清进度。</p>
+<p>最终代码如下：</p>
+<pre class="line-numbers"><code class="language-python">from tqdm import tqdm
+import pytesseract
+
+def convert_images_to_pdf(images: Generator[Image.Image, None, None],
+                          output: StrPath,
+                          ocr: bool = True, total: Optional[int] = None):
+    &quot;&quot;&quot;
+    Converts and merges images to a one-page pdf file, performing optional
+    OCR in the process.
+
+    :param images: A generator yielding PIL image objects.
+    :param output: Path to the result pdf.
+    :param ocr: Whether to perform OCR(Optical Character Recognition).
+    :param total: An optional integer hinting the total number of images given.
+        If supplied, a progress bar will be displayed during the conversion.
+    &quot;&quot;&quot;
+    doc = fitz.Document()
+    for image in images if total is None else tqdm(images, total=total):
+        if ocr:
+            pdf = pytesseract.image_to_pdf_or_hocr(image)
+            page = fitz.Document(stream=pdf, filetype=&quot;pdf&quot;)
+            doc.insert_pdf(page)
+        else:
+            # noinspection PyUnresolvedReferences
+            page = doc.new_page(width=image.width, height=image.height)
+            buffer = io.BytesIO()
+            image.save(buffer, format=&quot;jpeg&quot;)
+            page.insert_image(fitz.Rect(0, 0, image.width, image.height),
+                              stream=buffer)
+    doc.save(output)</code></pre>
+<h2 id="cli封装">CLI封装</h2>
+<p>在最后的最后，可以通过<a target="_blank" rel="noopener" href="https://click.palletsprojects.com/en/7.x/">Click</a>库，为脚本进行一个CLI的封装：</p>
+<pre class="line-numbers"><code class="language-python">import click
+
+@click.command()
+@click.argument(&quot;input&quot;, type=click.Path(exists=True))
+@click.argument(&quot;output&quot;, type=click.Path())
+@click.option(&quot;-f&quot;, &quot;--format&quot;, default=&quot;png&quot;,
+              help=&quot;Intermediate image format.&quot;)
+@click.option(&quot;-d&quot;, &quot;--dpi&quot;, default=300, help=&quot;DPI for rasterization.&quot;)
+@click.option(&quot;-b&quot;, &quot;--browser&quot;, default=&quot;chrome&quot;,
+              help=&quot;The browser selenium uses.&quot;)
+@click.option(&quot;--first-page&quot;, type=int, help=&quot;First page to convert/clean.&quot;)
+@click.option(&quot;--last-page&quot;, type=int, help=&quot;Last page to convert/clean.&quot;)
+@click.option(&quot;--ocr/--no-ocr&quot;, default=True,
+              help=&quot;Whether to perform OCR during the conversion.&quot;)
+@click.option(&quot;--clean/--dont-clean&quot;, default=True,
+              help=&quot;Whether to clean pdf using docleaner&#39;s online service.&quot;)
+def main(input: str, output: str, format: str, dpi: int, browser: str,
+         first_page: Optional[int], last_page: Optional[int], ocr: bool,
+         clean: bool):
+    images = convert_pdf_to_images(input, fmt=format, dpi=dpi,
+                                   first_page=first_page, last_page=last_page)
+    if clean:
+        images = clean_doc_online(images, browser)
+    doc = fitz.Document(input)
+    total = (doc.page_count if last_page is None else last_page) \
+        - (0 if first_page is None else first_page - 1)
+    convert_images_to_pdf(images, output, ocr=ocr, total=total)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()</code></pre>
+<p>大功告成！</p>
+<h1 id="测试">测试</h1>
+<p>我选取的测试书籍是津巴多的《态度改变与心理影响》。原文扫描版460页98.4MB，自动化脚本耗时半个小时左右处理完毕，结果大小为325MB。对比如下（典型页面）：</p>
+<p><img src="/2021/05/19/Docleaner/Comparison.jpg" class=""></p>
+<p>可以看到，脚本做出了显著的优化，但在脚本运行中也发现了一些可以改进的地方：</p>
+<ol type="1">
+<li>过于激进的光栅化分辨率使得结果文档的大小显著增加。</li>
+<li>基于Selenium的解决方案偶尔会出现开关没有开或者莫名其妙地关掉的情形。</li>
+<li>脚本的运行效率有待提升。</li>
+</ol>
+<p>对于这三点，我们将在以后的文章中进行改进。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%B9%B1%E6%90%9E/" rel="tag"># 乱搞</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/04/30/Determinant/" rel="prev" title="行列式笔记">
+                  <i class="fa fa-chevron-left"></i> 行列式笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/05/22/Docleaner-Optimization/" rel="next" title="科学白嫖“图档清洁专家”——优化篇">
+                  科学白嫖“图档清洁专家”——优化篇 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chengyuan Ma</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-nginx.min.js" integrity="sha512-/MNzg8GlnVrAau/TZClh1jxgHNX0HDgidbGnHS5x1OtbKiNoK3e0XNd1oV16xmmeDHjisa3GKLArUau+43GZ4A==" crossorigin="anonymous"></script>
+<script type = "text/javascript">
+    document.addEventListener('pjax:complete', function() {
+        if (typeof Prism !== 'undefined') {
+            Prism.highlightAll();
+        }
+    });
+</script>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+    <div class="pjax">
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+    </div>
+</body>
+</html>

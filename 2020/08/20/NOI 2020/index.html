@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"alan20210202.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="Day -1 在中午太阳晒得最狠的时候到了学校。宿舍爬楼累死人，也不知道为啥学校楼要建那么高。幸好宿舍里的空调给力，好评。 宿舍的环境还行。个人觉得比当年WC2018的要好。 信号出奇地差，必须在直接靠窗的地方才有4G，不然连2G也别想收到，听宿管和小卖部阿姨说当初就是设计成这个样子的。差评。 插座很多好评。 但是还是没有桌子，无论用什么姿势看电脑都贼难受。同寝室的jtl带了一个床上架的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="蒟蒻的NOI 2020退役记">
+<meta property="og:url" content="https://alan20210202.github.io/2020/08/20/NOI%202020/index.html">
+<meta property="og:site_name" content="Chengyuan Ma&#39;s Blog">
+<meta property="og:description" content="Day -1 在中午太阳晒得最狠的时候到了学校。宿舍爬楼累死人，也不知道为啥学校楼要建那么高。幸好宿舍里的空调给力，好评。 宿舍的环境还行。个人觉得比当年WC2018的要好。 信号出奇地差，必须在直接靠窗的地方才有4G，不然连2G也别想收到，听宿管和小卖部阿姨说当初就是设计成这个样子的。差评。 插座很多好评。 但是还是没有桌子，无论用什么姿势看电脑都贼难受。同寝室的jtl带了一个床上架的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-20T08:18:18.000Z">
+<meta property="article:modified_time" content="2020-08-20T08:18:18.000Z">
+<meta property="article:author" content="Chengyuan Ma">
+<meta property="article:tag" content="乱搞">
+<meta property="article:tag" content="OI">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://alan20210202.github.io/2020/08/20/NOI%202020/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" />
+<title>蒟蒻的NOI 2020退役记 | Chengyuan Ma's Blog</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-65HSG5NCY6"></script>
+    <script data-pjax>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-65HSG5NCY6');
+      }
+    </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Chengyuan Ma's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-pagedewarp"><a href="/dewarp/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>PageDewarp</a></li>
+        <li class="menu-item menu-item-english"><a href="/english/" rel="section"><i class="fa fa-globe-americas fa-fw"></i>English</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#day--1"><span class="nav-number">1.</span> <span class="nav-text">Day -1</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#day-0"><span class="nav-number">2.</span> <span class="nav-text">Day 0</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#day-1"><span class="nav-number">3.</span> <span class="nav-text">Day 1</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#day-2"><span class="nav-number">4.</span> <span class="nav-text">Day 2</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#day-3"><span class="nav-number">5.</span> <span class="nav-text">Day 3</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chengyuan Ma"
+      src="/avatar.png">
+  <p class="site-author-name" itemprop="name">Chengyuan Ma</p>
+  <div class="site-description" itemprop="description">不务正业高中生一枚</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://kalasearch.cn/" title="https:&#x2F;&#x2F;kalasearch.cn&#x2F;" rel="noopener" target="_blank">卡拉搜索</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://alan20210202.github.io/2020/08/20/NOI%202020/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          蒟蒻的NOI 2020退役记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-20 04:18:18" itemprop="dateCreated datePublished" datetime="2020-08-20T04:18:18-04:00">2020-08-20</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="day--1">Day -1</h1>
+<p>在中午太阳晒得最狠的时候到了学校。宿舍爬楼累死人，也不知道为啥学校楼要建那么高。幸好宿舍里的空调给力，好评。</p>
+<p>宿舍的环境还行。个人觉得比当年WC2018的要好。</p>
+<p>信号出奇地差，必须在直接靠窗的地方才有4G，不然连2G也别想收到，听宿管和小卖部阿姨说当初就是设计成这个样子的。差评。</p>
+<p>插座很多好评。</p>
+<p>但是还是没有桌子，无论用什么姿势看电脑都贼难受。同寝室的jtl带了一个床上架的桌子，看了直呼内行。床板贼硬，差评。</p>
+<p>伙食还可以，豆浆我觉得挺好喝的，就是湖南菜多多少少带点辣个人不是很能接受，而且菜很细碎的样子。</p>
+<p>睡前随随便便背了点笔试题。</p>
+<h1 id="day-0">Day 0</h1>
+<p>早上迷迷糊糊地去参加了开幕式。听到dzd说有剩饭扣1分大惊。其他就没啥印象了=_=。</p>
+<p>结束后拱火mr押题，mr说看到才艺表演一个跳舞的转来转去暗示会考平衡树，一本正经胡说八道.jpg。</p>
+<p>感觉周围大佬都贼多，互相之间也都认识，我一个蒟蒻在当中不知所措。自己看来对于在竞赛圈内的信息闭塞的可以。</p>
+<p>中午又背了一会笔试题，然后下午就去试机了。笔试没有想象中的难，但是确实是有超纲的，纠结了很久。幸好最后还是满分飘过了。唯一值得吐槽的或许是CCF十年不变的远古测评系统。</p>
+<p>随后在试机场上敲了一波LCT和FFT。看到jtl在写MTT有想敲三模数的冲动但是最后的合并调了好一会才勉强调出来，于是就很慌。</p>
+<p>晚上寝室里大家都在欢快地打板子。对面两个人都在打带花树，然后惊奇地发现带花树的代码似乎也没有想象中那么长。三个人讨论了一下觉得似乎有概率考分块的样子，但是笑一笑也就过去了。我自己把各种字符串的算法全部过了一遍。</p>
+<h1 id="day-1">Day 1</h1>
+<p>看到T1愣了好一会，愣是没有第一时间看出DP。不知道为什么当时满脑子都是Tarjan和缩点然后沿着这个方向陷入了死胡同。于是先敲了一个DFS，觉得自己要完蛋。</p>
+<p>看了T2又愣了一会，先敲了个暴力，然后觉得<span class="math inline">\(m\)</span>比较小的情况可以动态维护链并+容斥解决。先放着。</p>
+<p>看到T3深切地感受到这或许是个数据结构毒瘤？先敲了一个二维树状数组的暴力。当时脑子大概是坏掉了不是枚举矩形直接算而是枚举点算贡献。总之暴力复杂度似乎<span class="math inline">\(\mathcal O(nm\log^2 n)\)</span>非常差。然后认真思考了一下部分分，发现可以莫队。于是基于二维树状数组写了一个<span class="math inline">\(\mathcal O\left(n\sqrt m \log^2 n\right)\)</span>的算法。然后觉得<span class="math inline">\(\mathcal O(\log ^2n)\)</span>的二维数点不妥，改成了<span class="math inline">\(\mathcal O(\log n)\)</span>的可持久化线段树，于是暴力和莫队的复杂度都少了一个<span class="math inline">\(\log\)</span>。再一看发现莫队我可以用树状数组干嘛要二维数点，于是莫队的常数又降下来一点。瞄了一眼后面觉得应该可以用<span class="math inline">\(\mathcal O(n^{7/4})\)</span>的四维莫队，可惜当初没认真学高维莫队不知道块大小咋算了，于是作罢。最后敲了一个莫队和暴力的对拍放着。</p>
+<p>回到T2开始敲树剖和容斥，写了一个<span class="math inline">\(\mathcal O\left(m2^m\log^2n\right)\)</span>的算法。和暴力结合在一起觉得至少能拿<span class="math inline">\(32\)</span>分，常数小一点也可以冲冲<span class="math inline">\(40\)</span>样子。</p>
+<p>然后回到T1，突然发现这不就一个裸的DP吗，直骂自己前面傻逼。于是花5分钟敲完朴素DP，然后再花10分钟敲完环的部分分。</p>
+<p>然后发现边权至多为<span class="math inline">\(5\)</span>，意识到正解显然是用max-plus algebra下的矩阵快速幂进行优化，于是开始敲。此时离考试结束还有60分钟，心中贼慌。等到敲完离考试结束还有30分钟，心态爆炸，然后死活调不出来。只能把这个正解例程写在程序里作为最后之选。离交卷还有5分钟的时候不改了。检查其他两题的程序无误后就开始坐着怀疑自己前三个小时脑子到底在想什么……</p>
+<p>出考场觉得自己已经成为了时代的眼泪（笑）。</p>
+<p>下午三点去查分。听jtl说这次CCF准时出分没有咕简直是奇迹。结果就是<span class="math inline">\(50+32+40=122\)</span>。和预想的完全一致。这个时候就很后悔。如果当初早点看出矩阵快速幂把T1的正解调出来就好了。这个分觉得铁牌已经在向我招手。</p>
+<p>晚上讲题。T1的确是快速幂正解。T2的正解是线段树合并维护树形DP这个之前也在寝室里有了大概的想法，但是一看这个DP的状态设计果然神仙。出题人怒斥了我们打<span class="math inline">\(32\)</span>分树剖暴力的，说是什么数据结构学傻了……然后说写个虚树不就<span class="math inline">\(40\)</span>了吗。我下面听着就很无语：我也想打虚树，但是我不会啊…… T3的出题人原来就是各种OJ上人们一直吐槽的lxl。这个题目的内部名称似乎叫“第十三分块”？正解似乎是先建一个树套树然后再分治再分块……讲到一半就lost了，内心大骂出题人毒瘤。</p>
+<p>回寝室后所有人都是颓废的状态，gyc在打Splay的板子。剩下我们两个人开始摸鱼。</p>
+<h1 id="day-2">Day 2</h1>
+<p>T1一看给人一种网络流的既视感，然后发现图建不出来。退而求其次试图写出线性规划进行代数化建图，发现线性规划必须使用Big M的办法才能建出来，而且直观一看integrity gap大的离谱是不可能建图的。因为是求可行解也不知道目标函数咋写，所以也不能从对偶下手，只能作罢。敲了一个非常粗暴的DFS暴力枚举每道菜用哪两个原材料分别用多少，发现这个DFS在最坏情况下跑得巨慢无比——难不成我暴力骗分都不成？</p>
+<p>这个时候有了一个乱搞的intuition，就是枚举原料的排列然后按照排列来确定所用的原料。然后发现过不了样例，于是作罢。</p>
+<p>之后稍微改进了一点暴力，只枚举每道菜用哪两个原材料，最后时候用多少最后用网络流来判。这下终于拿到了<span class="math inline">\(15\)</span>分的暴力。顺便基于这个敲了一个随机化，但是似乎表现也不佳的样子。</p>
+<p>T2题面长度属实劝退。读完题面之后觉得似乎不是很可做。看了样例之后有了一点暴力的想法，写了一个复杂度为<span class="math inline">\(\mathcal O\left(2^{2^{h_{\text{max}}-1}}\right)\)</span>的算法。简单来说就是把输入的树补成最大树高然后枚举能否扩张成最大树高下的所有可能的二叉树形态。觉得除了<span class="math inline">\(12\)</span>分纯暴力还可以拿<span class="math inline">\(h_{\text{max}}=4\)</span>的分？之后就不会了。</p>
+<p>T3一看给我整懵了。可真就暴力不会写呗。直觉上似乎可以写Dijkstra然后在转移的时候排除掉当前路径下的割边。但是很快意识到Dijkstra的本质是DP而这个转移方案是有后效性的。事实上也是如此，样例都没有过。然后试验性地写了一个不可行的判定方法：求出最短路，如果把最短路去掉之后全图不连通，则不可行——也不知道这样对不对。</p>
+<p>5个小时就在三个题目的来回懵逼当中度过。</p>
+<p>这次CCF出分直接咕了将近两个小时。我们很明智地从一开始就待在寝室里，那些下去等分的就苦逼了。分数出来是<span class="math inline">\(15+12+5=32\)</span>、也差不多是我预想的这个水平，T2树高为<span class="math inline">\(4\)</span>的点我还是超时了，大概还是没有判同构去重的原因？</p>
+<p>下午去听讲题。T1正解的思路源于<span class="math inline">\(m=n-1\)</span>的思考，其他的情况都是向<span class="math inline">\(m=n-1\)</span>情况的规约，感觉是非常巧妙的。T2的最优算法居然是线性的？有点听蒙了。听到T3讲解的时候才意识到T3当中的图叫做弦图，而正解源于对于弦图性质的思考，最后用过两次类Dijkstra来解决，感觉是非常非常神奇，不明觉厉，自愧不如。</p>
+<p>讲的时候就出榜了，一看果然Cu，心情复杂，但是一开始也没有期望，所以也没有太沮丧。感觉心态真正崩盘的大概是jtl，人家Cu第一……差一分就Ag了。但是看榜还是有<span class="math inline">\(500\)</span>分以上的，觉得这些人真的很厉害。我或许不比他们笨，但是他们确实历练的比我这种多多了。我这种常年边缘划水的OIer果然不能和这些人比。</p>
+<h1 id="day-3">Day 3</h1>
+<p>看着手中的铜牌，意识到自己划水的OI之路至少到此为止暂时地画上了句号，颇有些不真实感。</p>
+<p>我一直在想，如果D1T1的正解我调出来了，我就是Ag了，会不会好一点呢？但是这终究也只是一个幻想而已罢了。一是比赛不能重来，二是我似乎也不知道缓存矩阵乘方的套路所以真写快速幂有可能复杂度还是会炸的样子。</p>
+<p>一如既往，自己复习的算法完美地和考试算法错开了。没有LCT，没有FFT，没有字符串。我深切意识到OI果然还是靠平时积累的，这种比赛临时抱佛脚很大概率是不靠谱的。</p>
+<p>还是要谢谢NOI最后给了我一个意识到自己有多菜的机会。还有那么多我没有学的啊~</p>
+<p>大概在没有竞赛压力之后我还是会对这些算法认真地研究一番的吧。觉得自己的心态是一个很奇妙的东西。在被父母逼着学竞赛的时候总觉得这些算法很烦，但是意识到自己远离竞赛之后，反而又觉得它们有趣起来了。</p>
+<p>网上看过很多这样的游记，一般到最后作者不是Au就是进队了，这种好事终究不会发生在我身上。</p>
+<p>唉。这就退役了。</p>
+<p>写于Day 3从长沙回上海的火车上。自己的思路一如既往地混乱。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%B9%B1%E6%90%9E/" rel="tag"># 乱搞</a>
+              <a href="/tags/OI/" rel="tag"># OI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/08/12/AlipayParanoia/" rel="prev" title="论支付宝对Xposed框架的被害妄想症">
+                  <i class="fa fa-chevron-left"></i> 论支付宝对Xposed框架的被害妄想症
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/11/25/Minecraft%20ILP/" rel="next" title="Designing Computational Redstone Circuits Automatically in Minecraft with Integer Programming: Preliminary Thoughts and Tests">
+                  Designing Computational Redstone Circuits Automatically in Minecraft with Integer Programming: Preliminary Thoughts and Tests <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chengyuan Ma</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js" integrity="sha512-YBk7HhgDZvBxmtOfUdvX0z8IH2d10Hp3aEygaMNhtF8fSOvBZ16D/1bXZTJV6ndk/L/DlXxYStP8jrF77v2MIg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-br8H6OngKoLht57WKRU5jz3Vr0vF+Tw4G6yhNN2F3dSDheq4JiaasROPJB1wy7PxPk7kV/+5AIbmoZLxxx7Zow==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js" integrity="sha512-JvRd44DHaJAv/o3wxi/dxhz2TO/jwwX8V5/LTr3gj6QMQ6qNNGXk/psoingLDuc5yZmccOq7XhpVaelIZE4tsQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-c.min.js" integrity="sha512-T6Lco61aWqCKSznWkd38lf159pD0+EwZ9UCEv6ARAvaWFiy/UHtYgOmlasT8lq5Ck17ZNHzbe5eHUablTGRXxw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cmake.min.js" integrity="sha512-M99z3be36IUB5pA3DWoJvjSYaZA9BiUqf1jXzVcjntASBZFNI53oDRzdJqGzH5voybcAx5Sg8F5QyryE6afD3g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js" integrity="sha512-hxZJ6OUEpUl9/o4C1gMGvrAbeqDaldBiZbs08c/V8NcU7YImBFlqJAc7Uzjf3bh2W8Wx26/dVDyPk9cUMQY0Mw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-go.min.js" integrity="sha512-SgF1uayJ2/8TV+MhLasqygnm++vYRXswmrR2ZAmUCL4pXtf+6KzUgXPpn10Y6xca658sxOQEOsoP3MChfhke5A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js" integrity="sha512-PWHY6Vao4E9K4LsGBYCY0ttDeiWZwuUozTbJvSy9UFHRz2J4Bl7rcWML3wEnJTVuCJhSwGne/8My5gTo/gnbpg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js" integrity="sha512-IC7rV8RslChgByOdUFC6ePqOGn+OwJhnKC3S5AezM8DAiOdGhJMwgsIvBChsa2yuxxoPbH2+W/kjNUM1cc+jUQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-kotlin.min.js" integrity="sha512-aTozTdtORp/xxS/dhRRDfmv/p1eyEMTje96MplkSOqdbKGGvOYIlogoGdtsh/BD91vaqKoAw9M7O/DodqqudIQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-julia.min.js" integrity="sha512-eTGeKQdDzC2rPAUVfM2Fa36s9B9wp138NEhzZqJpRSdJQ66BwLUot25r2YQveCRU5uYNVfX3gckDkl4byfBIWw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-latex.min.js" integrity="sha512-6D3l3Fy8g/hr6AeK2g1rcVZHyFjCqiqgUrwy0mBZTGFd8UwVcUDhzQeIIv3eYeXDecGPTtBOS9ctyRzJyUgypQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-rust.min.js" integrity="sha512-kgT7r2HlCEO4b+Rp3nJvm+/EMBwGMvv1WMdWkb3eNgnS91llMli8Y3T1CgnD8Hifqx50Q3XLUQXDd7PzKQQtUA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-python.min.js" integrity="sha512-wK9tQmDrstGtZqTKcyVf3h457QGMlNriKs+fHmEkiCizrq0LVovfT3v1smeT1DlQetHhdRkkX1JSuZg5LoNHJg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-nginx.min.js" integrity="sha512-/MNzg8GlnVrAau/TZClh1jxgHNX0HDgidbGnHS5x1OtbKiNoK3e0XNd1oV16xmmeDHjisa3GKLArUau+43GZ4A==" crossorigin="anonymous"></script>
+<script type = "text/javascript">
+    document.addEventListener('pjax:complete', function() {
+        if (typeof Prism !== 'undefined') {
+            Prism.highlightAll();
+        }
+    });
+</script>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+    <div class="pjax">
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+    </div>
+</body>
+</html>
