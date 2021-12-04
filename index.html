@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-count">95</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,117 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2021/12/04/TeX%E6%BA%90%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/12/04/TeX%E6%BA%90%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">TeX源代码阅读笔记</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-12-04 10:33:58 / 修改时间：17:23:27" itemprop="dateCreated datePublished" datetime="2021-12-04T10:33:58-05:00">2021-12-04</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>最近我因为个人项目的原因需要深入了解TeX。虽然<em>The TeXbook</em>和<em>TeX By Topic</em>两本书都很详尽地记述了TeX的运行机制机制，但读来仍然有一种雾里看花的感觉。要清晰了解一个程序的行为，终究没有比直接阅读其源代码更好的方法了<del>（屎山代码除外）</del>。好在Knuth一开始就公开了TeX的源代码并附上了非常完善的注释。然而无论如何，40年前的古董级代码理解起来也绝非易事，所以想着还是开一篇文章记录一下吧。这篇文章基本按照<em>TeX The Program</em>里面的章节顺序，对每一章略过细节进行简要的概述，其目的主要是帮助我回忆，当然，如果这篇文章能让其他读者对TeX的架构有个基本的了解，那也再好不过了。</p>
+<h1 id="基本架构">基本架构</h1>
+<p>TeX是用WEB语言编写的。WEB语言遵循Knuth提出的“文学编程/literate programming”的范式，夹杂文档和代码，可以看作是当今学术界常用的Jupyter Notebook的前身（当然，一个很大的区别是如今一个notebook不会超过20个cell，但TeX有1300多个……）。文档部分基于TeX，代码基于类Pascal（之所以说“类”，是因为当时Pascal的标准化还没完成）。如此一来，一个<code>tex.web</code>源文件，用<code>tangle</code>提取代码可以得到一份Pascal源文件用于构建程序本身，用<code>weave</code>提取文档则可以得到一份TeX源文件，编译成所谓的<em>TeX The Program</em>。</p>
+<p>为了增加可读性，TeX源代码中每一个“cell”包含的代码都不超过一页纸（通常更是不超过20行），对于比较长的函数，Knuth会把一部分逻辑分离到其他“cell”中去并在原地插入引用。<code>tangle</code>提取代码的过程本质上就是把基于这些引用对代码块进行重排。除此以外，Knuth还通过WEB定义了一部分宏，这部分宏的替换也是由<code>tangle</code>在生成代码的时候完成的。</p>
+<p>如果粗略地看，TeX的源代码是非常模块化的，但是实际上却未必然。后一章定义的宏可能只是前几章某个宏的别名，导致对一个模块的修改可能会导致意想不到的结果， 又或者是虽然抽象出来了一些可以复用的函数，但是这些函数接口的形式极大地约束了实现的方案，导致事实上灵活性的缺失。模块化的设计势必包含一定的抽象，而抽象都伴随这一定的代价。在TeX开发的时代系统资源相当受限，语言标准缺失，各种infrastructure也不成熟，效率和兼容性是第一目标，因此代码设计成这样是可以理解的——只是苦了像我一样被现代开发范式惯坏的后来者。</p>
+<h1 id="tex的奇妙字符串处理">TeX的奇妙字符串处理</h1>
+<p>TeX实现了自己的一套基于string pool的、极具特色的、动态储存字符串的方案。 简单来说，TeX有一个大的<code>char</code>数组<code>str_pool</code>，以及一个元素递增的下标数组<code>str_start</code>。TeX给每个字符串赋予一个编号。编号<code>s</code>的字符串存储于<code>str_pool</code>下标中的<code>str_start[s]</code>以及<code>str_start[s + 1]</code>之间。以下C伪代码可以将TeX的字符串转换为C风格的字符串：</p>
+<pre class="line-numbers"><code class="language-c">char *texstr_to_cstr(short s) &#123;
+    size_t len = str_start[s + 1] - str_start[s];
+    char *ret = malloc(len + 1);
+    memcpy(ret, str_pool + str_start[s], len);
+    ret[len] = 0;
+    return ret;
+&#125;</code></pre>
+<p>在运行过程中，TeX会维护<code>pool_ptr</code>和<code>str_ptr</code>两个变量，分别表示<code>str_pool</code>中最小可用的下标以及最小的可用的字符串编号。新建一个字符串大概是这样的：</p>
+<pre class="line-numbers"><code class="language-c">short cstr_to_texstr(char *s) &#123;
+    size_t len = strlen(s);
+    assert(str_start[str_ptr] == pool_ptr);
+    memcpy(str_pool + str_start[str_ptr], s, len);
+    str_start[++str_ptr] = pool_ptr += len;
+    return str_ptr - 1;
+&#125;</code></pre>
+<p>当然，实际上TeX在构建新字符串的时候是逐字符添加的，<code>pool_ptr</code>也是逐步递增。这又涉及到很多骚操作（例如append字符之后还能flush吐出来等等），在此略过。TeX有两个比较字符串的方法，<code>str_eq_buf</code>比较一个内部字符串和一个<code>char*</code>是否相等；<code>str_eq_str</code>比较两个内部字符串是否相等。</p>
+<h1 id="tex的奇妙算术">TeX的奇妙算术</h1>
+<p>还是时代的原因，TeX问世时IEEE754还没有出，当时各型机器、各个编译器上对于浮点数的算术运算都遵循不同的标准。因此，TeX为了规避这种不确定性，很大一部分计算都基于其自身定义的定点数——Knuth称之为scaled number。定点数长4字节，以<span class="math inline">\(2^{-16}\)</span>为最小单位。换而言之，如果直接把定点数当<code>int32_t</code>读，得到的是其所表示值的<span class="math inline">\(2^{16}\)</span>倍。除此以外，当时各个平台对于对负数的整除和取模运算的实现存在分歧，因此TeX除了几处非核心算法，其余的部分在整除和取模前都检查操作数的正负性，确保只对正整数进行这两个操作。</p>
+<p>TeX的定点数计算函数里有很多令人啧啧称奇的操作，例如以下函数本质上就是计算<span class="math inline">\(100(t/s)^3\)</span>。放在现在像我估计直接就一行搞定了，TeX是怎么做的呢？（以下注释是我补的，原文没有解释7230584和1663497两个magic number的由来）。</p>
+<pre class="line-numbers"><code class="language-c">typedef int16_t scaled;
+const int16_t inf_bad = 10000;
+int16_t badness(scaled t, scaled s) &#123;
+    if (t == 0) return 0;
+    if (s &lt;= 0) return inf_bad;
+    int r; // 近似于2⁶ * ³√100 * t / s
+    // 297³ ≈ 100 * 2¹⁸
+    // 如果t &gt; 7230584则t * 297 &gt;= 2147483647会溢出
+    if (t &lt;= 7230584) r = (t * 297) / s;
+    // 此时t &gt;= 7230585，如果s / 297 &lt; 1663497 / 297 = 5601的话，
+    // t / (s / 297) &gt;= 1291，此时（见下）一定会return inf_bad
+    // 除法很慢，所以如果具体结果不重要就不要做
+    else if (s &gt;= 1663497) r = t / (s / 297);
+    else r = t;
+    // 如果r &gt; 1290，则r * r * r  + (1 &lt;&lt; 17)会溢出
+    if (r &gt; 1290) return inf_bad;
+    return (r * r * r + (1 &lt;&lt; 17)) &gt;&gt; 18;
+&#125;</code></pre>
+<p>非常细致地考察了溢出的可能性，全程整数计算避免了浮点的不确定性，<code>s &gt;= 1663497</code>这个条件更是在一定情况下避免了耗时的除法运算——非常有Knuth的风格。</p>
+<h1 id="tex的奇妙内存分配">TeX的奇妙内存分配</h1>
+<p>（未完待续）</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2019,546 +2130,6 @@ R = \begin{bmatrix}
 <p>以前觉得这个式子很高端的，现在有种莫名的幻灭感。</p>
 <p>但是写到这的时候多看了一眼，发现斯特林逼近的一个推导里用到了Wallis公式？</p>
 <p>突然有点不确定这算不算是循环论证了。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2021/03/15/TreapMultiset/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/03/15/TreapMultiset/" class="post-title-link" itemprop="url">Reinventing the Wheel: A Drop-in STL Multiset Alternative Using Treap</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-03-15 23:30:50" itemprop="dateCreated datePublished" datetime="2021-03-15T23:30:50-04:00">2021-03-15</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p>It turns out that writing a STL container from scratch is mostly a tedious physical labor.</p>
-</blockquote>
-<p>STL is created to save C++ programmers the time of reinventing wheels. Unfortunately, many STL data structures, most notably self-balancing BSTs (aka. <code>std::(multi)set</code>), are not extendable and are by itself too limited to be used in the context of competitive programming, forcing us to write our own BSTs again and again in competitions.</p>
-<p>There comes the fact I find really interesting: A quick and dirty self-balancing BST implementation written during a competition is only about 50-60 lines long, while the STL implementation of <code>std::set</code> and <code>std::multiset</code> is usually more than a thousand-lines long in total.</p>
-<p>It does make me wonder: what makes this huge difference? And, will the code of our BST bloat as well if we write it the STL way -- with generics, iterators, and all the necessary bits and pieces as specified in the reference?</p>
-<p>To answer my question, I have here tried creating my implementation of multiset using treap as the underlying data structure. The result, <code>treap_multiset</code>, is almost a drop-in replacement to <code>std::multiset</code>. The few places where it does not conform to the C++ standard are:</p>
-<ol type="1">
-<li>It is currently not allocator-aware, so all allocator-related features are not implemented.</li>
-<li><code>emplace</code> and <code>emplace_hint</code> are not implemented.</li>
-<li>All operations that have logarithmic time complexity in <code>std::multiset</code> still have logarithmic time complexity here, but only in the average sense (because treap is a randomized data structure), and could have linear worst-case time complexity (though very, very, very unlikely).</li>
-<li><code>void erase(iterator)</code> takes amortized logarithmic time instead of constant time.</li>
-<li>A few uncommonly-used member types are missing.</li>
-</ol>
-<p><code>treap_multiset</code> also supports two new operations that are not supported in the original <code>std::multiset</code>:</p>
-<ol type="1">
-<li><pre class="line-numbers"><code class="language-cpp">   size_type rank(iterator it) const;
-   size_type rank(const_iterator it) const;</code></pre>
-<p>Both take average logarithmic time and return the rank / position of the iterator.</p></li>
-<li><pre class="line-numbers"><code class="language-cpp">   iterator at(size_type index);
-   const iterator at(size_type index) const;</code></pre>
-<p>Both take average logarithmic time and return the iterator at the specified index/position.</p></li>
-</ol>
-<p>The code is shown below:</p>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;stdexcept&gt;
-#include &lt;random&gt;
-#include &lt;algorithm&gt;
-
-static std::random_device random_device;
-static std::mt19937_64 random_engine(random_device());
-
-template &lt;typename T&gt;
-struct treap_node &#123;
-    using rand_weight_type = decltype(random_engine)::result_type;
-    using size_type = std::size_t;
-
-    treap_node *left, *right, *parent;
-    rand_weight_type weight;
-    size_type size;
-    T value;
-
-    treap_node(const T &amp;value): left(nullptr), right(nullptr), parent(nullptr),
-        weight(random_engine()), size(1), value(value) &#123;&#125;
-
-    treap_node(treap_node *left, treap_node *right, treap_node *parent, 
-        rand_weight_type weight, size_type size, const T &amp;value): 
-        left(left), right(right), parent(parent), weight(weight),
-        size(size), value(value) &#123;&#125;
-
-    void update_size() &#123;
-        size = 1 + (left ? left-&gt;size : 0) + (right ? right-&gt;size : 0);
-    &#125;
-&#125;;
-
-#define IMPL_ITERATOR_MOVE_NEXT do &#123; \
-    if (!node) break; \
-    if (node-&gt;right) &#123; \
-        node = node-&gt;right; \
-        while (node &amp;&amp; node-&gt;left) node = node-&gt;left; \
-    &#125; else &#123; \
-        bool from_right = true; \
-        while (from_right) &#123; \
-            if (!node-&gt;parent) &#123; node = nullptr; break; &#125; \
-            from_right = node-&gt;parent-&gt;right == node; \
-            node = node-&gt;parent; \
-        &#125; \
-    &#125; \
-&#125; while (0)
-
-#define IMPL_ITERATOR_MOVE_PREV do &#123; \
-    if (!node) break; \
-    if (node-&gt;left) &#123; \
-        node = node-&gt;left; \
-        while (node &amp;&amp; node-&gt;right) node = node-&gt;right; \
-    &#125; else &#123; \
-        bool from_left = true; \
-        while (from_left) &#123; \
-            if (!node-&gt;parent) &#123; node = nullptr; break; &#125; \
-            from_left = node-&gt;parent-&gt;left == node; \
-            node = node-&gt;parent; \
-        &#125; \
-    &#125; \
-&#125; while (0)
-
-#define TREAP_ITERATOR_DECL(name, qualifier, inc, dec) \
-template &lt;typename T&gt; struct name &#123; \
-    qualifier treap_node&lt;T&gt; *node; bool past_the_end; \
-    name(): node(nullptr), past_the_end(true) &#123;&#125; \
-    name(qualifier treap_node&lt;T&gt; *node, bool past_the_end) \
-        : node(node), past_the_end(past_the_end) &#123;&#125; \
-    name(qualifier treap_node&lt;T&gt; *node): node(node), past_the_end(false) &#123;&#125; \
-    qualifier T &amp;operator *() qualifier &#123; \
-        if (!node || past_the_end) \
-            throw std::runtime_error(&quot;dereferencing null/past-end iterator&quot;); \
-        return node-&gt;value; \
-    &#125; \
-    bool operator ==(const name&lt;T&gt; &amp;b) const &#123; \
-        return node == b.node &amp;&amp; past_the_end == b.past_the_end; \
-    &#125; \
-    bool operator !=(const name&lt;T&gt; &amp;b) const &#123; \
-        return node != b.node || past_the_end != b.past_the_end; \
-    &#125; \
-    name&lt;T&gt; &amp;operator ++() &#123; \
-        qualifier treap_node&lt;T&gt; *backup = node; \
-        IMPL_ITERATOR_MOVE_##inc; \
-        if (!node) past_the_end = true, node = backup; \
-        return *this; \
-    &#125; \
-    name&lt;T&gt; operator ++(int) &#123; \
-        name&lt;T&gt; ret(*this); \
-        return ++(*this), ret; \
-    &#125; \
-    name&lt;T&gt; &amp;operator --() &#123; \
-        if (past_the_end) past_the_end = false; \
-        else IMPL_ITERATOR_MOVE_##dec; \
-        if (!node) \
-            throw std::runtime_error(&quot;can&#39;t decrement at the beginning&quot;); \
-        return *this; \
-    &#125; \
-    name&lt;T&gt; operator --(int) &#123; \
-        name&lt;T&gt; ret(*this); \
-        return --(*this), ret; \
-    &#125; \
-&#125;
-
-TREAP_ITERATOR_DECL(treap_iterator, /* NO QUALIFIER */, NEXT, PREV);
-TREAP_ITERATOR_DECL(reverse_treap_iterator, /* NO QUALIFIER */, PREV, NEXT);
-TREAP_ITERATOR_DECL(const_treap_iterator, const, NEXT, PREV);
-TREAP_ITERATOR_DECL(const_reverse_treap_iterator, const, PREV, NEXT);
-
-template &lt;typename T, typename Compare = std::less&lt;T&gt;&gt;
-class treap_multiset &#123;
-public:
-    using key_type = T;
-    using value_type = T;
-    using size_type = typename treap_node&lt;T&gt;::size_type;
-    using key_compare = Compare;
-    using value_compare = Compare;
-    using node_type = treap_node&lt;T&gt;*;
-    using iterator = treap_iterator&lt;T&gt;;
-    using reverse_iterator = reverse_treap_iterator&lt;T&gt;;
-    using const_iterator = const_treap_iterator&lt;T&gt;;
-    using const_reverse_iterator = const_reverse_treap_iterator&lt;T&gt;;
-
-    treap_multiset(): root(nullptr) &#123;&#125;
-
-    treap_multiset(const treap_multiset &amp;b): root(deep_copy(b.root)), comp(b.comp) &#123;&#125;
-
-    treap_multiset(treap_multiset &amp;&amp;b): root(b.root), comp(b.comp) &#123;&#125;
-
-    ~treap_multiset() &#123; if (root) recursive_free(root); &#125;
-
-    bool empty() const &#123; return root == nullptr; &#125;
-
-    size_type size() const &#123; return root ? root-&gt;size : 0; &#125;
-
-    size_type max_size() const &#123; return 0x7FFFFFFF; &#125;
-
-    key_compare key_comp() const &#123; return comp; &#125;
-
-    value_compare value_comp() const &#123; return comp; &#125;
-
-    iterator begin() 
-        &#123; return iterator(leftmost(root)); &#125;
-
-    const_iterator begin() const 
-        &#123; return const_iterator(leftmost(root)); &#125;
-
-    const_iterator cbegin() const 
-        &#123; return const_iterator(leftmost(root)); &#125;
-
-    iterator end() 
-        &#123; return iterator(rightmost(root), true); &#125;
-
-    const_iterator end() const 
-        &#123; return const_iterator(rightmost(root), true); &#125;
-
-    const_iterator cend() const 
-        &#123; return const_iterator(rightmost(root), true); &#125;
-
-    reverse_iterator rbegin() 
-        &#123; return reverse_iterator(rightmost(root)); &#125;
-
-    const_reverse_iterator rbegin() const 
-        &#123; return const_reverse_iterator(rightmost(root)); &#125;
-
-    const_reverse_iterator crbegin() const 
-        &#123; return const_reverse_iterator(rightmost(root)); &#125;
-
-    reverse_iterator rend() 
-        &#123; return reverse_iterator(leftmost(root), true); &#125;
-
-    const_reverse_iterator rend() const 
-        &#123; return const_reverse_iterator(leftmost(root), true); &#125;
-
-    const_reverse_iterator crend() const 
-        &#123; return const_reverse_iterator(leftmost(root), true); &#125;
-
-    iterator insert(const value_type &amp;value) &#123;
-        node_type left, right;
-        split_le(root, value, left, nullptr, right, nullptr);
-        node_type temp = new treap_node&lt;T&gt;(value);
-        root = join(join(left, temp), right);
-        return iterator(temp);
-    &#125;
-
-    iterator insert(iterator position, const value_type &amp;value) 
-        &#123; return insert(value); &#125;
-
-    template &lt;typename II&gt;
-    void insert(II first, II last) &#123; 
-        for (; first != last; first++) 
-            insert(*first); 
-    &#125;
-
-    size_type rank(iterator it) const &#123; return rank(it.node); &#125;
-    
-    size_type rank(const_iterator it) const &#123; return rank(it.node); &#125;
-
-    iterator at(size_type index) &#123;
-        if (index &lt; 0 || index &gt; size()) return end();
-        return iterator(at_internal(index));
-    &#125;
-
-    const_iterator at(size_type index) const &#123;
-        if (index &lt; 0 || index &gt; size()) return end();
-        return const_iterator(at_internal(index));
-    &#125;
-
-    void erase(iterator pos) &#123;
-        assert_valid(pos);
-        node_type a, b, c;
-        size_type rank = this-&gt;rank(pos.node);
-        split_size(root, rank, a, nullptr, c, nullptr);
-        split_size(a, rank - 1, a, nullptr, b, nullptr);
-        root = join(a, c);
-        // assert(b == pos.node);
-        delete b;
-    &#125;
-
-    size_type erase(const value_type &amp;key) &#123;
-        node_type a, b, c;
-        split_le(root, key, a, nullptr, c, nullptr);
-        split_re(a, key, a, nullptr, b, nullptr);
-        root = join(a, c);
-        if (b) &#123;
-            size_type ret = b-&gt;size;
-            recursive_free(b);
-            return ret;
-        &#125;
-        return 0;
-    &#125;
-
-    void erase(iterator first, iterator last) &#123;
-        size_type rank_first = rank(first);
-        size_type rank_last = rank(last);
-        node_type a, b, c;
-        split_size(root, rank_last, a, nullptr, c, nullptr);
-        split_size(a, rank_last - 1, a, nullptr, b, nullptr);
-        root = join(a, c);
-        if (b) recursive_free(b);
-    &#125;
-
-    void clear() &#123; if (root) recursive_free(root); &#125;
-
-    void swap(treap_multiset &amp;b) &#123; swap(root, b.root); &#125;
-
-    iterator find(const value_type &amp;key) &#123;
-        node_type ret = find_internal(key);
-        return ret ? iterator(ret) : end();
-    &#125;
-
-    const_iterator find(const value_type &amp;key) const &#123;
-        node_type ret = const_cast&lt;treap_multiset&lt;T&gt;*&gt;(this)-&gt;find_internal(key);
-        return ret ? const_iterator(ret) : end();
-    &#125;
-
-    size_type count(const value_type &amp;key) const &#123;
-        node_type a, b, c;
-        treap_multiset&lt;T&gt; *thiz = const_cast&lt;treap_multiset&lt;T&gt;*&gt;(this);
-        thiz-&gt;split_le(root, key, a, nullptr, c, nullptr);
-        thiz-&gt;split_re(root, key, a, nullptr, b, nullptr);
-        size_type ret = b ? b-&gt;size : 0;
-        thiz-&gt;root = thiz-&gt;join(thiz-&gt;join(a, b), c);
-        return ret;
-    &#125;
-
-    iterator lower_bound(const value_type &amp;key) &#123;
-        node_type ret = lower_bound_internal(key);
-        return ret ? iterator(ret) : end();
-    &#125;
-
-    const_iterator lower_bound(const value_type &amp;key) const &#123;
-        node_type ret = const_cast&lt;treap_multiset&lt;T&gt;*&gt;(this)-&gt;lower_bound_internal(key);
-        return ret ? const_iterator(ret) : end();
-    &#125;
-
-    iterator upper_bound(const value_type &amp;key) &#123;
-        node_type ret = upper_bound_internal(key);
-        return ret ? iterator(ret) : end();
-    &#125;
-
-    const_iterator upper_bound(const value_type &amp;key) const &#123;
-        node_type ret = const_cast&lt;treap_multiset&lt;T&gt;*&gt;(this)-&gt;upper_bound_internal(key);
-        return ret ? const_iterator(ret) : end();
-    &#125;
-
-    std::pair&lt;iterator, iterator&gt; equal_range(const value_type &amp;key) &#123;
-        return std::make_pair(lower_bound(key), upper_bound(key));
-    &#125;
-
-    std::pair&lt;const_iterator, const_iterator&gt; equal_range(const value_type &amp;key) const &#123;
-        return std::make_pair(lower_bound(key), upper_bound(key));
-    &#125;
-
-    size_type depth(node_type node) &#123;
-        if (!node) return 0;
-        return 1 + std::max(depth(node-&gt;left), depth(node-&gt;right));
-    &#125;
-    
-private:
-    Compare comp;
-    node_type root;
-
-    void recursive_free(node_type root) &#123;
-        if (root-&gt;left) 
-            recursive_free(root-&gt;left);       
-        if (root-&gt;right) 
-            recursive_free(root-&gt;right);
-        delete root;
-    &#125;
-
-    void split_le(node_type root, const value_type &amp;key, 
-        node_type &amp;left, node_type left_parent,
-        node_type &amp;right, node_type right_parent) &#123;
-        if (!root) &#123; left = right = nullptr; return; &#125;
-        if (!comp(key, root-&gt;value)) &#123;
-            left = root; root-&gt;parent = left_parent;
-            split_le(root-&gt;right, key, root-&gt;right, root, right, right_parent);
-        &#125; else &#123;
-            right = root; root-&gt;parent = right_parent;
-            split_le(root-&gt;left, key, left, left_parent, root-&gt;left, root);
-        &#125;
-        root-&gt;update_size();
-    &#125;
-
-    void split_re(node_type root, const value_type &amp;key, 
-        node_type &amp;left, node_type left_parent,
-        node_type &amp;right, node_type right_parent) &#123;
-        if (!root) &#123; left = right = nullptr; return; &#125;
-        if (comp(root-&gt;value, key)) &#123;
-            left = root; root-&gt;parent = left_parent;
-            split_re(root-&gt;right, key, root-&gt;right, root, right, right_parent);
-        &#125; else &#123;
-            right = root; root-&gt;parent = right_parent;
-            split_re(root-&gt;left, key, left, left_parent, root-&gt;left, root);
-        &#125;
-        root-&gt;update_size();
-    &#125;
-
-    void split_size(node_type root, size_type size, 
-        node_type &amp;left, node_type left_parent,
-        node_type &amp;right, node_type right_parent) &#123;
-        if (!root) &#123; left = right = nullptr; return; &#125;
-        size_type left_size = 1 + (root-&gt;left ? root-&gt;left-&gt;size : 0);
-        if (left_size &lt;= size) &#123;
-            left = root; root-&gt;parent = left_parent;
-            split_size(root-&gt;right, 
-                size - left_size, root-&gt;right, root, right, right_parent);
-        &#125; else &#123;
-            right = root; root-&gt;parent = right_parent;
-            split_size(root-&gt;left, size, left, left_parent, root-&gt;left, root);
-        &#125;
-        root-&gt;update_size();
-    &#125;
-
-    node_type join(node_type left, node_type right) &#123;
-        if (!left) return right;
-        if (!right) return left;
-        if (left-&gt;weight &lt;= right-&gt;weight) &#123;
-            node_type temp = join(left-&gt;right, right);
-            if (temp) temp-&gt;parent = left;
-            left-&gt;right = temp;
-            left-&gt;update_size();
-            return left;
-        &#125; else &#123;
-            node_type temp = join(left, right-&gt;left);
-            if (temp) temp-&gt;parent = right;
-            right-&gt;left = temp;
-            right-&gt;update_size();
-            return right;
-        &#125;
-    &#125;
-
-    node_type leftmost(node_type x) const &#123;
-        if (!x) return nullptr;
-        node_type ret = x; while (ret-&gt;left) ret = ret-&gt;left;
-        return ret;
-    &#125;
-
-    node_type rightmost(node_type x) const &#123;
-        if (!x) return nullptr;
-        node_type ret = x; while (ret-&gt;right) ret = ret-&gt;right;
-        return ret;
-    &#125;
-
-    node_type find_internal(const value_type &amp;key) &#123;
-        node_type a, b, c;
-        split_le(root, key, a, nullptr, c, nullptr);
-        split_re(root, key, a, nullptr, b, nullptr);
-        root = join(join(a, b), c);
-        return b;
-    &#125;
-
-    node_type lower_bound_internal(const value_type &amp;key) &#123;
-        node_type left, right;
-        split_re(root, key, left, nullptr, right, nullptr);
-        node_type ret = leftmost(right);
-        root = join(left, right);
-        return ret;
-    &#125;
-
-    node_type upper_bound_internal(const value_type &amp;key) &#123;
-        node_type left, right;
-        split_le(root, key, left, nullptr, right, nullptr);
-        node_type ret = leftmost(right);
-        root = join(left, right);
-        return ret;
-    &#125;
-
-    node_type at_internal(size_type index) const &#123;
-        node_type temp = root;
-        while (true) &#123;
-            size_type left_size = 1 + (temp-&gt;left ? temp-&gt;left-&gt;size : 0);
-            if (index == left_size) return temp;
-            else if (index &lt; left_size) temp = temp-&gt;left;
-            else temp = temp-&gt;right, index -= left_size;
-        &#125;
-        return nullptr; // UNREACHABLE
-    &#125;
-
-    size_type rank(node_type node) &#123;
-        bool from_right = true;
-        size_type ret = 0;
-        while (node) &#123;
-            if (from_right)
-                ret += 1 + (node-&gt;left ? node-&gt;left-&gt;size : 0);
-            if (node-&gt;parent)
-                from_right = node == node-&gt;parent-&gt;right;
-            node = node-&gt;parent;
-        &#125;
-        return ret;
-    &#125;
-
-    node_type deep_copy(node_type node) &#123;
-        if (!node) return nullptr;
-        node_type left = deep_copy(node-&gt;left);
-        node_type right = deep_copy(node-&gt;right);
-        node_type ret = new treap_node&lt;T&gt;(
-            left, right, nullptr,
-            node-&gt;weight, node-&gt;size, node-&gt;value
-        );
-        if (left) left-&gt;parent = ret;
-        if (right) right-&gt;parent = ret;
-        return ret;
-    &#125;
-
-    void assert_valid(iterator it) &#123;
-        if (!it.node || it.past_the_end)
-            throw std::runtime_error(&quot;invalid iterator&quot;);
-        node_type temp = it.node;
-        while (temp-&gt;parent) temp = temp-&gt;parent;
-        if (temp != root)
-            throw std::runtime_error(&quot;invalid iterator&quot;);
-    &#125;
-&#125;;</code></pre>
-<p>(The code above hasn't been thoroughly tested yet and could still contain bugs).</p>
 
       
     </div>

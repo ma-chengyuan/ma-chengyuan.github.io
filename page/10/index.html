@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-count">95</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,118 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2018/09/01/%E5%9F%8E%E5%B8%82%E8%A7%84%E5%88%92/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/09/01/%E5%9F%8E%E5%B8%82%E8%A7%84%E5%88%92/" class="post-title-link" itemprop="url">NOIP模拟赛 城市规划</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-09-01 04:42:04" itemprop="dateCreated datePublished" datetime="2018-09-01T04:42:04-04:00">2018-09-01</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="题意">题意</h1>
+<p>有<span class="math inline">\(n\)</span>座高度为正整数的建筑物，定义不美观度为相邻建筑物高度差绝对值的最大值，你可以任意改动至多<span class="math inline">\(k\)</span>座建筑物的高度，求能够达到的最小不美观度。</p>
+<p><span class="math inline">\(k \le n \le 2000, h \le 2 \times 10^9\)</span></p>
+<h1 id="解法">解法</h1>
+<p>从数据范围看出这应该是一道DP题，所以很容易陷入的一条歪路就是，定义<span class="math inline">\(f[i, j]\)</span>为前<span class="math inline">\(i\)</span>座建筑物修改了<span class="math inline">\(j\)</span>次的最小不美观度，然后会发现没办法消除后效性<del>当场去世</del>。</p>
+<p>但是如果我们把题目paraphrase一下，变成：在修改至多<span class="math inline">\(k\)</span>座建筑物高度的情况下，<em>最大</em>的相邻高度差<em>最小</em>是多少？首先我们发现<strong>随着修改数增加，不美观度肯定是可以单调递减的</strong>，其次我们从这熟悉的句型就发现这其实是一道二分答案的题目，问题就变成了如何判定一个不美观度能不能达到了，我们还是需要使用DP来完成。</p>
+<p>定义<span class="math inline">\(f[i]\)</span>为修改前<span class="math inline">\(i - 1\)</span>座建筑物但是不修改<span class="math inline">\(i\)</span>的情况下为了达到我们二分的答案所需要的最小修改数，我们把它们全部初始化为<span class="math inline">\(i - 1\)</span>，即最坏情况下前面的我们都需要修改。</p>
+<p>接下来我们思考状态转移，设我们此时二分的答案为<span class="math inline">\(x\)</span>，我们发现如果对于<span class="math inline">\(j &lt; i\)</span>，如果<span class="math inline">\(|h_j - h_i| \le (i - j)x\)</span>，那么就说明我们总可以通过调整<span class="math inline">\(i\)</span>和<span class="math inline">\(j\)</span>之间（不包括<span class="math inline">\(i, j\)</span>）的<span class="math inline">\(i - j - 1\)</span>座建筑物达到我们需要二分的答案。因此状态转移方程为： <span class="math display">\[
+f[i] = \min_{1 \le j &lt; i, |h_j - h_i| \le (i - j)x} \{ f[j] + i - j - 1\}
+\]</span> 那么最后总体上为了达到二分的答案所需要的最小修改数是多少呢？是<span class="math inline">\(\min_{1 \le i \le n} \{f[i]\}\)</span>吗？其实并不是，因为对于<span class="math inline">\(f[i]\)</span>，最坏情况下我们还需要修改<span class="math inline">\(i\)</span>后面的<span class="math inline">\(n - i\)</span>座建筑物，因此总的最小修改数为： <span class="math display">\[
+\min_{1 \le i \le n} \{f[i] + n - i\}
+\]</span> 接下来就可以愉快的二分答案了，总的复杂度为<span class="math inline">\(O(n^2\log h_{max})\)</span>，还有要注意的是如果你采用<code>int mid = (l + r) / 2</code>的话是会爆<code>int</code>的，解决方法是使用<code>int mid = l + (r - l) / 2</code>：</p>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
+
+using namespace std;
+const int INF = 0x7fffffff;
+const int N = 2010;
+int f[N], h[N];
+int n, k;
+
+#define abs(a) ((a) &gt; 0 ? (a) : -(a))
+#define min(a, b) ((a) &lt; (b) ? (a) : (b))
+
+int valid(int x) &#123;
+    for (int i = 1; i &lt;= n; i++)
+        f[i] = i - 1;
+    for (int i = 2; i &lt;= n; i++) &#123;
+        for (int j = 1; j &lt; i; j++)
+            if (abs(h[i] - h[j]) &lt;= 1ll * x * (i - j))
+                f[i] = min(f[i], f[j] + i - j - 1);
+    &#125;
+    int ans = INF;
+    for (int i = 1; i &lt;= n; i++)
+        ans = min(ans, f[i] + n - i);
+    return ans;
+&#125; 
+
+int main() &#123;
+    scanf(&quot;%d%d&quot;, &amp;n, &amp;k);
+    for (int i = 1; i &lt;= n; i++) scanf(&quot;%d&quot;, &amp;h[i]);
+    int l = 0, r = INF;
+    while (l &lt; r) &#123;
+        int mid = l + (r - l) / 2;
+        if (valid(mid) &lt;= k) r = mid;
+        else l = mid + 1;
+    &#125;
+    printf(&quot;%d\n&quot;, l);
+    return 0;
+&#125;</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 

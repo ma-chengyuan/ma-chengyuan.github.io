@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-count">95</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,130 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2020/07/29/PACT0709/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/29/PACT0709/" class="post-title-link" itemprop="url">PACT 07/09 设施选址问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-29 04:17:40" itemprop="dateCreated datePublished" datetime="2020-07-29T04:17:40-04:00">2020-07-29</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="定义">定义</h1>
+<p><strong>输入：</strong>二分图<span class="math inline">\(G\)</span>，顶点集分为设施集<span class="math inline">\(F\)</span>和客户集<span class="math inline">\(D\)</span>。设施<span class="math inline">\(i\)</span>的开放费用为<span class="math inline">\(f_i\)</span>，用户<span class="math inline">\(j\)</span>到设施<span class="math inline">\(i\)</span>的有权为<span class="math inline">\(c_{ij}\)</span>的边代表距离。边权满足三角不等式。</p>
+<p><strong>目标：</strong>寻找一组设施<span class="math inline">\(S\)</span>，使得 <span class="math display">\[
+\sum_{i \in S} f_i + \sum_{j\in D} \min_{i \in S} \{c_{ij}\}
+\]</span> 即每个用户都会去离自己最近（或者说最划算）设施，求最小化开店费用加上服务成本（即每个顾客要走的距离之和）的开店方案。</p>
+<h1 id="线性规划表述">线性规划表述</h1>
+<p>令<span class="math inline">\(y_i\)</span>表示设施<span class="math inline">\(i\)</span>是否被选，<span class="math inline">\(x_{ij}\)</span>表示用户<span class="math inline">\(j\)</span>是否到设施<span class="math inline">\(i\)</span>去，则设施选址问题可以表述为下列线性规划（松弛整数限制）： <span class="math display">\[
+\begin{aligned}
+    \text{minimize}\quad &amp;\sum_{i\in F}f_iy_i + \sum_{j\in D}\sum_{i \in F}c_{ij}x_{ij} \\
+    \text{subject to}\quad &amp;\sum_{i\in F}x_{ij} \ge 1 \quad \forall j\in D \\
+    &amp;y_i - x_{ij} \ge 0 \quad \forall i\in F, j\in D \\
+    &amp;x_{ij} \ge 0 \quad \forall i\in F, j\in D \\
+    &amp;y_i \ge 0 \quad \forall i \in F
+\end{aligned}
+\]</span> 其中第一个约束表示所有顾客至少要去一个设施。第二个约束表示只有一个设施开的时候用户才可以去。</p>
+<p>其对偶为 <span class="math display">\[
+\begin{aligned}
+    \text{maximize}\quad &amp;\sum_{j \in D}\alpha_j \\
+    \text{subject to}\quad &amp;\alpha_j - \beta_{ij} \le c_{ij}\quad \forall i \in F, j\in D \\
+    &amp;\sum_{j\in D}\beta_{ij} \le f_i\quad \forall i\in F
+\end{aligned}
+\]</span></p>
+<p>令<span class="math inline">\((x^*,y^*)\)</span>和<span class="math inline">\((\alpha^*,\beta^*)\)</span>为主规划和对偶规划的最优解。显然，在线性规划当中很可能出现<span class="math inline">\(0&lt;x^*_{ij}&lt;1\)</span>即“部分得到服务”的情况。</p>
+<h1 id="近似算法的设计思路与分析">近似算法的设计思路与分析</h1>
+<p><strong>引理：</strong>如果<span class="math inline">\(x_{ij}^* &gt; 0\)</span>那么<span class="math inline">\(\alpha_j^* \ge c_{ij}\)</span>。</p>
+<p><strong>证明：</strong>由主互补松弛条件，若<span class="math inline">\(x_{ij}^*&gt;0\)</span>则<span class="math inline">\(\alpha_j^*-\beta_{ij}^* = c_{ij}\)</span>，又<span class="math inline">\(\beta_{ij}^* \ge 0\)</span>，得证。</p>
+<p>定义顾客<span class="math inline">\(j\)</span>所有部分光顾的设施为<span class="math inline">\(j\)</span>的邻域<span class="math inline">\(N(j)=\left\{ i \Big| x_{ij}^* &gt; 0,i\in F\right\}\)</span>。</p>
+<p>很容易想到一个近似算法：<strong>对于每一个顾客，我们开放邻域中离他最近的设施</strong>。</p>
+<p>由于我们的引理和弱对偶原理，我们的总服务成本<span class="math inline">\(\le \sum_{j\in D}\alpha_j^* \le \mathrm{OPT}\)</span>。如果我们开放设施的成本也有个上界就好了。</p>
+<p>然而并不行。</p>
+<p>考虑如下反例：</p>
+<p><img src="/2020/07/29/PACT0709/P1.svg" class=""></p>
+<p>如果按照我们的算法，我们会为<span class="math inline">\(j\)</span>和<span class="math inline">\(j&#39;\)</span>分别开放一个代价<span class="math inline">\(24\)</span>的设施。而事实上开那个代价<span class="math inline">\(25\)</span>的设施就够了。我们差不多浪费了两倍的钱，而这个倍数可以任意高（只要让代价稍高一点的设施处在所有顾客的邻域当中，而使每个顾客的邻域中都有比其代价略低的设施即可）。</p>
+<p>但是我们知道，<strong>对于任何一组邻域不交的顾客，开放设施的代价确实是不大于<span class="math inline">\(\mathrm{OPT}\)</span>的</strong>（为什么？因为那些设施只服务一个顾客，而那个顾客有可能“部分”光顾其他设施。比如说一个顾客光顾了<span class="math inline">\(0.5\)</span>的设施<span class="math inline">\(1\)</span>（代价为<span class="math inline">\(10\)</span>）和<span class="math inline">\(0.5\)</span>的设施<span class="math inline">\(2\)</span>（代价为<span class="math inline">\(20\)</span>），那么这个顾客就给目标函数贡献了<span class="math inline">\(0.5\times10+0.5\times 20\)</span>，显然这个时候如果我去开代价<span class="math inline">\(10\)</span>的那个设施，开店费是<span class="math inline">\(10\)</span>，是小于最优目标函数的）</p>
+<p>那我不妨先任选一组邻域不交的顾客（不妨称之为“幸运顾客”）按照就近原则开放他们的设施，然后再让那些邻域和幸运顾客有交集的顾客（不妨称之为“倒霉顾客”）去这些设施。</p>
+<p>根据我们之前的分析，幸运顾客的服务成本一定不大于<span class="math inline">\(\mathrm{OPT}\)</span>，考虑倒霉顾客的服务成本。假设倒霉顾客<span class="math inline">\(j\)</span>和幸运顾客<span class="math inline">\(i\)</span>的邻域共享一个设施<span class="math inline">\(b\)</span>，幸运顾客可以去离他最近的设施<span class="math inline">\(a\)</span>。</p>
+<p>那么根据三角不等式，让<span class="math inline">\(j\)</span>去<span class="math inline">\(a\)</span>的距离为 <span class="math display">\[
+c_{aj} \le c_{bj}+c_{bi}+c_{ai}
+\]</span> 根据引理， <span class="math display">\[
+\begin{align}
+c_{aj} &amp;\le c_{bj}+c_{bi}+c_{ai} \\
+&amp;\le \alpha_j^* + \alpha_i^* + \alpha _i^* \\
+&amp;\stackrel{?}{\le} 3\alpha_j^* 
+\end{align}
+\]</span> 最后一步是我们希望得出的，因为如果这样，那么所有顾客的服务成本的上界就是（不妨令幸运顾客的集合为<span class="math inline">\(D_1\)</span>，不幸运顾客的集合为<span class="math inline">\(D_2\)</span>）： <span class="math display">\[
+\begin{align}
+    \sum_{j\in D_1} \alpha_j^* + \sum_{j\in D_2}3\alpha_j^* \le \sum_{j\in D_1}3 \alpha_j^* + \sum_{j\in D_2}3\alpha_j^* = \mathrm{OPT}_{\text{dual}} \le \mathrm{OPT}
+\end{align}
+\]</span> 但是按照目前的信息最后一步并不总是成立的。</p>
+<p>那怎么办？改算法呗。我们只需要保证所有幸运顾客的<span class="math inline">\(\alpha^*\)</span>都小于等于倒霉顾客的<span class="math inline">\(\alpha^*\)</span>，也就是说排一下序就好了。</p>
+<p>于是我们就得到了我们的算法：</p>
+<ol type="1">
+<li>解原线性规划和对偶线性规划，得到<span class="math inline">\((x^*,y^*),(\alpha^*,\beta^*)\)</span>。</li>
+<li>选一个<span class="math inline">\(\alpha^*\)</span>最小的顾客并开放他邻域当中离他最近的店。</li>
+<li>暂时移除所有和这个顾客有相交邻域的顾客。</li>
+<li>持续以上两步直至所有顾客都被选中或移除。</li>
+<li>让所有被移除的顾客去离他们最近的已开放设施。</li>
+</ol>
+<p>这个算法的近似是多少呢？上面的分析已经说明了这个方案的设施成本不大于<span class="math inline">\(\mathrm{OPT}\)</span>，而服务成本不大于<span class="math inline">\(3\mathrm{OPT}\)</span>，因此总的来说这就是一个<span class="math inline">\(4\)</span>倍近似算法。</p>
+<h1 id="近似难度">近似难度</h1>
+<p><strong>定理（Guha, Khuller 1999）：</strong>如果设施选址问题存在近似比小于<span class="math inline">\(1.463\)</span>的算法，则<span class="math inline">\(\mathsf{P}=\mathsf{NP}\)</span>。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1512,140 +1636,6 @@ v(S_k) - v(S_{k-1}) \ge \frac{v(\mathrm{OPT}) - v(S_{k-1})}{k} \Rightarrow v(S_k
 \end{aligned}
 \]</span> 证毕。</p>
 <p>其实分析我们的贪心算法，我们发现我们其实只利用了<span class="math inline">\(v(\cdot)\)</span>的次模性，而没有利用<span class="math inline">\(v(\cdot)\)</span>的具体形式或者题目的具体要求。而次模性足以证明引理1，引理1足以证明近似比。也就是说，我们这个贪心算法及其分析是可以被推广到其他的次模优化问题上的。因此，这个看起来很简单粗暴的贪心算法，其实真的是非常有意思！</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2020/07/04/%E8%AE%A8%E5%88%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/07/04/%E8%AE%A8%E5%88%86/" class="post-title-link" itemprop="url">计一次讨分失败</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-07-04 10:38:36" itemprop="dateCreated datePublished" datetime="2020-07-04T10:38:36-04:00">2020-07-04</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>数学出分了，我最后一题分数被扣光。</p>
-<p><img src="/2020/07/04/%E8%AE%A8%E5%88%86/prob.jpg" class=""></p>
-<p>我的答案是</p>
-<p><img src="/2020/07/04/%E8%AE%A8%E5%88%86/mine.jpg" class=""></p>
-<p>而很显然参考答案是</p>
-<p><img src="/2020/07/04/%E8%AE%A8%E5%88%86/chen.jpg" class=""></p>
-<p>嘛确实是不一样的。但是我的答案和参考答案是等价的啊！</p>
-<p><img src="/2020/07/04/%E8%AE%A8%E5%88%86/proof.png" class=""></p>
-<p>最多形式不优美，怎落得如此下场？</p>
-<p>大概是老师批high了没注意到吧，我想，然后加了老师微信，自信满满地去讨回我失去的6分。</p>
-<p>事实证明我还是太天真了。</p>
-<blockquote>
-<p>你期末分数多少啊？</p>
-</blockquote>
-<blockquote>
-<p>哦，那是好学生啊，好学生看不出来？</p>
-</blockquote>
-<p>哦豁？！</p>
-<blockquote>
-<p>如果我没写“用《点到直线距离》一节里的知识”你还可以是对的？</p>
-</blockquote>
-<p>承认了？</p>
-<blockquote>
-<p>我说了用《点到直线距离》一节里的知识啊？你是不是没看题？</p>
-</blockquote>
-<p>不老师，我的条件也是基于点到直线距离的思想的，只是有一个额外的条件罢了。</p>
-<blockquote>
-<p>你这个额外的条件就是牵 强 附 会！</p>
-</blockquote>
-<p>我的额外条件和你的<span class="math inline">\(\delta\)</span>的功能是一样的啊……都是用于修正反例的特殊状况，何况我的主条件还是基于距离的。</p>
-<blockquote>
-<p>你这个充要条件根本没办法用！</p>
-</blockquote>
-<p>这就说不过去了， 我觉得用这个条件虽卖相不佳，但是真论应用起来不会复杂多少。</p>
-<blockquote>
-<p><span class="math inline">\(\delta\)</span>书里有你看到没有啊？你没有用<span class="math inline">\(\delta\)</span>就说明你的认知也就这个水平。如果你再坚持，你这方面的数学认知就到顶了，不会再有进步了！</p>
-</blockquote>
-<p>好，没想到<span class="math inline">\(\delta\)</span>是我的疏忽，但是我很好奇就凭寥寥数语和一道试题如何可以评判认知水平的？</p>
-<p>先入为主的自信与居高临下的傲慢。</p>
-<blockquote>
-<p>你是个好学生，数学追求完美的，因此你要学会去仔细品味正确答案……</p>
-</blockquote>
-<p>又是好学生，我就不理解了你用这个先入为主的标签作甚？反衬？</p>
-<p>数学追求完美还用你教？我承认我的答案形式上没有正解优雅，但是这无损其正确性！</p>
-<p>我究竟是被高看了还是低看了？</p>
-<blockquote>
-<p>分我是不会给的。还有问题吗？</p>
-</blockquote>
-<p>我明白了。参考答案的简洁确实令人惊叹，谢谢老师。</p>
-<p>诶，我究竟是讨分的还是去挨骂的？</p>
-<p>老师你要是就事论事说我的答案和预设的方向不对我也就算了，毕竟应试考试难免这样。</p>
-<p>你还点评起我的认知和能力来了？</p>
-<p>你要是教了我两年就算了，还是在你我只说了几句话的情况下？</p>
-<p>是不是每一个眼高手低的教师都有这种自认为见得多了的那种倨傲？我还真是见识了！</p>
-<p>附加条件就是有问题，啊？</p>
-<p>“追求完美”哈？</p>
-<p>你倒是仔细数数从初中到高中有哪些判断的附加条件要加上一句<span class="math inline">\(\Delta &gt; 0\)</span>？那个时候不加附加条件算错，现在加了你又不高兴了？或者说没把附加条件并到<span class="math inline">\(d_1d_2\)</span>变成<span class="math inline">\(\delta_1\delta_2\)</span>你就不高兴了？</p>
-<p>解析几何里面很多结论<span class="math inline">\(k\)</span>要存在算不算附加条件？算不算不完美？与之相比是不是向量要好得多，倾斜角要好得多，极坐标要好得多？我们是不是要全员追求完美抛弃有缺陷的斜率？</p>
-<p>“用到点到直线距离这一节”哈？</p>
-<p><span class="math inline">\(\delta\)</span>是这一节的内容，点到直线的距离就不是了吗？</p>
-<p>都写了“试写出”了还整唯一标准答案？</p>
-<p>我的答案和你的完全等价诶！</p>
-<p>证明的思路也和你的大同小异诶！</p>
-<p>就这样把所有分扣光？</p>
-<p>我的结论好歹是对的，是不是应该和那些结论都是错的做一点区分？</p>
-<p>就这样把一个90分以上黜落到90分一下？</p>
-<p>很遗憾，虽然我理解了老师的理论（这无疑是一种可悲），但是从老师对我的态度我只能读出一种面对完全不认识的学生，一种不知何起的居高临下的自负与倨傲。</p>
-<p>题目和答案都不错，我回去会好好欣赏的。</p>
-<p>但这个老师就算了，我很庆幸高中前两年不是他教。</p>
-<p>诶，自己真蠢，刚做题的时候天真地想期末大考能出出开放性探究题，讨分的时候天真地想老师或许只是疏忽而已。</p>
-<p>到最后自讨没趣，只能在一个网络上无人问津的角落，乱发一通牢骚。</p>
 
       
     </div>

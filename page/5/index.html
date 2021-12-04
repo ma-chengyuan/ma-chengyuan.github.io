@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-count">95</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,352 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2020/02/23/PyMinecraft/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/02/23/PyMinecraft/" class="post-title-link" itemprop="url">用Python非侵入式自动化原版Minecraft</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-02-23 07:34:40" itemprop="dateCreated datePublished" datetime="2020-02-23T07:34:40-05:00">2020-02-23</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>似乎博客又有一个月没有更了呢<del>而且一个月前挖的坑似乎还没有填完? 持续咕咕咕</del></p>
+<p>我前几天玩Minecraft挖矿的时候我就一直在思考一个问题</p>
+<blockquote>
+<p>如何自动化MC里面像挖矿这么无脑的操作呢？</p>
+</blockquote>
+<p>其实现成的想法还是很多的：</p>
+<ol type="1">
+<li>用粘液块和红石（Slimestone）实现半自动化（例如SciCraft里面的盾构）。SciCraft用这个方法挖了103000颗钻石，优点是纯原版，缺点是其实还是很肝，而且技术性非常强。</li>
+<li>利用mod的解决方案：像IC2，Mekanism这些mod其实都有自动化的解决方案。优点是比较简单。缺点是非原版，通用性比较差，而且自动挖矿在这些mod里面基本上也是大后期了，搭这一套措施很肝。</li>
+<li>利用客户端mod的解决方案：利用FreeCam或者透视这种客户端mod可以在服务端原版的情况下达到类似自动化的效果，但是缺点是这个是作弊。</li>
+<li>Carpet Mod：这个mod的<code>/player</code>命令是在服务端生成一个假的玩家实体并进行操作，好处就是简单，快捷，不会掉线。而且Carpet现在搭了Fabric的顺风车更新得非常勤快。缺点就是服务端要装Carpet，如果不是自己开服基本用不了，而且说实话Carpet的自动化比较简单（本来是配合SciCraft那一套设计的）。</li>
+<li><a target="_blank" rel="noopener" href="http://minerl.io/">MineRL</a>：直接利用强化学习解决一切自动化问题。优点是几乎啥都可以干，缺点是技术含量非常非常高，而且训练的硬件要求非常高。说实话我觉得是overkill。</li>
+</ol>
+<p>这些方案各有优缺点，其实对于我这种玩偶尔玩第三方服务器的人2、3、4基本上就可以否决掉了，1的话门槛比较高，5的话没有那硬件资源。所以这几天我自己试验了一个适合我需求的方案，还算不错。</p>
+<h1 id="初步设计">初步设计</h1>
+<p>简单来说呢，我的想法是这个样子的</p>
+<ol type="1">
+<li>不断截取游戏窗口</li>
+<li>通过OCR读取F3界面的字符</li>
+<li>获得玩家的位置</li>
+<li>通过闭环控制器控制玩家行动</li>
+<li>通过模拟键盘和鼠标事件来进行实际的控制</li>
+</ol>
+<p>这个解决方案和MineRL靠的比较近，都是比较贴近于实际玩游戏的过程。我最看重的一个有点就是这个解决方案完全不需要修改客户端，而且因为F3界面格式万年不变而且从很早版本就有了导致这个解决方案的版本兼容性超强，即使是玩第三方服务器第三方客户端也丝毫不虚。那么剩下来的就是用Python实现这一连串过程了。</p>
+<h1 id="用到的第三方库">用到的第三方库</h1>
+<pre class="line-numbers"><code class="language-python">import cv2 as cv
+import numpy as np
+
+import win32gui
+import win32ui
+import win32con
+
+import keyboard
+import mouse</code></pre>
+<p>上面是图像处理标准操作，中间是Win32标准操作，下面是鼠标和按键模拟用的（其实用win32api也可以解决，但是我还是想保留一点OS兼容性）。</p>
+<h1 id="游戏窗口截取">游戏窗口截取</h1>
+<p>因为我用的是Windows所以这个部分理所应当地用Pywin32来做，我个人对于Win32 API不是特别地熟悉（常年面向MSDN编程），Pywin32做接口之后就更搞不清楚了，于是上网上东抄抄西抄抄就做完了。我把这部分代码理了一下，通用性还是比较高的。</p>
+<pre class="line-numbers"><code class="language-python">Hwnd = int
+
+def get_window_with_title(keyword: str) -&gt; Hwnd:
+    &quot;&quot;&quot;
+    Gets the first window whose title contains the keyword, if any
+    !!! WIN 32 ONLY !!!
+    :param keyword: the keyword
+    :return: the first window whose title contains keyword, None if not found
+    &quot;&quot;&quot;
+
+    def callback(hwnd: Hwnd, extra: List[Hwnd]):
+        if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd) \
+                and keyword in win32gui.GetWindowText(hwnd):
+            extra.append(hwnd)
+
+    ret: List[Hwnd] = []
+    win32gui.EnumWindows(callback, ret)
+    return ret[0] if ret else None
+
+
+def capture_screen_of(hwnd: Hwnd, rect=None) -&gt; np.ndarray:
+    &quot;&quot;&quot;
+    Capture screen of hwnd, using win32 API
+    !!! WIN 32 ONLY !!!
+    :param hwnd: the window handle
+    :param rect: the rectangle, default value None, which means to capture the whole window
+    :return: the screen capture (RGBA) in numpy array format
+    &quot;&quot;&quot;
+    window_dc = win32gui.GetWindowDC(hwnd)
+    dc_object = win32ui.CreateDCFromHandle(window_dc)
+    compat_dc = dc_object.CreateCompatibleDC()
+    bitmap = win32ui.CreateBitmap()
+    if not rect:
+        rect = win32gui.GetWindowRect(hwnd)
+        rect = (0, 0, rect[2] - rect[0], rect[3] - rect[1])
+    width, height = rect[2] - rect[0], rect[3] - rect[1]
+    start = (rect[0], rect[1])
+    bitmap.CreateCompatibleBitmap(dc_object, width, height)
+    compat_dc.SelectObject(bitmap)
+    compat_dc.BitBlt((0, 0), (width, height), dc_object, start, win32con.SRCCOPY)
+    img = np.frombuffer(bitmap.GetBitmapBits(True), dtype=&#39;uint8&#39;)
+    img.shape = (height, width, 4)
+    dc_object.DeleteDC()
+    compat_dc.DeleteDC()
+    win32gui.ReleaseDC(hwnd, window_dc)
+    win32gui.DeleteObject(bitmap.GetHandle())
+    return img</code></pre>
+<p>（出于常年写静态语言的习惯还是加上了type annotation）</p>
+<h1 id="ocr">OCR</h1>
+<p>这是最头大的部分了，我一开始的想法非常天真：Tesseract OCR，G家这么好的轮子不用干啥。结果</p>
+<ol type="1">
+<li>Tesseract下载下来好几十MB，这瞬间让整个项目的dependencies复杂了起来。</li>
+<li>Tesseract似乎很慢，跑一次F3界面要跑0.5秒，我这算法要是按照2FPS的速度跑那玩家的反射弧要长出天际了。其实考虑到Tesseract很多都是在用LSTM这种速度也不奇怪。</li>
+<li>Tesseract对于Minecraft默认像素风字体的支持不好。如果要提升效果就要额外train。</li>
+</ol>
+<p>这三个因素加起来最终还是把Tesseract枪毙了。Python常见的OCR解决方案似乎只有这一家，所以只能自己设计OCR算法了。</p>
+<p>其实在我的这个场景里OCR的要求不高，因为</p>
+<ol type="1">
+<li>因为是截屏所以像素亮度很平整，也不会有扭曲或者畸变</li>
+<li>我可以获取到Minecraft的字体文件</li>
+</ol>
+<p>这两个因素在一起让这里的OCR退化成了template matching。</p>
+<p>从客户端<code>jar</code>文件里提取出来字体文件本身不是一件特别复杂的事，唯一可能复杂一点的地方就是要把字体位图当中透明色变成灰色：</p>
+<pre class="line-numbers"><code class="language-python">font_atlas_file = &quot;unicode_page_00.png&quot; # Minecraft的Unicode字体位图
+font_atlas = cv.imread(font_atlas_file, cv.IMREAD_UNCHANGED)
+font_atlas = cv.threshold(font_atlas[:, :, 3], 127, 255, cv.THRESH_BINARY)[1]</code></pre>
+<p>接下来是文字提取。经过我的测试Minecraft的F3界面文字在灰度图像下的前景色在<code>220-225</code>左右非常固定，而且文字背后半透明灰色的遮罩使文字的周围不会出现干扰。这样提取文字部分只需要threshold一下就解决了，运用OpenCV的代码非常简短：</p>
+<pre class="line-numbers"><code class="language-python">f3_color = (221, 225)
+...
+# cap是截图
+img = cv.cvtColor(cap, cv.COLOR_BGR2GRAY if cap.shape[2] == 3 else cv.COLOR_BGRA2GRAY)
+img = cv.threshold(img, f3_color[1], 255, cv.THRESH_TOZERO_INV)[1]
+img = cv.threshold(img, f3_color[0] - 1, 255, cv.THRESH_BINARY)[1]</code></pre>
+<p>接下来只要对于字符集当中的每一个文字，从字体位图里面找到点阵字体然后跑模板匹配就行了</p>
+<pre class="line-numbers"><code class="language-python">chars: List[Tuple[int, int, str]] = []
+for ch in charset:
+    font = bitmap_fonts[ord(ch)]
+    x = cv.matchTemplate(img, font, cv.TM_CCORR_NORMED)
+    # noinspection PyTypeChecker
+    chars.extend(zip(*np.where(x &gt; match_threshold), repeat(ch)))</code></pre>
+<p>最后是把识别出来的单个字符串联成行。这一部分的主要思路是把纵坐标在一定范围内的字符按照横坐标排序然后顺次拼接就行了。下面的代码还可以做亿点优化，但是这一部分不是本算法的瓶颈（上面的模式匹配才是），所以我懒了：</p>
+<pre class="line-numbers"><code class="language-python">img_width = img.shape[1]
+chars.sort(key=lambda tup: tup[0] * img_width + tup[1])
+last_y = -1 - max_line_height_deviation
+lines: List[List[Tuple[int, int, str]]] = []
+for ch in chars:  
+    if ch[0] - last_y &gt; max_line_height_deviation:
+        last_y = ch[0]
+        lines.append([])
+    lines[-1].append(ch)
+ret: List[str] = []
+for line in lines: 
+    line_str: str = &quot;&quot;
+    error = True
+    for (i, ch) in enumerate(line):
+        if i &gt; 0 and ch[1] - line[i - 1][1] &gt; whitespace_width:  
+            line_str += &#39; &#39;
+        line_str += ch[2]
+        error &amp;= ch[2] in [&#39;.&#39;, &#39;-&#39;, &#39;_&#39;]  
+    if not error:
+            ret.append(line_str)
+return ret</code></pre>
+<p>注意要集中处理的是有些字符会因为字体的原因容易被错误识别，例如<code>.</code>, <code>_</code>, <code>-</code>(后两个在MC的字体里面根本就是一样的)。这一部分要去除。同时因为空格无论怎么样都不会被模板匹配识别出来，所以要通过字间距的差别来插入。</p>
+<p>这个算法的运行时间是和字符集大小成正比的，因此字符集的精简很重要。在这里我其实只采用了<code>0123456789XYZFLa./-</code>这些字符，这些数字和符号确保可以正常识别数字，<code>XYZ</code>确保可以识别坐标，<code>Fa</code>确保可以识别朝向（<code>Facing</code>），<code>L</code>确保可以识别指向（<code>Looking at</code>）。总体来说这一部分的算法虽然简陋但是堪堪够用。在精简字符集后可以跑到20FPS，已经是Tesseract的10倍多了。</p>
+<p>在试验过程中比较有意思的一个发现是Minecraft的默认ASCII字体渲染是一个比较复杂的过程，似乎不是按照<code>ascii.png</code>上的内容直接来的（我的理解是似乎加了一些hint），导致模板匹配的思路在ASCII字体的时候是行不通的，必须在设置里面强制开启Unicode字体。</p>
+<h1 id="读取玩家信息">读取玩家信息</h1>
+<p>在OCR之后读取玩家信息就是水到渠成的事情了。我的OCR已经把行都划好了，只需要选取特定字符开头的行做一下字符串分割和parse就完成了。</p>
+<h1 id="闭环控制">闭环控制</h1>
+<p>最后一步当然是通过一个闭环控制器来控制玩家的运动。这一部分出于我在机器人社的经验我糊了一个P controller <del>ID部分懒得写了</del>来控制玩家的朝向，再写了个bang bang control来控制玩家的XZ坐标（在生存模式下Y坐标一般来说是控制不了的）。稍微比较烦的地方就是MC对于方位角的表示方式，需要一些分类讨论和转换。控制频率100Hz，效果差强人意，已经足够作为一个proof-of-concept了：</p>
+<pre class="line-numbers"><code class="language-python">def control_thread_func(coord_tol: float = 0.5, yaw_tol: float = 2, pitch_tol: float = 2):
+    &quot;&quot;&quot;
+    The control thread. If abs(error_target) &lt;= x_target, then the target will be considered reached
+    :param coord_tol: coordinate tolerance
+    :param yaw_tol: yaw tolerance
+    :param pitch_tol: pitch tolerance
+    :return: runs forever
+    &quot;&quot;&quot;
+    kp_yaw, kp_pitch = 0.5, 0.4 
+    global target_yaw
+    global target_pitch
+    global reached_yaw
+    global reached_pitch
+    global reached_coord
+    w, a, s, d = False, False, False, False # 记录WASD四个键状态
+    move_threshold = 0.5 # 如果在一个坐标分量上的偏差小于这个值那就不按这个分量上的按键了
+    turn_threshold = 1.5 # 每一次鼠标至少要动这么多
+
+    def key_cond(val, key, cond):
+        if val and not cond:
+            keyboard.release(key)
+            return False
+        if not val and cond:
+            keyboard.press(key)
+            return True
+        return val
+
+    while True:
+        if not in_control or not player_info:
+            time.sleep(0.05)
+            continue
+
+        yaw, pitch = player_info.facing
+        coord = xyz2xz(player_info.coord)
+
+        # 坐标控制
+        error_coord = math.hypot(target_coord[0] - coord[0], target_coord[1] - coord[1])
+        reached_coord = error_coord &lt; coord_tol
+        theta = math.atan2(target_coord[0] - coord[0], target_coord[1] - coord[1])
+        ws = math.cos(theta + math.radians(yaw)) * error_coord
+        ad = math.sin(theta + math.radians(yaw)) * error_coord
+        w = key_cond(w, &quot;w&quot;, ws &gt; move_threshold)
+        s = key_cond(s, &quot;s&quot;, ws &lt; -move_threshold)
+        a = key_cond(a, &quot;a&quot;, ad &gt; move_threshold)
+        d = key_cond(d, &quot;d&quot;, ad &lt; -move_threshold)
+
+        # 摄像头朝向控制
+        target_pitch = max(-90, min(90, target_pitch))
+        if auto_yaw and not reached_coord: 
+            target_yaw = -math.degrees(math.atan2(target_x - x, target_z - z))
+        if target_yaw &gt; 180:
+            target_yaw -= 180
+        if target_yaw &lt; -180:
+            target_yaw += 180
+        error_yaw = target_yaw - yaw
+        if abs(error_yaw - 360) &lt; abs(error_yaw):
+            error_yaw -= 360
+        if abs(error_yaw + 360) &lt; abs(error_yaw):
+            error_yaw += 360
+        error_pitch = target_pitch - pitch
+        reached_yaw = abs(error_yaw) &lt; yaw_tol
+        reached_pitch = abs(error_pitch) &lt; pitch_tol
+        if not reached_yaw:
+            d_yaw = kp_yaw * error_yaw
+            if abs(d_yaw) &lt; turn_threshold:
+                d_yaw = math.copysign(turn_threshold, error_yaw)
+        else:
+            d_yaw = 0
+        if not reached_pitch:
+            d_pitch = kp_pitch * error_pitch
+            if abs(d_pitch) &lt; turn_threshold:
+                d_pitch = math.copysign(turn_threshold, error_pitch)
+        else:
+            d_pitch = 0
+        mouse.move(d_yaw, d_pitch, absolute=False)
+
+        time.sleep(0.01)</code></pre>
+<h1 id="测试">测试</h1>
+<p>写完之后我写了一个简单的挖矿脚本，可以挖1x2的矿道并且插上火把点亮：</p>
+<pre class="line-numbers"><code class="language-python">def wait_turn():
+    time.sleep(0.01)
+    while player_info and (not reached_yaw or not reached_pitch):
+        time.sleep(0.05)
+
+
+def wait_coord():
+    time.sleep(0.01)
+    while player_info and not reached_coord:
+        time.sleep(0.05)
+
+def start_mining():
+    global in_control
+    global target_coord
+    global target_yaw
+    global target_pitch
+    if player_info is None:
+        return
+    if player_info.target_block is None:
+        return
+    direction = xyz2xz(player_info.target_block - np.floor(player_info.coord))
+    target_coord = xyz2xz(player_info.coord)
+    target_yaw = -math.degrees(math.atan2(direction[0], direction[1]))
+    in_control = True
+    target_pitch = 0
+    moved = 0
+    wait_turn()
+    try:
+        while True:
+            moved += 1
+            mouse.press() # 开始挖摄像头正对的方向
+            while np.linalg.norm(xyz2xz(player_info.target_block - np.floor(player_info.coord))) &lt; 1.:
+                time.sleep(0.01)
+            mouse.release() # 挖完了
+            if moved % 5 == 0: # 每挖五格就插一个火把（在副手）
+                target_yaw += 30
+                wait_turn()
+                mouse.right_click()
+                time.sleep(0.1)
+                target_yaw -= 30
+            target_pitch = 40 # 低头
+            wait_turn()
+            mouse.press() # 开始挖下面的那一格
+            while np.linalg.norm(xyz2xz(player_info.target_block - np.floor(player_info.coord))) &lt; 1.:
+                time.sleep(0.01)
+            mouse.release()
+            target_coord = xyz2xz(np.floor(player_info.coord)) + np.array([0.5, 0.5]) + 0.7 * direction # 前进！
+            target_pitch = 0 # 双眼平视前方
+            wait_turn()
+            wait_coord()
+    except Exception:
+        in_control = False
+        mouse.release()
+        print(&quot;exit&quot;)
+        return
+</code></pre>
+<p>这个脚本运行的非常顺畅（虽然并不总是成功，这和玩家坐标控制的精度有很大关系）。已经初步有了实用价值。看起来我这个技术路线总体还是可行的。当然现在的功能非常简陋，但是F3的信息非常丰富，如果拓展一下用途还是非常丰富的。当然最重要的还是这个脚本可以适用于所有有F3界面的Minecraft版本，版本兼容性堪称完美，爽到。</p>
+<p><del>写这个脚本花了2个小时，就是为了挖一个简单的矿，这么算来似乎有点亏？！</del></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1638,208 +1984,6 @@ location /SUB_PATH/ &#123;
     proxy_set_header Connection $http_connection;
     # proxy_buffering off; 
 &#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2019/12/14/NTTP/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/12/14/NTTP/" class="post-title-link" itemprop="url">NTT在SOCKS5代理中的奇妙应用</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-12-14 00:00:00" itemprop="dateCreated datePublished" datetime="2019-12-14T00:00:00-05:00">2019-12-14</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-27 03:42:42" itemprop="dateModified" datetime="2021-04-27T03:42:42-04:00">2021-04-27</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p>The enemy knows the system. ——Claude Shannon</p>
-</blockquote>
-<blockquote>
-<p>闷声大发财，这是坠吼的！ ——?</p>
-</blockquote>
-<p>程序是一个月以前写的。决定重新启用博客之后就把想法心得写一写吧，顺便把灵敏度分析补上。</p>
-<p>OI的奇怪知识点可真多~</p>
-<h1 id="什么是socks5">什么是SOCKS5?</h1>
-<p>SOCKS5是<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc1928">RFC1928</a>定义的一类网络代理协议。</p>
-<p>理论上来说，由于其简洁性，理论上SOCKS5是开销最低的代理协议。</p>
-<p>然而由于其过于简单，数据可以明文传输的特点，其流量特征非常明显，容易被干扰。因此在某些地区从很久以前就不能有效使用了。</p>
-<p>话虽如此，由于其协议简单，用作学习用途真是极好的。</p>
-<h1 id="什么是ntt">什么是NTT?</h1>
-<p>NTT是离散傅里叶变换在<span class="math inline">\(\mathbb{Z}/p\mathbb{Z}\)</span>（其中<span class="math inline">\(p\)</span>是素数）上的推广。</p>
-<p>具体的NTT以及FFT算法可以看之前的笔记<a href="/2019/02/03/NTT/" title="NTT笔记">NTT笔记</a>。</p>
-<h1 id="协议设计">协议设计</h1>
-<p>因为一个字节是8个比特，我们使用<span class="math inline">\(\mathbb{Z}/257\mathbb{Z}\)</span>下长度为<span class="math inline">\(256\)</span>的序列NTT。</p>
-<p>但是<span class="math inline">\(\mathbb{Z}/257\mathbb{Z}\)</span>毕竟不是<span class="math inline">\(\mathbb{Z}/256\mathbb{Z}\)</span>，如果尝试把<span class="math inline">\(256\)</span>放进字节里面就会溢出。考虑到这一点，定义如下的协议结构来储存NTT的结果。</p>
-<table>
-<thead>
-<tr class="header">
-<th style="text-align: left;">意义:</th>
-<th style="text-align: center;">溢出数</th>
-<th style="text-align: center;">溢出下标</th>
-<th style="text-align: center;">NTT 序列模<span class="math inline">\(256\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">字节数:</td>
-<td style="text-align: center;">1</td>
-<td style="text-align: center;"><em>溢出数</em></td>
-<td style="text-align: center;">256</td>
-</tr>
-</tbody>
-</table>
-<p>对于一段数据流，我们一次至多取<span class="math inline">\(255\)</span>字节，把这一段的长度放在最前面组成共<span class="math inline">\(256\)</span>个字节的数据块，NTT之后在放到上面这张表当中拼成至少<span class="math inline">\(257\)</span>字节的数据块。（理论上可以通过Padding省掉储存长度的字节）</p>
-<p>解码类似，先从上表规定的数据块复原出NTT序列，然后再INTT以下获得原序列，就行了。</p>
-<p>由于被NTT过的数据特征已经和明文的数据特征大不一样，因此可以规避一些现有的检测。</p>
-<p><em>但是根据本文一开头的Shannon's Maxim（又称Kerckhoff Principle），NTT无疑会带来新的数据特征，因而其obscurity源于对方对使用了NTT这一事实本身的不知晓或忽视，这和加密还是不一样的。</em></p>
-<h1 id="实现">实现</h1>
-<p>这种网络应用程序果然还是应该用Go写啊~</p>
-<blockquote>
-<p>你看这goroutine，它不香吗？</p>
-</blockquote>
-<p>因为NTT是成块处理的，无论是在写还是在读的时候都需要额外的buffer来缓存长度不够的块，就这一部分需要一点细节，总体按照上述协议实现一个套NTT的<code>ReadWriter</code>还是很简单的。写好的<code>NTTReadWriter</code>不仅可以套在<code>Conn</code>上，还可以套在文件上实现文件NTT之类的（虽然似乎没啥卵用）。</p>
-<p>在网络方面，客户端就留一个relay把本地监听的SOCKS请求NTT之后forward到服务端，然后服务端处理请求之后再forward回去就行了。用goroutine写这些还是很容易的。</p>
-<p>最后要在服务端实现SOCKS协议，这个似乎Go没有现成库的样子（现成的都很难和NTT耦合），于是只能自己写。最后的成品支持RFC1928中规定的Connect和Bind请求，功能基本上全了。</p>
-<p>在性能方面，我写的<code>NTTReadWriter</code>本身的性能测试下来应该在<span class="math inline">\(30\mathrm{MB/s}\)</span>左右，虽然不高但是已经超过网速了。最后在VPS上的综合测试结果也是能够跑满网速，8K不卡，非常顺滑。</p>
-<p><em>代码？不存在的。</em></p>
-<h1 id="优缺点">优缺点</h1>
-<h2 id="优点">优点</h2>
-<ol type="1">
-<li>把NTT用在网络通讯上的骚操作似乎我还没有听说过。（或许是我见识粗鄙了）</li>
-<li>NTT对于微小的扰动很敏感，因此数据特征应该会出现很大的变化。（会在下一个部分展示）</li>
-<li>NTT因为使用了大量的模运算，计算的开销比较大，块大小也不小。这对许多基于流模型的检测方法提出了挑战。</li>
-</ol>
-<h2 id="缺点">缺点</h2>
-<ol type="1">
-<li>太慢了。（虽然也足以跑满带宽）</li>
-<li>一般来说一个NTT块至多只有两个溢出，也就表明数据流中平均每<span class="math inline">\(256-258\)</span>个字节就会有一个很小的数，这不失为一个比较明显的特征。</li>
-<li>溢出位的记录导致额外的流量开销。（大概在<span class="math inline">\(1\%\)</span>的水平，还是相当可以接受的）</li>
-</ol>
-<h1 id="灵敏度分析">灵敏度分析</h1>
-<p>直觉告诉我NTT对于源数据的微小变化应该是非常敏感的，就算是一点点微扰在一层层处理之后也会让最后的结果面目全非。这也是我开脑洞选择用NTT隐藏SOCKS特征的原因（而且事实就是成功了（喜））。</p>
-<p>但是直觉总是不靠谱的。还是需要具体数据。</p>
-<p>测试环境如下：</p>
-<pre class="line-numbers"><code class="language-python"># 这似乎不是最Pythonic的写法（悲）
-import numpy as np
-import matplotlib.pyplot as plt
-
-MOD = 257
-G = 3
-LOG = 8
-LEN = 1 &lt;&lt; LOG
-
-def qpow(x, y):
-    ret = 1
-    while y != 0:
-        if y &amp; 1 == 1:
-            ret = ret * x % MOD
-        x = x * x % MOD
-        y &gt;&gt;= 1
-    return ret
-
-pos = np.zeros(LEN, dtype=int)
-for i in range(1, LEN):
-    pos[i] = ((i &amp; 1) &lt;&lt; (LOG - 1)) | (pos[i &gt;&gt; 1] &gt;&gt; 1)
-    
-def ntt(x, d=1):
-    y = np.array([x[pos[i]] for i in range(LEN)])
-    for k in range(LOG):
-        half, span = 1 &lt;&lt; k, 1 &lt;&lt; (k + 1)
-        w_ = qpow(G, (MOD - 1) // span)
-        if d == -1:
-            w_ = qpow(w_, MOD - 2)
-        for l in range(0, LEN, span):
-            mid = l + half
-            w = 1
-            for i in range(half):
-                t = w * y[mid + i] % MOD
-                y[mid + i] = (y[l + i] - t) % MOD
-                y[l + i] = (y[l + i] + t) % MOD
-                w = w * w_ % MOD
-    return qpow(LEN, MOD - 2) * y % MOD if d == -1 else y    </code></pre>
-<h2 id="不同位置相同扰动">不同位置，相同扰动</h2>
-<pre class="line-numbers"><code class="language-python">x = np.random.randint(MOD, size=LEN)
-ys = []
-for i in range(LEN):
-    x_ = np.copy(x)
-    x_[i] = (x_[i] + 1) % MOD
-    ys.append(ntt(x_))
-plt.matshow(np.array(ys))</code></pre>
-<p>即测试在原数列不同位置加<span class="math inline">\(1\)</span>微扰后对于NTT后数列的影响。结果如下：</p>
-<p><img src="/2019/12/14/NTTP/ntt-11.jpg" class=""></p>
-<p><img src="/2019/12/14/NTTP/ntt-12.jpg" class=""></p>
-<p><img src="/2019/12/14/NTTP/ntt-13.jpg" class=""></p>
-<p>除了位置（例如中间，大概是直流分量？）看起来都还不错！</p>
-<h2 id="同一位置不同扰动">同一位置，不同扰动</h2>
-<pre class="line-numbers"><code class="language-python">x = np.random.randint(MOD, size=LEN)
-p = np.random.randint(LEN)
-ys = []
-for i in range(LEN):
-    x_ = np.copy(x)
-    x_[p] = (x_[p] + i) % MOD
-    ys.append(ntt(x_))
-plt.matshow(np.array(ys))</code></pre>
-<p>即测试在原数据相同位置施加不同扰动对于NTT结果的影响，结果也还不错：</p>
-<p><img src="/2019/12/14/NTTP/ntt-21.jpg" class=""></p>
-<p><img src="/2019/12/14/NTTP/ntt-22.jpg" class=""></p>
-<p><img src="/2019/12/14/NTTP/ntt-23.jpg" class=""></p>
 
       
     </div>

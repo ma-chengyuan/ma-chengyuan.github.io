@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-count">95</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,546 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2021/03/15/TreapMultiset/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/03/15/TreapMultiset/" class="post-title-link" itemprop="url">Reinventing the Wheel: A Drop-in STL Multiset Alternative Using Treap</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-03-15 23:30:50" itemprop="dateCreated datePublished" datetime="2021-03-15T23:30:50-04:00">2021-03-15</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <blockquote>
+<p>It turns out that writing a STL container from scratch is mostly a tedious physical labor.</p>
+</blockquote>
+<p>STL is created to save C++ programmers the time of reinventing wheels. Unfortunately, many STL data structures, most notably self-balancing BSTs (aka. <code>std::(multi)set</code>), are not extendable and are by itself too limited to be used in the context of competitive programming, forcing us to write our own BSTs again and again in competitions.</p>
+<p>There comes the fact I find really interesting: A quick and dirty self-balancing BST implementation written during a competition is only about 50-60 lines long, while the STL implementation of <code>std::set</code> and <code>std::multiset</code> is usually more than a thousand-lines long in total.</p>
+<p>It does make me wonder: what makes this huge difference? And, will the code of our BST bloat as well if we write it the STL way -- with generics, iterators, and all the necessary bits and pieces as specified in the reference?</p>
+<p>To answer my question, I have here tried creating my implementation of multiset using treap as the underlying data structure. The result, <code>treap_multiset</code>, is almost a drop-in replacement to <code>std::multiset</code>. The few places where it does not conform to the C++ standard are:</p>
+<ol type="1">
+<li>It is currently not allocator-aware, so all allocator-related features are not implemented.</li>
+<li><code>emplace</code> and <code>emplace_hint</code> are not implemented.</li>
+<li>All operations that have logarithmic time complexity in <code>std::multiset</code> still have logarithmic time complexity here, but only in the average sense (because treap is a randomized data structure), and could have linear worst-case time complexity (though very, very, very unlikely).</li>
+<li><code>void erase(iterator)</code> takes amortized logarithmic time instead of constant time.</li>
+<li>A few uncommonly-used member types are missing.</li>
+</ol>
+<p><code>treap_multiset</code> also supports two new operations that are not supported in the original <code>std::multiset</code>:</p>
+<ol type="1">
+<li><pre class="line-numbers"><code class="language-cpp">   size_type rank(iterator it) const;
+   size_type rank(const_iterator it) const;</code></pre>
+<p>Both take average logarithmic time and return the rank / position of the iterator.</p></li>
+<li><pre class="line-numbers"><code class="language-cpp">   iterator at(size_type index);
+   const iterator at(size_type index) const;</code></pre>
+<p>Both take average logarithmic time and return the iterator at the specified index/position.</p></li>
+</ol>
+<p>The code is shown below:</p>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;stdexcept&gt;
+#include &lt;random&gt;
+#include &lt;algorithm&gt;
+
+static std::random_device random_device;
+static std::mt19937_64 random_engine(random_device());
+
+template &lt;typename T&gt;
+struct treap_node &#123;
+    using rand_weight_type = decltype(random_engine)::result_type;
+    using size_type = std::size_t;
+
+    treap_node *left, *right, *parent;
+    rand_weight_type weight;
+    size_type size;
+    T value;
+
+    treap_node(const T &amp;value): left(nullptr), right(nullptr), parent(nullptr),
+        weight(random_engine()), size(1), value(value) &#123;&#125;
+
+    treap_node(treap_node *left, treap_node *right, treap_node *parent, 
+        rand_weight_type weight, size_type size, const T &amp;value): 
+        left(left), right(right), parent(parent), weight(weight),
+        size(size), value(value) &#123;&#125;
+
+    void update_size() &#123;
+        size = 1 + (left ? left-&gt;size : 0) + (right ? right-&gt;size : 0);
+    &#125;
+&#125;;
+
+#define IMPL_ITERATOR_MOVE_NEXT do &#123; \
+    if (!node) break; \
+    if (node-&gt;right) &#123; \
+        node = node-&gt;right; \
+        while (node &amp;&amp; node-&gt;left) node = node-&gt;left; \
+    &#125; else &#123; \
+        bool from_right = true; \
+        while (from_right) &#123; \
+            if (!node-&gt;parent) &#123; node = nullptr; break; &#125; \
+            from_right = node-&gt;parent-&gt;right == node; \
+            node = node-&gt;parent; \
+        &#125; \
+    &#125; \
+&#125; while (0)
+
+#define IMPL_ITERATOR_MOVE_PREV do &#123; \
+    if (!node) break; \
+    if (node-&gt;left) &#123; \
+        node = node-&gt;left; \
+        while (node &amp;&amp; node-&gt;right) node = node-&gt;right; \
+    &#125; else &#123; \
+        bool from_left = true; \
+        while (from_left) &#123; \
+            if (!node-&gt;parent) &#123; node = nullptr; break; &#125; \
+            from_left = node-&gt;parent-&gt;left == node; \
+            node = node-&gt;parent; \
+        &#125; \
+    &#125; \
+&#125; while (0)
+
+#define TREAP_ITERATOR_DECL(name, qualifier, inc, dec) \
+template &lt;typename T&gt; struct name &#123; \
+    qualifier treap_node&lt;T&gt; *node; bool past_the_end; \
+    name(): node(nullptr), past_the_end(true) &#123;&#125; \
+    name(qualifier treap_node&lt;T&gt; *node, bool past_the_end) \
+        : node(node), past_the_end(past_the_end) &#123;&#125; \
+    name(qualifier treap_node&lt;T&gt; *node): node(node), past_the_end(false) &#123;&#125; \
+    qualifier T &amp;operator *() qualifier &#123; \
+        if (!node || past_the_end) \
+            throw std::runtime_error(&quot;dereferencing null/past-end iterator&quot;); \
+        return node-&gt;value; \
+    &#125; \
+    bool operator ==(const name&lt;T&gt; &amp;b) const &#123; \
+        return node == b.node &amp;&amp; past_the_end == b.past_the_end; \
+    &#125; \
+    bool operator !=(const name&lt;T&gt; &amp;b) const &#123; \
+        return node != b.node || past_the_end != b.past_the_end; \
+    &#125; \
+    name&lt;T&gt; &amp;operator ++() &#123; \
+        qualifier treap_node&lt;T&gt; *backup = node; \
+        IMPL_ITERATOR_MOVE_##inc; \
+        if (!node) past_the_end = true, node = backup; \
+        return *this; \
+    &#125; \
+    name&lt;T&gt; operator ++(int) &#123; \
+        name&lt;T&gt; ret(*this); \
+        return ++(*this), ret; \
+    &#125; \
+    name&lt;T&gt; &amp;operator --() &#123; \
+        if (past_the_end) past_the_end = false; \
+        else IMPL_ITERATOR_MOVE_##dec; \
+        if (!node) \
+            throw std::runtime_error(&quot;can&#39;t decrement at the beginning&quot;); \
+        return *this; \
+    &#125; \
+    name&lt;T&gt; operator --(int) &#123; \
+        name&lt;T&gt; ret(*this); \
+        return --(*this), ret; \
+    &#125; \
+&#125;
+
+TREAP_ITERATOR_DECL(treap_iterator, /* NO QUALIFIER */, NEXT, PREV);
+TREAP_ITERATOR_DECL(reverse_treap_iterator, /* NO QUALIFIER */, PREV, NEXT);
+TREAP_ITERATOR_DECL(const_treap_iterator, const, NEXT, PREV);
+TREAP_ITERATOR_DECL(const_reverse_treap_iterator, const, PREV, NEXT);
+
+template &lt;typename T, typename Compare = std::less&lt;T&gt;&gt;
+class treap_multiset &#123;
+public:
+    using key_type = T;
+    using value_type = T;
+    using size_type = typename treap_node&lt;T&gt;::size_type;
+    using key_compare = Compare;
+    using value_compare = Compare;
+    using node_type = treap_node&lt;T&gt;*;
+    using iterator = treap_iterator&lt;T&gt;;
+    using reverse_iterator = reverse_treap_iterator&lt;T&gt;;
+    using const_iterator = const_treap_iterator&lt;T&gt;;
+    using const_reverse_iterator = const_reverse_treap_iterator&lt;T&gt;;
+
+    treap_multiset(): root(nullptr) &#123;&#125;
+
+    treap_multiset(const treap_multiset &amp;b): root(deep_copy(b.root)), comp(b.comp) &#123;&#125;
+
+    treap_multiset(treap_multiset &amp;&amp;b): root(b.root), comp(b.comp) &#123;&#125;
+
+    ~treap_multiset() &#123; if (root) recursive_free(root); &#125;
+
+    bool empty() const &#123; return root == nullptr; &#125;
+
+    size_type size() const &#123; return root ? root-&gt;size : 0; &#125;
+
+    size_type max_size() const &#123; return 0x7FFFFFFF; &#125;
+
+    key_compare key_comp() const &#123; return comp; &#125;
+
+    value_compare value_comp() const &#123; return comp; &#125;
+
+    iterator begin() 
+        &#123; return iterator(leftmost(root)); &#125;
+
+    const_iterator begin() const 
+        &#123; return const_iterator(leftmost(root)); &#125;
+
+    const_iterator cbegin() const 
+        &#123; return const_iterator(leftmost(root)); &#125;
+
+    iterator end() 
+        &#123; return iterator(rightmost(root), true); &#125;
+
+    const_iterator end() const 
+        &#123; return const_iterator(rightmost(root), true); &#125;
+
+    const_iterator cend() const 
+        &#123; return const_iterator(rightmost(root), true); &#125;
+
+    reverse_iterator rbegin() 
+        &#123; return reverse_iterator(rightmost(root)); &#125;
+
+    const_reverse_iterator rbegin() const 
+        &#123; return const_reverse_iterator(rightmost(root)); &#125;
+
+    const_reverse_iterator crbegin() const 
+        &#123; return const_reverse_iterator(rightmost(root)); &#125;
+
+    reverse_iterator rend() 
+        &#123; return reverse_iterator(leftmost(root), true); &#125;
+
+    const_reverse_iterator rend() const 
+        &#123; return const_reverse_iterator(leftmost(root), true); &#125;
+
+    const_reverse_iterator crend() const 
+        &#123; return const_reverse_iterator(leftmost(root), true); &#125;
+
+    iterator insert(const value_type &amp;value) &#123;
+        node_type left, right;
+        split_le(root, value, left, nullptr, right, nullptr);
+        node_type temp = new treap_node&lt;T&gt;(value);
+        root = join(join(left, temp), right);
+        return iterator(temp);
+    &#125;
+
+    iterator insert(iterator position, const value_type &amp;value) 
+        &#123; return insert(value); &#125;
+
+    template &lt;typename II&gt;
+    void insert(II first, II last) &#123; 
+        for (; first != last; first++) 
+            insert(*first); 
+    &#125;
+
+    size_type rank(iterator it) const &#123; return rank(it.node); &#125;
+    
+    size_type rank(const_iterator it) const &#123; return rank(it.node); &#125;
+
+    iterator at(size_type index) &#123;
+        if (index &lt; 0 || index &gt; size()) return end();
+        return iterator(at_internal(index));
+    &#125;
+
+    const_iterator at(size_type index) const &#123;
+        if (index &lt; 0 || index &gt; size()) return end();
+        return const_iterator(at_internal(index));
+    &#125;
+
+    void erase(iterator pos) &#123;
+        assert_valid(pos);
+        node_type a, b, c;
+        size_type rank = this-&gt;rank(pos.node);
+        split_size(root, rank, a, nullptr, c, nullptr);
+        split_size(a, rank - 1, a, nullptr, b, nullptr);
+        root = join(a, c);
+        // assert(b == pos.node);
+        delete b;
+    &#125;
+
+    size_type erase(const value_type &amp;key) &#123;
+        node_type a, b, c;
+        split_le(root, key, a, nullptr, c, nullptr);
+        split_re(a, key, a, nullptr, b, nullptr);
+        root = join(a, c);
+        if (b) &#123;
+            size_type ret = b-&gt;size;
+            recursive_free(b);
+            return ret;
+        &#125;
+        return 0;
+    &#125;
+
+    void erase(iterator first, iterator last) &#123;
+        size_type rank_first = rank(first);
+        size_type rank_last = rank(last);
+        node_type a, b, c;
+        split_size(root, rank_last, a, nullptr, c, nullptr);
+        split_size(a, rank_last - 1, a, nullptr, b, nullptr);
+        root = join(a, c);
+        if (b) recursive_free(b);
+    &#125;
+
+    void clear() &#123; if (root) recursive_free(root); &#125;
+
+    void swap(treap_multiset &amp;b) &#123; swap(root, b.root); &#125;
+
+    iterator find(const value_type &amp;key) &#123;
+        node_type ret = find_internal(key);
+        return ret ? iterator(ret) : end();
+    &#125;
+
+    const_iterator find(const value_type &amp;key) const &#123;
+        node_type ret = const_cast&lt;treap_multiset&lt;T&gt;*&gt;(this)-&gt;find_internal(key);
+        return ret ? const_iterator(ret) : end();
+    &#125;
+
+    size_type count(const value_type &amp;key) const &#123;
+        node_type a, b, c;
+        treap_multiset&lt;T&gt; *thiz = const_cast&lt;treap_multiset&lt;T&gt;*&gt;(this);
+        thiz-&gt;split_le(root, key, a, nullptr, c, nullptr);
+        thiz-&gt;split_re(root, key, a, nullptr, b, nullptr);
+        size_type ret = b ? b-&gt;size : 0;
+        thiz-&gt;root = thiz-&gt;join(thiz-&gt;join(a, b), c);
+        return ret;
+    &#125;
+
+    iterator lower_bound(const value_type &amp;key) &#123;
+        node_type ret = lower_bound_internal(key);
+        return ret ? iterator(ret) : end();
+    &#125;
+
+    const_iterator lower_bound(const value_type &amp;key) const &#123;
+        node_type ret = const_cast&lt;treap_multiset&lt;T&gt;*&gt;(this)-&gt;lower_bound_internal(key);
+        return ret ? const_iterator(ret) : end();
+    &#125;
+
+    iterator upper_bound(const value_type &amp;key) &#123;
+        node_type ret = upper_bound_internal(key);
+        return ret ? iterator(ret) : end();
+    &#125;
+
+    const_iterator upper_bound(const value_type &amp;key) const &#123;
+        node_type ret = const_cast&lt;treap_multiset&lt;T&gt;*&gt;(this)-&gt;upper_bound_internal(key);
+        return ret ? const_iterator(ret) : end();
+    &#125;
+
+    std::pair&lt;iterator, iterator&gt; equal_range(const value_type &amp;key) &#123;
+        return std::make_pair(lower_bound(key), upper_bound(key));
+    &#125;
+
+    std::pair&lt;const_iterator, const_iterator&gt; equal_range(const value_type &amp;key) const &#123;
+        return std::make_pair(lower_bound(key), upper_bound(key));
+    &#125;
+
+    size_type depth(node_type node) &#123;
+        if (!node) return 0;
+        return 1 + std::max(depth(node-&gt;left), depth(node-&gt;right));
+    &#125;
+    
+private:
+    Compare comp;
+    node_type root;
+
+    void recursive_free(node_type root) &#123;
+        if (root-&gt;left) 
+            recursive_free(root-&gt;left);       
+        if (root-&gt;right) 
+            recursive_free(root-&gt;right);
+        delete root;
+    &#125;
+
+    void split_le(node_type root, const value_type &amp;key, 
+        node_type &amp;left, node_type left_parent,
+        node_type &amp;right, node_type right_parent) &#123;
+        if (!root) &#123; left = right = nullptr; return; &#125;
+        if (!comp(key, root-&gt;value)) &#123;
+            left = root; root-&gt;parent = left_parent;
+            split_le(root-&gt;right, key, root-&gt;right, root, right, right_parent);
+        &#125; else &#123;
+            right = root; root-&gt;parent = right_parent;
+            split_le(root-&gt;left, key, left, left_parent, root-&gt;left, root);
+        &#125;
+        root-&gt;update_size();
+    &#125;
+
+    void split_re(node_type root, const value_type &amp;key, 
+        node_type &amp;left, node_type left_parent,
+        node_type &amp;right, node_type right_parent) &#123;
+        if (!root) &#123; left = right = nullptr; return; &#125;
+        if (comp(root-&gt;value, key)) &#123;
+            left = root; root-&gt;parent = left_parent;
+            split_re(root-&gt;right, key, root-&gt;right, root, right, right_parent);
+        &#125; else &#123;
+            right = root; root-&gt;parent = right_parent;
+            split_re(root-&gt;left, key, left, left_parent, root-&gt;left, root);
+        &#125;
+        root-&gt;update_size();
+    &#125;
+
+    void split_size(node_type root, size_type size, 
+        node_type &amp;left, node_type left_parent,
+        node_type &amp;right, node_type right_parent) &#123;
+        if (!root) &#123; left = right = nullptr; return; &#125;
+        size_type left_size = 1 + (root-&gt;left ? root-&gt;left-&gt;size : 0);
+        if (left_size &lt;= size) &#123;
+            left = root; root-&gt;parent = left_parent;
+            split_size(root-&gt;right, 
+                size - left_size, root-&gt;right, root, right, right_parent);
+        &#125; else &#123;
+            right = root; root-&gt;parent = right_parent;
+            split_size(root-&gt;left, size, left, left_parent, root-&gt;left, root);
+        &#125;
+        root-&gt;update_size();
+    &#125;
+
+    node_type join(node_type left, node_type right) &#123;
+        if (!left) return right;
+        if (!right) return left;
+        if (left-&gt;weight &lt;= right-&gt;weight) &#123;
+            node_type temp = join(left-&gt;right, right);
+            if (temp) temp-&gt;parent = left;
+            left-&gt;right = temp;
+            left-&gt;update_size();
+            return left;
+        &#125; else &#123;
+            node_type temp = join(left, right-&gt;left);
+            if (temp) temp-&gt;parent = right;
+            right-&gt;left = temp;
+            right-&gt;update_size();
+            return right;
+        &#125;
+    &#125;
+
+    node_type leftmost(node_type x) const &#123;
+        if (!x) return nullptr;
+        node_type ret = x; while (ret-&gt;left) ret = ret-&gt;left;
+        return ret;
+    &#125;
+
+    node_type rightmost(node_type x) const &#123;
+        if (!x) return nullptr;
+        node_type ret = x; while (ret-&gt;right) ret = ret-&gt;right;
+        return ret;
+    &#125;
+
+    node_type find_internal(const value_type &amp;key) &#123;
+        node_type a, b, c;
+        split_le(root, key, a, nullptr, c, nullptr);
+        split_re(root, key, a, nullptr, b, nullptr);
+        root = join(join(a, b), c);
+        return b;
+    &#125;
+
+    node_type lower_bound_internal(const value_type &amp;key) &#123;
+        node_type left, right;
+        split_re(root, key, left, nullptr, right, nullptr);
+        node_type ret = leftmost(right);
+        root = join(left, right);
+        return ret;
+    &#125;
+
+    node_type upper_bound_internal(const value_type &amp;key) &#123;
+        node_type left, right;
+        split_le(root, key, left, nullptr, right, nullptr);
+        node_type ret = leftmost(right);
+        root = join(left, right);
+        return ret;
+    &#125;
+
+    node_type at_internal(size_type index) const &#123;
+        node_type temp = root;
+        while (true) &#123;
+            size_type left_size = 1 + (temp-&gt;left ? temp-&gt;left-&gt;size : 0);
+            if (index == left_size) return temp;
+            else if (index &lt; left_size) temp = temp-&gt;left;
+            else temp = temp-&gt;right, index -= left_size;
+        &#125;
+        return nullptr; // UNREACHABLE
+    &#125;
+
+    size_type rank(node_type node) &#123;
+        bool from_right = true;
+        size_type ret = 0;
+        while (node) &#123;
+            if (from_right)
+                ret += 1 + (node-&gt;left ? node-&gt;left-&gt;size : 0);
+            if (node-&gt;parent)
+                from_right = node == node-&gt;parent-&gt;right;
+            node = node-&gt;parent;
+        &#125;
+        return ret;
+    &#125;
+
+    node_type deep_copy(node_type node) &#123;
+        if (!node) return nullptr;
+        node_type left = deep_copy(node-&gt;left);
+        node_type right = deep_copy(node-&gt;right);
+        node_type ret = new treap_node&lt;T&gt;(
+            left, right, nullptr,
+            node-&gt;weight, node-&gt;size, node-&gt;value
+        );
+        if (left) left-&gt;parent = ret;
+        if (right) right-&gt;parent = ret;
+        return ret;
+    &#125;
+
+    void assert_valid(iterator it) &#123;
+        if (!it.node || it.past_the_end)
+            throw std::runtime_error(&quot;invalid iterator&quot;);
+        node_type temp = it.node;
+        while (temp-&gt;parent) temp = temp-&gt;parent;
+        if (temp != root)
+            throw std::runtime_error(&quot;invalid iterator&quot;);
+    &#125;
+&#125;;</code></pre>
+<p>(The code above hasn't been thoroughly tested yet and could still contain bugs).</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1937,130 +2477,6 @@ c_{ak} &amp;\le c_{aj} + c_{bj} +c_{bk} \\
 <li><span class="math inline">\(t=3\)</span>，剩下的<span class="math inline">\(n-1\)</span>家设施全部开张。</li>
 </ul>
 <p>如果没有最后的清理步骤，那么我们的算法会开放所有的设施。光是开放设施的代价就有<span class="math inline">\(n+1+(n-1)(n+2)=\Omega(n^2)\)</span>。而只开一家设施的代价是<span class="math inline">\(O(n)\)</span>的。因此最后的清理步骤非常重要！</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2020/07/29/PACT0709/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/07/29/PACT0709/" class="post-title-link" itemprop="url">PACT 07/09 设施选址问题</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-07-29 04:17:40" itemprop="dateCreated datePublished" datetime="2020-07-29T04:17:40-04:00">2020-07-29</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="定义">定义</h1>
-<p><strong>输入：</strong>二分图<span class="math inline">\(G\)</span>，顶点集分为设施集<span class="math inline">\(F\)</span>和客户集<span class="math inline">\(D\)</span>。设施<span class="math inline">\(i\)</span>的开放费用为<span class="math inline">\(f_i\)</span>，用户<span class="math inline">\(j\)</span>到设施<span class="math inline">\(i\)</span>的有权为<span class="math inline">\(c_{ij}\)</span>的边代表距离。边权满足三角不等式。</p>
-<p><strong>目标：</strong>寻找一组设施<span class="math inline">\(S\)</span>，使得 <span class="math display">\[
-\sum_{i \in S} f_i + \sum_{j\in D} \min_{i \in S} \{c_{ij}\}
-\]</span> 即每个用户都会去离自己最近（或者说最划算）设施，求最小化开店费用加上服务成本（即每个顾客要走的距离之和）的开店方案。</p>
-<h1 id="线性规划表述">线性规划表述</h1>
-<p>令<span class="math inline">\(y_i\)</span>表示设施<span class="math inline">\(i\)</span>是否被选，<span class="math inline">\(x_{ij}\)</span>表示用户<span class="math inline">\(j\)</span>是否到设施<span class="math inline">\(i\)</span>去，则设施选址问题可以表述为下列线性规划（松弛整数限制）： <span class="math display">\[
-\begin{aligned}
-    \text{minimize}\quad &amp;\sum_{i\in F}f_iy_i + \sum_{j\in D}\sum_{i \in F}c_{ij}x_{ij} \\
-    \text{subject to}\quad &amp;\sum_{i\in F}x_{ij} \ge 1 \quad \forall j\in D \\
-    &amp;y_i - x_{ij} \ge 0 \quad \forall i\in F, j\in D \\
-    &amp;x_{ij} \ge 0 \quad \forall i\in F, j\in D \\
-    &amp;y_i \ge 0 \quad \forall i \in F
-\end{aligned}
-\]</span> 其中第一个约束表示所有顾客至少要去一个设施。第二个约束表示只有一个设施开的时候用户才可以去。</p>
-<p>其对偶为 <span class="math display">\[
-\begin{aligned}
-    \text{maximize}\quad &amp;\sum_{j \in D}\alpha_j \\
-    \text{subject to}\quad &amp;\alpha_j - \beta_{ij} \le c_{ij}\quad \forall i \in F, j\in D \\
-    &amp;\sum_{j\in D}\beta_{ij} \le f_i\quad \forall i\in F
-\end{aligned}
-\]</span></p>
-<p>令<span class="math inline">\((x^*,y^*)\)</span>和<span class="math inline">\((\alpha^*,\beta^*)\)</span>为主规划和对偶规划的最优解。显然，在线性规划当中很可能出现<span class="math inline">\(0&lt;x^*_{ij}&lt;1\)</span>即“部分得到服务”的情况。</p>
-<h1 id="近似算法的设计思路与分析">近似算法的设计思路与分析</h1>
-<p><strong>引理：</strong>如果<span class="math inline">\(x_{ij}^* &gt; 0\)</span>那么<span class="math inline">\(\alpha_j^* \ge c_{ij}\)</span>。</p>
-<p><strong>证明：</strong>由主互补松弛条件，若<span class="math inline">\(x_{ij}^*&gt;0\)</span>则<span class="math inline">\(\alpha_j^*-\beta_{ij}^* = c_{ij}\)</span>，又<span class="math inline">\(\beta_{ij}^* \ge 0\)</span>，得证。</p>
-<p>定义顾客<span class="math inline">\(j\)</span>所有部分光顾的设施为<span class="math inline">\(j\)</span>的邻域<span class="math inline">\(N(j)=\left\{ i \Big| x_{ij}^* &gt; 0,i\in F\right\}\)</span>。</p>
-<p>很容易想到一个近似算法：<strong>对于每一个顾客，我们开放邻域中离他最近的设施</strong>。</p>
-<p>由于我们的引理和弱对偶原理，我们的总服务成本<span class="math inline">\(\le \sum_{j\in D}\alpha_j^* \le \mathrm{OPT}\)</span>。如果我们开放设施的成本也有个上界就好了。</p>
-<p>然而并不行。</p>
-<p>考虑如下反例：</p>
-<p><img src="/2020/07/29/PACT0709/P1.svg" class=""></p>
-<p>如果按照我们的算法，我们会为<span class="math inline">\(j\)</span>和<span class="math inline">\(j&#39;\)</span>分别开放一个代价<span class="math inline">\(24\)</span>的设施。而事实上开那个代价<span class="math inline">\(25\)</span>的设施就够了。我们差不多浪费了两倍的钱，而这个倍数可以任意高（只要让代价稍高一点的设施处在所有顾客的邻域当中，而使每个顾客的邻域中都有比其代价略低的设施即可）。</p>
-<p>但是我们知道，<strong>对于任何一组邻域不交的顾客，开放设施的代价确实是不大于<span class="math inline">\(\mathrm{OPT}\)</span>的</strong>（为什么？因为那些设施只服务一个顾客，而那个顾客有可能“部分”光顾其他设施。比如说一个顾客光顾了<span class="math inline">\(0.5\)</span>的设施<span class="math inline">\(1\)</span>（代价为<span class="math inline">\(10\)</span>）和<span class="math inline">\(0.5\)</span>的设施<span class="math inline">\(2\)</span>（代价为<span class="math inline">\(20\)</span>），那么这个顾客就给目标函数贡献了<span class="math inline">\(0.5\times10+0.5\times 20\)</span>，显然这个时候如果我去开代价<span class="math inline">\(10\)</span>的那个设施，开店费是<span class="math inline">\(10\)</span>，是小于最优目标函数的）</p>
-<p>那我不妨先任选一组邻域不交的顾客（不妨称之为“幸运顾客”）按照就近原则开放他们的设施，然后再让那些邻域和幸运顾客有交集的顾客（不妨称之为“倒霉顾客”）去这些设施。</p>
-<p>根据我们之前的分析，幸运顾客的服务成本一定不大于<span class="math inline">\(\mathrm{OPT}\)</span>，考虑倒霉顾客的服务成本。假设倒霉顾客<span class="math inline">\(j\)</span>和幸运顾客<span class="math inline">\(i\)</span>的邻域共享一个设施<span class="math inline">\(b\)</span>，幸运顾客可以去离他最近的设施<span class="math inline">\(a\)</span>。</p>
-<p>那么根据三角不等式，让<span class="math inline">\(j\)</span>去<span class="math inline">\(a\)</span>的距离为 <span class="math display">\[
-c_{aj} \le c_{bj}+c_{bi}+c_{ai}
-\]</span> 根据引理， <span class="math display">\[
-\begin{align}
-c_{aj} &amp;\le c_{bj}+c_{bi}+c_{ai} \\
-&amp;\le \alpha_j^* + \alpha_i^* + \alpha _i^* \\
-&amp;\stackrel{?}{\le} 3\alpha_j^* 
-\end{align}
-\]</span> 最后一步是我们希望得出的，因为如果这样，那么所有顾客的服务成本的上界就是（不妨令幸运顾客的集合为<span class="math inline">\(D_1\)</span>，不幸运顾客的集合为<span class="math inline">\(D_2\)</span>）： <span class="math display">\[
-\begin{align}
-    \sum_{j\in D_1} \alpha_j^* + \sum_{j\in D_2}3\alpha_j^* \le \sum_{j\in D_1}3 \alpha_j^* + \sum_{j\in D_2}3\alpha_j^* = \mathrm{OPT}_{\text{dual}} \le \mathrm{OPT}
-\end{align}
-\]</span> 但是按照目前的信息最后一步并不总是成立的。</p>
-<p>那怎么办？改算法呗。我们只需要保证所有幸运顾客的<span class="math inline">\(\alpha^*\)</span>都小于等于倒霉顾客的<span class="math inline">\(\alpha^*\)</span>，也就是说排一下序就好了。</p>
-<p>于是我们就得到了我们的算法：</p>
-<ol type="1">
-<li>解原线性规划和对偶线性规划，得到<span class="math inline">\((x^*,y^*),(\alpha^*,\beta^*)\)</span>。</li>
-<li>选一个<span class="math inline">\(\alpha^*\)</span>最小的顾客并开放他邻域当中离他最近的店。</li>
-<li>暂时移除所有和这个顾客有相交邻域的顾客。</li>
-<li>持续以上两步直至所有顾客都被选中或移除。</li>
-<li>让所有被移除的顾客去离他们最近的已开放设施。</li>
-</ol>
-<p>这个算法的近似是多少呢？上面的分析已经说明了这个方案的设施成本不大于<span class="math inline">\(\mathrm{OPT}\)</span>，而服务成本不大于<span class="math inline">\(3\mathrm{OPT}\)</span>，因此总的来说这就是一个<span class="math inline">\(4\)</span>倍近似算法。</p>
-<h1 id="近似难度">近似难度</h1>
-<p><strong>定理（Guha, Khuller 1999）：</strong>如果设施选址问题存在近似比小于<span class="math inline">\(1.463\)</span>的算法，则<span class="math inline">\(\mathsf{P}=\mathsf{NP}\)</span>。</p>
 
       
     </div>

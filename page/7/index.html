@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-count">95</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,232 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2019/09/04/%E6%9C%89%E9%99%90%E5%BE%AE%E7%A7%AF%E5%88%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/09/04/%E6%9C%89%E9%99%90%E5%BE%AE%E7%A7%AF%E5%88%86/" class="post-title-link" itemprop="url">有限微积分</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-04 10:34:50" itemprop="dateCreated datePublished" datetime="2019-09-04T10:34:50-04:00">2019-09-04</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="回顾">回顾</h1>
+<p>微积分是数学分析中一类极为有力的工具，其中微分的核心是微分算子<span class="math inline">\(D\)</span>，定义为： <span class="math display">\[
+Df(x) = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
+\]</span> 若<span class="math inline">\(DF(x) = f(x)\)</span>我们称<span class="math inline">\(F(x)\)</span>是<span class="math inline">\(f(x)\)</span>的原函数，他们两个一起构成了积分的核心——牛顿-莱布尼茨公式： <span class="math display">\[
+\int_a^b f(x)dx = F(b) - F(a)
+\]</span> 在微积分当中我们有一整套系统的规则来方便地计算各种形式的微分和积分，而依稀记得一句话：<strong>积分是黎曼和的极限</strong>，即积分是求和的连续情况，求和是积分的离散情况，既然我们可以系统地计算积分，那么我们可不可以系统地计算和式呢？答案是肯定的，《具体数学》中为我们引入的一类工具便是——<strong>有限微积分</strong>。（个人觉得叫离散微积分更好？）</p>
+<h1 id="定义和记号">定义和记号</h1>
+<p>仿照微分算子<span class="math inline">\(D\)</span>的定义我们首先定义差分算子<span class="math inline">\(D\)</span>： <span class="math display">\[
+\Delta f(x) = f(x + 1) - f(x)
+\]</span> 可以发现，差分算子本质是微分算子定义中<span class="math inline">\(h = 1\)</span>的特例，只不过在微分中<span class="math inline">\(h\)</span>无限接近于0，而在差分当中最小只能为1。</p>
+<p>类似地，若<span class="math inline">\(\Delta F(x) = f(x)\)</span>我们也可以称<span class="math inline">\(F(x)\)</span>是<span class="math inline">\(f(x)\)</span>的“原函数”，显然我们有： <span class="math display">\[
+\sum_a^b f(x) \delta x  = F(b) - F(a)
+\]</span> 我们在这里仿照定积分引入了一个新的记号<span class="math inline">\(\sum_a^b f(x)\delta x\)</span>，不难发现： <span class="math display">\[
+\sum_a^b f(x) \delta x = \sum_{x = a}^{b - 1}f(x)
+\]</span> 类似地，仿照不定积分的定义，我们还可以定义一个更为抽象的概念”不定和式“，即 <span class="math display">\[
+\sum f(x) \delta x = F(x) + C
+\]</span> <span class="math inline">\(C\)</span>也起类似积分常数的作用。</p>
+<h1 id="注入灵魂">注入灵魂</h1>
+<p>照葫芦画瓢到此为止，然而如果只有这么些记号是没有卵用的，就像你不能只靠微分的极限定义和莱布尼茨公式计算微积分一样，我们也不能指望靠这些记号就可以快速计算和式了，我们还需要类似于微积分当中的幂法则等一系列规则的支持。</p>
+<p>首先不证自明的一点是：<strong>在有限微积分中，差分算子对于加法和减法的分配率成立</strong>。</p>
+<h2 id="幂法则">幂法则</h2>
+<p>我们先考察微积分当中的幂法则在这里有没有等价的替代品，众所周知，幂法则是： <span class="math display">\[
+Dx^m = mx^{m-1}
+\]</span> 如果简单地把微分算子换成差分我们会得到： <span class="math display">\[
+\Delta x^m = (x + 1)^m - x^m
+\]</span> 接下来的展开势必就要用到二项式定理了，事到如今只要是正常人都知道最后是得不到$ mx^{m-1} $的，我们发现直接把幂法则照搬过来是行不通的，如果问题不是出在差分算子上那就是出在“幂”上了，那么现在问题变成了：<strong>我们能不能找到一种“幂”的定义，使它在差分算子作用下表现出类似幂法则的性质呢？</strong></p>
+<p>答案是肯定的，这种“幂”被称作下降阶乘幂，记作<span class="math inline">\(x^{\underline m}\)</span>，《具体数学》中对它的定义是： <span class="math display">\[
+x^{\underline m} = x(x - 1)(x - 2)\cdots(x - m + 1)
+\]</span> 显然无论是从形式还是从名字来看它都有一个更简洁的阶乘定义： <span class="math display">\[
+x^{\underline m} = \frac{x!}{(x - m)!}
+\]</span> 在《具体数学》中作者花了不少笔墨来把它最上面的定义推广到<span class="math inline">\(m &lt; 0\)</span>的情形，但是一切在阶乘定义中就很显然了，对于<span class="math inline">\(m &gt; 0\)</span>，我们有： <span class="math display">\[
+x^{\underline{-m}} = \frac{1}{(x + 1)(x + 2)\cdots(x + m)}
+\]</span> 我们也有类似<span class="math inline">\(x^{m + n} = x^mx^n\)</span>的规则： <span class="math display">\[
+x^{\underline{m + n}} = x^{\underline m}(x - m)^{\underline n}
+\]</span> 好的，让我们回到幂法则，那么如果我们结合下降阶乘幂和差分算子，我们会得到什么呢？ <span class="math display">\[
+\begin{aligned}
+\Delta x^{\underline m} &amp;= (x + 1)^{\underline m} - x^{\underline m} \\
+&amp;= \frac{(x + 1)!}{(x + 1 - m)!} - \frac{x!}{(x - m)!} \\
+&amp;= \frac{(x + 1)! - (x + 1 - m)x!}{(x + 1 - m)!} \\
+&amp;= \frac{x![(x + 1) - (x + 1 - m)]}{(x + 1 - m)!} \\
+&amp;= \frac{mx!}{[x - (m - 1)]!} \\
+&amp;= mx^{\underline{m - 1}}
+\end{aligned}
+\]</span> 我们成功地推出了“幂法则”！</p>
+<p>顺带一提，除了下降阶乘幂之外还有上升阶乘幂，定义为<span class="math inline">\(x^{\overline m} = \frac{(x + m - 1)!}{(x - 1)!}\)</span>，也有类似幂法则的性质，但是用起来比较麻烦，故我们使用下降阶乘幂。</p>
+<p>既然我们已经成功导出了有限微积分中差分算子的幂法则，那么对于不定和式，其幂法则也呼之欲出： <span class="math display">\[
+\sum x^{\underline m}\delta x = \frac{x^{\underline{m + 1}}}{m + 1} + C
+\]</span> 正如积分中对于幂法则在<span class="math inline">\(m = -1\)</span>的时候需要特殊处理，即<span class="math inline">\(\int x^{-1} dx = \ln x + C\)</span>，在求和当中，我们也有类似的： <span class="math display">\[
+\sum x^{\underline{-1}}\delta x = H_x + C
+\]</span> 其中<span class="math inline">\(H_x\)</span>表示调和级数的第<span class="math inline">\(x\)</span>项部分和，我们知道当<span class="math inline">\(x \to \infty\)</span>时有<span class="math inline">\(H_x = \ln x + \gamma\)</span>，其中<span class="math inline">\(\gamma\)</span>是欧拉-马歇罗尼常数。从此我们也可以看出上述规则确实是积分中对应公式的一个离散模拟。</p>
+<p>那么这些法则有什么用呢？我们可以再试试看求解如下和式： <span class="math display">\[
+\sum_{x = 1}^n x^2
+\]</span> 我在先前成套方法的介绍中曾利用成套方法对它进行过求解，过程相对来说比较繁琐，我们看看怎么用有限微积分秒杀这道题。</p>
+<p>首先，注意到： <span class="math display">\[
+x^2 = x^{\underline 2} + x^{\underline 1}
+\]</span> 所以： <span class="math display">\[
+\begin{aligned}
+\sum x^2 \delta x &amp;= \sum x^{\underline 2}\delta x + \sum x^{\underline 1}\delta x \\
+&amp;= \frac{x^{\underline 3}}{3} + \frac{x^{\underline 2}}{2} + C \\
+&amp;= \frac{2x(x - 1)(x - 2) + 3x(x - 1)}{6} + C \\
+&amp;= \frac{x(x - 1)(2x - 1)}{6} + C
+\end{aligned}
+\]</span> 接下来就是展现真正技术的时刻： <span class="math display">\[
+\begin{aligned}
+\sum_{x = 1}^n x^2 &amp;= \sum_1^{n + 1} x^2 \delta x \\
+&amp;= \frac{n(n + 1)(2n + 1)}{6} + C - \frac{1 \cdot 0 \cdot 1}{6} - C \\
+&amp;= \frac{n(n + 1)(2n + 1)}{6}
+\end{aligned}
+\]</span> 就非常舒服。<strong>通过归纳法可以证明，对于任何多项式，我们总是可以把它转换为若干个下降阶乘幂的线性组合</strong>，因此，对于一切多项式的和式，我们都能用有限微积分系统地求取！</p>
+<p><strong>运用指数为<span class="math inline">\(-2\)</span>的幂法则，你就会发现你得到了所谓的裂项公式。</strong></p>
+<h2 id="ex的对等"><span class="math inline">\(e^x\)</span>的对等</h2>
+<p>在微积分中，<span class="math inline">\(e^x\)</span>的具有非常好的性质，即导数和积分都等于自身，那么在有限微积分当中有没有类似的函数呢，幸运的是，找到这样的函数并不困难： <span class="math display">\[
+\begin{aligned}
+\Delta f(x) &amp;= f(x) \\ 
+f(x + 1) - f(x) &amp;= f(x) \\
+f(x + 1) &amp;= 2f(x)
+\end{aligned}
+\]</span> 这就很明显了，<span class="math inline">\(f(x) = 2^x\)</span>，或者对其平移的结果都满足差分等于自身的性质。</p>
+<p>因此，无惑乎我们有： <span class="math display">\[
+\begin{aligned}
+\sum_{x = 1}^n 2^x &amp;= \sum_1^{n + 1} 2^x \delta x \\
+&amp;= 2^{n + 1} - 2^0 \\
+&amp;= 2^{n + 1} - 1
+\end{aligned}
+\]</span></p>
+<h2 id="指数函数">指数函数</h2>
+<p>我们知道在微积分当中： <span class="math display">\[
+\int a^xdx = \frac{a^x}{\ln a} + C
+\]</span> 我们接下来探究在有限微积分当中是否有类似结论的出现，我们先猜想： <span class="math display">\[
+\sum a^x\delta x = ka^x + C
+\]</span> 两边取差分： <span class="math display">\[
+\begin{aligned}
+a^x &amp;= ka^{x + 1} - ka^x \\
+a^x &amp;= ka^x(a - 1) \\
+k &amp;= \frac{1}{a - 1}
+\end{aligned}
+\]</span> 因此： <span class="math display">\[
+\sum a^x\delta x = \frac{a^x}{a - 1} + C
+\]</span> <strong>使用这一规则可以直接推出等比数列求和公式</strong>。</p>
+<h2 id="其他法则">其他法则？</h2>
+<p>我们要不要把链式法则，积法则，商法则之类的全部搬到有限微积分里面了呢？其实是不用的，因为这些法则都是辅助我们计算微分的，其存在的原因便是使用微分的极限定义计算导数实在是太困难了，而差分算子则不然，计算一个函数的差分只要代进去就行了。</p>
+<p>但是，为了后文的方便，在此我们着重来讨论积法则在有限微积分当中的对等，在微积分当中，积法则是： <span class="math display">\[
+D(uv) = uDv + vDu
+\]</span> 那么在有限微积分当中： <span class="math display">\[
+\begin{aligned}
+\Delta(u(x)v(x)) &amp;= u(x + 1)v(x + 1) - u(x)v(x) \\
+&amp;= u(x + 1)v(x + 1) - u(x)v(x + 1) + u(x)v(x + 1) - u(x)v(x) \\
+&amp;= u(x)\Delta v(x) + v(x + 1)\Delta u(x)
+\end{aligned}
+\]</span> 记移进算子<span class="math inline">\(Ef(x) = f(x + 1)\)</span>，则有限微积分的积法则可以被表示为： <span class="math display">\[
+\begin{aligned}
+\Delta(uv) &amp;= u\Delta v + Ev\Delta u \\
+&amp;= Eu\Delta v + v\Delta u
+\end{aligned}
+\]</span></p>
+<h1 id="分部求和">分部求和</h1>
+<p>对于积分，我们有分部积分公式： <span class="math display">\[
+\int udv = uv - \int vdu
+\]</span> 其本质是对微分积法则移项并两边积分得到的成果，我们能不能也用上面推导出的有限微积分的“积法则”推导出分部求和呢？ <span class="math display">\[
+\begin{aligned}
+\Delta(uv) &amp;= u\Delta v + Ev\Delta u \\
+\Rightarrow u\Delta v &amp;= \Delta(uv) - Ev\Delta u \\
+\Rightarrow \sum u \Delta v &amp;= uv - \sum Ev\Delta u
+\end{aligned}
+\]</span> 最后的结果就是分部求和的公式，分部积分的经典例题是<span class="math inline">\(\int xe^xdx\)</span>，对应到有限微积分当中就是<span class="math inline">\(\sum x2^x\delta x\)</span>，运用我们刚得到的分部求和公式，令<span class="math inline">\(u = x, \Delta u = 1, v = 2^x, \Delta v = 2^x\)</span>我们就得到了： <span class="math display">\[
+\begin{aligned}
+\sum x2^x\delta x &amp;= x2^x - \sum 2^{x + 1}\delta x + C\\
+&amp;=x2^x - 2^{x + 1} + C
+\end{aligned}
+\]</span> 因此 <span class="math display">\[
+\begin{aligned}
+\sum_{i = 0}^nx2^x &amp;= \sum_0^{n + 1} x2^x\delta x \\
+&amp;= (n + 1)2^{n + 1} - 2^{n + 2} - 0\cdot 1 + 2 \\
+&amp;= (n - 1)2^{n + 1} + 2
+\end{aligned}
+\]</span> 计算这个和式甚至不需要思考！</p>
+<p>我们来试试上次成套方法博客中我说需要一定技巧的<span class="math inline">\(\sum_{x = 1}^n (-1)^xx^2\)</span>吧！</p>
+<p>令<span class="math inline">\(u = x^2, \Delta v = (-1)^x\)</span>可得<span class="math inline">\(\Delta u = 2x + 1, v = -\frac{ (-1)^x}{2}\)</span>： <span class="math display">\[
+\begin{aligned}
+\sum (-1)^xx^2\delta x &amp;= -\frac{x^2(-1)^x}{2} - \sum-\frac{ (-1)^{x + 1}}{2}(2x + 1)\delta x + C\\
+&amp;= -\frac{x^2(-1)^x}{2} - \sum\frac{(-1)^x(2x + 1)}{2}\delta x + C\\
+&amp;= -\frac{x^2(-1)^x}{2} - \sum\frac{(2x + 1)}{2}(-1)^x\delta x + C
+\end{aligned}
+\]</span> 观察这个式子的后项，我们故技重施，令<span class="math inline">\(u = \frac{(2x + 1)}{2}, \Delta u = 1, \Delta v = (-1)^x\)</span>： <span class="math display">\[
+\begin{aligned}
+\sum\frac{(2x + 1)}{2}(-1)^x\delta x &amp;= -\frac{(2x + 1)(-1)^x}{4} - \sum-\frac{ (-1)^{x + 1}}{2}\delta x + C\\
+&amp;= -\frac{(2x + 1)(-1)^x}{4} - \frac{1}{2}\sum(-1)^x\delta x + C\\
+&amp;= -\frac{(2x + 1)(-1)^x}{4} + \frac{1}{4}(-1)^x + C\\
+&amp;= -\frac{(-1)^xx}{2} + C
+\end{aligned}
+\]</span> 回到上式： <span class="math display">\[
+\begin{aligned}
+\sum (-1)^xx^2\delta x &amp;= -\frac{x^2(-1)^x}{2} + \frac{(-1)^xx}{2} + C\\
+&amp;= -\frac{(-1)^xx(x - 1)}{2} + C
+\end{aligned}
+\]</span> 给这个和式加上下界： <span class="math display">\[
+\begin{aligned}
+\sum_{x = 1}^n (-1)^xx^2 &amp;= -\frac{(-1)^{n + 1}n(n + 1)}{2} + -\frac{(-1)^1\cdot 0 \cdot 1}{2} \\
+&amp;= \frac{(-1)^nn(n + 1)}{2}
+\end{aligned}
+\]</span> 以上的过程如行云流水一般地系统化和顺畅，只要熟悉我们拆分出指数项，然后对多项式项不断使用差分降次——这其实是分部积分的技巧，但是得益于有限微积分和微积分的联系我们得以直接拿来用了。</p>
+<h1 id="总结">总结</h1>
+<p>综上所述，基于整数建立起来的有限微积分虽然不一定有传统的微积分那么好的性质，但是依然可以系统地高效地处理很多的求和问题，我们在有限微积分的公式推导中还顺便导出了平方和公式，裂项公式和等比数列公式等，而这一切公式的导出在有限微积分的背景下是那么地自然，以至于让人无法相信第一个属于小学奥数，第二个属于初中数学，而最后一个要在高中才能教到。虽然这也和我们独到的证明方法有关（一般来说这三个公式分别需要用到归纳法，叠缩和扰动法证明），但是可以预见的是，有限微积分的确在和式的处理上具有<strong>提纲掣领</strong>的作用，不容小觑。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1638,242 +1864,6 @@ void fft(int len, cplx *x, cplx *X, int dir = 1) &#123;
         &#125;
     &#125;
 &#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2018/12/15/%E9%A9%AC%E8%BE%BE%E5%BB%BA%E6%A8%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/12/15/%E9%A9%AC%E8%BE%BE%E5%BB%BA%E6%A8%A1/" class="post-title-link" itemprop="url">VEX 393 马达电流模型</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-12-15 03:02:16" itemprop="dateCreated datePublished" datetime="2018-12-15T03:02:16-05:00">2018-12-15</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="电路图">电路图</h1>
-<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-19/85128984.jpg" /></p>
-<p>绿色箭头为PWM开段电流方向，红色为闭段电流方向。</p>
-<h1 id="模型">模型</h1>
-<h2 id="符号定义">符号定义</h2>
-<table>
-<thead>
-<tr class="header">
-<th style="text-align: right;">符号</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;"><span class="math inline">\(f_{\text{pwm}} \approx 1250\text{Hz}\)</span></td>
-<td>PWM频率</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;"><span class="math inline">\(t_{\text{pwm}} \approx 1 / f_{\text{pwm}}\)</span></td>
-<td>PWM周期</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;"><span class="math inline">\(t_{\text{on}}\)</span></td>
-<td>PWM高电位时间</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;"><span class="math inline">\(t_{\text{off}}\)</span></td>
-<td>PWM低电位时间</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;"><span class="math inline">\(I(t)\)</span></td>
-<td>电流（随时间变化）</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;"><span class="math inline">\(I_0\)</span></td>
-<td>PWM周期开始时的电流</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;"><span class="math inline">\(I_{\text{max}}\)</span></td>
-<td>PWM峰值电流</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;"><span class="math inline">\(I_{\text{final}}\)</span></td>
-<td>PWM周期结束时的电流</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;"><span class="math inline">\(U_\text{b} \approx 7.4\text V\)</span></td>
-<td>电池电压</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;"><span class="math inline">\(U_\text{bemf}\)</span></td>
-<td>反电动势</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;"><span class="math inline">\(U_\text L\)</span></td>
-<td>电感电压</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;"><span class="math inline">\(U_\text D \approx 0.75 \text V\)</span></td>
-<td>二极管压降</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;"><span class="math inline">\(L \approx 6.5\times 10^{-4}\text H\)</span></td>
-<td>电感</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;"><span class="math inline">\(R \approx 1.609\Omega\)</span></td>
-<td>马达内阻</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;"><span class="math inline">\(R_\text s \approx 0.28\Omega\)</span></td>
-<td>系统内阻</td>
-</tr>
-</tbody>
-</table>
-<p><strong>部分参数可以自行测定，测定方法见文末。</strong></p>
-<h2 id="开段分析">开段分析</h2>
-<p>首先，由基尔霍夫定律和欧姆定律，可得： <span class="math display">\[
-U_\text b - I(t)(R+R_\text s) - U_\text L - U_\text {bemf} = 0
-\]</span> 对上式进行整理，并结合电感电压公式： <span class="math display">\[
-U_\text b = L\frac{dI(t)}{dt} + I(t)(R + R_\text s) + U_\text {bemf}
-\]</span> 我们把它看做一个关于<span class="math inline">\(I\)</span>的线性微分方程，初始条件为<span class="math inline">\(I(0) = I_0\)</span>解得： <span class="math display">\[
-I(t) = e^{-\frac{t(R + R_\text s)}{L}} \left( I_0 - \frac{U_\text b - U_\text {bemf}}{R + R_\text s}\right) + \frac{U_\text b - U_\text {bemf}}{R + R_\text s}
-\]</span> 我们知道电流在高电压段逐步变大，因此<span class="math inline">\(I_\text{max} = I(t_\text{on})\)</span>，即： <span class="math display">\[
-I_\text{max} = e^{-\frac{t_\text{on}(R + R_\text s)}{L}} \left( I_0 - \frac{U_\text b - U_\text {bemf}}{R + R_\text s}\right) + \frac{U_\text b - U_\text {bemf}}{R + R_\text s}
-\]</span> 出于简化式子的需要，令 <span class="math display">\[
-\begin{aligned}
-c_\text{on} &amp;= -\frac{t_\text{on}(R + R_\text s)}{L} \\
-e_\text{on} &amp;= e^{c_\text{on}} = e^{-\frac{t_\text{on}(R + R_\text s)}{L}} \\
-I_\text{on} &amp;= \frac{U_\text b - U_\text {bemf}}{R + R_\text s}
-\end{aligned}
-\]</span> 注意到<span class="math inline">\(I_\text{on}\)</span>为<span class="math inline">\(\frac{dI(t)}{dt} \to 0\)</span>时的电流，因此也称作<strong>稳态电流</strong>。</p>
-<p>整理得到： <span class="math display">\[
-I_\text{max} = e_\text{on}I_0 + (1 - e_\text{on})I_\text{on}
-\]</span> 为了之后平均电流的计算需要我们顺便计算一波<span class="math inline">\(I(t)\)</span>的积分： <span class="math display">\[
-\int^{t_\text{on}}_0 I(t)dt = t_\text{on}\left(I_\text{on} - \frac{(1 - e_\text{on})(I_0 - I_\text{on})}{c_\text{on}}\right)
-\]</span></p>
-<h2 id="闭段分析">闭段分析</h2>
-<p>再次由基尔霍夫定律及欧姆定律，有：</p>
-<p><span class="math display">\[
-I(t)R + U_\text L + U_\text {bemf} + U_\text D = 0
-\]</span> 同样整理： <span class="math display">\[
-I(t)R + L \frac{dI(t)}{dt}+ U_\text {bemf} + U_\text D = 0
-\]</span> 以初始条件<span class="math inline">\(I(0) = I_\text{max}\)</span>求解这个微分方程解得： <span class="math display">\[
-I(t) = e^{-\frac{tR}{L}}\left(I_\text{max} + \frac{U_\text {bemf} + U_\text D}{R}\right) - \frac{U_\text {bemf} + U_\text D}{R}
-\]</span> 类似地： <span class="math display">\[
-I_\text{final} = e^{-\frac{t_\text{off}R}{L}}\left(I_\text{max} + \frac{U_\text {bemf} + U_\text D}{R}\right) - \frac{U_\text {bemf} + U_\text D}{R}
-\]</span> 我们也令： <span class="math display">\[
-\begin{aligned}
-c_\text{off} &amp;= -\frac{t_\text{off}R}{L}\\
-e_\text{off} &amp;= e^{c_\text{off}} = e^{-\frac{t_\text{off}R}{L}} \\
-I_\text{off} &amp;= - \frac{U_\text {bemf} + U_\text D}{R}
-\end{aligned}
-\]</span> 可见<span class="math inline">\(I_\text{off}\)</span>也是<span class="math inline">\(\frac{dI(t)}{dt} \to 0\)</span>时的电流，也是稳态电流。</p>
-<p>整理得到： <span class="math display">\[
-I_\text{final} = e_\text{off}I_\text{max} + (1 - e_\text{off})I_\text{off}
-\]</span> 为了后文计算平均电流的需要，我们也计算积分： <span class="math display">\[
-\int^{t_\text{off}}_0 I(t)dt = t_\text{off}\left(I_\text{off} - \frac{(1 - e_\text{off})(I_\text{max} - I_\text{off})}{c_\text{off}}\right)
-\]</span></p>
-<p>注意到以上式子都依赖于<span class="math inline">\(t_\text{on}\)</span>和<span class="math inline">\(t_\text{off}\)</span>，前者就是占空比乘以PWM总周期长度，而后者则有些棘手，因为<span class="math inline">\(t_\text{off} = t_\text{pwm} - t_\text{on}\)</span><strong>并不总是成立</strong>。</p>
-<p>接下来的分析有两种情况：</p>
-<ol type="1">
-<li>连续电流：PWM周期中的电流是连续的，即<span class="math inline">\(I_0 = I_\text{final}\)</span>。</li>
-<li>不连续电流：电流在PWM闭段下降至<span class="math inline">\(0\)</span>被二极管截断，即<span class="math inline">\(I_0 = I_\text{final} = 0\)</span>。</li>
-</ol>
-<p>两种情况需要分类讨论。</p>
-<h2 id="连续电流">连续电流</h2>
-<p>由<span class="math inline">\(I_0 = I_\text{final}\)</span>，将<span class="math inline">\(I_\text{final}\)</span>展开： <span class="math display">\[
-I_0 = I_\text{final} = e_\text{off}(e_\text{on}I_0 + (1 - e_\text{on})I_\text{on}) + (1 - e_\text{off})I_\text{off}
-\]</span> 解出<span class="math inline">\(I_0\)</span>： <span class="math display">\[
-I_0 = \frac{e_\text{off}(I_\text{off} + (e_\text{on} - 1)I_\text{on}) - I_\text{off}}{e_\text{off}e_\text{on} - 1}
-\]</span></p>
-<h2 id="不连续电流">不连续电流</h2>
-<p>这个时候我们知道<span class="math inline">\(I_0 = I_\text{final} = 0\)</span>，由<span class="math inline">\(I_\text{final}\)</span>的计算式我们可以反解出<span class="math inline">\(t_\text{off}\)</span>： <span class="math display">\[
-t_\text{off} = -\frac{L}{R}\ln\left(-\frac{I_\text{off}}{I_\text{max} - I_\text{off}}\right)
-\]</span> <strong>从实现上来说，我们先假定<span class="math inline">\(t_\text{off} = t_\text{pwm} - t_\text{on}\)</span>（即假设没有二极管），计算出<span class="math inline">\(I_\text{final}\)</span>，检查它的正负性，来判断电流是否被截断</strong>。</p>
-<h2 id="平均电流计算">平均电流计算</h2>
-<p>最后，我们结合计算出来的$ t_, t_$，以及开闭段计算出来的两个积分，我们终于可以计算PWM过程中的平均电流： <span class="math display">\[
-\overline{I} = f_\text{pwm}\left(t_\text{on}\left(I_\text{on} - \frac{(1 - e_\text{on})(I_0 - I_\text{on})}{c_\text{on}}\right) + t_\text{off}\left(I_\text{off} - \frac{(1 - e_\text{off})(I_\text{max} - I_\text{off})}{c_\text{off}}\right)\right)
-\]</span> 这也是我们模型计算的最终结果。</p>
-<p><strong>在实际的实现当中需要考虑更多的细节，比如说转速的方向，命令的方向等等……并不总是如以上的公式那么简单，是一项艰苦的体力劳动，具体可以参考In The Zone下的model.c</strong>。</p>
-<h2 id="逆向计算">逆向计算</h2>
-<p>很多时候我们不仅需要计算马达一定情况下的电流，<strong>更需要计算马达在某一状态下为了达到某一指定电流（扭矩）所需要的指令大小。</strong>例如：</p>
-<ol type="1">
-<li>计算空载情况下马达到达某一速度所需要的指令值（精确的马达线性化）</li>
-<li>把PID的输出看做目标扭矩使用模型再反解出指令。</li>
-</ol>
-<p>针对这个需求，因为马达曲线直观上总是单调的，因此理论上你总可以根据数学反推推出一个公式，但是由于模型当中牵涉到了分类讨论（电流的连续性），因此较为复杂。利用马达曲线的单调性，二分不失为一个更好的做法。由于指令的范围不大，我们至多只需要二分七八次即可。</p>
-<p><strong>注意：模型的计算在Cortex上还是较为耗时间的，实际当中根据当前电压计算一次完整的马达曲线需要4秒左右，优化常数，提高模型计算的效率一直是一个大问题，这也是为什么在实际应用中也许tanh线性化等计算更快的线性化的方法会更好的原因。</strong></p>
-<h2 id="结果">结果</h2>
-<p>这是真实的速度-指令曲线（空载）：</p>
-<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/12974510.jpg" /></p>
-<p>这是使用模型计算的速度-指令曲线：</p>
-<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/17697936.jpg" /></p>
-<p>两者几乎一致，说明建模正确。</p>
-<h1 id="参数测定">参数测定</h1>
-<h2 id="马达内阻">马达内阻</h2>
-<p>使用伏安法，我们首先需要测量出马达在<strong>127命令下堵转电流</strong><span class="math inline">\(I_\text{stall}\)</span>，127命令是为了尽可能消除电感的影响（即PWM全开），堵转是为了避免电能转化为机械能消耗掉，则根据开段分析当中的 <span class="math display">\[
-U_\text b - I(t)(R+R_\text s) - U_\text L - U_\text {bemf} = 0
-\]</span> 此时<span class="math inline">\(U_\text L = U_\text{bemf} = 0, I(t) = I_\text{stall}\)</span>，可反解出 <span class="math display">\[
-R = \frac{U_\text b}{I_\text{stall}} - R_\text s
-\]</span></p>
-<h2 id="反电动势常数">反电动势常数</h2>
-<p>我们知道<span class="math inline">\(U_\text{bemf} = K_\text e\omega\)</span>，其中<span class="math inline">\(\omega\)</span>是转速， <span class="math inline">\(K_\text e\)</span>为反电动势常数，为了测定其值，我们测量出马达在<strong>127命令无负载运转电流</strong><span class="math inline">\(I_\text{free}\)</span>和此时的转速<span class="math inline">\(\omega_\text{free}\)</span>（单位不论，但是需要保持统一），由 <span class="math display">\[
-U_\text b - I(t)(R+R_\text s) - U_\text L - U_\text {bemf} = 0
-\]</span> 此时<span class="math inline">\(U_\text L = 0, I(t) = I_\text{free}\)</span>，解得 <span class="math display">\[
-U_\text{bemf} = U_\text b - I_\text{free}(R + R_\text s)
-\]</span> 那么 <span class="math display">\[
-\begin{aligned}
-K_\text e &amp;= \frac{U_\text b - I_\text{free}(R + R_\text s)}{\omega_\text{free}} \\
-&amp;= \left(1 - \frac{I_\text{free}}{I_\text{stall}}\right)\frac{U_\text b}{\omega_\text{free}}
-\end{aligned}
-\]</span></p>
 
       
     </div>

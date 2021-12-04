@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-count">95</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,242 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2018/12/15/%E9%A9%AC%E8%BE%BE%E5%BB%BA%E6%A8%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="不务正业高中生一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/12/15/%E9%A9%AC%E8%BE%BE%E5%BB%BA%E6%A8%A1/" class="post-title-link" itemprop="url">VEX 393 马达电流模型</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-12-15 03:02:16" itemprop="dateCreated datePublished" datetime="2018-12-15T03:02:16-05:00">2018-12-15</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="电路图">电路图</h1>
+<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-19/85128984.jpg" /></p>
+<p>绿色箭头为PWM开段电流方向，红色为闭段电流方向。</p>
+<h1 id="模型">模型</h1>
+<h2 id="符号定义">符号定义</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">符号</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(f_{\text{pwm}} \approx 1250\text{Hz}\)</span></td>
+<td>PWM频率</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(t_{\text{pwm}} \approx 1 / f_{\text{pwm}}\)</span></td>
+<td>PWM周期</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(t_{\text{on}}\)</span></td>
+<td>PWM高电位时间</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(t_{\text{off}}\)</span></td>
+<td>PWM低电位时间</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(I(t)\)</span></td>
+<td>电流（随时间变化）</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(I_0\)</span></td>
+<td>PWM周期开始时的电流</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(I_{\text{max}}\)</span></td>
+<td>PWM峰值电流</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(I_{\text{final}}\)</span></td>
+<td>PWM周期结束时的电流</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(U_\text{b} \approx 7.4\text V\)</span></td>
+<td>电池电压</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(U_\text{bemf}\)</span></td>
+<td>反电动势</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(U_\text L\)</span></td>
+<td>电感电压</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(U_\text D \approx 0.75 \text V\)</span></td>
+<td>二极管压降</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(L \approx 6.5\times 10^{-4}\text H\)</span></td>
+<td>电感</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(R \approx 1.609\Omega\)</span></td>
+<td>马达内阻</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(R_\text s \approx 0.28\Omega\)</span></td>
+<td>系统内阻</td>
+</tr>
+</tbody>
+</table>
+<p><strong>部分参数可以自行测定，测定方法见文末。</strong></p>
+<h2 id="开段分析">开段分析</h2>
+<p>首先，由基尔霍夫定律和欧姆定律，可得： <span class="math display">\[
+U_\text b - I(t)(R+R_\text s) - U_\text L - U_\text {bemf} = 0
+\]</span> 对上式进行整理，并结合电感电压公式： <span class="math display">\[
+U_\text b = L\frac{dI(t)}{dt} + I(t)(R + R_\text s) + U_\text {bemf}
+\]</span> 我们把它看做一个关于<span class="math inline">\(I\)</span>的线性微分方程，初始条件为<span class="math inline">\(I(0) = I_0\)</span>解得： <span class="math display">\[
+I(t) = e^{-\frac{t(R + R_\text s)}{L}} \left( I_0 - \frac{U_\text b - U_\text {bemf}}{R + R_\text s}\right) + \frac{U_\text b - U_\text {bemf}}{R + R_\text s}
+\]</span> 我们知道电流在高电压段逐步变大，因此<span class="math inline">\(I_\text{max} = I(t_\text{on})\)</span>，即： <span class="math display">\[
+I_\text{max} = e^{-\frac{t_\text{on}(R + R_\text s)}{L}} \left( I_0 - \frac{U_\text b - U_\text {bemf}}{R + R_\text s}\right) + \frac{U_\text b - U_\text {bemf}}{R + R_\text s}
+\]</span> 出于简化式子的需要，令 <span class="math display">\[
+\begin{aligned}
+c_\text{on} &amp;= -\frac{t_\text{on}(R + R_\text s)}{L} \\
+e_\text{on} &amp;= e^{c_\text{on}} = e^{-\frac{t_\text{on}(R + R_\text s)}{L}} \\
+I_\text{on} &amp;= \frac{U_\text b - U_\text {bemf}}{R + R_\text s}
+\end{aligned}
+\]</span> 注意到<span class="math inline">\(I_\text{on}\)</span>为<span class="math inline">\(\frac{dI(t)}{dt} \to 0\)</span>时的电流，因此也称作<strong>稳态电流</strong>。</p>
+<p>整理得到： <span class="math display">\[
+I_\text{max} = e_\text{on}I_0 + (1 - e_\text{on})I_\text{on}
+\]</span> 为了之后平均电流的计算需要我们顺便计算一波<span class="math inline">\(I(t)\)</span>的积分： <span class="math display">\[
+\int^{t_\text{on}}_0 I(t)dt = t_\text{on}\left(I_\text{on} - \frac{(1 - e_\text{on})(I_0 - I_\text{on})}{c_\text{on}}\right)
+\]</span></p>
+<h2 id="闭段分析">闭段分析</h2>
+<p>再次由基尔霍夫定律及欧姆定律，有：</p>
+<p><span class="math display">\[
+I(t)R + U_\text L + U_\text {bemf} + U_\text D = 0
+\]</span> 同样整理： <span class="math display">\[
+I(t)R + L \frac{dI(t)}{dt}+ U_\text {bemf} + U_\text D = 0
+\]</span> 以初始条件<span class="math inline">\(I(0) = I_\text{max}\)</span>求解这个微分方程解得： <span class="math display">\[
+I(t) = e^{-\frac{tR}{L}}\left(I_\text{max} + \frac{U_\text {bemf} + U_\text D}{R}\right) - \frac{U_\text {bemf} + U_\text D}{R}
+\]</span> 类似地： <span class="math display">\[
+I_\text{final} = e^{-\frac{t_\text{off}R}{L}}\left(I_\text{max} + \frac{U_\text {bemf} + U_\text D}{R}\right) - \frac{U_\text {bemf} + U_\text D}{R}
+\]</span> 我们也令： <span class="math display">\[
+\begin{aligned}
+c_\text{off} &amp;= -\frac{t_\text{off}R}{L}\\
+e_\text{off} &amp;= e^{c_\text{off}} = e^{-\frac{t_\text{off}R}{L}} \\
+I_\text{off} &amp;= - \frac{U_\text {bemf} + U_\text D}{R}
+\end{aligned}
+\]</span> 可见<span class="math inline">\(I_\text{off}\)</span>也是<span class="math inline">\(\frac{dI(t)}{dt} \to 0\)</span>时的电流，也是稳态电流。</p>
+<p>整理得到： <span class="math display">\[
+I_\text{final} = e_\text{off}I_\text{max} + (1 - e_\text{off})I_\text{off}
+\]</span> 为了后文计算平均电流的需要，我们也计算积分： <span class="math display">\[
+\int^{t_\text{off}}_0 I(t)dt = t_\text{off}\left(I_\text{off} - \frac{(1 - e_\text{off})(I_\text{max} - I_\text{off})}{c_\text{off}}\right)
+\]</span></p>
+<p>注意到以上式子都依赖于<span class="math inline">\(t_\text{on}\)</span>和<span class="math inline">\(t_\text{off}\)</span>，前者就是占空比乘以PWM总周期长度，而后者则有些棘手，因为<span class="math inline">\(t_\text{off} = t_\text{pwm} - t_\text{on}\)</span><strong>并不总是成立</strong>。</p>
+<p>接下来的分析有两种情况：</p>
+<ol type="1">
+<li>连续电流：PWM周期中的电流是连续的，即<span class="math inline">\(I_0 = I_\text{final}\)</span>。</li>
+<li>不连续电流：电流在PWM闭段下降至<span class="math inline">\(0\)</span>被二极管截断，即<span class="math inline">\(I_0 = I_\text{final} = 0\)</span>。</li>
+</ol>
+<p>两种情况需要分类讨论。</p>
+<h2 id="连续电流">连续电流</h2>
+<p>由<span class="math inline">\(I_0 = I_\text{final}\)</span>，将<span class="math inline">\(I_\text{final}\)</span>展开： <span class="math display">\[
+I_0 = I_\text{final} = e_\text{off}(e_\text{on}I_0 + (1 - e_\text{on})I_\text{on}) + (1 - e_\text{off})I_\text{off}
+\]</span> 解出<span class="math inline">\(I_0\)</span>： <span class="math display">\[
+I_0 = \frac{e_\text{off}(I_\text{off} + (e_\text{on} - 1)I_\text{on}) - I_\text{off}}{e_\text{off}e_\text{on} - 1}
+\]</span></p>
+<h2 id="不连续电流">不连续电流</h2>
+<p>这个时候我们知道<span class="math inline">\(I_0 = I_\text{final} = 0\)</span>，由<span class="math inline">\(I_\text{final}\)</span>的计算式我们可以反解出<span class="math inline">\(t_\text{off}\)</span>： <span class="math display">\[
+t_\text{off} = -\frac{L}{R}\ln\left(-\frac{I_\text{off}}{I_\text{max} - I_\text{off}}\right)
+\]</span> <strong>从实现上来说，我们先假定<span class="math inline">\(t_\text{off} = t_\text{pwm} - t_\text{on}\)</span>（即假设没有二极管），计算出<span class="math inline">\(I_\text{final}\)</span>，检查它的正负性，来判断电流是否被截断</strong>。</p>
+<h2 id="平均电流计算">平均电流计算</h2>
+<p>最后，我们结合计算出来的$ t_, t_$，以及开闭段计算出来的两个积分，我们终于可以计算PWM过程中的平均电流： <span class="math display">\[
+\overline{I} = f_\text{pwm}\left(t_\text{on}\left(I_\text{on} - \frac{(1 - e_\text{on})(I_0 - I_\text{on})}{c_\text{on}}\right) + t_\text{off}\left(I_\text{off} - \frac{(1 - e_\text{off})(I_\text{max} - I_\text{off})}{c_\text{off}}\right)\right)
+\]</span> 这也是我们模型计算的最终结果。</p>
+<p><strong>在实际的实现当中需要考虑更多的细节，比如说转速的方向，命令的方向等等……并不总是如以上的公式那么简单，是一项艰苦的体力劳动，具体可以参考In The Zone下的model.c</strong>。</p>
+<h2 id="逆向计算">逆向计算</h2>
+<p>很多时候我们不仅需要计算马达一定情况下的电流，<strong>更需要计算马达在某一状态下为了达到某一指定电流（扭矩）所需要的指令大小。</strong>例如：</p>
+<ol type="1">
+<li>计算空载情况下马达到达某一速度所需要的指令值（精确的马达线性化）</li>
+<li>把PID的输出看做目标扭矩使用模型再反解出指令。</li>
+</ol>
+<p>针对这个需求，因为马达曲线直观上总是单调的，因此理论上你总可以根据数学反推推出一个公式，但是由于模型当中牵涉到了分类讨论（电流的连续性），因此较为复杂。利用马达曲线的单调性，二分不失为一个更好的做法。由于指令的范围不大，我们至多只需要二分七八次即可。</p>
+<p><strong>注意：模型的计算在Cortex上还是较为耗时间的，实际当中根据当前电压计算一次完整的马达曲线需要4秒左右，优化常数，提高模型计算的效率一直是一个大问题，这也是为什么在实际应用中也许tanh线性化等计算更快的线性化的方法会更好的原因。</strong></p>
+<h2 id="结果">结果</h2>
+<p>这是真实的速度-指令曲线（空载）：</p>
+<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/12974510.jpg" /></p>
+<p>这是使用模型计算的速度-指令曲线：</p>
+<p><img src="http://ovzrr9kke.bkt.clouddn.com/18-9-28/17697936.jpg" /></p>
+<p>两者几乎一致，说明建模正确。</p>
+<h1 id="参数测定">参数测定</h1>
+<h2 id="马达内阻">马达内阻</h2>
+<p>使用伏安法，我们首先需要测量出马达在<strong>127命令下堵转电流</strong><span class="math inline">\(I_\text{stall}\)</span>，127命令是为了尽可能消除电感的影响（即PWM全开），堵转是为了避免电能转化为机械能消耗掉，则根据开段分析当中的 <span class="math display">\[
+U_\text b - I(t)(R+R_\text s) - U_\text L - U_\text {bemf} = 0
+\]</span> 此时<span class="math inline">\(U_\text L = U_\text{bemf} = 0, I(t) = I_\text{stall}\)</span>，可反解出 <span class="math display">\[
+R = \frac{U_\text b}{I_\text{stall}} - R_\text s
+\]</span></p>
+<h2 id="反电动势常数">反电动势常数</h2>
+<p>我们知道<span class="math inline">\(U_\text{bemf} = K_\text e\omega\)</span>，其中<span class="math inline">\(\omega\)</span>是转速， <span class="math inline">\(K_\text e\)</span>为反电动势常数，为了测定其值，我们测量出马达在<strong>127命令无负载运转电流</strong><span class="math inline">\(I_\text{free}\)</span>和此时的转速<span class="math inline">\(\omega_\text{free}\)</span>（单位不论，但是需要保持统一），由 <span class="math display">\[
+U_\text b - I(t)(R+R_\text s) - U_\text L - U_\text {bemf} = 0
+\]</span> 此时<span class="math inline">\(U_\text L = 0, I(t) = I_\text{free}\)</span>，解得 <span class="math display">\[
+U_\text{bemf} = U_\text b - I_\text{free}(R + R_\text s)
+\]</span> 那么 <span class="math display">\[
+\begin{aligned}
+K_\text e &amp;= \frac{U_\text b - I_\text{free}(R + R_\text s)}{\omega_\text{free}} \\
+&amp;= \left(1 - \frac{I_\text{free}}{I_\text{stall}}\right)\frac{U_\text b}{\omega_\text{free}}
+\end{aligned}
+\]</span></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1498,83 +1734,6 @@ int main() &#123;
     &#125;
     return 0;
 &#125; </code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2018/09/06/Nim%E6%B8%B8%E6%88%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="不务正业高中生一枚">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/06/Nim%E6%B8%B8%E6%88%8F/" class="post-title-link" itemprop="url">Nim博弈与阶梯博弈</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-09-06 08:52:10" itemprop="dateCreated datePublished" datetime="2018-09-06T08:52:10-04:00">2018-09-06</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>觉得博弈论这种东西，知道结论代码巨短无比，不知道结论当场去世……</p>
-<h1 id="nim-博弈">Nim 博弈</h1>
-<h2 id="问题表述">问题表述</h2>
-<p>有<span class="math inline">\(n\)</span>堆石子，第<span class="math inline">\(i\)</span>堆石子有<span class="math inline">\(a_i\)</span>个，两个玩家轮流操作，每个玩家每轮可以选择一堆石子，取走至少一个石子（也可以把一堆取光，但不能不取）。不能操作者判负。已知每方均采取最优策略，问先手还是后手必胜？</p>
-<h2 id="解法">解法</h2>
-<p><strong>定理：</strong>Nim博弈先手必胜当且仅当<span class="math inline">\(\bigoplus_{i = 1}^n a_i \neq 0\)</span>。</p>
-<p><strong>证明：</strong>设<span class="math inline">\(\bigoplus_{i = 1}^n a_i = x \neq 0\)</span>，且<span class="math inline">\(x\)</span>的最高位为<span class="math inline">\(j\)</span>，由异或的性质，显然存在一个<span class="math inline">\(a_i\)</span>的第<span class="math inline">\(j\)</span>位为<span class="math inline">\(1\)</span>，且<span class="math inline">\(a_i \oplus x &lt; a_i\)</span>，我们选择第<span class="math inline">\(i\)</span>堆，令<span class="math inline">\(a_i = a_i \oplus x\)</span>，由异或的相消性，此时<span class="math inline">\(\bigoplus_{i = 1}^n a_i = 0\)</span>，我们把这样一个局面留给了后手，而后手无论怎么操作异或和都会变成非零。而不能操作的局面，即全零的局面的异或和同样为<span class="math inline">\(0\)</span>，又因为我们每次都可以那样地把锅推给对方，因此先手必胜。</p>
-<h1 id="阶梯博弈">阶梯博弈</h1>
-<h2 id="问题表述-1">问题表述</h2>
-<p>有<span class="math inline">\(n\)</span>阶阶梯从左到右从低到高排开，记地面为第<span class="math inline">\(0\)</span>级，第<span class="math inline">\(i\)</span>个阶梯上有<span class="math inline">\(a_i\)</span>个石子，两个玩家轮流操作，每个玩家每轮可以选择一个阶梯，将其中的至少一个石子转移到左边的阶梯（或者地面）上。不能操作者判负。已知每方均采取最优策略，问先手还是后手必胜？</p>
-<h2 id="解法-1">解法</h2>
-<p><strong>定理：</strong>阶梯博弈等价于奇数阶的Nim博弈。</p>
-<p><strong>证明：</strong>如果上一步对方从一个偶数阶的阶梯移动若干个石子到奇数阶，那么我们就原封不动地在这一步把这些石子再移到左边的偶数阶上去，因此偶数阶的石子的移动不造成影响。而既然偶数阶不造成影响，那么从奇数阶转移到偶数阶的操作等价于从奇数阶取走了若干石子（如果我们不看偶数阶），这样最后偶数阶的石子会全部到地面上，而奇数阶无法操作者自然就输了，证毕。</p>
-<p><strong>例题：</strong>POJ 1704</p>
 
       
     </div>
