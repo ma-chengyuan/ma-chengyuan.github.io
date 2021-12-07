@@ -31,7 +31,7 @@
 <meta property="og:description" content="最近我因为个人项目的原因需要深入了解TeX。虽然The TeXbook和TeX By Topic两本书都很详尽地记述了TeX的运行机制机制，但读来仍然有一种雾里看花的感觉。要清晰了解一个程序的行为，终究没有比直接阅读其源代码更好的方法了（屎山代码除外）。好在Knuth一开始就公开了TeX的源代码并附上了非常完善的注释。然而无论如何，40年前的古董级代码理解起来也绝非易事，所以想着还是开一篇文章记录">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-12-04T15:33:58.166Z">
-<meta property="article:modified_time" content="2021-12-05T19:52:39.573Z">
+<meta property="article:modified_time" content="2021-12-07T03:30:24.661Z">
 <meta property="article:author" content="Chengyuan Ma">
 <meta name="twitter:card" content="summary">
 
@@ -169,7 +169,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">基本架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%84%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">TeX的奇妙字符串处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E7%AE%97%E6%9C%AF"><span class="nav-number">3.</span> <span class="nav-text">TeX的奇妙算术</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">4.</span> <span class="nav-text">TeX的奇妙内存分配</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">5.</span> <span class="nav-text">TeX的奇妙数据结构</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E5%9F%BA%E6%9C%AC%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">TeX的奇妙基本架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%84%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">TeX的奇妙字符串处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E7%AE%97%E6%9C%AF"><span class="nav-number">3.</span> <span class="nav-text">TeX的奇妙算术</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">4.</span> <span class="nav-text">TeX的奇妙内存分配</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">5.</span> <span class="nav-text">TeX的奇妙数据结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99command-code"><span class="nav-number">6.</span> <span class="nav-text">TeX的奇妙Command Code</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E6%A8%A1%E5%BC%8F%E5%B5%8C%E5%A5%97"><span class="nav-number">7.</span> <span class="nav-text">TeX的奇妙模式嵌套</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E5%AD%97%E5%85%B8eqtb"><span class="nav-number">8.</span> <span class="nav-text">TeX的奇妙字典——eqtb</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -270,7 +270,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-12-05 14:52:39" itemprop="dateModified" datetime="2021-12-05T14:52:39-05:00">2021-12-05</time>
+        <time title="修改时间：2021-12-06 22:30:24" itemprop="dateModified" datetime="2021-12-06T22:30:24-05:00">2021-12-06</time>
       </span>
 
   
@@ -291,13 +291,13 @@
     
     <div class="post-body" itemprop="articleBody">
         <p>最近我因为个人项目的原因需要深入了解TeX。虽然<em>The TeXbook</em>和<em>TeX By Topic</em>两本书都很详尽地记述了TeX的运行机制机制，但读来仍然有一种雾里看花的感觉。要清晰了解一个程序的行为，终究没有比直接阅读其源代码更好的方法了<del>（屎山代码除外）</del>。好在Knuth一开始就公开了TeX的源代码并附上了非常完善的注释。然而无论如何，40年前的古董级代码理解起来也绝非易事，所以想着还是开一篇文章记录一下吧。这篇文章基本按照<em>TeX The Program</em>里面的章节顺序，对每一章略过细节进行简要的概述，其目的主要是帮助我回忆，当然，如果这篇文章能让其他读者对TeX的架构有个基本的了解，那也再好不过了。</p>
-<h1 id="基本架构">基本架构</h1>
-<p>TeX是用WEB语言编写的。WEB语言遵循Knuth提出的“文学编程/literate programming”的范式，夹杂文档和代码，可以看作是当今学术界常用的Jupyter Notebook的前身（当然，一个很大的区别是如今一个notebook不会超过20个cell，但TeX有1300多个……）。文档部分基于TeX，代码基于类Pascal（之所以说“类”，是因为当时Pascal的标准化还没完成）。如此一来，一个<code>tex.web</code>源文件，用<code>tangle</code>提取代码可以得到一份Pascal源文件用于构建程序本身，用<code>weave</code>提取文档则可以得到一份TeX源文件，编译成所谓的<em>TeX The Program</em>。</p>
+<h1 id="tex的奇妙基本架构">TeX的奇妙基本架构</h1>
+<p>TeX是用WEB语言编写的。WEB语言遵循Knuth提出的“文学编程/literate programming”的范式，夹杂文档和代码，可以看作是当今学术界常用的Jupyter Notebook的前身（当然，一个很大的区别是如今一个notebook不会超过20个cell，但TeX有1300多个……）。文档部分基于TeX，代码基于类Pascal（之所以说“类”，是因为当时Pascal的标准化还没完成）。如此一来，一个<code>tex.web</code>源文件，用<code>tangle</code>提取代码可以得到一份Pascal源文件用于构建程序本身，用<code>weave</code>提取文档则可以得到一份TeX源文件，编译成所谓的<em>TeX The Program</em>。在后文中我会使用形如TTP100的记号表示<em>TeX The Program</em>某节的内容。</p>
 <p>为了增加可读性，TeX源代码中每一个“cell”包含的代码都不超过一页纸（通常更是不超过20行），对于比较长的函数，Knuth会把一部分逻辑分离到其他“cell”中去并在原地插入引用。<code>tangle</code>提取代码的过程本质上就是把基于这些引用对代码块进行重排。除此以外，Knuth还通过WEB定义了一部分宏，这部分宏的替换也是由<code>tangle</code>在生成代码的时候完成的。</p>
 <p>如果粗略地看，TeX的源代码是非常模块化的，但是实际上却未必然。后一章定义的宏可能只是前几章某个宏的别名，导致对一个模块的修改可能会导致意想不到的结果， 又或者是虽然抽象出来了一些可以复用的函数，但是这些函数接口的形式极大地约束了实现的方案，导致事实上灵活性的缺失。模块化的设计势必包含一定的抽象，而抽象都伴随这一定的代价。在TeX开发的时代系统资源相当受限，语言标准缺失，各种infrastructure也不成熟，效率和兼容性是第一目标，因此代码设计成这样是可以理解的——只是苦了像我一样被现代开发范式惯坏的后来者。</p>
 <h1 id="tex的奇妙字符串处理">TeX的奇妙字符串处理</h1>
 <p>TeX实现了自己的一套基于string pool的、极具特色的、动态储存字符串的方案。 简单来说，TeX有一个大的、静态分配的<code>char</code>数组<code>str_pool</code>，以及一个元素递增的下标数组<code>str_start</code>。TeX给每个字符串赋予一个编号。编号<code>s</code>的字符串存储于<code>str_pool</code>下标中的<code>str_start[s]</code>以及<code>str_start[s + 1]</code>之间。以下C伪代码可以将TeX的字符串转换为C风格的字符串：</p>
-<pre class="line-numbers"><code class="language-c">char *texstr_to_cstr(short s) &#123;
+<pre class="line-numbers"><code class="language-c">char *texstr_to_cstr(uint16_t s) &#123;
     size_t len = str_start[s + 1] - str_start[s];
     char *ret = malloc(len + 1);
     memcpy(ret, str_pool + str_start[s], len);
@@ -305,7 +305,7 @@
     return ret;
 &#125;</code></pre>
 <p>在运行过程中，TeX会维护<code>pool_ptr</code>和<code>str_ptr</code>两个变量，分别表示<code>str_pool</code>中最小可用的下标以及最小的可用的字符串编号。新建一个字符串大概是这样的：</p>
-<pre class="line-numbers"><code class="language-c">short cstr_to_texstr(char *s) &#123;
+<pre class="line-numbers"><code class="language-c">uint16_t cstr_to_texstr(char *s) &#123;
     size_t len = strlen(s);
     assert(str_start[str_ptr] == pool_ptr);
     memcpy(str_pool + str_start[str_ptr], s, len);
@@ -313,6 +313,7 @@
     return str_ptr - 1;
 &#125;</code></pre>
 <p>当然，实际上TeX在构建新字符串的时候是逐字符添加的，<code>pool_ptr</code>也是逐步递增。这又涉及到很多骚操作（例如append字符之后还能flush吐出来等等），在此略过。TeX有两个比较字符串的方法，<code>str_eq_buf</code>比较一个内部字符串和一个<code>char*</code>是否相等；<code>str_eq_str</code>比较两个内部字符串是否相等。</p>
+<p>此外，TeX源代码中的所有字符串字面量，会在WEB TANGLE的时候被抽取到一个编译器的string pool里作为<code>str_pool</code>的基础，原地只会留下对应字符串的编号。所以在源代码里的字符串字面量，其实都是整数类型。</p>
 <h1 id="tex的奇妙算术">TeX的奇妙算术</h1>
 <p>还是时代的原因，TeX问世时IEEE754还没有出，当时各型机器、各个编译器上对于浮点数的算术运算都遵循不同的标准。因此，TeX为了规避这种不确定性，很大一部分计算都基于其自身定义的定点数——Knuth称之为scaled number。定点数长4字节，以<span class="math inline">\(2^{-16}\)</span>为最小单位。换而言之，如果直接把定点数当<code>int32_t</code>读，得到的是其所表示值的<span class="math inline">\(2^{16}\)</span>倍。除此以外，当时各个平台对于对负数的整除和取模运算的实现存在分歧，因此TeX除了几处非核心算法，其余的部分在整除和取模前都检查操作数的正负性，确保只对正整数进行这两个操作。</p>
 <p>TeX的定点数计算函数里有很多令人啧啧称奇的操作，例如以下函数本质上就是计算<span class="math inline">\(100(t/s)^3\)</span>。放在现在像我估计直接就一行搞定了，TeX是怎么做的呢？（以下注释是我补的，原文没有解释7230584和1663497两个magic number的由来）。</p>
@@ -338,7 +339,7 @@ int16_t badness(scaled t, scaled s) &#123;
 <p>除此以外，TeX还有一个数据类型称作<code>glue_ratio</code>，等同于一个32位浮点数。它只有一个使用场景：在将一个list固化成一个box之后，存储list内部glue的伸缩比。因为box的大小是已经决定的了，此时精度问题不会对TeX的行为产生任何影响。</p>
 <pre class="line-numbers"><code class="language-c">typedef float glue_ratio;</code></pre>
 <h1 id="tex的奇妙内存分配">TeX的奇妙内存分配</h1>
-<p>不出所料，TeX也不会调用系统接口进行内存分配，自带一个很大的数组<code>mem</code>并在此基础上进行伪·动态内存分配<del>（如此说来，当今OIer颇有Knuth之遗风）</del>。TeX内存分配的基本单位是4字节的<code>memory_word</code>。<code>memory_word</code>可以视作一个union，有6种打开方式，具体如下（命名较原文有所更改）：</p>
+<p>不出所料，TeX也不会调用系统接口进行内存分配，而是自带一个很大的数组<code>mem</code>并在此基础上进行伪·动态内存分配<del>（如此说来，当今OIer颇有Knuth之遗风）</del>。TeX内存分配的基本单位是4字节的<code>memory_word</code>。<code>memory_word</code>可以视作一个union，有6种打开方式，具体如下（命名较原文有所更改）：</p>
 <pre class="line-numbers"><code class="language-c">union memory_word &#123; // 假设没有memory alignment padding
     int32_t int_; 
     scaled sc;
@@ -365,8 +366,8 @@ int16_t badness(scaled t, scaled s) &#123;
 <p>也并不是，Knuth考虑了TeX中最最常见的一种box——由单个字符表示的char box。Knuth发现如果用<code>type(x)</code>表示一个char box的字体编号，再用<code>subtype(x)</code>表示它对应的字符，那么一个char box就能塞进一个word里面！</p>
 <pre class="line-numbers"><code class="language-c">#define font type
 #define character subtype</code></pre>
-<p>既然<code>type</code>已经被挪作他用了，如何知道一个box是char box还是其他类型呢？注意到char box一定被分配到高地址区，其他更复杂的box再低地址区，于是只要判断指针是不是<code>&gt;= hi_mem_min</code>就行了。</p>
-<p>不得不说，TeX在内存的使用上面堪称锱铢必较。<del>（想想Rust因为内存对齐一个enum就是8个字节的overhead，Rust你要知耻啊）</del></p>
+<p>既然<code>type</code>已经被挪作他用了，如何知道一个box是char box还是其他类型呢？注意到char box一定被分配到高地址区，其他更复杂的box都在低地址区，于是只要判断指针是不是<code>&gt;= hi_mem_min</code>就行了。</p>
+<p>不得不说，TeX在内存的使用上面堪称锱铢必较。按照一个字段的取值范围选择最小适用的数据类型固然能让数据结构更紧凑，但是也限制了拓展的可能性。例如，如果指针类型只有2字节，那如果哪一天TeX的需要管理超过65536个内存单元时应当如何？这就是TeX源代码的时代局限性。</p>
 <p>对于一个hbox/vbox，TeX定义如下：</p>
 <pre class="line-numbers"><code class="language-c">struct hbox_node &#123; // sizeof(hbox_node) == 7;
     memory_word meta; // type tag = 0
@@ -406,6 +407,36 @@ enum &#123; // xxx_order的取值
     FILLL = 3,
 &#125;</code></pre>
 <p>这是TeX中第一次出现引用计数。在后面，引用计数还会一次又一次地出现。</p>
+<h1 id="tex的奇妙command-code">TeX的奇妙Command Code</h1>
+<p>TeX给每一类primitive固定了一个command code。具体不详细展开了，详见TTP207。</p>
+<p>我个人认为给每一个primitive集中地，显式地指定一个整数的command code是不利于系统的可拓展性的——即使primitive内部使用整数command code进行比较与匹配，command code的分配也应该由程序完成。我说这话自然有站着说话不腰疼之嫌。这些command code孤立着看怎么样不好说，容我看完后续章节之后再来回顾。</p>
+<h1 id="tex的奇妙模式嵌套">TeX的奇妙模式嵌套</h1>
+<p><em>The TeXbook</em>有提到，TeX总共有六个模式：(restricted) horizontal，(internal) vertical，和(inline) math。在程序中，这六个模式对应六个整数常量。horizontal，vertical和display math对应的常量为正，对应的restricted mode的常量为前者的相反数——如此一来通过取绝对值就能判断一个模式的基本类型。 而且三个mode code不是简单的1，2，3，而是间隔<code>max_command</code>（即上节command code的最大值）。如此一来，mode code与command code之和就将模式和primitive的二元组一一映射到不同的整数。这在TeX的“big switch”中有大用。</p>
+<p>任何一个时刻TeX的运行状态都是若干个这样模式的嵌套。这种嵌套在程序中自然通过栈来维护，栈中存储如下数据结构：</p>
+<pre class="line-numbers"><code class="language-c">struct list_state_record &#123;
+    int16_t mode; // 不确定是不是int16_t，原文中的Pascal有通过数据范围指定类型的方式，C没有
+    pointer head; // 指向该模式正在构建的list的链表头
+    pointer tail; // 指向该模式正在构建的list的链表尾
+    int prev_graf; // 对应\prefgraf，即已经当前段落断行完毕的行数
+    int mode_line; // 当前mode的起始行数
+    memory_word aux; // 辅助信息
+&#125;;</code></pre>
+<h1 id="tex的奇妙字典eqtb">TeX的奇妙字典——<code>eqtb</code></h1>
+<p>我们终于迎来了一个在TeX中具有核心意义的巨大数据结构——<code>eqtb</code>表。<code>eqtb</code>是equivalent table的简写，存储了每一个符号（包括control sequence，token register，counter等）的含义。<code>eqtb</code>是一个分为六部分的巨大数组，每个部分占据连续的一段下标区间，从小到大分别为：</p>
+<ol type="1">
+<li>字符宏（active character，即cat code 13）的定义；</li>
+<li>多字符控制序列的定义（基础是一个哈希表）；</li>
+<li>Glue的定义，例如<code>\baselineskip</code>；</li>
+<li>局部变量，包括catcode，box register，字体等；</li>
+<li>数字参数，例如断行负权（hyphenation penalty）；</li>
+<li>大小（dimension），例如<code>hsize</code>。</li>
+</ol>
+<p>数组的每一个元素是一个<code>memory_word</code>。重定义如下</p>
+<pre class="line-numbers"><code class="language-c">struct equivalent &#123; // 布局等同于memory_word
+    int8_t type; // 定义类型——是一个宏？一个primitive？一个counter？一个token list？
+    int8_t level; // 被定义时TeX的嵌套级数。0是未定义，1是全局，2是全局一下一个group内，以此类推
+    int16_t equiv; // 定义，可以是一个指针，也可以表示一个字体编号，取决于type
+&#125;</code></pre>
 
     </div>
 
