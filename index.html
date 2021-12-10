@@ -266,7 +266,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-12-09 18:49:52" itemprop="dateModified" datetime="2021-12-09T18:49:52-05:00">2021-12-09</time>
+        <time title="修改时间：2021-12-09 20:47:53" itemprop="dateModified" datetime="2021-12-09T20:47:53-05:00">2021-12-09</time>
       </span>
 
   
@@ -326,6 +326,7 @@ int16_t badness(scaled t, scaled s) &#123;
     return (r * r * r + (1 &lt;&lt; 17)) &gt;&gt; 18;
 &#125;</code></pre>
 <p>可以看到，代码非常细致地考察了溢出的可能性，全程整数计算避免了浮点的不确定性，<code>s &gt;= 1663497</code>这个条件更是在一定情况下避免了耗时的除法运算——非常有Knuth的风格。</p>
+<p>TeX内部存储长度的单位是pt，格式自然是定点数。1 inch是72.27 pt。因此，所有TeX长度的最小单位是<span class="math inline">\(\frac1{72.27}\cdot2^{-16}=\frac{1}{4736286.72}\)</span> inch。</p>
 <p>除此以外，TeX还有一个数据类型称作<code>glue_ratio</code>，等同于一个32位浮点数。它只有一个使用场景：在将一个list固化成一个box之后，存储list内部glue的伸缩比。因为box的大小是已经决定的了，此时精度问题不会对TeX的行为产生任何影响。</p>
 <pre class="line-numbers"><code class="language-c">typedef float glue_ratio;</code></pre>
 <h1 id="tex的奇妙内存分配">TeX的奇妙内存分配</h1>
@@ -424,7 +425,8 @@ enum &#123; // xxx_order的取值
 <p>数组的每一个元素是一个<code>memory_word</code>。重定义如下</p>
 <pre class="line-numbers"><code class="language-c">struct equivalent &#123; // 布局等同于memory_word
     int8_t type; // 定义类型——是一个宏？一个primitive？一个counter？一个token list？
-    int8_t level; // 被定义时TeX的嵌套级数。0是未定义，1是全局，2是全局一下一个group内，以此类推
+    int8_t level; // 被定义时TeX的局部域的嵌套级数，基于以下常数：
+    // level_zero是未定义，level_one是全局，level_one + 1是全局一下一个group内，以此类推
     int16_t equiv; // 定义，可以是一个指针，也可以表示一个字体编号，取决于type
 &#125;</code></pre>
 <p>其中<code>equiv</code>和<code>type</code>的意义都不难理解，但是<code>level</code>字段却出乎我的意料。按照当下的套路，如果需要存储或解析一个符号在多重嵌套作用域中的绑定，常见的方法是存一个帧栈并在解析符号时自顶向下查找。虽然这种思路很符合直觉，其弊端是需要在栈中为每一个作用域存储一个符号表。这在一切数据结构都要造轮子的时代显然增加了代码的复杂性。TeX的<code>level</code>字段则更像是把这些表拍扁成一块，在一定程度上节约了内存。但是现在想来，这样的设计无法独立存储或引用一个局部作用域——这对于lexical scoping是必须的。TeX的dynamic scoping究竟是喂屎还是特性一直有争论，在语言设计层面也有很多种解释。现在看来，除了语言设计的考量，内部的代码实现也不由得TeX不搞dynamic scoping。</p>
@@ -480,6 +482,7 @@ uint16_t hash_used; // 一个递减的指针，hash中所有下标不小于hash_
     uint8_t level; 
     uint16_t index; 
 &#125; save_stack[...];
+uint16_t save_ptr; // save_stack[save_ptr - 1]是栈顶
 enum &#123; // type的取值
     RESTORE_OLD_VALUE,
     RESTORE_ZERO,
@@ -491,8 +494,12 @@ enum &#123; // type的取值
 <li><code>RESTORE_OLD_VALUE</code>适用于内部作用域赋值覆盖外部已定义对象的情况。此时被覆盖的对象对应的<code>eqtb</code>下标为<code>index</code>，且在出栈回退时，该元素底下的一个元素应当视作被覆盖的原值——注意到，<code>eqtb</code>和<code>save_stack</code>的元素的内存布局都与<code>memory_word</code>相同，因此就有往栈里存<code>eqtb</code>的东西的奇怪操作。</li>
 <li><code>RESTORE_ZERO</code>适用于内部作用域赋值外部未定义对象的情况。此时局部创建对象对应的<code>eqtb</code>下标为<code>index</code>，在出栈时，<code>eqtb[index]</code>应当被置为和<code>eqtb[undefined_control_sequence]</code>一样的内容（说人话就是回归未定义的状态）。</li>
 <li><code>INSERT_TOKEN</code>用于在grouping结束之后追加token的情况——即<code>\aftergroup</code>。此时<code>index</code>表示要追加的token（虽然还没有写到，但TeX用一个16位整数编码一个token）。</li>
-<li><code>LEVEL_BOUNDARY</code>：未完待续。</li>
+<li><code>LEVEL_BOUNDARY</code>顾名思义，用于标记每一个level的“边界”。注意到在一个作用域里面会往<code>save_stack</code>里面塞东西的数量是不确定的。如何在回退的时候只回退刚刚退出的那个作用域对应的修改呢？这就是这个<code>type</code>的用途。<code>LEVEL_BOUNDARY</code>在进入一个作用域的时候第一个入栈，并在离开作用域逐个出栈的过程中作为终止的标记。换而言之<code>LEVEL_BOUNDARY</code>之上的就是当前作用域的所有修改。<code>LEVEL_BOUNDARY</code>元素的<code>level</code>字段标记上一层作用域的“类型”，<code>next</code>字段指向上一层作用域的<code>LEVEL_BOUNDARY</code>在栈中的下标。</li>
 </ol>
+<p>什么是作用域类型呢？除了最简单的靠<code>&#123;..&#125;</code>创造作用域以外，能够创建作用域的语法构造有很多，如<code>\hbox</code>、<code>\begingroup\endgroup</code>等。不同类型的作用域终止条件不同，退出之后需要额外进行的操作也不同，因此需要记忆。TeX使用<code>cur_group</code>这一全局变量维护当前作用域的group code，上面几层的group code正如上面所说的那样以类链表的形式存在<code>save_stack</code>的<code>LEVEL_BOUNDARY</code>节点里面。</p>
+<p>骚操作又来了，如果创造作用域的命令有参数，那该参数也会入栈并处于新作用域对应<code>LEVEL_BOUNDARY</code>的底部。一个例子是<code>\hbox to 100px &#123; ... &#125;</code>那这个100px就会先于<code>LEVEL_BOUNDARY</code>入栈。这样在出栈回退过后这个保存了的参数马上就能用。<del>Knuth不要什么都往栈里放啊喂。</del></p>
+<p>还要注意的是，用<code>\global</code>修饰的全局赋值不需要回退。因此，在试图回退的时候需要检查此时<code>eqtb</code>里面对应项的<code>level</code>。如果是<code>level_one</code>，那么说明最近的一次赋值是全局的，要放弃回退。</p>
+<p>除此以外，因为TeX内部有很多引用计数的结构，如token list，glue specification，par shape等。这些数据结构在赋值的时候和回退的时候需要额外处理，旧的值该回收的要回收，这让<code>save_stack</code>上面的操作逻辑稍微复杂了一点。</p>
 
       
     </div>
