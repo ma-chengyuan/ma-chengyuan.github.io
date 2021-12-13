@@ -266,7 +266,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-12-09 20:47:53" itemprop="dateModified" datetime="2021-12-09T20:47:53-05:00">2021-12-09</time>
+        <time title="修改时间：2021-12-13 12:03:25" itemprop="dateModified" datetime="2021-12-13T12:03:25-05:00">2021-12-13</time>
       </span>
 
   
@@ -398,7 +398,7 @@ enum &#123; // xxx_order的取值
     FILLL = 3,
 &#125;</code></pre>
 <p>这是TeX中第一次出现引用计数。在后面，引用计数还会一次又一次地出现。</p>
-<h1 id="tex的奇妙command-code">TeX的奇妙Command Code</h1>
+<h1 id="tex的奇妙command-code">TeX的奇妙command code</h1>
 <p>TeX给每一类primitive固定了一个command code。具体不详细展开了，详见TTP207。</p>
 <p>我个人认为给每一个primitive集中地，显式地指定一个整数的command code是不利于系统的可拓展性的——即使primitive内部使用整数command code进行比较与匹配，command code的分配也应该由程序完成。我说这话自然有站着说话不腰疼之嫌。这些command code孤立着看怎么样不好说，容我看完后续章节之后再来回顾。</p>
 <h1 id="tex的奇妙模式嵌套">TeX的奇妙模式嵌套</h1>
@@ -500,6 +500,19 @@ enum &#123; // type的取值
 <p>骚操作又来了，如果创造作用域的命令有参数，那该参数也会入栈并处于新作用域对应<code>LEVEL_BOUNDARY</code>的底部。一个例子是<code>\hbox to 100px &#123; ... &#125;</code>那这个100px就会先于<code>LEVEL_BOUNDARY</code>入栈。这样在出栈回退过后这个保存了的参数马上就能用。<del>Knuth不要什么都往栈里放啊喂。</del></p>
 <p>还要注意的是，用<code>\global</code>修饰的全局赋值不需要回退。因此，在试图回退的时候需要检查此时<code>eqtb</code>里面对应项的<code>level</code>。如果是<code>level_one</code>，那么说明最近的一次赋值是全局的，要放弃回退。</p>
 <p>除此以外，因为TeX内部有很多引用计数的结构，如token list，glue specification，par shape等。这些数据结构在赋值的时候和回退的时候需要额外处理，旧的值该回收的要回收，这让<code>save_stack</code>上面的操作逻辑稍微复杂了一点。</p>
+<h1 id="tex的奇妙token-list">TeX的奇妙token list</h1>
+<p>Token list是TeX的另一大核心数据结构。而在解释token list之前，自然要先了解TeX是如何表示一个token的。TeX将token分为两类：</p>
+<ol type="1">
+<li>“字符型”的token是catcode和单个字符的组合。TeX将其表示为<span class="math inline">\(2^8 \cdot\text{catcode}+\text{char code}\)</span>。</li>
+<li>控制序列的token本质上对应<code>eqtb</code>表中的一个位置。TeX将对应<code>eqtb</code>下标<span class="math inline">\(p\)</span>的控制序列表示为<span class="math inline">\(\left(2^{12}-1\right) + p\)</span>。</li>
+</ol>
+<p>如此一来，每个token都可以映射为一个16位的正整数。接下来自然是TeX的常规操作：把token塞到一个memory word中，空出来的16位正好指向下一个token的地址。因此，token list的本质还是一个单向链表。</p>
+<p>除了来自源文件的token，TeX还有两个特殊的token：<code>match</code>和<code>end_match</code>。这两个在存储宏定义的时候会用到。具体来说，TeX很神奇地将宏的参数格式和替换宏体存在一个token list里面。<code>end_match</code>是参数部分和宏体的分界，而<code>match</code>则代表宏参数格式中的参数本身（因为参数格式中参数的编号总是递增的，所以只需要存储<code>match</code>而不需要存储对应的参数编号）——是不是很绕？举个例子，如果定义如下的宏：</p>
+<pre class="line-numbers tex"><code class="language-none">\def\mac a#1#2 \b &#123;#1\−a ##1#2 #2&#125;</code></pre>
+<p>那么TeX会为这个宏创建以下的token list：</p>
+<pre class="line-numbers"><code class="language-c">[letter(&#39;a&#39;), match, match, spacer, ctrl(&quot;b&quot;), end_match, // end_match前面的是参数格式
+ out_param(1), ctrl(&quot;-&quot;), letter(&#39;a&#39;), spacer, mac_param, 
+ out_param(2), spacer, out_param(2)]</code></pre>
 
       
     </div>
