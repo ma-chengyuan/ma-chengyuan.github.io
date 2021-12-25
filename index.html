@@ -266,7 +266,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-12-22 23:13:26" itemprop="dateModified" datetime="2021-12-22T23:13:26-05:00">2021-12-22</time>
+        <time title="修改时间：2021-12-24 20:29:28" itemprop="dateModified" datetime="2021-12-24T20:29:28-05:00">2021-12-24</time>
       </span>
 
   
@@ -513,19 +513,19 @@ enum &#123; // type的取值
 <pre class="line-numbers"><code class="language-c">[letter(&#39;a&#39;), match, match, spacer, ctrl(&quot;b&quot;), end_match, // end_match前面的是参数格式
  out_param(1), ctrl(&quot;-&quot;), letter(&#39;a&#39;), spacer, mac_param, 
  out_param(2), spacer, out_param(2)]</code></pre>
-<h1 id="tex的奇妙输入状态机">TeX的奇妙输入状态机</h1>
+<h1 id="tex的奇妙输入状态栈">TeX的奇妙输入状态栈</h1>
 <p>好嘞，final week一过，继续更新。</p>
-<p>从这一章开始，TTP开始介绍TeX的输入例程。所谓“输入例程（input routine）”，即TeX从文件中读取字符，再从字符转化为token的过程，其逻辑起始于基本的文件操作，汇聚并终结于<code>get_next_token</code>这一函数，被Knuth形象地称为TeX的眼睛或嘴巴。</p>
+<p>从这一章开始，TTP开始介绍TeX的输入例程。所谓“输入例程（input routine）”，即TeX从文件中读取字符，再从字符转化为token的过程，其逻辑起始于基本的文件操作，汇聚并终结于<code>get_next</code>这一函数，被Knuth形象地称为TeX的眼睛或嘴巴。</p>
 <p>介绍一个算法，变量或状态是一个自然的切入点：任意时刻TeX输入例程的状态是由哪些变量决定的呢？</p>
 <p>简单地想象一下，不难想到TeX应该有一个文件指针，存储系统的文件句柄；有一个读取位置的指针，指向当前读取的字符；有一个变量，记录scanner当前的状态……这个思路总体是不错的，如果仅仅是如此，Knuth大可不必专门开辟一章。</p>
 <p>输入状态的复杂性来源于<code>\input</code>这一特殊的内部命令。当TeX读到<code>\input</code>，它就必须暂存和当前文件相关的所有输入状态、打开新的文件、然后从头开始；当这一新文件读取完毕，TeX又需要恢复到读取<code>\input</code>时的状态来继续读取上级文件后面的内容。套娃的里面可以有更多的套娃，<code>\input</code>的文件里可以含有更多的<code>\input</code>。这个需求显然指向了一个数据结构——栈。确实，TeX内部的<code>input_stack</code>就是用来存储一级级打开的文件的状态（Knuth称之为“input state”）的。 一个文件的input state包括以下6个字段：</p>
 <pre class="line-numbers"><code class="language-c">struct input_state &#123;
     uint8_t scanner_state;
-    uint16_t name; // 指向str_pool中的文件名。如果是从终端输入则为0
-    uint16_t start; // 该文件当前行在buffer中的起始下标——下文会细讲什么是buffer
-    uint16_t limit;  // 该文件当前行在buffer中的结束下标
-    uint16_t loc; // 下一个字符在buffer中的下标
-    uint8_t index; // buffer里这一行下面还压了多少行
+    uint16_t name;
+    uint16_t start;
+    uint16_t limit;
+    uint16_t loc;
+    uint8_t index;
 &#125;</code></pre>
 <ol type="1">
 <li><code>scanner_state</code>顾名思义，保存了当时scanner的状态，有<code>new_line</code>，<code>mid_line</code>和<code>skip_blanks</code>三种可能。关于scanner的状态和具体的转移逻辑可以参考TeX By Topic的第2章。</li>
@@ -539,6 +539,15 @@ enum &#123; // type的取值
 <p><img src="/2021/12/04/TeX%E6%BA%90%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/buffer%E7%A4%BA%E6%84%8F.drawio.svg" class=""></p>
 <p>但是事情远没有那么简单。因为对于TeX来说，下一个token既可以来自文件，也可以来自一个token list。Input stack需要把两种情况都考虑到，而我们上面只介绍了一种。Knuth发挥了那个资源受限年代程序员的传统艺能——复用结构体。事实上我对上面六个字段的解释是不全面的：<code>scanner_state</code>并不是只有三个取值，它还可以取到一个隐藏值<code>token_list</code>。如果一个input state的<code>scanner_state</code>是<code>token_list</code>，那么就说明这个input state表示一个来自token list的输入而非文件输入。此时，<code>start</code>字段指向token list的起始节点；<code>name</code>变成了正在展开的控制序列在<code>eqtb</code>中的位置；<code>index</code>字段被重命名为<code>token_type</code>，表示当前token list的类型（是表示一个宏的参数，还是一个宏的主体，还是<code>\everypar</code>，还是来自一个token list寄存器……）；假如这个token list是一个宏的展开，<code>limit</code>字段被重命名为<code>param_start</code>，指向<code>param_stack</code>当中当前宏参数列表的起始位置。</p>
 <p>这一部分的逻辑非常复杂，我觉得没看过原文的读者读我上面的概述还是免不了一头雾水。我已经尽力而为，希望进一步搞清楚的读者只能去看原文了。这里推荐TTP 311关于<code>show_context</code>的代码。TeX的代码的一个优点就是有很多这种调试用的过程可以把复杂变量代表的状态pretty print出来，因此通过看这些过程的代码，对照print的内容，对于这些变量的意义就能有一个大致的了解。</p>
+<h1 id="tex的奇妙get_next">TeX的奇妙<code>get_next</code></h1>
+<p>正如前文所言，<code>get_next</code>是TeX输入例程的核心，这个函数是如此重要，其逻辑又是如此复杂，以至于Knuth为其专辟一章。<code>get_next</code>没有任何参数也不返回任何值，而是通过修改以下三个全局变量来将结果传递给调用方（非常有历史感的作法！）：</p>
+<ol type="1">
+<li><code>cur_chr</code>存储当前单字符token的字符编码或者当前控制序列（包括active character）在<code>eqtb</code>中的<code>equiv</code>字段。</li>
+<li><code>cur_cmd</code>存储当前单字符token的catcode或者当前控制序列（包括active character）在<code>eqtb</code>中的<code>type</code>字段。</li>
+<li><code>cur_cs</code>存储当前控制序列在<code>eqtb</code>中的下标。</li>
+</ol>
+<p><code>get_next</code>的复杂之处还体现在它是根据上一节的input state来决定读取的行为，即它既从能文件中读取token，也能从token list中读取下一个token。从文件中读token自然涉及到一个tokenization的过程，TeX tokenization的状态机的代码就在此处。从token list中读取token的过程中需要特判<code>\noexpand</code>——作为一个很特殊的primitive，<code>\noexpand</code>的实现也在这里。</p>
+<p>除此以外，TeX还有一个全局变量<code>cur_tok</code>。按照上文一节token list的编码方式，这一个变量就可以表示一个token（也可以看作是<code>cur_chr</code>和<code>cur_cmd</code>的合体）。<code>cur_tok</code>主要与<code>back_input</code>函数连用。后者通过在input stack最顶端插入一个只包含<code>cur_tok</code>的token list来把<code>cur_tok</code>表示的token“放回”输入流中（换而言之，下一次<code>get_next</code>就会返回该token）——这一用法在错误恢复过程中非常多见。</p>
 <blockquote>
 <p>未完待续</p>
 </blockquote>
