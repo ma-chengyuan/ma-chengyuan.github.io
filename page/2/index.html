@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">95</span>
+          <span class="site-state-item-count">96</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,115 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2021/03/16/Wallis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="技校摸鱼中=_=">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/03/16/Wallis/" class="post-title-link" itemprop="url">数学课划水整活之Wallis乘积公式的一种证明</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-03-16 01:07:28" itemprop="dateCreated datePublished" datetime="2021-03-16T01:07:28-04:00">2021-03-16</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>今天数学课讲了一点组合数的性质，因为太简单了所以稍微划了一会水。</p>
+<p>结果发现自己整出来了一个算<span class="math inline">\(\pi\)</span>的式子？</p>
+<p>化简以后发现是传说中的Wallis公式？</p>
+<p>虽然原理一样的证明Wiki上有提到但是还是当场惊了。</p>
+<p>简单记一笔吧。</p>
+<p>一切的开端是今年寒假做夏校申请的时候证明过的一个极限 <span class="math display">\[
+\lim_{n\to\infty} 2^{-2n}\binom{2n}{n} = 0
+\]</span> 当时是用斯特林近似暴力代换进行证明（现在看来并不严谨） <span class="math display">\[
+\begin{aligned}
+    \lim_{n\to\infty} \binom{2n}{n} \frac{\left[\sqrt{2\pi n} \left(n \over e\right)^n \right]^2} {\sqrt{4\pi n} \left(2n \over e\right)^{2n}} &amp;= \lim_{n\to\infty} \left[\frac{\sqrt{2\pi n} \left(n \over e\right)^n}{n!}\right]^2 \frac{(2n)!}{\sqrt{4\pi n} \left(2n \over e\right)^{2n}} \\
+    &amp;= 1 \\     
+    \Rightarrow 
+    \lim_{n\to\infty} 2^{-2n}\binom{2n}{n} &amp;= \lim_{n\to\infty} 2^{-2n}\frac {\sqrt{4\pi n} \left(2n \over e\right)^{2n}}{\left[\sqrt{2\pi n} \left(n \over e\right)^n\right]^2} \cdot \lim_{n\to\infty} \binom{2n}{n} \frac{\left[\sqrt{2\pi n} \left(n \over e\right)^n\right]^2} {\sqrt{4\pi n} \left(2n \over e\right)^{2n}} \\
+    &amp;=  \lim_{n\to\infty} 2^{-2n}\frac {\sqrt{4\pi} 2^{2n}n^{2n+\frac{1}{2}}e^{-2n}}{2\pi n^{2n+1}e^{-2n}} \\
+    &amp;= \lim_{n\to\infty} \frac{1}{\sqrt{\pi n}}\\
+    &amp;= 0
+\end{aligned}
+\]</span> 今天划水的时候发现由以上过程，这个极限可以加强为 <span class="math display">\[
+\lim_{n\to\infty} \frac{\sqrt{\pi n}\binom{2n}{n}}{2^{2n}} = 1
+\]</span> 稍作整理即得 <span class="math display">\[
+\lim_{n\to\infty} \frac{2^{4n}}{n\binom{2n}{n}^2} = \pi
+\]</span> 拿卡西欧摁了一下，发现式子没有假，虽然收敛得有亿点点慢但确实是收敛到了<span class="math inline">\(\pi\)</span>。</p>
+<p>关键是这个式子我似乎没见过啊？<del>内心直接膨胀，可把我牛逼坏了。</del></p>
+<p>因为形式看起来较复杂，接着我就想可不可以通过邻项作比的方式变换一下形态 <span class="math display">\[
+\begin{aligned}
+\frac{2^{4n}}{n\binom{2n}{n}^2} \Bigg / \frac{2^{4(n-1)}}{(n-1)\binom{2n-2}{n-1}^2} &amp;= \frac{16(n-1)}{n} \left[\binom{2n-2}{n-1} \bigg/ \binom{2n}{n}\right]^2 \\
+&amp;= \frac{16(n-1)}{n} \left[\frac{n^2}{2n(2n-1)}\right]^2 \\
+&amp;= \frac{16n(n-1)}{(4n-2)^2} \\
+&amp;= \frac{2n}{2n-1}\cdot \frac{2n-2}{2n-1}
+\end{aligned}
+\]</span> 这个形式似曾相识，结合上式把式子化为连乘积的形式，要素察觉！ <span class="math display">\[
+\begin{aligned}
+\frac{2^{4n}}{n\binom{2n}{n}^2} &amp;= \frac{2^{4}}{1\binom{2}{1}^2} \cdot \frac{2}{3} \cdot \frac{4}{3} \cdot \frac{4}{5} \cdot \frac{6}{5} \cdots \frac{2n-2}{2n-1}\cdot \frac{2n}{2n-1} \\
+&amp;= 4\cdot \frac{2}{3} \cdot \frac{4}{3} \cdot \frac{4}{5} \cdot \frac{6}{5} \cdots \frac{2n-2}{2n-1}\cdot \frac{2n}{2n-1}
+\end{aligned}
+\]</span> 这不就是Wallis乘积公式嘛？翻出Wikipedia一看： <span class="math display">\[
+\begin{aligned}
+\frac{\pi}{2} &amp;=\prod_{n=1}^{\infty} \frac{4 n^{2}}{4 n^{2}-1}=\prod_{n=1}^{\infty}\left(\frac{2 n}{2 n-1} \cdot \frac{2 n}{2 n+1}\right) \\
+&amp;=\left(\frac{2}{1} \cdot \frac{2}{3}\right) \cdot\left(\frac{4}{3} \cdot \frac{4}{5}\right) \cdot\left(\frac{6}{5} \cdot \frac{6}{7}\right) \cdot\left(\frac{8}{7} \cdot \frac{8}{9}\right) \cdots
+\end{aligned}
+\]</span> 完全一致，直接得证。</p>
+<p>哇，也就是说我划着水就把Wallis公式不严谨地整了一遍？</p>
+<p><em>果然还是要膨胀.jpg</em></p>
+<p>以前觉得这个式子很高端的，现在有种莫名的幻灭感。</p>
+<p>但是写到这的时候多看了一眼，发现斯特林逼近的一个推导里用到了Wallis公式？</p>
+<p>突然有点不确定这算不算是循环论证了。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2291,210 +2400,6 @@ f &amp;= g \times \mu \\
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2020/07/29/PACT0710/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="技校摸鱼中=_=">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/07/29/PACT0710/" class="post-title-link" itemprop="url">PACT 07/10 主对偶方法</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-07-29 09:45:14" itemprop="dateCreated datePublished" datetime="2020-07-29T09:45:14-04:00">2020-07-29</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="什么是主对偶方法">什么是主对偶方法？</h1>
-<p>对于所有可以写成整数规划/线性规划形式的问题（不妨假设是最小化问题），由对偶定理可得，对偶最优解一定是<span class="math inline">\(\mathrm{OPT}\)</span>的一个下界。</p>
-<p>因此，对偶可行解也是<span class="math inline">\(\mathrm{OPT}\)</span>的一个下界。</p>
-<p>所谓的主对偶方法（Primal-dual Method），就是从一个对偶规划的可行解出发，不断优化这个对偶可行解，并在这个过程中利用对偶规划的特性指引我们求得原问题的解。</p>
-<p>太抽象？</p>
-<h1 id="叕访顶点覆盖">叕访顶点覆盖</h1>
-<p>（顶点覆盖问题属实牛逼嗷，那么多近似方法都可以用）</p>
-<p>顶点覆盖问题的主线性规划是 <span class="math display">\[
-\begin{aligned}
-    \text{minimize}\quad &amp;\sum_{v\in V}w_vx_v \\
-    \text{subject to}\quad &amp;x_u+x_v\ge 1\quad \forall (u, v)\in E \\
-    &amp;x_v \in \{0,1\}\quad \forall v\in V
-\end{aligned}
-\]</span> 其对偶规划是 <span class="math display">\[
-\begin{aligned}
-    \text{maximize}\quad &amp;\sum_{v\in E} y_e \\
-    \text{subject to}\quad &amp;\sum_{v\in e} y_e \le w_v \quad \forall v \in V\\
-    &amp;y_e \ge 0\quad \forall e\in E
-\end{aligned}
-\]</span> 显然，<span class="math inline">\(y_e=0\)</span>就是一个平凡的对偶可行解。基于主对偶方法的思想，我们可以得到两个算法：</p>
-<h2 id="算法1">算法1</h2>
-<ol type="1">
-<li>初始化<span class="math inline">\(y_e\gets0,C\gets \emptyset\)</span>。</li>
-<li>当还有一条边<span class="math inline">\((u,v)\)</span>没有被覆盖时，
-<ol type="1">
-<li><span class="math inline">\(\varepsilon\gets \min\left\{w_u-\sum_{u\in e} y_e,w_v-\sum_{v\in e} y_e\right\}\)</span>。</li>
-<li><span class="math inline">\(y_e\gets y_e+\varepsilon\)</span>（以上两步旨在尽可能增加<span class="math inline">\(y_e\)</span>直至两端点中一个点对应的约束收紧）。</li>
-<li>假设增加<span class="math inline">\(y_e\)</span>之后<span class="math inline">\(u\)</span>对应的约束收紧了，那么<span class="math inline">\(C\gets C\cup\{u\}\)</span>。</li>
-<li>同时删除所有与<span class="math inline">\(u\)</span>邻接的边。</li>
-</ol></li>
-<li>返回<span class="math inline">\(C\)</span>。</li>
-</ol>
-<p>（注意到，当<span class="math inline">\(w_u=1\)</span>时，这个算法退化为我们最初学的极大匹配算法）</p>
-<h2 id="算法2">算法2</h2>
-<ol type="1">
-<li>初始化<span class="math inline">\(y_e\gets0,C\gets \emptyset\)</span>。</li>
-<li>当<span class="math inline">\(C\)</span>不是一个合法的顶点覆盖时，
-<ol type="1">
-<li><span class="math inline">\(\varepsilon\gets \min_{v\in V} \left\{\frac{1}{\deg(v)}\sum_{v\in e}y_e\right\}\)</span></li>
-<li>对于所有边<span class="math inline">\(e\in E\)</span>，<span class="math inline">\(y_e\gets y_e+\varepsilon\)</span>（以上两步旨在同时增加所有<span class="math inline">\(y_e\)</span>直至有约束收紧）。</li>
-<li>将所有紧约束对应的顶点加入<span class="math inline">\(C\)</span>。</li>
-<li>同时删去这些点和它们邻接的所有边。</li>
-</ol></li>
-<li>返回<span class="math inline">\(C\)</span>。</li>
-</ol>
-<p>其实还有很多这样的寻找局部极大对偶可行解的方法，以上两个算法是最容易想到的。</p>
-<h2 id="分析">分析</h2>
-<p>两个算法的分析是共通的： <span class="math display">\[
-\begin{aligned}
-    \sum_{v\in C}w_v &amp;= \sum_{v \in C}\sum_{v\in e\in E} y_e \\
-    &amp;= \sum_{e\in E} y_e |C\cap e| \\
-    &amp;\le \sum_{e\in E} y_e \cdot 2 \\
-    &amp;= 2 \cdot \mathrm{OPT}_{\text{dual}} \\
-    &amp;\le 2 \cdot \mathrm{OPT}
-\end{aligned}
-\]</span> 以上步骤的第一步是因为我们加入覆盖集的所有顶点对应的约束都是紧的。</p>
-<p>主对偶方法神奇的一点就在于：<strong>虽然我们在线性规划的指导下进行设计与分析，但是最后的算法却是一个完全不需要求解线性规划的纯粹的组合算法（Combinatorial Algorithm），因此非常优雅。</strong></p>
-<h1 id="再探设施选址">再探设施选址</h1>
-<p>回忆之前设施选址的线性规划。<span class="math inline">\(y_i\)</span>表示设施<span class="math inline">\(i\)</span>是否被选，<span class="math inline">\(x_{ij}\)</span>表示用户<span class="math inline">\(j\)</span>是否到设施<span class="math inline">\(i\)</span>去： <span class="math display">\[
-\begin{aligned}
-    \text{minimize}\quad &amp;\sum_{i\in F}f_iy_i + \sum_{j\in D}\sum_{i \in F}c_{ij}x_{ij} \\
-    \text{subject to}\quad &amp;\sum_{i\in F}x_{ij} \ge 1 \quad \forall j\in D \\
-    &amp;y_i - x_{ij} \ge 0 \quad \forall i\in F, j\in D \\
-    &amp;x_{ij} \ge 0 \quad \forall i\in F, j\in D \\
-    &amp;y_i \ge 0 \quad \forall i \in F
-\end{aligned}
-\]</span> 其对偶为 <span class="math display">\[
-\begin{aligned}
-    \text{maximize}\quad &amp;\sum_{j \in D}\alpha_j \\
-    \text{subject to}\quad &amp;\alpha_j - \beta_{ij} \le c_{ij}\quad \forall i \in F, j\in D \\
-    &amp;\sum_{j\in D}\beta_{ij} \le f_i\quad \forall i\in F
-\end{aligned}
-\]</span></p>
-<p>以下将对偶规划中第一行的约束称为“第一类约束”，第二行的约束称为“第二类约束”。</p>
-<h2 id="算法">算法</h2>
-<p>我们设计一个基于主对偶方法的近似算法：</p>
-<ol type="1">
-<li>初始化<span class="math inline">\(\alpha_j\gets 0,\beta_{ij}\gets 0\)</span>（平凡的对偶可行解）。</li>
-<li>以相同的速率同时增加的值<span class="math inline">\(\alpha_j\)</span>。</li>
-<li>当对于某些<span class="math inline">\(i,j\)</span>出现<span class="math inline">\(\alpha_j=c_{ij}\)</span>时，为了能够在不违反第一类约束的前提下让<span class="math inline">\(\alpha_j\)</span>继续增加，我们开始同步增加<span class="math inline">\(\beta_{ij}\)</span>的值。</li>
-<li>随着一些<span class="math inline">\(\beta_{ij}\)</span>值的增加某些第二类约束也会收紧，此时暂时开放该约束对应的设施。因为此时对应的<span class="math inline">\(\beta_{ij}\)</span>不能再增加了，那些<span class="math inline">\(\alpha_j\)</span>也自然不会再增加了，我们就此将这些<span class="math inline">\(\alpha_j\)</span>的值冻结起来（其余的<span class="math inline">\(\alpha_j\)</span>可以继续增加）。</li>
-<li>不断重复以上步骤直至所有的<span class="math inline">\(\alpha_j\)</span>都被冻结了。</li>
-<li>按照第4步开放的先后顺序处理所有暂时开放的设施，
-<ol type="1">
-<li>永久开放该设施，</li>
-<li>并将所有和该设施共享一个“紧顾客”（tight client，指和设施对应约束是紧的顾客，这里实在是不怎么好翻，具体的解释参看下面的感性认识和接下来的分析），即那些两边的<span class="math inline">\(\beta\)</span>都大于<span class="math inline">\(0\)</span>的顾客的暂时开放的设施关闭（移出队列）。</li>
-</ol></li>
-</ol>
-<p>听听这是人话吗？感性理解一下以上算法（也有助于接下来的分析）：</p>
-<ol type="1">
-<li><span class="math inline">\(\alpha_j\)</span>可以理解为每个顾客为了得到服务愿意付出的代价，一开始所有人都想白嫖。</li>
-<li>显然如果大家都想白嫖的话没有一个人会得到服务，因此大家一起提升这个愿意付出的代价。</li>
-<li>当<span class="math inline">\(\alpha_j=c_{ij}\)</span>也就是某个顾客发现自己愿意支付的价位内出现了设施的时候他就很高兴。但是这个设施没开，所以顾客决定给这个设施的开放分摊成本（增加<span class="math inline">\(\beta_{ij}\)</span>），但是这样也不是个事，万一不远处有个不需要他付钱或者只需要分摊很少开张费用的设施呢？所以<span class="math inline">\(\alpha_j\)</span>的增长也不能落下。</li>
-<li>当有第二类约束收紧，即几个顾客终于凑够了钱让这个设施开放，那么这个设施就暂时开张了。这几个用户很满足，就准备去这个设施了，所以他们的<span class="math inline">\(\alpha_j\)</span>不增加了。</li>
-<li>不断重复以上步骤直至满足所有顾客的需求。</li>
-<li>按照第4步开放的先后顺序处理暂时开张的设施，
-<ol type="1">
-<li>永久开张，</li>
-<li>如果去这个设施的顾客里有人给其他设施也分摊成本了，那把那些设施全部关掉。</li>
-</ol></li>
-</ol>
-<p>（如果我把上面变量的名字换一下，把“第一类约束”，“第二类约束”也换个名字，那么从上面的算法当中你根本看不到线性规划的痕迹，这就是一个听着很有道理实际上近似比也有保证的组合算法。这就是主对偶方法的优雅之处。）</p>
-<h2 id="分析-1">分析</h2>
-<p>我们不妨称那些为最后永久开放的设施垫付开张成本的顾客为“幸运顾客”，形式上地来说，一个顾客<span class="math inline">\(j\)</span>为幸运顾客当且仅当最后永久开张的设施中有一处设施<span class="math inline">\(i\)</span>使得<span class="math inline">\(\alpha_j-\beta_{ij}=c_{ij},\beta_{ij}&gt;0\)</span>，也就是说顾客<span class="math inline">\(j\)</span>和设施<span class="math inline">\(i\)</span>之间在对偶规划对应的约束是紧的——这也是上面tight client的本意。</p>
-<p>相对地我们称不是幸运顾客的那些顾客“倒霉顾客”，说他们倒霉是因为他们明明给某些设施分摊了开张成本，也都准备好去那里了，结果这个设施在最后关掉了。</p>
-<p>不妨设最后决定开张的设施为<span class="math inline">\(F&#39;\)</span>，幸运顾客的集合为<span class="math inline">\(L\)</span>。<span class="math inline">\(j \to i\)</span>表示顾客<span class="math inline">\(j\)</span>到设施<span class="math inline">\(i\)</span>的约束是紧的（也就是顾客<span class="math inline">\(j\)</span>给设施<span class="math inline">\(i\)</span>分摊了成本）。注意由于我们算法最后一步的清理操作，每个幸运顾客只可能垫付一个<span class="math inline">\(F\)</span>中设施的成本，那么设施的开放费用和幸运顾客的服务成本可以一起表示为： <span class="math display">\[
-\begin{align}
-    &amp;\quad\,\sum_{i\in F&#39;}f_i+\sum_{j\in L} \sum_{\substack{i\in F&#39;\\ j\to i}} c_{ij}\\
-    &amp;= \sum_{i \in F&#39;}\sum_{\substack{j\in L\\ j\to i}} \beta _{ij}+\sum_{j\in L} \sum_{\substack{i\in F&#39;\\ j\to i}} \left(\alpha_j - \beta_{ij}\right) \\
-    &amp;=\sum_{j \in L} \alpha_{j}
-\end{align}
-\]</span> 我们接下来分析倒霉顾客的情况。</p>
-<p>假设有一个倒霉顾客<span class="math inline">\(k\)</span>，他分摊了设施<span class="math inline">\(b\)</span>的开张成本并最终让设施<span class="math inline">\(b\)</span>暂时开张（同时假设<span class="math inline">\(b\)</span>是他分摊成本的设施中最先开张的——也就是<span class="math inline">\(\alpha_k\)</span>恰在<span class="math inline">\(b\)</span>开张后被冻结）。但是比<span class="math inline">\(b\)</span>早开张的设施<span class="math inline">\(a\)</span>中有一个幸运顾客<span class="math inline">\(j\)</span>也为<span class="math inline">\(b\)</span>分摊了成本，导致最后清理的时候<span class="math inline">\(b\)</span>被关闭了。不妨假设<span class="math inline">\(k\)</span>最后只能去<span class="math inline">\(a\)</span>。注意到由三角不等式， <span class="math display">\[
-\begin{align}
-c_{ak} &amp;\le c_{aj} + c_{bj} +c_{bk} \\
-&amp;\le (\alpha_j-\beta_{aj}) + (\alpha_j - \beta_{bj}) + (\alpha_{k}-\beta_{bk}) \\
-&amp;\le \alpha_j+\alpha_j + \alpha_k \\
-&amp;\le 3\alpha_k
-\end{align}
-\]</span> 最后一步之所以成立，是因为<span class="math inline">\(a\)</span>开张后<span class="math inline">\(\alpha_j\)</span>必然冻结，<span class="math inline">\(\alpha_k\)</span>停止增长要等到<span class="math inline">\(b\)</span>开张后。而<span class="math inline">\(a\)</span>比<span class="math inline">\(b\)</span>先开张，因此<span class="math inline">\(\alpha_k \ge \alpha_j\)</span>。我们在上面假设<span class="math inline">\(k\)</span>最后去了<span class="math inline">\(a\)</span>，其实如果最后<span class="math inline">\(k\)</span>去了比<span class="math inline">\(a\)</span>还近的那自然他的服务成本更低了。</p>
-<p>因此倒霉顾客的服务成本<span class="math inline">\(\le \sum_{k\in D\setminus L} \alpha_k\)</span>。</p>
-<p>结合上述的分析，我们可以得到我们的总成本： <span class="math display">\[
-\begin{align}
-    \text{total cost} &amp;\le \sum_{j\in L} \alpha_j + \sum_{k\in D\setminus L} 3\alpha_k \\
-    &amp;\le 3\sum_{j\in D}\alpha_j \\
-    &amp;\le 3\cdot\mathrm{OPT}
-\end{align}
-\]</span> 也就是说，我们证明了我们这个算法的近似比为<span class="math inline">\(3\)</span>。</p>
-<h2 id="为什么最后一步要清理一些暂时开张的设施">为什么最后一步要清理一些暂时开张的设施？</h2>
-<p>为什么我们算法的最后一步要清理暂时开张的设施呢？为什么不能一些用户分摊够开张费用就让这个设施永久开张下去呢？</p>
-<p>考虑如下的一个实例：</p>
-<p>有<span class="math inline">\(n\)</span>个设施，其中<span class="math inline">\(f_1=n+1\)</span>且<span class="math inline">\(f_i=n+2\quad\forall i =2,3,\cdots,n\)</span>。</p>
-<p>有<span class="math inline">\(2n\)</span>个顾客。前<span class="math inline">\(n\)</span>名顾客到所有设施的距离都是<span class="math inline">\(1\)</span>。对于后面的<span class="math inline">\(n\)</span>名顾客，第<span class="math inline">\(n+i\)</span>名顾客只和设施<span class="math inline">\(i\)</span>的距离为<span class="math inline">\(1\)</span>，和其余设施的距离都为<span class="math inline">\(3\)</span>。易证这样的边权满足三角不等式。</p>
-<p>现在考察我们算法的运行情况：</p>
-<ul>
-<li><span class="math inline">\(t=0\)</span>，初始化。</li>
-<li><span class="math inline">\(t=1\)</span>，所有的<span class="math inline">\(\alpha_j=1\)</span>，每名顾客开始为至少一个设施分摊成本了。</li>
-<li><span class="math inline">\(t=2\)</span>，对于任何一个设施都有<span class="math inline">\(n+1\)</span>名顾客为其人均分摊了<span class="math inline">\(1\)</span>的开张成本，而注意到<span class="math inline">\(f_1=n+1\)</span>，因此设施<span class="math inline">\(1\)</span>开张了，相应地，前<span class="math inline">\(n\)</span>名顾客和第<span class="math inline">\(n+1\)</span>名顾客的<span class="math inline">\(\alpha_j\)</span>被冻结。其余的<span class="math inline">\(n-1\)</span>名顾客继续为对应的设施分摊费用。</li>
-<li><span class="math inline">\(t=3\)</span>，剩下的<span class="math inline">\(n-1\)</span>家设施全部开张。</li>
-</ul>
-<p>如果没有最后的清理步骤，那么我们的算法会开放所有的设施。光是开放设施的代价就有<span class="math inline">\(n+1+(n-1)(n+2)=\Omega(n^2)\)</span>。而只开一家设施的代价是<span class="math inline">\(O(n)\)</span>的。因此最后的清理步骤非常重要！</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
@@ -2530,7 +2435,7 @@ c_{ak} &amp;\le c_{aj} + c_{bj} +c_{bk} \\
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

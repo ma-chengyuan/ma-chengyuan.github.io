@@ -32,7 +32,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ma-chengyuan.github.io/2021/12/04/TeX%E6%BA%90%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/buffer%E7%A4%BA%E6%84%8F.drawio.svg">
 <meta property="article:published_time" content="2021-12-04T15:33:58.166Z">
-<meta property="article:modified_time" content="2021-12-25T01:29:28.796Z">
+<meta property="article:modified_time" content="2021-12-29T04:21:46.090Z">
 <meta property="article:author" content="Chengyuan Ma">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://ma-chengyuan.github.io/2021/12/04/TeX%E6%BA%90%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/buffer%E7%A4%BA%E6%84%8F.drawio.svg">
@@ -171,7 +171,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E5%9F%BA%E6%9C%AC%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">TeX的奇妙基本架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%84%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">TeX的奇妙字符串处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E7%AE%97%E6%9C%AF"><span class="nav-number">3.</span> <span class="nav-text">TeX的奇妙算术</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">4.</span> <span class="nav-text">TeX的奇妙内存分配</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">5.</span> <span class="nav-text">TeX的奇妙数据结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99command-code"><span class="nav-number">6.</span> <span class="nav-text">TeX的奇妙command code</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E6%A8%A1%E5%BC%8F%E5%B5%8C%E5%A5%97"><span class="nav-number">7.</span> <span class="nav-text">TeX的奇妙模式嵌套</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E5%AD%97%E5%85%B8eqtb"><span class="nav-number">8.</span> <span class="nav-text">TeX的奇妙字典——eqtb</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E5%93%88%E5%B8%8C%E8%A1%A8"><span class="nav-number">9.</span> <span class="nav-text">TeX的奇妙哈希表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E6%A0%88%E5%AD%98"><span class="nav-number">10.</span> <span class="nav-text">TeX的奇妙栈存</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99token-list"><span class="nav-number">11.</span> <span class="nav-text">TeX的奇妙token list</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E8%BE%93%E5%85%A5%E7%8A%B6%E6%80%81%E6%A0%88"><span class="nav-number">12.</span> <span class="nav-text">TeX的奇妙输入状态栈</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99get_next"><span class="nav-number">13.</span> <span class="nav-text">TeX的奇妙get_next</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E5%9F%BA%E6%9C%AC%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">TeX的奇妙基本架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%84%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">TeX的奇妙字符串处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E7%AE%97%E6%9C%AF"><span class="nav-number">3.</span> <span class="nav-text">TeX的奇妙算术</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">4.</span> <span class="nav-text">TeX的奇妙内存分配</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">5.</span> <span class="nav-text">TeX的奇妙数据结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99command-code"><span class="nav-number">6.</span> <span class="nav-text">TeX的奇妙command code</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E6%A8%A1%E5%BC%8F%E5%B5%8C%E5%A5%97"><span class="nav-number">7.</span> <span class="nav-text">TeX的奇妙模式嵌套</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E5%AD%97%E5%85%B8eqtb"><span class="nav-number">8.</span> <span class="nav-text">TeX的奇妙字典——eqtb</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E5%93%88%E5%B8%8C%E8%A1%A8"><span class="nav-number">9.</span> <span class="nav-text">TeX的奇妙哈希表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E6%A0%88%E5%AD%98"><span class="nav-number">10.</span> <span class="nav-text">TeX的奇妙栈存</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99token-list"><span class="nav-number">11.</span> <span class="nav-text">TeX的奇妙token list</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99%E8%BE%93%E5%85%A5%E7%8A%B6%E6%80%81%E6%A0%88"><span class="nav-number">12.</span> <span class="nav-text">TeX的奇妙输入状态栈</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99get_next"><span class="nav-number">13.</span> <span class="nav-text">TeX的奇妙get_next</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tex%E7%9A%84%E5%A5%87%E5%A6%99expand"><span class="nav-number">14.</span> <span class="nav-text">TeX的奇妙expand</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -187,7 +187,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">95</span>
+          <span class="site-state-item-count">96</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -272,7 +272,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-12-24 20:29:28" itemprop="dateModified" datetime="2021-12-24T20:29:28-05:00">2021-12-24</time>
+        <time title="修改时间：2021-12-28 23:21:46" itemprop="dateModified" datetime="2021-12-28T23:21:46-05:00">2021-12-28</time>
       </span>
 
   
@@ -517,7 +517,7 @@ enum &#123; // type的取值
 <p>Token list是TeX的另一大核心数据结构。而在解释token list之前，自然要先了解TeX是如何表示一个token的。TeX将token分为两类：</p>
 <ol type="1">
 <li>“字符型”的token是catcode和单个字符的组合。TeX将其表示为<span class="math inline">\(2^8 \cdot\text{catcode}+\text{char code}\)</span>。</li>
-<li>控制序列的token本质上对应<code>eqtb</code>表中的一个位置。TeX将对应<code>eqtb</code>下标<span class="math inline">\(p\)</span>的控制序列表示为<span class="math inline">\(\left(2^{12}-1\right) + p\)</span>。</li>
+<li>控制序列的token本质上对应<code>eqtb</code>表中的一个位置。TeX将对应<code>eqtb</code>下标<span class="math inline">\(p\)</span>的控制序列表示为<span class="math inline">\(\left(2^{12}-1\right) + p\)</span>——<span class="math inline">\(\left(2^{12} - 1\right)\)</span>也被称为<code>cs_token_flag</code>。</li>
 </ol>
 <p>如此一来，每个token都可以映射为一个16位的正整数。接下来自然是TeX的常规操作：把token塞到一个memory word中，空出来的16位正好指向下一个token的地址。因此，token list的本质还是一个单向链表。</p>
 <p>除了来自源文件的token，TeX还有两个特殊的token：<code>match</code>和<code>end_match</code>。这两个在存储宏定义的时候会用到。具体来说，TeX很神奇地将宏的参数格式和替换宏体存在一个token list里面。<code>end_match</code>是参数部分和宏体的分界，而<code>match</code>则代表宏参数格式中的参数本身（因为参数格式中参数的编号总是递增的，所以只需要存储<code>match</code>而不需要存储对应的参数编号）——是不是很绕？举个例子，如果定义如下的宏：</p>
@@ -551,16 +551,77 @@ enum &#123; // type的取值
 <p>这些字段Knuth在原文中花了很多篇幅去解释，我想了想可能还是画图更为直观，不妨考虑如下情形：用户在终端内输入了<code>\input A</code>，然后文件A里面某一行包含了<code>\input B</code>，图中所示即TeX在读取B内容的时候<code>input_stack</code>的情况。</p>
 <p><img src="/2021/12/04/TeX%E6%BA%90%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/buffer%E7%A4%BA%E6%84%8F.drawio.svg" class=""></p>
 <p>但是事情远没有那么简单。因为对于TeX来说，下一个token既可以来自文件，也可以来自一个token list。Input stack需要把两种情况都考虑到，而我们上面只介绍了一种。Knuth发挥了那个资源受限年代程序员的传统艺能——复用结构体。事实上我对上面六个字段的解释是不全面的：<code>scanner_state</code>并不是只有三个取值，它还可以取到一个隐藏值<code>token_list</code>。如果一个input state的<code>scanner_state</code>是<code>token_list</code>，那么就说明这个input state表示一个来自token list的输入而非文件输入。此时，<code>start</code>字段指向token list的起始节点；<code>name</code>变成了正在展开的控制序列在<code>eqtb</code>中的位置；<code>index</code>字段被重命名为<code>token_type</code>，表示当前token list的类型（是表示一个宏的参数，还是一个宏的主体，还是<code>\everypar</code>，还是来自一个token list寄存器……）；假如这个token list是一个宏的展开，<code>limit</code>字段被重命名为<code>param_start</code>，指向<code>param_stack</code>当中当前宏参数列表的起始位置。</p>
+<p>最后的最后，这里需要展开讲讲TeX的<code>\outer</code>机制。<code>\outer</code>修饰的宏不能出现在其他宏的参数中（即只能在最外层直接调用）。显式声明<code>\outer</code>的目的是让TeX在括号错配中不断look ahead的过程中有一个明确的停止点，使得错误恢复的过程更加稳健。正如Knuth所说，outer macros本质上把一个文件分成了若干个相对对立的sub-files。现在来看，<code>\outer</code>是一个十足的鸡肋，TeX Stack Exchange上有人直言Knuth就不应该整出<code>\outer</code>这个玩意，而且放眼LaTeX也几乎没有人使用<code>\outer</code>。但是和<code>\outer</code>有关的代码却是四处可见，不可不谈的。TeX定义了一个全局变量称为<code>scannner_status</code>，记录某一时刻TeX输入例程的状态，这个状态和之前的<code>scanner_state</code>不一样，后者可以看作是更偏围观的，前者更加宏观：</p>
+<pre class="line-numbers"><code class="language-c">enum &#123;
+    NORMAL, // 默认状态
+    SKIPPING, // 类似\iffalse ...&lt;这里的状态&gt;... \fi
+    DEFINING, // 类似\def\foo&lt;这里的状态&gt;&#123; ... &lt;或这里的状态&gt;... &#125;
+    MATCHING, // 类似\foo&#123;&lt;这里的状态&gt;&#125;
+    ALIGNING, // 类似\halign&#123;&lt;这里的状态&gt;&#125;
+    ABSORBING // 类似\iftrue ... &lt;这里的状态&gt; ... \fi
+&#125; scanner_state;</code></pre>
+<p>显然，在遇到一个outer macro的时候，只有<code>NORMAL</code>和<code>SKIPPING</code>状态是正常的；在文件尾，合理的状态只有<code>NORMAL</code>。其他状态多多少少都说明前面有一个大括号错配了，因此TeX会调用<code>runaway</code>函数进行报错（我们非常熟悉的“runaway arguments ...”错误就是<code>runaway</code>函数输出的）。</p>
 <p>这一部分的逻辑非常复杂，我觉得没看过原文的读者读我上面的概述还是免不了一头雾水。我已经尽力而为，希望进一步搞清楚的读者只能去看原文了。这里推荐TTP 311关于<code>show_context</code>的代码。TeX的代码的一个优点就是有很多这种调试用的过程可以把复杂变量代表的状态pretty print出来，因此通过看这些过程的代码，对照print的内容，对于这些变量的意义就能有一个大致的了解。</p>
 <h1 id="tex的奇妙get_next">TeX的奇妙<code>get_next</code></h1>
 <p>正如前文所言，<code>get_next</code>是TeX输入例程的核心，这个函数是如此重要，其逻辑又是如此复杂，以至于Knuth为其专辟一章。<code>get_next</code>没有任何参数也不返回任何值，而是通过修改以下三个全局变量来将结果传递给调用方（非常有历史感的作法！）：</p>
 <ol type="1">
 <li><code>cur_chr</code>存储当前单字符token的字符编码或者当前控制序列（包括active character）在<code>eqtb</code>中的<code>equiv</code>字段。</li>
 <li><code>cur_cmd</code>存储当前单字符token的catcode或者当前控制序列（包括active character）在<code>eqtb</code>中的<code>type</code>字段。</li>
-<li><code>cur_cs</code>存储当前控制序列在<code>eqtb</code>中的下标。</li>
+<li><code>cur_cs</code>存储当前控制序列在<code>eqtb</code>中的下标，如果当前token不是控制序列则值为0。</li>
 </ol>
 <p><code>get_next</code>的复杂之处还体现在它是根据上一节的input state来决定读取的行为，即它既从能文件中读取token，也能从token list中读取下一个token。从文件中读token自然涉及到一个tokenization的过程，TeX tokenization的状态机的代码就在此处。从token list中读取token的过程中需要特判<code>\noexpand</code>——作为一个很特殊的primitive，<code>\noexpand</code>的实现也在这里。</p>
 <p>除此以外，TeX还有一个全局变量<code>cur_tok</code>。按照上文一节token list的编码方式，这一个变量就可以表示一个token（也可以看作是<code>cur_chr</code>和<code>cur_cmd</code>的合体）。<code>cur_tok</code>主要与<code>back_input</code>函数连用。后者通过在input stack最顶端插入一个只包含<code>cur_tok</code>的token list来把<code>cur_tok</code>表示的token“放回”输入流中（换而言之，下一次<code>get_next</code>就会返回该token）——这一用法在错误恢复过程中非常多见。</p>
+<p><code>get_next</code>只会设置上面三个全局变量而不会设置<code>cur_tok</code>。为了在调用<code>get_next</code>的同时顺便设置<code>cur_tok</code>，Knuth定义了一个<code>get_token</code>函数作为<code>get_next</code>的简单封装：</p>
+<pre class="line-numbers"><code class="language-c">void get_token(void) &#123;
+    no_new_control_sequence = false; // TeX默认不允许在tokenization的过程中新定义控制序列
+    get_next();
+    no_new_control_sequence = true;
+    // 按照上文token list一节提到的规则将cur_cs、cur_chr、cur_cmd三个变量整合成cur_tok
+    cur_tok = cur_cs ? cs_token_flag + cur_cs : (cur_cmd &lt;&lt; 8) | cur_chr;
+&#125;</code></pre>
+<h1 id="tex的奇妙expand">TeX的奇妙<code>expand</code></h1>
+<p>接下来介绍的是TeX的展开token的过程。这个过程主要通过<code>expand</code>函数实现。<code>expand</code>会将input stream中的第一个token（即调用<code>get_next</code>得到的token）进行<em>一次</em>展开，并把展开的结果放回到input stream里面，从而使下一次对<code>get_next</code>的调用返回展开后的第一个token。对于TeX而言，可以展开的token大致可以分为三大类：</p>
+<ol type="1">
+<li>第一类是宏。此时<code>expand</code>会调用<code>macro_call</code>按照我们熟知的规则进行宏展开。</li>
+<li>第二类是非宏但可展开的primitive，细分如下：
+<ol type="1">
+<li><code>\...mark</code>——用于插入标记（这个命令比较冷门，一般要和output routine的代码合用，但是现在基本没有人手写output routine……）</li>
+<li><code>\expandafter</code>——用于展开顺序的调整。</li>
+<li><code>\noexpand</code>——用于抑制展开。</li>
+<li><code>\csname...\endcsname</code>——用于动态构建复杂的控制序列。</li>
+<li><code>\input</code>——展开的效果就是在input stack上面入栈一个新文件。</li>
+<li><code>\if</code>等条件语句——此时<code>expand</code>调用<code>conditionals</code>，具体内容在后续章节。</li>
+<li><code>\fi</code>或者<code>\else</code>——见后续章节。</li>
+<li><code>\the ...</code>——此时<code>expand</code>调用<code>ins_the_toks</code>，具体内容在后续章节。</li>
+<li>“conversion primitives”——我目前也不是很明白，<code>expand</code>此时调用<code>conv_toks</code>，具体内容在后续章节。</li>
+</ol></li>
+<li><code>\halign</code>或者<code>\valign</code>中单元格格式模板部分的结束——TeX称之为<code>endv</code>（可能的原因是在The TeXbook中有提到，TeX内部把模板<code>#</code>以前的部分称为u，以后的部分称为v，因此<code>endv</code>就是整个模板结束的意思）</li>
+</ol>
+<p>将<code>expand</code>和<code>get_next</code>结合起来，就是TeX中的<code>get_x_token</code>函数，这个函数会不断地展开input stream中的第一个token直至不能展开为止（<code>expand</code>只是展开一次）。</p>
+<pre class="line-numbers"><code class="language-c">void get_x_token(void) &#123;
+    // Knuth主张合理地使用goto有益无害，所以各种label和goto也成了TeX中一常见的风景了。
+    while (1) &#123;
+        get_next();
+        // cur_cmd &lt;= max_command 就是指当前token不是一个控制序列。
+        // 靠巧妙地定义常数值从而可以通过数值大小比较判断大类关系，这是Knuth的传统艺能，不能不品尝。
+        if (cur_cmd &lt;= max_command) break;
+        // 上面“非宏但是可展开的primitive”对应的cur_cmd介于max_command和call之间。
+        // 因此cur_cmd &gt;= call对应宏和模板结束的情况。
+        if (cur_cmd &gt;= call) &#123;
+            if (cur_cmd &lt; end_template) macro_call();
+            else &#123;
+                cur_cs = frozen_endv;
+                cur_cmd = endv;
+                break;
+            &#125;
+        &#125; else expand();
+        // expand其实已经包含了上面if中的两种情况。Knuth把上面两个分支单独摘出来是因为这样可以
+        // 省下一次函数跳转的开销，程序就能更快。人工内联函数与人脑分支预测也是TeX的传统艺能。
+        // 换而言之，上面这个大if其实就等同于一句expand();
+    &#125;
+    // 同get_token。
+    cur_tok = cur_cs ? cs_token_flag + cur_cs : (cur_cmd &lt;&lt; 8) | cur_chr;
+&#125;</code></pre>
 <blockquote>
 <p>未完待续</p>
 </blockquote>
@@ -583,6 +644,9 @@ enum &#123; // type的取值
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2022/01/23/FasterChromium/" rel="next" title="Making Chromium UI ~3x as Smooth on High Refresh Rate Monitors">
+                  Making Chromium UI ~3x as Smooth on High Refresh Rate Monitors <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
@@ -625,7 +689,7 @@ enum &#123; // type的取值
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

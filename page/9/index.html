@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">95</span>
+          <span class="site-state-item-count">96</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,6 +226,206 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2018/09/17/%E7%82%B9%E5%88%86%E6%B2%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="技校摸鱼中=_=">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/09/17/%E7%82%B9%E5%88%86%E6%B2%BB/" class="post-title-link" itemprop="url">POJ 1741 / 点分治</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-09-17 02:09:28" itemprop="dateCreated datePublished" datetime="2018-09-17T02:09:28-04:00">2018-09-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="题面">题面</h1>
+<p><a target="_blank" rel="noopener" href="http://poj.org/problem?id=1741">题面</a>，给定一个<span class="math inline">\(n\)</span>个节点的无根树，边带权，求树上长度不超过<span class="math inline">\(k\)</span>的简单路径的数量。</p>
+<p><span class="math inline">\(n \le 10^5\)</span></p>
+<h1 id="解法">解法</h1>
+<p>这道题所使用到的思想是分治，假设我们现在要处理一颗根为<span class="math inline">\(u\)</span>的树，很明显这棵树的路径<span class="math inline">\(x \to y\)</span>有两种：</p>
+<ol type="1">
+<li>如果<span class="math inline">\(x, y\)</span>在<span class="math inline">\(u\)</span>的同一棵子树里面，那么<span class="math inline">\(x \to y\)</span>一定不经过<span class="math inline">\(u\)</span>，只在某棵子树里面。</li>
+<li>如果<span class="math inline">\(x, y\)</span>在<span class="math inline">\(u\)</span>的不同子树里面，那么<span class="math inline">\(x \to y\)</span>一定经过<span class="math inline">\(u\)</span>。</li>
+</ol>
+<p>很明显第一种情况我们可以递归在子树里面做，因此我们主要处理第二种情况，准确来说，我们从<span class="math inline">\(u\)</span>开始DFS一波，求出<span class="math inline">\(d[x]\)</span>为<span class="math inline">\(x\)</span>到<span class="math inline">\(u\)</span>的距离（深度），那么我们要求的答案就变成了<span class="math inline">\(x, y\)</span>不属于<span class="math inline">\(u\)</span>的同一棵子树，且<span class="math inline">\(d[x] + d[y] \le k\)</span>的<span class="math inline">\((x, y)\)</span>的个数。</p>
+<p>我们先忽略“不属于同一棵子树”这个限制，考虑后面的条件，给定<span class="math inline">\(d​\)</span>，如何求<span class="math inline">\(d[x] + d[y] \le k​\)</span>的<span class="math inline">\((x, y)​\)</span>的个数？</p>
+<p>我们使用<strong>双指针</strong>的方法，把<span class="math inline">\(d\)</span>排序，然后维护两个指针<span class="math inline">\(i, j\)</span>，假设有<span class="math inline">\(cnt\)</span>个元素，初始化<span class="math inline">\(i = 1, j = cnt\)</span>。很明显随着<span class="math inline">\(i\)</span>的增加，<span class="math inline">\(j\)</span>必定单调不增！而对于任意时刻的满足<span class="math inline">\(d[i] + d[j] \le k\)</span>的<span class="math inline">\(i, j\)</span>，显然对于<span class="math inline">\(i &lt; x \le j\)</span>，都有<span class="math inline">\(d[i] + d[x] \le k\)</span>，因此我们把答案累加上<span class="math inline">\(j - i\)</span>。总体复杂度为<span class="math inline">\(O(cnt \log cnt)\)</span>，代码很短：</p>
+<pre class="line-numbers"><code class="language-cpp">sort(d + 1, d + 1 + cnt);
+int ret = 0;
+for (int i = 1, j = cnt; i &lt; j; ) &#123;
+    if (d[i] + d[j] &lt;= k) ret += j - i, i++;
+    else j--;
+&#125;</code></pre>
+<p>我们接下来考虑如何加上”不属于同一棵子树“的限制，假设我们递归计算的函数为<span class="math inline">\(calc(u)\)</span>，一开始初始化<span class="math inline">\(d[u] = 0\)</span>，然后统计了一波，假设我们多统计了都在子树<span class="math inline">\(v\)</span>里面的路径的数量，这是多少呢？很显然<strong>这些多统计的路径数等价于初始化<span class="math inline">\(d[v] = w_{uv}\)</span>之后<span class="math inline">\(calc(v)\)</span>的值</strong>，减去即可：</p>
+<pre class="line-numbers"><code class="language-cpp">...
+ans += calc(u);
+for (int e = fst[u]; e; e = nxt[e]) &#123;
+    int v = to[e];
+    if (vis[v]) continue;
+    dis[v] = len[e]; ans -= calc(v); // 减去多算的
+    ...
+&#125;</code></pre>
+<p>最后，还留下一个问题：<strong>从哪里开始分治呢？</strong>注意到如果我们出发点取得不好，选到了链的一端，那么复杂度就退化了，因此我们最好从<strong>无根树的重心开始分治</strong>，求重心是<span class="math inline">\(O(n)\)</span>的：</p>
+<pre class="line-numbers"><code class="language-cpp">void dfs_rt(int u, int p) &#123; // sz[0] 是总结点数，p是父节点
+    sz[u] = 1, f[u] = 0;
+    for (int e = fst[u]; e; e = nxt[e]) &#123;
+        int v = to[e];
+        if (vis[v] || v == p) continue;
+        dfs_rt(v, u);
+        sz[u] += sz[v];
+        f[u] = max(f[u], sz[v]);
+    &#125;
+    f[u] = max(f[u], sz[0] - sz[u]);
+    if (f[u] &lt; f[rt]) rt = u;
+&#125;</code></pre>
+<p>因此，最后算法的总框架就是：</p>
+<ol type="1">
+<li>从重心<span class="math inline">\(u\)</span>开始分治</li>
+<li>处理完重心以后，删除<span class="math inline">\(u\)</span>，递归处理其他的无根树。</li>
+</ol>
+<pre class="line-numbers"><code class="language-cpp">void dfs(int u) &#123;
+    vis[u] = 1; dis[u] = 0;
+    ans += calc(u);
+    for (int e = fst[u]; e; e = nxt[e]) &#123;
+        int v = to[e];
+        if (vis[v]) continue;
+        dis[v] = len[e]; ans -= calc(v);
+        rt = 0; sz[0] = sz[v];
+        dfs_rt(v, 0); dfs(rt);
+    &#125;
+&#125;</code></pre>
+<p>易证递归的深度不超过<span class="math inline">\(O(\log n)\)</span>，算上双指针中排序的时间，算法的总复杂度为<span class="math inline">\(O(n\log ^2 n)\)</span>。</p>
+<p>代码：</p>
+<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;algorithm&gt;
+
+using namespace std;
+const int N = 10010;
+int n, k, fst[N], nxt[2 * N], to[2 * N], len[2 * N];
+int tot, cnt, vis[N], f[N], sz[N], dis[N], d[N], rt;
+int ans;
+
+void link(int a, int b, int w) &#123;
+    nxt[++tot] = fst[a];
+    fst[a] = tot; to[tot] = b;
+    len[tot] = w;
+&#125;
+
+void dfs_rt(int u, int p) &#123;
+    sz[u] = 1, f[u] = 0;
+    for (int e = fst[u]; e; e = nxt[e]) &#123;
+        int v = to[e];
+        if (vis[v] || v == p) continue;
+        dfs_rt(v, u);
+        sz[u] += sz[v];
+        f[u] = max(f[u], sz[v]);
+    &#125;
+    f[u] = max(f[u], sz[0] - sz[u]);
+    if (f[u] &lt; f[rt]) rt = u;
+&#125;
+
+void dfs_d(int u, int p) &#123;
+    d[++cnt] = dis[u];
+    for (int e = fst[u]; e; e = nxt[e]) &#123;
+        int v = to[e];
+        if (vis[v] || v == p) continue;
+        dis[v] = dis[u] + len[e];
+        dfs_d(v, u);
+    &#125;
+&#125;
+
+int calc(int u) &#123;
+    cnt = 0; dfs_d(u, 0);
+    sort(d + 1, d + 1 + cnt);
+    int ret = 0;
+    for (int i = 1, j = cnt; i &lt; j; ) &#123;
+        if (d[i] + d[j] &lt;= k) ret += j - i, i++;
+        else j--;
+    &#125;
+    return ret;
+&#125;
+
+void dfs(int u) &#123;
+    vis[u] = 1; dis[u] = 0;
+    ans += calc(u);
+    for (int e = fst[u]; e; e = nxt[e]) &#123;
+        int v = to[e];
+        if (vis[v]) continue;
+        dis[v] = len[e]; ans -= calc(v);
+        rt = 0; sz[0] = sz[v];
+        dfs_rt(v, 0); dfs(rt);
+    &#125;
+&#125;
+
+int main() &#123;
+    f[0] = 0x3f3f3f3f;
+    while (scanf(&quot;%d%d&quot;, &amp;n, &amp;k), n) &#123;
+        tot = 1; ans = 0;
+        fill(vis + 1, vis + 1 + n, 0);
+        fill(fst + 1, fst + 1 + n, 0);
+        for (int i = 1; i &lt;= n - 1; i++) &#123;
+            int a, b, w;
+            scanf(&quot;%d%d%d&quot;, &amp;a, &amp;b, &amp;w);
+            link(a, b, w);
+            link(b, a, w);
+        &#125;
+        sz[0] = n; dfs_rt(1, 0);
+        dfs(rt);
+        printf(&quot;%d\n&quot;, ans);
+    &#125;
+    return 0;
+&#125; </code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1427,214 +1627,6 @@ int main() &#123;
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2018/09/01/%E5%AF%86%E7%A0%81%E9%94%81/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="技校摸鱼中=_=">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/01/%E5%AF%86%E7%A0%81%E9%94%81/" class="post-title-link" itemprop="url">NOIP模拟赛 密码锁</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-09-01 04:42:34" itemprop="dateCreated datePublished" datetime="2018-09-01T04:42:34-04:00">2018-09-01</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="题意">题意</h1>
-<p>有<span class="math inline">\(n\)</span>把串级连接的锁（前一把的输入连接到后一把的输出），每一把锁将输入和一个操作数进行<em>与</em>，<em>或</em>，<em>异或</em>之一的二元位运算的结果作为输出，给定初始时每把锁的参数和运算类型。接下来<span class="math inline">\(m\)</span>个操作共两种：</p>
-<ol type="1">
-<li>查询某个数通过这一串锁的结果</li>
-<li>修改某个锁的操作数和运算</li>
-</ol>
-<p>$n  ^5, m ^5 $，保证查询的数和操作数不超过<span class="math inline">\(1000\)</span>。</p>
-<h1 id="解法">解法</h1>
-<p>从数据范围可知正解的复杂度是<span class="math inline">\(O(n\log n)\)</span>级别的，考虑其操作中又有查询又有修改，直觉上我们断定这是一道数据结构题。</p>
-<p>那维护什么呢？位运算？肯定是不行的，原因就是<strong>位运算是不结合的</strong>，比如说<code>(a | b) &amp; c</code>就不一定等于<code>a | (b &amp; c)</code>，而无论是线段树还是树状数组都只能维护有结合律的代数结构，因此直接维护位运算是行不通的。</p>
-<p>但是<strong>因为二元位运算的一个操作数已经给出，而且每个位的运算有互不干扰，我们可以把给定的一个二元位运算转化为若干个依赖于输入某一位的一元位运算或函数</strong>。</p>
-<p>那么这样做有什么好处呢？我们看看这样的一元函数有哪些：</p>
-<ol type="1">
-<li><span class="math inline">\(e\)</span>：将输入位直接输出。</li>
-<li><span class="math inline">\(n\)</span>：将输入位取反输出。</li>
-<li><span class="math inline">\(0\)</span>：输出恒为0。</li>
-<li><span class="math inline">\(1\)</span>：输出恒为1。</li>
-</ol>
-<p>定义它们之间的二元运算为串联：<span class="math inline">\((f \cdot g)(x)=g(f(x))\)</span>，则有如下性质：</p>
-<ol type="1">
-<li>结合律：<span class="math inline">\((f \cdot g) \cdot h = f \cdot (g \cdot h)\)</span></li>
-<li>单位元：<span class="math inline">\(e\)</span></li>
-<li>封闭性：任意两个运算的复合都是这四个运算之一（自己列张表）</li>
-</ol>
-<p>可以看到这构成了一个<strong>幺半群</strong>，因此可以用线段树进行维护。接下来就很简单了，开<span class="math inline">\(10\)</span>棵线段树分别维护每一位，然后单点修改全局查询即可。</p>
-<p>代码：</p>
-<pre class="line-numbers"><code class="language-cpp">#include &lt;cstdio&gt;
-#include &lt;cstdlib&gt;
-#include &lt;cstring&gt;
-#include &lt;cctype&gt;
-#include &lt;algorithm&gt;
-#include &lt;queue&gt;
-#define rg register
-
-using namespace std;
-typedef long long ll;
-typedef unsigned int u32;
-#define lch (rt &lt;&lt; 1)
-#define rch (lch | 1)
-#define larg lch, l, mid
-#define rarg rch, mid + 1, r
-#define bit(a, b) (((a) &gt;&gt; (b)) &amp; 1)
-const int INF = 0x3f3f3f3f;
-const int BITS = 10;
-const int N = 200010;
-const int T = N * 4;
-const int r[4][4] = &#123;
-    &#123; 0, 1, 1, 0 &#125;, // 0
-    &#123; 0, 1, 0, 1 &#125;, // 1
-    &#123; 0, 1, 3, 2 &#125;, // N
-    &#123; 0, 1, 2, 3 &#125; // E 
-&#125;;
-const int p[4][2] = &#123;
-    &#123; 0, 0 &#125;,
-    &#123; 1, 1 &#125;,
-    &#123; 1, 0 &#125;,
-    &#123; 0, 1 &#125;
-&#125;;
-const int x[3][2] = &#123;
-    &#123; 0, 3 &#125;, // AND
-    &#123; 3, 1 &#125;, // OR
-    &#123; 3, 2 &#125; // XOR
-&#125;;
-
-char t[BITS][T], a[BITS][N];
-char s[5];
-int n, m;
-
-inline int read() &#123;
-    char ch = getchar(), s = 1;
-    while (!isdigit(ch)) &#123;
-        if (ch == &#39;-&#39;) s = -1;
-        ch = getchar();
-    &#125;
-    int ans = 0;
-    while (isdigit(ch)) &#123;
-        ans = ans * 10 + ch - 48;
-        ch = getchar();
-    &#125;
-    return ans * s;
-&#125;
-
-inline void pushup(int z, int rt) &#123;
-    t[z][rt] = r[t[z][lch]][t[z][rch]];
-&#125;
-
-void build(int z, int rt, int l, int r) &#123;
-    if (l == r) &#123;
-        t[z][rt] = a[z][l];
-        return;
-    &#125;
-    int mid = (l + r) &gt;&gt; 1;
-    build(z, larg);
-    build(z, rarg);
-    pushup(z, rt);
-&#125;
-
-void update(int z, int rt, int l, int r, int pos, int d) &#123;
-    if (l == r) &#123;
-        t[z][rt] = d;
-        return;
-    &#125;
-    int mid = (l + r) &gt;&gt; 1;
-    if (pos &lt;= mid) update(z, larg, pos, d);
-    else update(z, rarg, pos, d);
-    pushup(z, rt);
-&#125;
-
-int main() &#123;
-    freopen(&quot;cipher.in&quot;, &quot;r&quot;, stdin);
-    freopen(&quot;cipher.out&quot;, &quot;w&quot;, stdout);
-    scanf(&quot;%d%d&quot;, &amp;n, &amp;m);
-    for (rg int i = 1; i &lt;= n; ++i) &#123;
-        int tmp, op;
-        scanf(&quot;%s%d&quot;, s, &amp;tmp);
-        if (s[0] == &#39;A&#39;) op = 0;
-        else if (s[0] == &#39;O&#39;) op = 1;
-        else op = 2;
-        for (rg int j = 0; j &lt; BITS; ++j)
-            a[j][i] = x[op][bit(tmp, j)];
-    &#125;
-    for (rg int i = 0; i &lt; BITS; ++i)
-        build(i, 1, 1, n);
-    while (m--) &#123;
-        int op; scanf(&quot;%d&quot;, &amp;op);
-        if (op == 1) &#123;
-            int tmp; scanf(&quot;%d&quot;, &amp;tmp);
-            int res = 0;
-            for (rg int i = 0; i &lt; BITS; ++i)
-                res |= p[t[i][1]][bit(tmp, i)] &lt;&lt; i;
-            printf(&quot;%d\n&quot;, res);
-        &#125; else &#123;
-            int pos, tmp;
-            scanf(&quot;%d%s%d&quot;, &amp;pos, s, &amp;tmp);
-            if (s[0] == &#39;A&#39;) op = 0;
-            else if (s[0] == &#39;O&#39;) op = 1;
-            else op = 2;
-            for (rg int i = 0; i &lt; BITS; ++i)
-                update(i, 1, 1, n, pos, x[op][bit(tmp, i)]);
-        &#125;
-    &#125;
-    fclose(stdin);
-    fclose(stdout);
-    return 0;
-&#125;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
@@ -1670,7 +1662,7 @@ int main() &#123;
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

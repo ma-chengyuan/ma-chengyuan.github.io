@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">95</span>
+          <span class="site-state-item-count">96</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -235,6 +235,118 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2022/01/23/FasterChromium/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.png">
+      <meta itemprop="name" content="Chengyuan Ma">
+      <meta itemprop="description" content="技校摸鱼中=_=">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chengyuan Ma's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/01/23/FasterChromium/" class="post-title-link" itemprop="url">Making Chromium UI ~3x as Smooth on High Refresh Rate Monitors</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-01-23 09:44:45 / 修改时间：15:44:25" itemprop="dateCreated datePublished" datetime="2022-01-23T09:44:45-05:00">2022-01-23</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="the-problem">The Problem</h1>
+<p>Is it just me, or Chrome really isn't as fast and smooth as it claims?</p>
+<p>Most people switch to Firefox for all its privacy claims. I did not (although that's indeed a plus). I have been using Firefox because the UI animations on nearly all Chromium-based browsers are intolerably laggy.</p>
+<p>By “UI,” I mean all the components surrounding the web view: the tap strip, the toolbar, the download shelf, the Omnibox. The problem is most noticeable when you close a tab and see how neighbors adjust their bounds to fill the gap. You observe uncomfortable stutters, and that discomfort lures you into repeating the whole thing to confirm that it's not an illusion. It's not, and the pain only intensifies with the repetition until it completely ruins your day.</p>
+<p>Do not mistake me. The animations in web pages are impeccable (Chrome couldn't have taken over more than half of the market share if it can't even do this right). But this contrast just makes the whole problem more annoying. Worse still, this lag passes down to nearly all Chromium derivatives like Edge or Brave and makes the entire Chromium world visually unacceptable. Vivaldi is an exception because it bases its UI on its own framework, but then its homemade UI does not blend well with other Chromium UI (which the Vivaldi devs don't bother to hide). This inconsistency itself is a problem.</p>
+<p>So I started using Firefox. It was great until all the incompatibility issues reminded me again that I would need a Chromium-based browser in case.</p>
+<p>Of course, you would expect someone to file a bug report somewhere for such a big user experience problem. <a target="_blank" rel="noopener" href="https://support.google.com/chrome/thread/60679686/chrome-slow-interface-animation-when-opening-closing-and-moving-tabs?hl=en">Someone did indeed</a>, but the devs don't seem to care.</p>
+<blockquote>
+<p>Tfw you run across this thread while trying to find out if anyone else's scrolling stutters sometimes.</p>
+<p>Blows my mind how stuff like this remains unsolved for months. I've sorta gotten used to laggy tabs by now but it's like they're fine with ignoring reasons for people to trash talk their browser's performance.</p>
+</blockquote>
+<p>Enough complaints. If the devs aren't going to fix it, I will do it myself.</p>
+<h1 id="checking-out-the-code">Checking Out the Code</h1>
+<p>The first step into fixing the bug is to check out the code. I followed <a target="_blank" rel="noopener" href="https://chromium.googlesource.com/chromium/src/+/main/docs/windows_build_instructions.md">this guide</a> on Chromium's project homepage and encountered basically no problems except for two,</p>
+<ul>
+<li><p>The guide asks you to run everything in a Windows command prompt instead of other shells. This also implies that you shouldn't start the command prompt from other shells (e.g., by typing <code>cmd.exe</code> in PowerShell) because then the launched process inherits the environment variables from the parent shell. I have Conda installed and this inheritance caused problems. The Conda shell integration somehow dynamically prepends its Python executable to <code>Path</code> on PowerShell startup. Consequently, no matter how up front I put depot tools in <code>Path</code> it will always be preceded by the Conda Python as long as I launch <code>cmd.exe</code> from PowerShell.</p></li>
+<li><p>Use NTFS. The guide says</p>
+<blockquote>
+<p>At least 100GB of free disk space on an NTFS-formatted hard drive. FAT32 will not work, as some of the Git packfiles are larger than 4GB.</p>
+</blockquote>
+<p>I did not take this very seriously and thought I would be good as long as I don't use FAT32, so I initially used my external SSD in exFAT. The checkout did complete with no warnings and I was able to build. However, I faced massive &gt;1h overbuilds even when I modified nothing (and more than 6000 targets have to be rebuilt when I changed a <code>.cc</code> file). For a time I thought this is the norm and had a very bad impression on the efficiency of Chromium's build system. ExFAT is also very inefficient in storing small files such that ~30G of source files ends up occupying ~180G of disk space, which is complete nonsense. Reformatting my drive as NTFS solves both problems.</p></li>
+</ul>
+<h1 id="first-attempt">First Attempt</h1>
+<p>I have never dealt with Chromium code before. Fortunately, Chromium's excellent documentation saves me the trouble of diving into the tens of millions of lines of code in the codebase completely clueless. It also has this <a target="_blank" rel="noopener" href="https://source.chromium.org/chromium/chromium/src">online code search engine</a> which makes navigating the code orders of magnitude easier. I was able to find this piece of code, a good start:</p>
+<p><img src="/2022/01/23/FasterChromium/tab_strip_bounds_animator.png" class=""></p>
+<p>A further look into <code>BoundsAnimator</code> reveals that it has the member function <code>SetAnimationDuration</code>.</p>
+<p><img src="/2022/01/23/FasterChromium/set_animation_duration.png" class=""></p>
+<p>My first hypothesis is that <strong>if the animation is somehow laggy, then by making it shorter in duration the lag becomes less noticeable.</strong></p>
+<p>A search in <code>tab****.cc</code> reveals that it is not called by tab strip except with an argument of 0 to disable rich animation, so the default duration is nearly always used, which is defined here:</p>
+<p><img src="/2022/01/23/FasterChromium/default_animation_duration.png" class=""></p>
+<p>So I changed 200 down to 100 and then to 60. Now the animations are blazingly fast (literally), but is it smoother? Lags are much less likely to occur and be noticed but I could still found some from time to time. This fix is not satisfactory. Time to go deeper.</p>
+<h1 id="second-attempt">Second Attempt</h1>
+<p>A closer look at <code>BoundsAnimator</code> shows that it calls <code>SlideAnimation</code> under the hood:</p>
+<p><img src="/2022/01/23/FasterChromium/bounds_animator_calling_slide_animation.png" class=""></p>
+<p><code>SlideAnimation</code>, in turn, inherits <code>LinearAnimation</code>, where an interesting constant gets defined,</p>
+<p><img src="/2022/01/23/FasterChromium/linear_animation.png" class=""></p>
+<p>The above screenshot basically captures everything I want to say. The <code>LinearAnimation</code> class uses the framerate passed in the constructor to calculate the timer interval at which it updates its internal state and calls observers (that's the role of <code>BoundsAnimator</code>). The observers then propagate the update to redraw interfaces. Most calls to <code>LinearAnimation</code> constructors ignore the <code>frame_rate</code> argument so <code>kDefaultFrameRate</code> is used. 60 appears to be a reasonable value at the first glance but it no longer is given that I am using a 165Hz monitor.</p>
+<p>There has been a common argument that human eyes cannot differentiate motions beyond 60Hz and high refresh rate monitors are just a hype. I had believed this for years until I switched to a 90Hz phone. When everything else is animating at just 90Hz a 60Hz animation stands out as clunky, not to mention 120Hz or 165Hz. So here lies the problem: <strong>the Chromium UI animation appears to lag because somehow the devs decided to hardcode a framerate ceiling into its rendering process</strong>. <del>They take VSync onto another level.</del></p>
+<p>(This realization might also explain an interesting phenomenon I discovered when I attempted to file a bug report myself a while ago. I used OBS to record the tab strip animations. The lag was obvious at the time of the recording but when I looked back at the recording it seemed less so. Perhaps that was due to the screen capture being 60FPS too? Probably there was some magic going on at the video decoders that makes 60FPS video content appears smoothers?)</p>
+<p>If this is indeed the root of the problem, then the solution is simple: just tune up <code>kDefaultFramerate</code>. Do not forget to tune down the minimum timer interval in <code>CalculateInterval</code> accordingly though, because as it is now (10000) any framerate greater than 100 will be effectively capped to 100.</p>
+<p>This is literally a change to 3 lines of code, and yes, the lags are gone!</p>
+<p>(So in some sense the “3x as smooth” in the title is a clickbait. <span class="math inline">\(165 / 60 = 2.75\)</span>, so the framerate does approximately triple. The question is: is framerate a good measure of “smoothness”?)</p>
+<h1 id="some-thoughts">Some Thoughts</h1>
+<p>I have had a very strong respect for the Chromium Project for years, so strong that I may well call it worship. After all, it is a codebase with over 10M LoCs (and growing) while I was still struggling to manage my personal projects, which all go below 10k LoCs. I've read many posts analyzing the elaborate architecture of Chrome, and many others call Chromium an engineering masterpiece. It was under this mindset that, when I first observed this bug a year ago, I thought there must be some seriously complicated regression deep inside the rendering engine of Chromium. Any fix would be highly untrivial and beyond the understanding of us mortals.</p>
+<p>I consider a great takeaway from this bug-fixing experience to be the demystification of the project. I downloaded the code; I found something I could fix; I fixed it. Locating the root of the problem wasn't hard. So I suppose the only justification for the devs not to have fixed it is that the browser UI has a lower priority than the kernel.</p>
+<p>I wouldn't say that my fix is elegant in any sense. All I can say about it is that it works well on my machine. Now it seems that the approach to hardcode the default framerate as a device-independent constant is fundamentally flawed. But how to improve on that? Should we query the max framerate of the monitor whenever we play an animation? Should we cache the result somewhere? Should we make it a configurable item in <code>chrome://flags</code>? A general and sustainable fix is much more complicated than changing the constants. I may be able to come up with one someday, but IAP is drawing to an end, and there are too many things for me to do. So, I choose to file a more technical issue <a target="_blank" rel="noopener" href="https://bugs.chromium.org/p/chromium/issues/detail?id=1288936">on Chromium's issue tracker</a> for the time being. Leave it to the devs. But before they officially fix the bugs, I will be using my own fork of Chromium.</p>
+<p>Speaking of building Chromium on my own. A side product is that now I can enjoy the latest features of Chrome (I am already using M100) without worrying about the privacy controversies Chrome has. I am pretty sure there still exists some telemetry modules in Chromium (that's why ungoogled Chromium exists), but that's arguably much better than Chrome. I also leave the API key empty, so nothing sensitive will be sent to Google -- perhaps? My guess is that now it's on par with unhardened Firefox.</p>
+<p>By the way, here I would like to briefly mention Firefox's approach to the UI problem. When investigating the bug I was surprised to know that Firefox's UI are web-based, i.e., it uses the same kernel to render both the web pages and the UI. Thus some very interesting things will happen if you type <code>chrome://browser/content/browser.xhtml</code> into the Firefox address bar! I feel like this is a better way to go since building web UI is a mature subject, and now by optimizing your kernel you are also optimizing your UI. I am not sure.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2021/12/04/TeX%E6%BA%90%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -266,7 +378,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-12-24 20:29:28" itemprop="dateModified" datetime="2021-12-24T20:29:28-05:00">2021-12-24</time>
+        <time title="修改时间：2021-12-28 23:21:46" itemprop="dateModified" datetime="2021-12-28T23:21:46-05:00">2021-12-28</time>
       </span>
 
   
@@ -504,7 +616,7 @@ enum &#123; // type的取值
 <p>Token list是TeX的另一大核心数据结构。而在解释token list之前，自然要先了解TeX是如何表示一个token的。TeX将token分为两类：</p>
 <ol type="1">
 <li>“字符型”的token是catcode和单个字符的组合。TeX将其表示为<span class="math inline">\(2^8 \cdot\text{catcode}+\text{char code}\)</span>。</li>
-<li>控制序列的token本质上对应<code>eqtb</code>表中的一个位置。TeX将对应<code>eqtb</code>下标<span class="math inline">\(p\)</span>的控制序列表示为<span class="math inline">\(\left(2^{12}-1\right) + p\)</span>。</li>
+<li>控制序列的token本质上对应<code>eqtb</code>表中的一个位置。TeX将对应<code>eqtb</code>下标<span class="math inline">\(p\)</span>的控制序列表示为<span class="math inline">\(\left(2^{12}-1\right) + p\)</span>——<span class="math inline">\(\left(2^{12} - 1\right)\)</span>也被称为<code>cs_token_flag</code>。</li>
 </ol>
 <p>如此一来，每个token都可以映射为一个16位的正整数。接下来自然是TeX的常规操作：把token塞到一个memory word中，空出来的16位正好指向下一个token的地址。因此，token list的本质还是一个单向链表。</p>
 <p>除了来自源文件的token，TeX还有两个特殊的token：<code>match</code>和<code>end_match</code>。这两个在存储宏定义的时候会用到。具体来说，TeX很神奇地将宏的参数格式和替换宏体存在一个token list里面。<code>end_match</code>是参数部分和宏体的分界，而<code>match</code>则代表宏参数格式中的参数本身（因为参数格式中参数的编号总是递增的，所以只需要存储<code>match</code>而不需要存储对应的参数编号）——是不是很绕？举个例子，如果定义如下的宏：</p>
@@ -538,16 +650,77 @@ enum &#123; // type的取值
 <p>这些字段Knuth在原文中花了很多篇幅去解释，我想了想可能还是画图更为直观，不妨考虑如下情形：用户在终端内输入了<code>\input A</code>，然后文件A里面某一行包含了<code>\input B</code>，图中所示即TeX在读取B内容的时候<code>input_stack</code>的情况。</p>
 <p><img src="/2021/12/04/TeX%E6%BA%90%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/buffer%E7%A4%BA%E6%84%8F.drawio.svg" class=""></p>
 <p>但是事情远没有那么简单。因为对于TeX来说，下一个token既可以来自文件，也可以来自一个token list。Input stack需要把两种情况都考虑到，而我们上面只介绍了一种。Knuth发挥了那个资源受限年代程序员的传统艺能——复用结构体。事实上我对上面六个字段的解释是不全面的：<code>scanner_state</code>并不是只有三个取值，它还可以取到一个隐藏值<code>token_list</code>。如果一个input state的<code>scanner_state</code>是<code>token_list</code>，那么就说明这个input state表示一个来自token list的输入而非文件输入。此时，<code>start</code>字段指向token list的起始节点；<code>name</code>变成了正在展开的控制序列在<code>eqtb</code>中的位置；<code>index</code>字段被重命名为<code>token_type</code>，表示当前token list的类型（是表示一个宏的参数，还是一个宏的主体，还是<code>\everypar</code>，还是来自一个token list寄存器……）；假如这个token list是一个宏的展开，<code>limit</code>字段被重命名为<code>param_start</code>，指向<code>param_stack</code>当中当前宏参数列表的起始位置。</p>
+<p>最后的最后，这里需要展开讲讲TeX的<code>\outer</code>机制。<code>\outer</code>修饰的宏不能出现在其他宏的参数中（即只能在最外层直接调用）。显式声明<code>\outer</code>的目的是让TeX在括号错配中不断look ahead的过程中有一个明确的停止点，使得错误恢复的过程更加稳健。正如Knuth所说，outer macros本质上把一个文件分成了若干个相对对立的sub-files。现在来看，<code>\outer</code>是一个十足的鸡肋，TeX Stack Exchange上有人直言Knuth就不应该整出<code>\outer</code>这个玩意，而且放眼LaTeX也几乎没有人使用<code>\outer</code>。但是和<code>\outer</code>有关的代码却是四处可见，不可不谈的。TeX定义了一个全局变量称为<code>scannner_status</code>，记录某一时刻TeX输入例程的状态，这个状态和之前的<code>scanner_state</code>不一样，后者可以看作是更偏围观的，前者更加宏观：</p>
+<pre class="line-numbers"><code class="language-c">enum &#123;
+    NORMAL, // 默认状态
+    SKIPPING, // 类似\iffalse ...&lt;这里的状态&gt;... \fi
+    DEFINING, // 类似\def\foo&lt;这里的状态&gt;&#123; ... &lt;或这里的状态&gt;... &#125;
+    MATCHING, // 类似\foo&#123;&lt;这里的状态&gt;&#125;
+    ALIGNING, // 类似\halign&#123;&lt;这里的状态&gt;&#125;
+    ABSORBING // 类似\iftrue ... &lt;这里的状态&gt; ... \fi
+&#125; scanner_state;</code></pre>
+<p>显然，在遇到一个outer macro的时候，只有<code>NORMAL</code>和<code>SKIPPING</code>状态是正常的；在文件尾，合理的状态只有<code>NORMAL</code>。其他状态多多少少都说明前面有一个大括号错配了，因此TeX会调用<code>runaway</code>函数进行报错（我们非常熟悉的“runaway arguments ...”错误就是<code>runaway</code>函数输出的）。</p>
 <p>这一部分的逻辑非常复杂，我觉得没看过原文的读者读我上面的概述还是免不了一头雾水。我已经尽力而为，希望进一步搞清楚的读者只能去看原文了。这里推荐TTP 311关于<code>show_context</code>的代码。TeX的代码的一个优点就是有很多这种调试用的过程可以把复杂变量代表的状态pretty print出来，因此通过看这些过程的代码，对照print的内容，对于这些变量的意义就能有一个大致的了解。</p>
 <h1 id="tex的奇妙get_next">TeX的奇妙<code>get_next</code></h1>
 <p>正如前文所言，<code>get_next</code>是TeX输入例程的核心，这个函数是如此重要，其逻辑又是如此复杂，以至于Knuth为其专辟一章。<code>get_next</code>没有任何参数也不返回任何值，而是通过修改以下三个全局变量来将结果传递给调用方（非常有历史感的作法！）：</p>
 <ol type="1">
 <li><code>cur_chr</code>存储当前单字符token的字符编码或者当前控制序列（包括active character）在<code>eqtb</code>中的<code>equiv</code>字段。</li>
 <li><code>cur_cmd</code>存储当前单字符token的catcode或者当前控制序列（包括active character）在<code>eqtb</code>中的<code>type</code>字段。</li>
-<li><code>cur_cs</code>存储当前控制序列在<code>eqtb</code>中的下标。</li>
+<li><code>cur_cs</code>存储当前控制序列在<code>eqtb</code>中的下标，如果当前token不是控制序列则值为0。</li>
 </ol>
 <p><code>get_next</code>的复杂之处还体现在它是根据上一节的input state来决定读取的行为，即它既从能文件中读取token，也能从token list中读取下一个token。从文件中读token自然涉及到一个tokenization的过程，TeX tokenization的状态机的代码就在此处。从token list中读取token的过程中需要特判<code>\noexpand</code>——作为一个很特殊的primitive，<code>\noexpand</code>的实现也在这里。</p>
 <p>除此以外，TeX还有一个全局变量<code>cur_tok</code>。按照上文一节token list的编码方式，这一个变量就可以表示一个token（也可以看作是<code>cur_chr</code>和<code>cur_cmd</code>的合体）。<code>cur_tok</code>主要与<code>back_input</code>函数连用。后者通过在input stack最顶端插入一个只包含<code>cur_tok</code>的token list来把<code>cur_tok</code>表示的token“放回”输入流中（换而言之，下一次<code>get_next</code>就会返回该token）——这一用法在错误恢复过程中非常多见。</p>
+<p><code>get_next</code>只会设置上面三个全局变量而不会设置<code>cur_tok</code>。为了在调用<code>get_next</code>的同时顺便设置<code>cur_tok</code>，Knuth定义了一个<code>get_token</code>函数作为<code>get_next</code>的简单封装：</p>
+<pre class="line-numbers"><code class="language-c">void get_token(void) &#123;
+    no_new_control_sequence = false; // TeX默认不允许在tokenization的过程中新定义控制序列
+    get_next();
+    no_new_control_sequence = true;
+    // 按照上文token list一节提到的规则将cur_cs、cur_chr、cur_cmd三个变量整合成cur_tok
+    cur_tok = cur_cs ? cs_token_flag + cur_cs : (cur_cmd &lt;&lt; 8) | cur_chr;
+&#125;</code></pre>
+<h1 id="tex的奇妙expand">TeX的奇妙<code>expand</code></h1>
+<p>接下来介绍的是TeX的展开token的过程。这个过程主要通过<code>expand</code>函数实现。<code>expand</code>会将input stream中的第一个token（即调用<code>get_next</code>得到的token）进行<em>一次</em>展开，并把展开的结果放回到input stream里面，从而使下一次对<code>get_next</code>的调用返回展开后的第一个token。对于TeX而言，可以展开的token大致可以分为三大类：</p>
+<ol type="1">
+<li>第一类是宏。此时<code>expand</code>会调用<code>macro_call</code>按照我们熟知的规则进行宏展开。</li>
+<li>第二类是非宏但可展开的primitive，细分如下：
+<ol type="1">
+<li><code>\...mark</code>——用于插入标记（这个命令比较冷门，一般要和output routine的代码合用，但是现在基本没有人手写output routine……）</li>
+<li><code>\expandafter</code>——用于展开顺序的调整。</li>
+<li><code>\noexpand</code>——用于抑制展开。</li>
+<li><code>\csname...\endcsname</code>——用于动态构建复杂的控制序列。</li>
+<li><code>\input</code>——展开的效果就是在input stack上面入栈一个新文件。</li>
+<li><code>\if</code>等条件语句——此时<code>expand</code>调用<code>conditionals</code>，具体内容在后续章节。</li>
+<li><code>\fi</code>或者<code>\else</code>——见后续章节。</li>
+<li><code>\the ...</code>——此时<code>expand</code>调用<code>ins_the_toks</code>，具体内容在后续章节。</li>
+<li>“conversion primitives”——我目前也不是很明白，<code>expand</code>此时调用<code>conv_toks</code>，具体内容在后续章节。</li>
+</ol></li>
+<li><code>\halign</code>或者<code>\valign</code>中单元格格式模板部分的结束——TeX称之为<code>endv</code>（可能的原因是在The TeXbook中有提到，TeX内部把模板<code>#</code>以前的部分称为u，以后的部分称为v，因此<code>endv</code>就是整个模板结束的意思）</li>
+</ol>
+<p>将<code>expand</code>和<code>get_next</code>结合起来，就是TeX中的<code>get_x_token</code>函数，这个函数会不断地展开input stream中的第一个token直至不能展开为止（<code>expand</code>只是展开一次）。</p>
+<pre class="line-numbers"><code class="language-c">void get_x_token(void) &#123;
+    // Knuth主张合理地使用goto有益无害，所以各种label和goto也成了TeX中一常见的风景了。
+    while (1) &#123;
+        get_next();
+        // cur_cmd &lt;= max_command 就是指当前token不是一个控制序列。
+        // 靠巧妙地定义常数值从而可以通过数值大小比较判断大类关系，这是Knuth的传统艺能，不能不品尝。
+        if (cur_cmd &lt;= max_command) break;
+        // 上面“非宏但是可展开的primitive”对应的cur_cmd介于max_command和call之间。
+        // 因此cur_cmd &gt;= call对应宏和模板结束的情况。
+        if (cur_cmd &gt;= call) &#123;
+            if (cur_cmd &lt; end_template) macro_call();
+            else &#123;
+                cur_cs = frozen_endv;
+                cur_cmd = endv;
+                break;
+            &#125;
+        &#125; else expand();
+        // expand其实已经包含了上面if中的两种情况。Knuth把上面两个分支单独摘出来是因为这样可以
+        // 省下一次函数跳转的开销，程序就能更快。人工内联函数与人脑分支预测也是TeX的传统艺能。
+        // 换而言之，上面这个大if其实就等同于一句expand();
+    &#125;
+    // 同get_token。
+    cur_tok = cur_cs ? cs_token_flag + cur_cs : (cur_cmd &lt;&lt; 8) | cur_chr;
+&#125;</code></pre>
 <blockquote>
 <p>未完待续</p>
 </blockquote>
@@ -2271,115 +2444,6 @@ R = \begin{bmatrix}
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://ma-chengyuan.github.io/2021/03/16/Wallis/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.png">
-      <meta itemprop="name" content="Chengyuan Ma">
-      <meta itemprop="description" content="技校摸鱼中=_=">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chengyuan Ma's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/03/16/Wallis/" class="post-title-link" itemprop="url">数学课划水整活之Wallis乘积公式的一种证明</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-03-16 01:07:28" itemprop="dateCreated datePublished" datetime="2021-03-16T01:07:28-04:00">2021-03-16</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>今天数学课讲了一点组合数的性质，因为太简单了所以稍微划了一会水。</p>
-<p>结果发现自己整出来了一个算<span class="math inline">\(\pi\)</span>的式子？</p>
-<p>化简以后发现是传说中的Wallis公式？</p>
-<p>虽然原理一样的证明Wiki上有提到但是还是当场惊了。</p>
-<p>简单记一笔吧。</p>
-<p>一切的开端是今年寒假做夏校申请的时候证明过的一个极限 <span class="math display">\[
-\lim_{n\to\infty} 2^{-2n}\binom{2n}{n} = 0
-\]</span> 当时是用斯特林近似暴力代换进行证明（现在看来并不严谨） <span class="math display">\[
-\begin{aligned}
-    \lim_{n\to\infty} \binom{2n}{n} \frac{\left[\sqrt{2\pi n} \left(n \over e\right)^n \right]^2} {\sqrt{4\pi n} \left(2n \over e\right)^{2n}} &amp;= \lim_{n\to\infty} \left[\frac{\sqrt{2\pi n} \left(n \over e\right)^n}{n!}\right]^2 \frac{(2n)!}{\sqrt{4\pi n} \left(2n \over e\right)^{2n}} \\
-    &amp;= 1 \\     
-    \Rightarrow 
-    \lim_{n\to\infty} 2^{-2n}\binom{2n}{n} &amp;= \lim_{n\to\infty} 2^{-2n}\frac {\sqrt{4\pi n} \left(2n \over e\right)^{2n}}{\left[\sqrt{2\pi n} \left(n \over e\right)^n\right]^2} \cdot \lim_{n\to\infty} \binom{2n}{n} \frac{\left[\sqrt{2\pi n} \left(n \over e\right)^n\right]^2} {\sqrt{4\pi n} \left(2n \over e\right)^{2n}} \\
-    &amp;=  \lim_{n\to\infty} 2^{-2n}\frac {\sqrt{4\pi} 2^{2n}n^{2n+\frac{1}{2}}e^{-2n}}{2\pi n^{2n+1}e^{-2n}} \\
-    &amp;= \lim_{n\to\infty} \frac{1}{\sqrt{\pi n}}\\
-    &amp;= 0
-\end{aligned}
-\]</span> 今天划水的时候发现由以上过程，这个极限可以加强为 <span class="math display">\[
-\lim_{n\to\infty} \frac{\sqrt{\pi n}\binom{2n}{n}}{2^{2n}} = 1
-\]</span> 稍作整理即得 <span class="math display">\[
-\lim_{n\to\infty} \frac{2^{4n}}{n\binom{2n}{n}^2} = \pi
-\]</span> 拿卡西欧摁了一下，发现式子没有假，虽然收敛得有亿点点慢但确实是收敛到了<span class="math inline">\(\pi\)</span>。</p>
-<p>关键是这个式子我似乎没见过啊？<del>内心直接膨胀，可把我牛逼坏了。</del></p>
-<p>因为形式看起来较复杂，接着我就想可不可以通过邻项作比的方式变换一下形态 <span class="math display">\[
-\begin{aligned}
-\frac{2^{4n}}{n\binom{2n}{n}^2} \Bigg / \frac{2^{4(n-1)}}{(n-1)\binom{2n-2}{n-1}^2} &amp;= \frac{16(n-1)}{n} \left[\binom{2n-2}{n-1} \bigg/ \binom{2n}{n}\right]^2 \\
-&amp;= \frac{16(n-1)}{n} \left[\frac{n^2}{2n(2n-1)}\right]^2 \\
-&amp;= \frac{16n(n-1)}{(4n-2)^2} \\
-&amp;= \frac{2n}{2n-1}\cdot \frac{2n-2}{2n-1}
-\end{aligned}
-\]</span> 这个形式似曾相识，结合上式把式子化为连乘积的形式，要素察觉！ <span class="math display">\[
-\begin{aligned}
-\frac{2^{4n}}{n\binom{2n}{n}^2} &amp;= \frac{2^{4}}{1\binom{2}{1}^2} \cdot \frac{2}{3} \cdot \frac{4}{3} \cdot \frac{4}{5} \cdot \frac{6}{5} \cdots \frac{2n-2}{2n-1}\cdot \frac{2n}{2n-1} \\
-&amp;= 4\cdot \frac{2}{3} \cdot \frac{4}{3} \cdot \frac{4}{5} \cdot \frac{6}{5} \cdots \frac{2n-2}{2n-1}\cdot \frac{2n}{2n-1}
-\end{aligned}
-\]</span> 这不就是Wallis乘积公式嘛？翻出Wikipedia一看： <span class="math display">\[
-\begin{aligned}
-\frac{\pi}{2} &amp;=\prod_{n=1}^{\infty} \frac{4 n^{2}}{4 n^{2}-1}=\prod_{n=1}^{\infty}\left(\frac{2 n}{2 n-1} \cdot \frac{2 n}{2 n+1}\right) \\
-&amp;=\left(\frac{2}{1} \cdot \frac{2}{3}\right) \cdot\left(\frac{4}{3} \cdot \frac{4}{5}\right) \cdot\left(\frac{6}{5} \cdot \frac{6}{7}\right) \cdot\left(\frac{8}{7} \cdot \frac{8}{9}\right) \cdots
-\end{aligned}
-\]</span> 完全一致，直接得证。</p>
-<p>哇，也就是说我划着水就把Wallis公式不严谨地整了一遍？</p>
-<p><em>果然还是要膨胀.jpg</em></p>
-<p>以前觉得这个式子很高端的，现在有种莫名的幻灭感。</p>
-<p>但是写到这的时候多看了一眼，发现斯特林逼近的一个推导里用到了Wallis公式？</p>
-<p>突然有点不确定这算不算是循环论证了。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
@@ -2415,7 +2479,7 @@ R = \begin{bmatrix}
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
