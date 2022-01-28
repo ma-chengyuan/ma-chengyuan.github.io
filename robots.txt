@@ -11,5 +11,5 @@ Disallow: /fonts/
 Disallow: /vendors/
 Disallow: /fancybox/
 
-Sitemap: https://alan20210202.github.io/sitemap.xml
-Sitemap: https://alan20210202.github.io/baidusitemap.xml
+Sitemap: https://ma-chengyuan.github.io/sitemap.xml
+Sitemap: https://ma-chengyuan.github.io/baidusitemap.xml
